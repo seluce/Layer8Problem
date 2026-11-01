@@ -23,8 +23,9 @@
  * WHY THE RUN IS RESUMABLE. 4651 calls is twenty minutes of network on a good
  * day and an afternoon on a bad one. Every finished piece is recorded in a
  * ledger that lives WITH the masters, so an abort costs nothing and a second
- * run picks up where the first stopped. The ledger holds the checksum and the
- * model, so a rewritten line or a changed model re-renders and nothing else.
+ * run picks up where the first stopped. The ledger holds both checksums, the
+ * model and the voice, so a rewritten line, a new respelling, another model or
+ * another voice re-renders - and nothing else does.
  *
  * WHY THE MP3 MASTERS ARE KEPT. The provider bills per character, not per
  * download. Re-encoding to another bitrate or another format from the masters
@@ -199,9 +200,14 @@ try {
 const MANIFEST = `${ROOT}voice/manifest.${LANG}.json`;
 if (!existsSync(MANIFEST)) die(`no manifest for "${LANG}". Run npm run voice:manifest.`);
 const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
-const recorded = new Map(manifest.entries.map(e => [e.key, e.sha]));
+const recorded = new Map(manifest.entries.map(e => [e.key, e]));
 
-const drifted = entries.filter(e => recorded.get(e.key) !== e.sha);
+// Both checksums: the text as written and the text as sent. A manifest that
+// knows only the first cannot see a new respelling, which is how a rule could
+// be added, committed and gated green while every affected file went on saying
+// the old thing. See the note on the two of them in voice-text.mjs.
+const drifted = entries.filter(e => recorded.get(e.key)?.sha !== e.sha
+                                 || recorded.get(e.key)?.spk !== e.spk);
 if (drifted.length) {
     die(`the ${LANG} tree and the manifest disagree in ${drifted.length} places.\n`
       + '  Run npm run voice:manifest before generating, or audio is bought for text\n'
@@ -240,13 +246,25 @@ const saveLedger = () => {
     renameSync(tmp, LEDGER);
 };
 
-/** Done means: this exact text, through this exact model, and the file is there. */
+/**
+ * Done means: this exact text, sent in this exact form, through this exact
+ * model and voice, with the file actually on disk.
+ *
+ * A field that did not yet exist when an entry was written is grandfathered
+ * rather than treated as stale - the alternative is re-rendering, and re-
+ * buying, a finished run the first time this tool is updated. That is a real
+ * trade and not a free one: an entry taken on trust is an entry nothing can
+ * check, so they are counted and reported instead of being passed over in
+ * silence. Both ledgers were stamped with `spk` on 01.11.2026, so the count
+ * is 0 here and anything above that is worth asking about.
+ */
+let trusted = 0;
 const done = (e) => {
     const r = ledger[e.key];
-    // r.voice is undefined in entries written before the field existed. Those
-    // are grandfathered deliberately: treating them as stale would re-render -
-    // and re-buy - a finished run the first time this tool was updated.
-    return !!r && r.sha === e.sha && r.model === MODEL
+    if (!r) return false;
+    if (r.spk === undefined || r.voice === undefined) trusted++;
+    return r.sha === e.sha && r.model === MODEL
+        && (r.spk === undefined || r.spk === e.spk)
         && (r.voice === undefined || r.voice === VOICE)
         && existsSync(`${OUT}/${fileFor(e)}.opus`);
 };
@@ -264,6 +282,7 @@ console.log(`  voice   ${OWN_VOICE ? (cfg.voiceName ?? cfg.voiceId) : `${VOICE} 
 console.log(`  model   ${MODEL}`);
 console.log(`  out     ${OUT.slice(ROOT.length)}`);
 console.log(`  to do   ${todo.length} of ${entries.length} pieces, ${chars.toLocaleString('de-DE')} characters`);
+if (trusted) console.log(`  ! ${trusted} finished pieces predate a field this tool checks and are taken on trust`);
 if (CONTEXT) console.log(`  context ${ctxChars.toLocaleString('de-DE')} characters as previous_text (billing unknown)`);
 // At the published pay-as-you-go rate, which is the dearest way to buy it:
 // usage inside a plan's included credits has come out cheaper than this.
@@ -372,7 +391,7 @@ async function speak(e) {
             execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y',
                 '-i', mp3, '-c:a', 'libopus', '-b:a', bitrate, '-ac', '1',
                 `${OUT}/${fileFor(e)}.opus`]);
-            ledger[e.key] = { sha: e.sha, model: MODEL, voice: VOICE, chars: e.chars };
+            ledger[e.key] = { sha: e.sha, spk: e.spk, model: MODEL, voice: VOICE, chars: e.chars };
             return true;
         }
 

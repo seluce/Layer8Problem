@@ -4,8 +4,9 @@
  * Narration is pre-rendered, not spoken at runtime, because the voice has to
  * sound the same on every machine. That means the audio and the prose are two
  * separate things that CAN drift apart - edit a line and the file still says
- * the old one, with nothing to notice it. So every entry carries the checksum
- * of the source string, and --check holds the manifest against the trees.
+ * the old one, with nothing to notice it. So every entry carries two checksums,
+ * one over the text as written and one over the text as it is sent to the
+ * provider, and --check holds the manifest against the trees.
  *
  * Usage: node tools/make-voice.mjs [--lang=de|en] [--write] [--check]
  *        --write   create or update voice/manifest.<lang>.json
@@ -20,7 +21,7 @@
  */
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { collectEntries, TERMINAL, TRANSFORM } from './voice-text.mjs';
+import { collectEntries, TERMINAL } from './voice-text.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const args = process.argv.slice(2);
@@ -45,8 +46,20 @@ const old = existsSync(MANIFEST) ? JSON.parse(readFileSync(MANIFEST, 'utf8')) : 
 const oldBy = new Map((old?.entries ?? []).map(e => [e.key, e]));
 
 const fresh = entries.filter(e => !oldBy.has(e.key));
+// Either checksum. `sha` moves when the prose is rewritten, `spk` when the
+// prose stays put and what gets SENT changes - a new respelling in
+// voice-text.mjs. Both mean the file on disk says something else, and the
+// second kind is the one nothing used to notice.
+//
+// An entry with no `spk` counts as changed too, and that is not pedantry: a
+// manifest that cannot say what was sent cannot say the entry is in step, and
+// the first run after the field arrived has to rewrite it. Rewriting the
+// manifest is free. What costs money is the LEDGER, and that one grandfathers
+// the same gap deliberately - see make-audio.mjs.
 const changed = entries.filter(e => oldBy.has(e.key)
-    && (oldBy.get(e.key).sha !== e.sha || (old?.transform ?? 0) !== TRANSFORM));
+    && (oldBy.get(e.key).sha !== e.sha || oldBy.get(e.key).spk !== e.spk));
+const respoken = changed.filter(e => oldBy.get(e.key).spk && oldBy.get(e.key).sha === e.sha);
+const unrecorded = changed.filter(e => !oldBy.get(e.key).spk);
 const gone = [...oldBy.keys()].filter(k => !seen.has(k));
 const chars = entries.reduce((n, e) => n + e.chars, 0);
 const todo = fresh.length + changed.length;
@@ -56,7 +69,9 @@ console.log(`  ${entries.length} pieces, ${chars.toLocaleString('de-DE')} charac
 console.log(`  ${(chars / 900 / 60).toFixed(1)} h at 900 characters a minute\n`);
 if (old) {
     console.log(`  new      ${fresh.length}`);
-    console.log(`  changed  ${changed.length}${(old.transform ?? 0) !== TRANSFORM ? '   (the transform itself changed - everything is stale)' : ''}`);
+    console.log(`  changed  ${changed.length}`
+        + (respoken.length ? `   (${respoken.length} of them the same text spoken differently)` : '')
+        + (unrecorded.length ? `   (${unrecorded.length} from before the manifest recorded what is sent)` : ''));
     console.log(`  orphaned ${gone.length}   (audio whose text is gone)`);
     console.log(`  to speak ${todo}, ${entries.filter(e => fresh.includes(e) || changed.includes(e))
         .reduce((n, e) => n + e.chars, 0).toLocaleString('de-DE')} characters\n`);
@@ -83,10 +98,17 @@ if (WRITE) {
     // swapped, and 4651 copies of a derived value cost 300 kB in a file that
     // moves on every text edit. The line-per-entry shape keeps a diff down to
     // the lines that actually changed.
-    const head = `{\n "lang": ${JSON.stringify(LANG)},\n "transform": ${TRANSFORM},`
+    //
+    // `spk` is the exception that proves the rule: it costs 98 kB a language
+    // and is kept because it is NOT derivable from this entry. It depends on
+    // the rules in voice-text.mjs, which is exactly what it is here to notice.
+    // Written even where it equals `sha` - most pieces go through no rule at
+    // all - because an absent one has to keep meaning "from before this field",
+    // which is the one thing the changeover report counts.
+    const head = `{\n "lang": ${JSON.stringify(LANG)},`
                + `\n "generated": ${JSON.stringify(new Date().toISOString().slice(0, 10))},\n "entries": [\n`;
     const body = entries
-        .map(e => `  {"key":${JSON.stringify(e.key)},"sha":"${e.sha}","chars":${e.chars}}`)
+        .map(e => `  {"key":${JSON.stringify(e.key)},"sha":"${e.sha}","spk":"${e.spk}","chars":${e.chars}}`)
         .join(',\n');
     writeFileSync(MANIFEST, head + body + '\n ]\n}\n');
     console.log(`  written: voice/manifest.${LANG}.json`);

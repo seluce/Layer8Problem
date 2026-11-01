@@ -366,19 +366,27 @@ checksum then fails and the file is simply respoken.
 
 **Both trees must produce the same keys.** They did on the first run, 4651
 each, no difference in either direction - the same rule that `lint:parity`
-enforces for the data.
+enforces for the data. The fifteen named interface strings bring it to 4663.
 
 | | |
 |---|---|
-| pieces | 4651 per language |
-| characters | 806,329 de · 780,560 en |
-| as speech | 14.9 h · 14.5 h |
+| pieces | 4663 per language |
+| characters | 808,907 de · 782,956 en |
+| as speech | 15.0 h · 14.5 h |
 
-`transform` in the manifest is the version of the function that turns a
-written line into a spoken one (markup out, `H.A.L.G.E.R.D.` to `Halgerd`).
-Bump it and every entry counts as stale, because every file was made from a
-different text than this version would send - a checksum over the SOURCE
-cannot see that by itself.
+**Every entry carries two checksums, and they answer different questions.**
+`sha` is taken over the text as WRITTEN and is the file name - the browser
+hashes the sentence it is about to show and asks for that file. `spk` is taken
+over the text as SENT, after `spokenForm()`, and it is the only thing that can
+see a change to the respelling rules: nothing in the prose moves, so nothing in
+`sha` moves, so the ledger calls the piece finished and the provider is never
+asked again while the file goes on saying the old thing.
+
+This was one `transform` version number before, bumped by hand. It could only
+ever report "all of it is stale" - and `make-audio.mjs` never read it, so
+bumping it marked 4663 pieces changed and re-rendered none of them. A checksum
+per piece is exact in both directions: adding the German `Rack` respelling
+marked 109 pieces and left the other 4554 alone.
 
 **Not part of `lint:all` yet.** Until the audio exists the manifest is a
 plan, and gating every data edit on a plan is noise. It joins the gate with
@@ -497,7 +505,7 @@ it, and is the documented cure for short, unstable pieces. It is **not**
 documented whether it is billed. The dry run prints both numbers:
 
 ```
-to do   100 of 4651 pieces, 15.623 characters
+to do   100 of 4663 pieces, 15.623 characters
 context 15.087 characters as previous_text (billing unknown)
 at most $1.25 at the published rate, $2.46 if context is billed
 ```
@@ -523,7 +531,7 @@ and how far the plan's remainder still reaches.
 ## 8. `npm test` — the five test suites, in both languages
 
 ```
-npm test        # 17 / 251 / 20 / 46 / 12, then the same five again with --lang=en
+npm test        # 17 / 251 / 20 / 46 / 15, then the same five again with --lang=en
 npm run test:de # one language only, while working
 npm run test:en
 ```
@@ -577,7 +585,7 @@ The fifth suite, and the reason it is its own: every link between a sentence on
 screen and the file that speaks it fails SILENTLY. A digest computed one way in
 Node and another way in the browser does not throw — the narrator is simply
 mute, in the shipped game only. A window that forgets to hush reads a result
-out over the noticeboard. Twelve checks, twenty-five mutation probes
+out over the noticeboard. Fifteen checks, thirty-four mutation probes
 (01.11.2026).
 
 Six of those checks arrived with the voiced interface strings and the two
@@ -594,6 +602,25 @@ things and only the running game shows that: a language switch spoke a tutorial
 bubble that `skip()` had left behind in the state, and the mail's resume asked
 `state.isEmailOpen` — a flag every closing path clears one line AFTER hiding
 the window, so the line was never once given back. Both are covered now.
+
+Three more checks came with the respelling rules. Two of them are a pair, held
+in both directions because both directions are silent: the German rule has to
+reach the German tree, and it must not reach the English one, where the voice
+reads `Rack` correctly already. The candidate scan is case-insensitive while
+the rule is not - German capitalises its nouns, so a lowercase `rack` arriving
+in that tree is a gap, and this is where it comes out instead of going quietly
+to the provider.
+
+The third is the one that cost the most to learn. `collectEntries()` was called
+once per language in a loop, and the deferred pools are cached on `DB` by NAME:
+the second call reloaded the core tier and left all eleven terminal pools in
+the first language, with `currentLanguage()` already reporting the second, so
+the guard inside saw nothing. The measurement built on it called 4625 of 4663
+English pieces drifted, which reads like a broken tree rather than a mixed one
+— and acting on it would have bought a second English run. `setLanguage()` is
+the path that drops the cache; the check asserts that every terminal pool
+really changes, because one identical line is ordinary and a whole pool of them
+is the old tree still sitting there.
 
 ## 9. `dev-week.js` — the console tool
 

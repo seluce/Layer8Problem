@@ -13,7 +13,7 @@
  * needs them read has a screen reader, supported since 6.4.
  */
 import { createHash } from 'node:crypto';
-import { DB, ensure, loadCore, currentLanguage, POOL_NAMES } from '../src/data.js';
+import { DB, ensure, loadCore, setLanguage, currentLanguage, POOL_NAMES } from '../src/data.js';
 import { de } from '../src/i18n/de.js';
 import { en } from '../src/i18n/en.js';
 
@@ -87,25 +87,40 @@ const DICTS = { de, en };
 const INSTRUCTION = /^CMD:/;
 
 /**
- * How the written line becomes the spoken one. Bumped when spokenForm()
- * changes, because then every file was made from a different text than the one
- * this version would send - the checksum alone cannot see that.
- */
-export const TRANSFORM = 1;
-
-/**
- * Said, not spelled. The screen keeps the dots; a voice reading them out
- * letter by letter turns the company system into a hardware list.
+ * Said, not spelled - and not the same in both languages.
  *
- * Written for a day that arrived: it fired zero times while only the event
- * pools were collected, because H.A.L.G.E.R.D. speaks in the start sequence and
- * the chronicle and neither of those is voiced. The interface keys above put
- * him on the voiced list, and the rule now rewrites three pieces per language -
- * his two warnings and the closing screen of the tutorial.
+ * Two different faults live here. H.A.L.G.E.R.D. is written with dots, and a
+ * voice reading those out turns the company system into a hardware list; that
+ * is wrong in either language. "Rack" is an English word standing in German
+ * prose, where a German voice gives it a German a - and in the English tree
+ * the same word is read correctly and must not be touched. So a rule has a
+ * language, and `all` is for the ones that have none.
+ *
+ * Respelling is the lever because the written line may not change: the screen
+ * keeps "Rack 4", the hash is taken over what is SHOWN, and the substitute
+ * never reaches the player's eyes.
+ *
+ * ONLY WHAT SOMEBODY HAS HEARD GOES IN. A rule costs a re-render of every
+ * piece it touches, bought a second time - 108 German pieces for this one -
+ * so a guess at how a voice says a word is a guess paid for in credits. The
+ * German tree is full of English computing words (Server, Ticket, Switch,
+ * Update, Cache, Queue), and a German saying them out loud is how the prose
+ * is meant to sound anyway. Rack was the one that came back wrong.
  */
-const SPOKEN_AS = [
-    [/H\.A\.L\.G\.E\.R\.D\./g, 'Halgerd'],
-];
+const SPOKEN_AS = {
+    all: [
+        [/H\.A\.L\.G\.E\.R\.D\./g, 'Halgerd'],
+    ],
+    // The capital letter and the two boundaries together: "Track", "Cracker"
+    // and "Barack" never start a match, and "Racker" keeps its ending. The
+    // hyphenated compounds the tree holds - Server-Rack, 19-Zoll-Rack,
+    // Wackel-Rack - are reached, because a hyphen is a word boundary.
+    de: [
+        [/\bRacks\b/g, 'Räcks'],
+        [/\bRack\b/g, 'Räck'],
+    ],
+    en: [],
+};
 
 /**
  * Markup that is dropped rather than spoken.
@@ -114,20 +129,45 @@ const SPOKEN_AS = [
  * that is enforced rather than assumed. The emphasis tags are here for the
  * INTERFACE strings above, where `<b>` marks the number in a tutorial step.
  *
- * Adding them did not make a single rendered piece stale, which is why
- * TRANSFORM below stays at 1: no voiced string in either tree contains a tag
- * other than `<br>`, so a rule about `<b>` cannot change what any of them
- * sounds like. Measured, not assumed - the checker refuses an unknown tag.
+ * Adding them made not one rendered piece stale: no voiced string in either
+ * tree contains a tag other than `<br>`, so a rule about `<b>` cannot change
+ * what any of them sounds like. Measured, not assumed - and it is the `spk`
+ * checksum below that measures it now, rather than somebody's judgement. The
+ * checker refuses an unknown tag either way.
  */
 const KNOWN_TAGS = /<\/?(?:br|b|i|em|strong)\s*\/?>/gi;
 
-export function spokenForm(s) {
+export function spokenForm(s, lang) {
+    const own = SPOKEN_AS[lang];
+    // Thrown rather than defaulted: a caller that forgets the language would
+    // otherwise get the shared rules alone and silently buy German prose read
+    // as German, which is the fault this argument exists for.
+    if (!own) throw new Error(`spokenForm: no spoken-form rules for language "${lang}".`);
     let out = s.replace(KNOWN_TAGS, ' ');
-    for (const [from, to] of SPOKEN_AS) out = out.replace(from, to);
+    for (const [from, to] of [...SPOKEN_AS.all, ...own]) out = out.replace(from, to);
     return out.replace(/\s+/g, ' ').trim();
 }
 
 export const sha = (s) => createHash('sha1').update(s, 'utf8').digest('hex').slice(0, 12);
+
+/**
+ * TWO CHECKSUMS, ANSWERING DIFFERENT QUESTIONS.
+ *
+ * `sha` is taken over the text as WRITTEN, and it is the file name: the browser
+ * hashes the sentence it is about to show and asks for that file (see fileFor
+ * below). `spk` is taken over the text as SENT, after spokenForm() - and it is
+ * the only thing that can notice a change to the rules themselves. Add a
+ * respelling and the written line is untouched, so `sha` is untouched, so the
+ * ledger calls the piece finished and the provider is never asked again: the
+ * file on disk goes on saying the old thing at 0 errors and 0 warnings.
+ *
+ * This was a single TRANSFORM number in the manifest before, bumped by hand
+ * whenever the rules changed. It could only ever say "all of it is stale", and
+ * - the half that mattered - make-audio.mjs never read it at all, so bumping it
+ * marked 4,663 pieces changed in one report and re-rendered none of them. A
+ * checksum per piece is exact in both directions: the Rack rule touches 109
+ * German pieces and leaves the other 4,554 alone.
+ */
 
 /**
  * The audio file a piece is filed under: the checksum of the text it says.
@@ -166,6 +206,17 @@ export const fileFor = (entry) => entry.sha;
  */
 export async function collectEntries(lang) {
     if (lang !== 'de' && lang !== 'en') throw new Error(`Unknown language "${lang}".`);
+    // setLanguage() BEFORE loadCore(), because the deferred pools are cached
+    // on DB by NAME and not by language - ensure() returns early on
+    // `if (DB[name])`. So a second call for the other language in one process
+    // reloaded the core tier, left all eleven terminal pools in the first
+    // language, and passed the guard below, because currentLanguage() had
+    // moved by then. A loop over both languages then reported 4,625 of 4,663
+    // English pieces as drifted: it was holding them against German prose.
+    // setLanguage() is the path that drops the cache, and it returns early when
+    // the language is already the wanted one - which is why loadCore() still
+    // has to follow it for a fresh process.
+    await setLanguage(lang);
     await loadCore(lang);
     await ensure(...POOL_NAMES);
     if (currentLanguage() !== lang) {
@@ -231,8 +282,9 @@ export async function collectEntries(lang) {
     for (const e of entries) {
         if (seen.has(e.key)) throw new Error(`Duplicate key: ${e.key}`);
         seen.add(e.key);
-        e.spoken = spokenForm(e.src);
+        e.spoken = spokenForm(e.src, lang);
         e.sha = sha(e.src);
+        e.spk = sha(e.spoken);
         e.chars = e.spoken.length;
         // Two pieces of identical text share one file, which is right - they
         // say the same thing. Two DIFFERENT texts under one checksum would

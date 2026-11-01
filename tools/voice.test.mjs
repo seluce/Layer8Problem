@@ -201,7 +201,7 @@ await ok('a placeholder cannot be recorded', () => {
 
 // --- 7. Said, not spelled ---------------------------------------------------
 //
-// Three pieces per language go through SPOKEN_AS now, all three of them
+// Three pieces per language go through the shared rules, all three of them
 // H.A.L.G.E.R.D. A provider reading those dots gets a hardware list, and the
 // mistake is only audible - the file is there, the hash matches, the checker is
 // green.
@@ -209,12 +209,68 @@ await ok('the dotted name is sent as a word', () => {
     const dotted = entries.filter(e => /H\.A\.L\.G\.E\.R\.D\./.test(e.src));
     assert.ok(dotted.length >= 3, `expected the three H.A.L.G.E.R.D. pieces, found ${dotted.length}`);
     for (const e of dotted) {
-        assert.ok(!/H\.A\.L/.test(spokenForm(e.src)), `${e.key} would be spelled out`);
-        assert.match(spokenForm(e.src), /Halgerd/, `${e.key} lost the name altogether`);
+        assert.ok(!/H\.A\.L/.test(spokenForm(e.src, LANG)), `${e.key} would be spelled out`);
+        assert.match(spokenForm(e.src, LANG), /Halgerd/, `${e.key} lost the name altogether`);
     }
     // The screen keeps the dots: the rule belongs to what is SENT, and the
     // hash is taken over what is SHOWN.
     for (const e of dotted) assert.match(e.src, /H\.A\.L\.G\.E\.R\.D\./);
+});
+
+// A respelling with a language on it, held in both directions - because both
+// directions are silent. Moved to the shared list it would respell the English
+// tree, where the word is already read correctly; dropped from the German one
+// the pronunciation simply comes back, and only an ear would know.
+await ok(`a respelling reaches the ${LANG} tree and only where it belongs`, () => {
+    // Case-insensitive on purpose, and only here. The RULE is capital-only,
+    // because German capitalises its nouns and the word-form survey found no
+    // lowercase one in that tree - a machine line quoting "rack not found"
+    // would be the exception, and this is where it would turn up: in German
+    // nothing may survive the rules in ANY spelling, so a lowercase arrival
+    // fails here and names itself instead of going quietly to the provider.
+    const written = entries.filter(e => /\bracks?\b/i.test(e.src));
+    // Over a hundred pieces in each tree carry it. The floor is low enough that
+    // ordinary editing does not move it and high enough to catch a set that has
+    // collapsed to nothing, which is what a broken rule looks like from here.
+    assert.ok(written.length > 20, `expected the Rack pieces, found ${written.length}`);
+    for (const e of written) {
+        if (LANG === 'de') {
+            assert.ok(!/\bracks?\b/i.test(e.spoken), `${e.key} is still sent as a German word`);
+            assert.match(e.spoken, /\bRäcks?\b/, `${e.key} lost the word altogether`);
+        } else {
+            assert.match(e.spoken, /\bracks?\b/i, `${e.key} was respelled in a language that reads it`);
+            assert.ok(!/Räck/.test(e.spoken), `${e.key} carries a German respelling`);
+        }
+        // The screen is untouched either way.
+        assert.ok(!/Räck/.test(e.src), `${e.key} has the respelling in its PROSE`);
+    }
+});
+
+// --- 7b. The checksum over what is SENT -------------------------------------
+//
+// The file name is the hash of the text as WRITTEN, which is right for the
+// browser and blind to exactly one thing: a change to the rules above. Nothing
+// in the prose moves, so nothing in the file name moves, so the ledger calls
+// every affected piece finished and the provider is never asked again. A
+// checksum over the spoken form is the only record that can tell - see the note
+// in voice-text.mjs, and the TRANSFORM number that preceded it and was read by
+// nothing.
+await ok('the manifest records what is sent, not only what is shown', () => {
+    const manifest = JSON.parse(readFileSync(`${ROOT}voice/manifest.${LANG}.json`, 'utf8'));
+    const by = new Map(manifest.entries.map(e => [e.key, e]));
+    const wrong = [];
+    for (const e of entries) {
+        if (by.get(e.key)?.spk !== createHash('sha1').update(spokenForm(e.src, LANG), 'utf8')
+                                        .digest('hex').slice(0, 12)) wrong.push(e.key);
+    }
+    assert.deepEqual(wrong.slice(0, 5), [], 'the manifest cannot see a change to the spoken form');
+
+    // And the two tools that have to act on it. The generation run compares the
+    // ledger against this value and writes it back; without either half a
+    // respelling is committed, gated green and never spoken.
+    const audio = readFileSync(`${ROOT}tools/make-audio.mjs`, 'utf8');
+    assert.match(audio, /r\.spk === undefined \|\| r\.spk === e\.spk/, 'the run does not compare the spoken form');
+    assert.match(audio, /ledger\[e\.key\] = \{[^}]*spk: e\.spk/, 'the run does not record the spoken form');
 });
 
 // --- 8. The mail interrupts, and hands the line back ------------------------
@@ -272,6 +328,34 @@ await ok('a result screen speaks again in the new language', () => {
     assert.match(code('tutorial.js'),
         /onLanguageChange\(\(\) => \{[\s\S]{0,600}?if \(!tutorial\.isActive\) return;/,
         'a language switch can speak a tutorial bubble that is no longer on screen');
+});
+
+// --- 10. One process, both trees --------------------------------------------
+//
+// Last on purpose: it loads the other tree over this one, and nothing after it
+// could trust DB.
+//
+// The deferred pools are cached on DB by name and not by language, so a second
+// collectEntries() in one process used to give back the core tier in the new
+// language and all eleven terminal pools in the old one - with
+// currentLanguage() already reporting the new one, so the guard inside it saw
+// nothing wrong at all. The measurement that walked into it called 4,625 of
+// 4,663 English pieces drifted, which reads like a broken tree rather than a
+// mixed one, and the cost of believing that would have been a second English
+// run.
+await ok('a second language in the same process really arrives', async () => {
+    const other = LANG === 'de' ? 'en' : 'de';
+    const { entries: theirs } = await collectEntries(other);
+    const mine = new Map(entries.map(e => [e.key, e.sha]));
+    const stuck = [];
+    for (const pool of TERMINAL) {
+        const shared = theirs.filter(e => e.key.startsWith(`${pool}/`) && mine.has(e.key));
+        assert.ok(shared.length, `no shared pieces in "${pool}" - the two trees no longer line up`);
+        // Not "some differ" but "all are the same": one identical line is
+        // ordinary, a whole pool of them is the old tree still sitting there.
+        if (shared.every(e => mine.get(e.key) === e.sha)) stuck.push(pool);
+    }
+    assert.deepEqual(stuck, [], 'a pool came back in the first language');
 });
 
 console.log(`\n${passed} checks passed.`);
