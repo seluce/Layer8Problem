@@ -366,13 +366,14 @@ checksum then fails and the file is simply respoken.
 
 **Both trees must produce the same keys.** They did on the first run, 4651
 each, no difference in either direction - the same rule that `lint:parity`
-enforces for the data. The fifteen named interface strings bring it to 4663.
+enforces for the data. The fifteen named interface strings bring it to 4663,
+the 118 morning moods (`moods`, the morning screen) to 4781.
 
 | | |
 |---|---|
-| pieces | 4663 per language |
-| characters | 808,907 de · 782,956 en |
-| as speech | 15.0 h · 14.5 h |
+| pieces | 4781 per language |
+| characters | 830,693 de · 803,706 en |
+| as speech | 15.4 h · 14.9 h |
 
 **Every entry carries two checksums, and they answer different questions.**
 `sha` is taken over the text as WRITTEN and is the file name - the browser

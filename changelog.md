@@ -3,6 +3,7 @@
 Sound:
 * The terminal is read out loud. Every scene, every outcome, in both languages, by a voice that is not a person's - the settings say whose and what made it, and the switch beside the volume turns it off.
 * H.A.L.G.E.R.D. speaks too: the tutorial, and the two warnings before the first email and the first emergency.
+* The morning screen is read out as well - why the day already starts badly.
 * The narrator's slider has a line of its own to try, the way the sound and the music do.
 * An email arriving no longer ends the scene being read. It waits, and goes on where it stopped once the mail is answered.
 * Changing language mid-scene starts the new language from the top, on an outcome as well as on an event.

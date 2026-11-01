@@ -494,10 +494,13 @@ export const ui = {
     },
 
     // Shows the morning mood before the day starts.
+    // The mood's text is read like a scene; the conditions under it are not,
+    // they carry the morning's price as a number.
     setTerminalMorning: function(title, text, conditions) {
         this._setTerminal(this.EVENT_CLASS, {
             mode: 'morning',
-            morning: { title, text, conditions }
+            morning: { title, text, conditions },
+            speak: text
         });
     },
 

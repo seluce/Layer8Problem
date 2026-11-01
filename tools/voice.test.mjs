@@ -128,6 +128,11 @@ await ok('every terminal screen decides what it speaks', () => {
     // because what it stores is a recipe.
     assert.match(ui, /mode: 'event',[\s\S]{0,400}?speak: text/, 'an event does not hand over its text');
     assert.match(ui, /mode: 'result',[\s\S]{0,200}?speak\n/, 'a result does not hand over its sentence');
+    // The morning mood is collected (TERMINAL holds `moods`), so it has to be
+    // handed over too - or 118 recordings a language are bought and never
+    // played, at 0 errors and 0 warnings.
+    assert.ok(TERMINAL.includes('moods'), 'the morning moods are no longer collected');
+    assert.match(ui, /mode: 'morning',[\s\S]{0,120}?speak: text/, 'the morning does not hand over its text');
 });
 
 // --- 5. Nothing is voiced that the terminal never shows ---------------------
@@ -394,7 +399,7 @@ await ok('the read-aloud button reads the terminal, past the switch', () => {
 
     // Both screens that carry it ask the engine, and neither asks the switch -
     // which would hide it from exactly the player it is for.
-    for (const f of ['components/EventView.svelte', 'components/ResultView.svelte']) {
+    for (const f of ['components/EventView.svelte', 'components/ResultView.svelte', 'components/MorningView.svelte']) {
         const view = markup(f);
         assert.match(view, /\$derived\(engine\.canReplayNarration\(\)\)/, `${f} decides on its own when to show it`);
         assert.match(view, /\{#if canRead\}[\s\S]{0,40}?<ReadButton \/>/, `${f} never shows the button`);

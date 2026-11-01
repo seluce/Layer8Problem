@@ -1,5 +1,7 @@
 <!--
-  The morning mood shown before the workday starts.
+  The morning mood shown before the workday starts. Its text is narrated like
+  a scene (setTerminalMorning hands it over), so it carries the read-aloud
+  button too.
 
   `conditions` is still an HTML fragment: the wording carries inline colour that
   varies per effect. It comes from the engine, never from player input.
@@ -9,8 +11,13 @@
     import { engine } from '../engine.js';
     import { t } from '../i18n/i18n.svelte.js';
     import { renderRecipe } from '../engine/recipe.js';
+    import ReadButton from './ReadButton.svelte';
 
     const view = $derived(state.terminal.morning ?? {});
+
+    // Beside the conditions, above the start button - the same corner of the
+    // card as on a result.
+    const canRead = $derived(engine.canReplayNarration());
 </script>
 
 <div class="w-full max-w-2xl text-left fade-in bg-slate-900 border border-slate-400 p-4 md:p-6 rounded-xl shadow-2xl mx-auto my-auto shrink-0 relative">
@@ -28,9 +35,12 @@
         <p class="italic text-slate-300 text-lg leading-relaxed font-serif">{view.text}</p>
     </div>
 
-    <div class="mb-8 text-center text-sm bg-slate-950 border border-slate-800 p-3 rounded-sm shadow-inner">
-        {t('morning.conditions')}
-        {#if view.conditions}<span class={view.conditions.cls}>{renderRecipe(view.conditions) ?? ''}</span>{/if}
+    <div class="mb-8 flex items-center gap-2">
+        <div class="flex-1 min-w-0 text-center text-sm bg-slate-950 border border-slate-800 p-3 rounded-sm shadow-inner">
+            {t('morning.conditions')}
+            {#if view.conditions}<span class={view.conditions.cls}>{renderRecipe(view.conditions) ?? ''}</span>{/if}
+        </div>
+        {#if canRead}<ReadButton />{/if}
     </div>
 
     <button data-continue onclick={() => engine.reset()}

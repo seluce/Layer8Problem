@@ -4,7 +4,7 @@
  * two copies of this walk would drift and the drift would be inaudible: the
  * generator would buy audio for a text the manifest never recorded.
  *
- * What gets a voice: the terminal. Mails, the phone, the intranet, the board,
+ * What gets a voice: the terminal, the morning screen included. Mails, the phone, the intranet, the board,
  * the vending machine, the log and the books stay for reading - they are read
  * at the player's own pace, or they change from run to run.
  *
@@ -17,9 +17,17 @@ import { DB, ensure, loadCore, setLanguage, currentLanguage, POOL_NAMES } from '
 import { de } from '../src/i18n/de.js';
 import { en } from '../src/i18n/en.js';
 
-/** Pools that play in the terminal. A new one is added here and nowhere else. */
+/**
+ * Pools that play in the terminal. A new one is added here and nowhere else.
+ *
+ * `moods` is the morning screen - DER MORGEN DANACH, before the first action
+ * of a day. It stands in the terminal like a scene and is read like one; only
+ * its `text` is spoken, never the title, and never the line under it that
+ * says what the morning cost, which carries a number.
+ */
 export const TERMINAL = ['coffee', 'server', 'calls', 'sidequests', 'bossfights',
-                         'lunch', 'meetings', 'reputation', 'party', 'special', 'tutorial'];
+                         'lunch', 'meetings', 'reputation', 'party', 'special', 'tutorial',
+                         'moods'];
 
 /** Fields that hold spoken prose. `t` (the button) is deliberately absent. */
 const SPOKEN = new Set(['text', 'r', 'txt']);
