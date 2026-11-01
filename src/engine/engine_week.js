@@ -2,6 +2,7 @@ import { KEYS } from './keys.js';
 import { t } from '../i18n/i18n.svelte.js';
 import { freshDay, snapshotDay } from './engine_state.svelte.js';
 import { platform } from '../platform.js';
+import { weekEntry } from './leaderboard.js';
 import { DB, ensure } from '../data.js';
 
 /**
@@ -649,6 +650,7 @@ export const week = {
 
         this.recordWeekResult(outcome, daysCompleted);   // reads difficultyKey -> before endWeek
         end.balance = this.buildWeekBalance(end);        // reads week.weekLog -> before endWeek
+        this.submitWeekScore(!!end.isWin, end.cause);     // reads the week too -> before endWeek
         // endWeek() below clears week.active, so the screen cannot ask the
         // state what mode it belonged to - it travels on the end object.
         //
@@ -665,6 +667,37 @@ export const week = {
         this.endWeek();                                  // week.active off, slot cleared
         this.syncRun(true);                              // the empty slot travels at once
         this.showEnd(end);
+    },
+
+    /**
+     * Sends the finished week to its Steam board (desktop only).
+     *
+     * Two paths end a week - finishWeek() and the Friday gala in
+     * engine_events - and both call this BEFORE endWeek(), which empties the
+     * week it reads: level, day, ledger. The figures are the state's at the
+     * moment the week ended, which on a lost day are the ones that ended it.
+     *
+     * The answer arrives later; state.weekSubmit carries it to the end
+     * screen, which says what the week was worth and whether it beat the
+     * stored one. Runtime only, never saved.
+     */
+    submitWeekScore: function(won, cause) {
+        if (!platform.isDesktop) return;
+        const s = this.state, w = s.week, level = w.level;
+        const entry = weekEntry({
+            level, won, cause: won && cause !== 'gala' ? 'time' : cause,
+            day: w.dayIndex, time: s.time,
+            tickets: s.tickets, l: s.fl, a: s.al, b: s.cr,
+            valve: s.rageWarningReceived, warning: s.chefWarningReceived,
+            log: w.weekLog,
+        });
+        s.weekSubmit = { pending: true, score: entry.score, level };
+        const settle = (res) => {
+            s.weekSubmit = res?.ok
+                ? { pending: false, score: entry.score, level, scoreChanged: !!res.scoreChanged, rank: res.rank }
+                : { pending: false, failed: true, score: entry.score, level };
+        };
+        platform.leaderboardSubmit(entry.board, entry.score, entry.details).then(settle, () => settle(null));
     },
 
     /** The week-level counters, mirroring recordDayResult(). */

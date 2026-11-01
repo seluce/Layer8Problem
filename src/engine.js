@@ -198,6 +198,7 @@ document.addEventListener('keydown', (event) => {
         if (isVisible('save-export-modal') || isVisible('save-import-modal')) { engine.ui.closeModals(); return; }
         if (isVisible('report-modal')) { engine.closeReportModal(); return; }
         if (isVisible('global-stats-modal')) { engine.closeGlobalStats(); return; }
+        if (isVisible('leaderboard-modal')) { engine.closeLeaderboard(); return; }
 
         if (isVisible('inventory-modal')) { engine.closeInventory(); return; }
         if (isVisible('team-modal')) { engine.closeTeam(); return; }

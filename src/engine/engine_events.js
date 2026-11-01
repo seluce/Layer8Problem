@@ -1968,6 +1968,7 @@ export const events = {
             weekDay = this.state.week.dayIndex;
             this.recordWeekResult('survived', 5);
             balance = this.buildWeekBalance({ isWin: true });
+            this.submitWeekScore(true, 'gala');
             this.endWeek();
         }
 

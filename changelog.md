@@ -24,6 +24,10 @@ The day to day:
 * The volume sliders no longer rest half-faded until touched.
 * A career that has worked its way through a pool is now shown the scenes where a decision is still untaken, rather than ones it has read to the end. Known scenes still come back - that is what they are for - but the ones with something left come first.
 
+Steam:
+* Leaderboards for the working week: one per level, and all three in one list. A week earns a point for every working minute it lasted and, if it made it to Friday evening, a bonus for how calmly it ended. Each entry shows how the week ended and on which values, and opens to show it day by day.
+* The end of a week says what it was worth and whether it beat your best.
+
 Bug fixes:
 * Resetting the settings now resets the preset for the working week as well.
 * The signatures under the noticeboard's notes could hardly be seen - Kevin's, for one, stood near-white on yellow paper. The tear-off slips and a few other lines in pale grey are darker now too.

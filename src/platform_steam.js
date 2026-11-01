@@ -5,7 +5,7 @@
  * single place in the renderer that knows about IPC — the engine never talks to
  * Electron directly.
  *
- * The counterpart for every channel used here lives in main.js.
+ * The counterpart for every channel used here lives in electron/main.cjs.
  */
 
 // window.require rather than a bare require(): the bundler must not try to
@@ -144,6 +144,27 @@ export const desktop = {
             return await ipcRenderer.invoke('steam-get-global-stats');
         } catch (err) {
             console.warn("Global stats could not be fetched.", err);
+            return null;
+        }
+    },
+
+    // See platform.js for the shapes. Both answer null rather than throw, the
+    // way globalStats does: a leaderboard that cannot be reached is not an
+    // error the player has to read about.
+    leaderboardSubmit: async (board, score, details) => {
+        try {
+            return await ipcRenderer.invoke('steam-leaderboard-submit', { board, score, details });
+        } catch (err) {
+            console.warn("Leaderboard score could not be submitted.", err);
+            return null;
+        }
+    },
+
+    leaderboardEntries: async (board, scope) => {
+        try {
+            return await ipcRenderer.invoke('steam-leaderboard-entries', { board, scope });
+        } catch (err) {
+            console.warn("Leaderboard could not be fetched.", err);
             return null;
         }
     },

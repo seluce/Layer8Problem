@@ -754,6 +754,12 @@
                         <img src="assets/img/ui/ui_globe.webp" alt="" width="24" height="24" class="w-6 h-6 inline-block shrink-0 select-none text-slate-400 group-hover:text-purple-400 transition-colors" onerror="this.outerHTML='&lt;span class=&quot;text-xl text-slate-400 group-hover:text-purple-400 transition-colors&quot;&gt;🌍&lt;/span&gt;'"> 
                         <span data-i18n="settings.globalStats">Global statistics & comparison</span>
                     </button>
+
+                    <!-- Desktop build only: the week leaderboards on Steam -->
+                    <button data-action="openLeaderboard" class="platform-desktop w-full text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-amber-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
+                        <img src="assets/img/ui/ui_medal.webp" alt="" width="24" height="24" class="w-6 h-6 inline-block shrink-0 select-none" onerror="this.outerHTML='&lt;span class=&quot;text-xl&quot;&gt;🏆&lt;/span&gt;'">
+                        <span data-i18n="settings.leaderboard">Week leaderboard</span>
+                    </button>
                 </div>
             </div>
 
@@ -982,6 +988,31 @@
 </div>
 
 <!-- GLOBALE STATISTIKEN MODAL END -->
+
+<!-- LEADERBOARD MODAL START -->
+
+<!-- Desktop only, like the statistics above. Stands over the end screen of a
+     week too, which is why it shares their layer. Filled by
+     src/components/LeaderboardView.svelte. -->
+<div id="leaderboard-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=leaderboard.title" class="fixed inset-0 bg-black/90 z-10000 hidden items-center justify-center p-4 fade-in">
+    <div class="neon-box accent-amber bg-slate-900 max-w-3xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[90vh]">
+
+        <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center relative shrink-0">
+            <div class="flex items-center gap-3 min-w-0">
+                <img src="assets/img/ui/ui_medal.webp" alt="" width="28" height="28" class="w-7 h-7 inline-block shrink-0 select-none" onerror="this.outerHTML='&lt;span class=&quot;text-2xl&quot;&gt;🏆&lt;/span&gt;'">
+                <div class="flex flex-col min-w-0">
+                    <h2 class="text-lg font-black text-slate-100 tracking-widest uppercase mt-0.5 leading-tight" data-i18n="leaderboard.title">Leaderboard</h2>
+                    <span class="text-[0.625rem] text-amber-400 font-mono" data-i18n="leaderboard.subtitle">Who lasts the longest in the week?</span>
+                </div>
+            </div>
+            <button data-action="closeLeaderboard" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
+        </div>
+
+        <div id="leaderboard-content" class="p-5 overflow-y-auto w-full"></div>
+    </div>
+</div>
+
+<!-- LEADERBOARD MODAL END -->
 
 
 

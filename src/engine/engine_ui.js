@@ -5,6 +5,7 @@ import { t, tf, language } from '../i18n/i18n.svelte.js';
 import { DB, ensure } from '../data.js';
 import { platform } from '../platform.js';
 import { WEEK_DIFFS, dayName } from './engine_week.js';
+import { BOARD_NAMES, LEVELS } from './leaderboard.js';
 import { recipeKey, renderRecipe } from './recipe.js';
 import { drawIndex } from './draw_bag.js';
 
@@ -41,7 +42,7 @@ for (const ev of ['pointerdown', 'keydown', 'touchstart']) {
 // see windowOverTerminal(). The same ones the Escape key closes.
 const WINDOWS_OVER_TERMINAL = [
     'item-confirm-modal', 'save-export-modal', 'save-import-modal',
-    'report-modal', 'global-stats-modal', 'inventory-modal', 'team-modal',
+    'report-modal', 'global-stats-modal', 'leaderboard-modal', 'inventory-modal', 'team-modal',
     'archive-modal', 'knowledge-modal', 'board-modal', 'excuse-modal', 'settings-modal'
 ];
 
@@ -1725,6 +1726,48 @@ export const ui = {
 
     closeGlobalStats: function() {
         const modal = document.getElementById('global-stats-modal');
+        if (!modal) return;
+        this.hideOverlay(modal);
+    },
+
+    // The week leaderboards, desktop only. Contents are rendered by
+    // components/LeaderboardView.svelte. Opened from the menu and from the
+    // end screen of a week, which it stands over.
+    openLeaderboard: function() {
+        this.closeSettings();
+        const modal = document.getElementById('leaderboard-modal');
+        if (!modal) return;
+        this.showOverlay(modal);
+        this.state.leaderboardOpens++;
+        this.loadLeaderboard(this.state.leaderboard.scope ?? 'global');
+    },
+
+    /**
+     * Fetches the three boards for one scope ('global' or 'friends').
+     *
+     * One after the other, not at once: each download is a Steam call result
+     * the library polls for, and three in flight gain nothing but contention.
+     * A newer request - the player flips the scope while this one runs -
+     * takes over, and the older one drops its answer instead of painting it
+     * over the newer.
+     */
+    loadLeaderboard: async function(scope) {
+        const token = (this._leaderboardToken = {});
+        this.state.leaderboard = { scope, boards: null, mine: null, loading: true, failed: false };
+        const boards = {}, mine = {};
+        let reached = false;
+        for (const level of LEVELS) {
+            const res = await platform.leaderboardEntries(BOARD_NAMES[level], scope);
+            if (this._leaderboardToken !== token) return;
+            if (res) reached = true;
+            boards[level] = res?.entries ?? [];
+            mine[level] = res?.mine ?? null;
+        }
+        this.state.leaderboard = { scope, boards, mine, loading: false, failed: !reached };
+    },
+
+    closeLeaderboard: function() {
+        const modal = document.getElementById('leaderboard-modal');
         if (!modal) return;
         this.hideOverlay(modal);
     },

@@ -51,7 +51,14 @@
     "files": [
       "docs/**/*",
       "electron/**/*",
+      "steamworks_sdk/redistributable_bin/**/*",
       "package.json"
+    ],
+    "asarUnpack": [
+      "node_modules/steamworks-ffi-node/**",
+      "node_modules/koffi/**",
+      "node_modules/@koromix/**",
+      "steamworks_sdk/redistributable_bin/**"
     ],
     "win": {
       "target": "dir",
@@ -73,6 +80,6 @@
     "vite": "^8.3.5"
   },
   "dependencies": {
-    "steamworks.js": "^0.4.0"
+    "steamworks-ffi-node": "0.11.3"
   }
 }

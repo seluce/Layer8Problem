@@ -6,39 +6,138 @@ const fs = require('fs');
 
 let win; // Kept global so the fullscreen toggle can reach it
 
+const STEAM_APP_ID = 4487580;
+
 // --- STEAMWORKS INIT ---
-let steamClient = null; 
-try { 
-    const steamworks = require('steamworks.js'); 
-    steamClient = steamworks.init(4487580); 
-    console.log("Steam API connected."); 
+//
+// steamworks-ffi-node since the leaderboards: steamworks.js (last release
+// 0.4.0, August 2024) has no leaderboard API. This one calls the SDK through
+// koffi and needs the SDK's redistributable_bin beside the app, in
+// steamworks_sdk/ - Valve's licence keeps it out of npm, and out of the
+// repository too (.gitignore). Without it, or without a running Steam, init()
+// says no and the game runs standalone like the web build.
+//
+// The absolute path matters once packaged: the library resolves a relative
+// one against the working directory, which is wherever Steam started us. In
+// the package this points into app.asar, and the loader swaps that for
+// app.asar.unpacked, where asarUnpack in package.json puts the binaries.
+let steam = null;
+try {
+    const { SteamworksSDK } = require('steamworks-ffi-node');
+    const sdk = SteamworksSDK.getInstance();
+    sdk.setSdkPath(path.join(__dirname, '..', 'steamworks_sdk'));
+    if (sdk.init({ appId: STEAM_APP_ID })) {
+        steam = sdk;
+        // steamworks.js ran the callbacks on its own, at 30 a second. This
+        // library leaves it to the caller.
+        setInterval(() => {
+            try { steam.runCallbacks(); } catch { /* the next tick tries again */ }
+        }, 1000 / 30);
+        console.log("Steam API connected.");
+    } else {
+        console.warn("Steam not running or SDK missing. Starting in standalone mode.");
+    }
 } catch (err) {
-    console.warn("Steam not running or invalid app id. Starting in standalone mode.", err);
+    console.warn("Steam could not be loaded. Starting in standalone mode.", err);
 }
 
-// The renderer reports an unlocked achievement
-ipcMain.on('steam-unlock-achievement', (event, achievementId) => { 
-    if (steamClient) { 
-        try { 
-            steamClient.achievement.activate(achievementId);
-            steamClient.stats.store();
-        } catch (err) { 
-            console.warn(`Steam achievement failed (${achievementId}):`, err);
-        } 
-    } 
+// The renderer reports an unlocked achievement. unlockAchievement() stores
+// the stats itself.
+ipcMain.on('steam-unlock-achievement', (event, achievementId) => {
+    if (!steam) return;
+    steam.achievements.unlockAchievement(String(achievementId))
+        .catch(err => console.warn(`Steam achievement failed (${achievementId}):`, err));
 });
 
-// The renderer reports a counter increment
+// The renderer reports a counter increment.
+//
+// One at a time: read, add one and write are three steps with an await in
+// between, and two increments of the same stat in one tick - a week day ends
+// and starts the next in one click - would both read 5 and both write 6.
+// steamworks.js did all three synchronously and never had the question.
+let statQueue = Promise.resolve();
 ipcMain.on('steam-increment-stat', (event, statName) => {
-    if (steamClient) {
-        try {
-            // Read the current value, add one, persist
-            let currentValue = steamClient.stats.getInt(statName) || 0;
-            steamClient.stats.setInt(statName, currentValue + 1);
-            steamClient.stats.store();
-        } catch (err) {
-            console.warn(`Steam stat failed (${statName}):`, err);
-        }
+    if (!steam) return;
+    statQueue = statQueue.then(async () => {
+        const name = String(statName);
+        const current = (await steam.stats.getStatInt(name))?.value || 0;
+        await steam.stats.setStatInt(name, current + 1);      // stores by itself
+    }).catch(err => console.warn(`Steam stat failed (${statName}):`, err));
+});
+
+// --- LEADERBOARDS ---
+//
+// Three boards, one per week level; the renderer builds score and details in
+// src/engine/leaderboard.js. The names are an allow-list here, so nothing
+// from the renderer can create a board of its own choosing - and
+// week-flow.test.mjs holds this list against BOARD_NAMES there.
+const LEADERBOARDS = ['week_easy', 'week_normal', 'week_hard'];
+const SCORE_MAX = 2550 + 300;          // WEEK_MINUTES + COMPOSURE_MAX
+const boardHandles = new Map();
+
+async function boardHandle(name) {
+    if (boardHandles.has(name)) return boardHandles.get(name);
+    const { LeaderboardSortMethod, LeaderboardDisplayType } = require('steamworks-ffi-node');
+    // Find OR create: a board the Steamworks backend does not have yet comes
+    // into being with the first week submitted to it. Its community name is
+    // then set in the backend.
+    const info = await steam.leaderboards.findOrCreateLeaderboard(
+        name, LeaderboardSortMethod.Descending, LeaderboardDisplayType.Numeric);
+    if (!info?.handle) return null;
+    boardHandles.set(name, info.handle);
+    return info.handle;
+}
+
+// A finished week. Steam keeps the better of this and the stored score
+// (KeepBest), details included, and says whether it changed.
+ipcMain.handle('steam-leaderboard-submit', async (event, { board, score, details } = {}) => {
+    if (!steam || !LEADERBOARDS.includes(board)) return null;
+    const points = Math.round(Number(score));
+    if (!Number.isFinite(points) || points < 0 || points > SCORE_MAX) return null;
+    const values = (Array.isArray(details) ? details : []).slice(0, 64).map(v => Math.round(Number(v)) | 0);
+    try {
+        const { LeaderboardUploadScoreMethod } = require('steamworks-ffi-node');
+        const handle = await boardHandle(board);
+        if (!handle) return null;
+        const res = await steam.leaderboards.uploadScore(handle, points, LeaderboardUploadScoreMethod.KeepBest, values);
+        if (!res?.success) return null;
+        return { ok: true, scoreChanged: res.scoreChanged, rank: res.globalRankNew, previousRank: res.globalRankPrevious };
+    } catch (err) {
+        console.warn(`Leaderboard upload failed (${board}):`, err);
+        return null;
+    }
+});
+
+// One board's entries: the global top 100, or the friends, and in both cases
+// the player's own entry so the window can say where they stand even outside
+// the top. Names are resolved here - the renderer has no Steam to ask.
+ipcMain.handle('steam-leaderboard-entries', async (event, { board, scope } = {}) => {
+    if (!steam || !LEADERBOARDS.includes(board)) return null;
+    try {
+        const { LeaderboardDataRequest } = require('steamworks-ffi-node');
+        const handle = await boardHandle(board);
+        if (!handle) return null;
+        const me = steam.getStatus()?.steamId ? String(steam.getStatus().steamId) : null;
+
+        const list = scope === 'friends'
+            ? await steam.leaderboards.downloadLeaderboardEntries(handle, LeaderboardDataRequest.Friends, 0, 0)
+            : await steam.leaderboards.downloadLeaderboardEntries(handle, LeaderboardDataRequest.Global, 1, 100);
+        const mine = me ? await steam.leaderboards.downloadLeaderboardEntriesForUsers(handle, [me]) : [];
+
+        const shape = (e) => ({
+            steamId: e.steamId,
+            rank: e.globalRank,
+            score: e.score,
+            // Plain arrays across IPC. The details may arrive as a list of
+            // typed arrays (see normalizeDetails in leaderboard.js).
+            details: (e.details ?? []).map(d => (typeof d === 'number' ? d : Object.values(d).map(Number))),
+            name: e.steamId === me ? steam.friends.getPersonaName() : (steam.friends.getFriendPersonaName(e.steamId) || ''),
+            me: e.steamId === me,
+        });
+        return { entries: (list ?? []).map(shape), mine: mine?.[0] ? shape(mine[0]) : null };
+    } catch (err) {
+        console.warn(`Leaderboard download failed (${board}):`, err);
+        return null;
     }
 });
 
@@ -50,9 +149,9 @@ ipcMain.on('steam-increment-stat', (event, statName) => {
 // maps it. Returns null when neither is available, and the renderer then falls
 // back to the browser preference exactly like the web build.
 ipcMain.handle('steam-get-language', () => {
-    if (steamClient) {
+    if (steam) {
         try {
-            const fromApi = steamClient.apps?.currentGameLanguage?.();
+            const fromApi = steam.getCurrentGameLanguage();
             if (fromApi) return fromApi;
         } catch (err) {
             console.warn("Steam language unavailable:", err);
@@ -152,9 +251,9 @@ ipcMain.on('open-external-browser', (event, url) => {
 // uploaded in Steamworks BEFORE a build using them goes out - an unknown token
 // shows up as bare text in the friends list.
 ipcMain.on('steam-set-status', (event, token) => {
-    if (steamClient) {
+    if (steam) {
         try {
-            steamClient.localplayer.setRichPresence('steam_display', token);
+            steam.richPresence.setRichPresence('steam_display', token);
         } catch (err) {
             console.warn("Steam rich presence failed:", err);
         }
@@ -172,7 +271,7 @@ ipcMain.handle('steam-get-global-stats', async () => {
         ];
         const query = names.map((n, i) => `name[${i}]=${n}`).join('&');
         const url = 'https://api.steampowered.com/ISteamUserStats/GetGlobalStatsForGame/v0001/'
-                  + `?appid=4487580&count=${names.length}&${query}`;
+                  + `?appid=${STEAM_APP_ID}&count=${names.length}&${query}`;
         const response = await fetch(url);
         const data = await response.json();
         
@@ -235,9 +334,9 @@ function createWindow () {
 // Intercept external links: prefer the Steam overlay, fall back to the browser
 win.webContents.setWindowOpenHandler(({ url }) => {
     if (url.startsWith('http')) {
-      if (steamClient) {
+      if (steam) {
           try {
-              steamClient.overlay.activateToWebPage(url);
+              steam.overlay.activateGameOverlayToWebPage(url);
           } catch (err) {
               console.warn("Steam overlay failed, falling back to external browser:", err);
               shell.openExternal(url);
@@ -264,8 +363,8 @@ ipcMain.on('toggle-fullscreen', () => {
 
 // Linux, hybrid graphics: skip Chromium's Vulkan probe.
 //
-// The overlay hook below forces --in-process-gpu (steamworks.js appends it, so
-// Steam's renderer can reach our GL context). That moves GPU initialisation
+// The overlay hook below forces --in-process-gpu (so Steam's renderer can
+// reach our GL context). That moves GPU initialisation
 // into the main process - and on a laptop with two cards the probe walks every
 // installed driver profile, which wakes the discrete GPU. Measured on Linux
 // Mint with an RTX 3060 beside an AMD Cezanne: seconds before the window
@@ -284,12 +383,23 @@ if (process.platform === 'linux') {
     app.commandLine.appendSwitch('disable-features', 'Vulkan');
 }
 
-// Steam overlay hook for Electron. Must run BEFORE whenReady()
-try {
-    require('steamworks.js').electronEnableSteamOverlay();
-} catch (err) {
-    console.warn("Steam overlay could not be initialised.", err);
-}
+// Steam overlay hook for Electron. Must run BEFORE whenReady().
+//
+// What steamworks.js's electronEnableSteamOverlay() did, written out now that
+// the library is gone: the overlay draws into our GL context, which needs the
+// GPU in-process and no DirectComposition, and it only refreshes when
+// Chromium paints - so an idle window is invalidated sixty times a second,
+// or the achievement popup would freeze mid-slide. steamworks-ffi-node has
+// an overlay of its own, marked experimental; this is the hook that has been
+// shipping.
+app.commandLine.appendSwitch('in-process-gpu');
+app.commandLine.appendSwitch('disable-direct-composition');
+app.on('browser-window-created', (_, bw) => {
+    const repaint = setInterval(() => {
+        if (bw.isDestroyed()) clearInterval(repaint);
+        else if (!bw.webContents.isPainting()) bw.webContents.invalidate();
+    }, 1000 / 60);
+});
 
 // One copy of the game at a time.
 //
@@ -309,6 +419,11 @@ if (!app.requestSingleInstanceLock()) {
     });
     app.whenReady().then(createWindow);
 }
+
+// Hand the Steam session back cleanly, as the library asks.
+app.on('before-quit', () => {
+    try { steam?.shutdown(); } catch { /* quitting anyway */ }
+});
 
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') app.quit();

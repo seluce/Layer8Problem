@@ -28,7 +28,7 @@
     import PartyReport from './PartyReport.svelte';
     import WeekBalance from './WeekBalance.svelte';
     import { renderRecipe } from '../engine/recipe.js';
-    import { t, tf } from '../i18n/i18n.svelte.js';
+    import { t, tf, language } from '../i18n/i18n.svelte.js';
 
     const modal = $derived(game.modal);
 
@@ -180,6 +180,30 @@
         {#if isFinal}
             <DayReport cause={modal.cause}
                        week={modal.isWeek ? { mode: modal.weekMode, day: modal.weekDay } : null} />
+        {/if}
+
+        <!-- What the week was worth on the leaderboard (desktop only:
+             weekSubmit stays null where there is no Steam). The answer
+             arrives after the screen does, so the line starts as "sending"
+             and settles. No data-modal-continue - see the note below. -->
+        {#if isFinal && modal.isWeek && game.weekSubmit}
+            {@const sent = game.weekSubmit}
+            {@const points = Number(sent.score).toLocaleString(language())}
+            <div class="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs font-mono">
+                <span class="min-w-0 {sent.scoreChanged ? 'text-amber-400 font-bold' : 'text-slate-300'}" aria-live="polite">
+                    {sent.pending ? t('leaderboard.submit.pending')
+                      : sent.failed ? tf('leaderboard.submit.failed', { points })
+                      : sent.scoreChanged ? tf('leaderboard.submit.best', { points, rank: Number(sent.rank).toLocaleString(language()) })
+                      : tf('leaderboard.submit.kept', { points })}
+                </span>
+                {#if !sent.pending && !sent.failed}
+                    <button type="button" onclick={() => engine.openLeaderboard()}
+                            class="bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-amber-500
+                                   text-slate-300 hover:text-white px-3 py-1 rounded-sm font-bold uppercase tracking-widest transition-colors">
+                        {t('leaderboard.open')}
+                    </button>
+                {/if}
+            </div>
         {/if}
 
         <!-- The night: what tomorrow inherits, before and after sleep. The

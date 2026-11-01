@@ -23,11 +23,12 @@ src/
   platform.js           platform interface, web version
   platform_steam.js     Steam bridge, loads itself only under Electron
 
-  components/           41 Svelte components, 8 of them for the intranet
-  engine/               15 modules; engine_state.svelte.js holds the state,
+  components/           43 Svelte components, 8 of them for the intranet
+  engine/               20 modules; engine_state.svelte.js holds the state,
                         engine_week.js the week mode, engine_hooks.js the
                         observer list the tutorial listens on,
-                        engine_vending.js the machine on the third floor
+                        engine_vending.js the machine on the third floor,
+                        leaderboard.js what a week is worth on Steam
   data/de/              24 data files, the German source
   data/en/              the same 24, in English
   i18n/                 language selection and interface strings
@@ -49,7 +50,7 @@ tools/
   make-steam-achievements.mjs  achievement strings for Steamworks
   dev-week.js          console tool for the week mode, see below
   TOOLS.md              manual for everything in this folder
-  *.test.mjs            four test suites, npm test (de and en)
+  *.test.mjs            five test suites, npm test (de and en)
   register.mjs          loader hook for the tests
   svelte-loader.mjs     compiles .svelte.js for the tests
 ```
@@ -505,9 +506,42 @@ knew only "from twelve" and could therefore be pushed into the afternoon; it now
 has a window up to 14:00. For the same reason Friday only ends after the weekly
 meeting — between 15:00 and 16:30 there are only 90 minutes of buffer.
 
+## The week leaderboards (Steam)
+
+Three Steam boards, one per week level, and an "All" tab that merges them in
+the game. One board for everything would fill from the top with rested weeks:
+`npm run sim:week` has a sensible player finishing 85 % of those and 35 % of
+the hardest. `engine/leaderboard.js` is pure - score, detail values, the merge
+- so the tests hold it without a game around it.
+
+**The score is minutes first.** One point per working minute survived (2,550
+for the week), and a finished week earns up to 300 more for a calm Friday:
+little aggro, little boss radar, few open tickets. A failed week is held below
+2,550, so it never outranks a finished one.
+
+**The detail values are a wire format.** Steam keeps up to 64 int32 per entry
+and hands them back by position, so a position never changes its meaning: a
+new field goes on the end, with a new `FORMAT`, and `decodeDetails()` keeps
+reading the old one. `encodeDetails()` writes one value more than the layout
+needs, because steamworks-ffi-node 0.11.3 reads the details back with a koffi
+call whose last argument is a length rather than an index and loses the final
+value; `normalizeDetails()` reads both that shape and a corrected one.
+
+**Two paths end a week** - `finishWeek()` and the Friday gala in
+`engine_events` - and both call `submitWeekScore()` before `endWeek()`
+empties what it reads. `electron/main.cjs` keeps its own list of the three
+board names and the score ceiling, because it cannot import from `src/`; the
+week suite holds the two together.
+
+**The Steamworks SDK is not in the repository.** steamworks-ffi-node loads
+`steamworks_sdk/redistributable_bin/` from beside the app, and Valve's licence
+keeps those binaries out of npm and out of a public repository. Without them,
+or without a running Steam, the desktop build starts standalone - like the web
+build, leaderboards included.
+
 ## Overlays
 
-All twenty full-screen windows are switched through the same three functions in
+All twenty-one full-screen windows are switched through the same three functions in
 `engine_ui.js`: `showOverlay()`, `hideOverlay()`, `isOverlayOpen()`. Open means:
 the class `hidden` is absent.
 

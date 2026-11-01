@@ -542,6 +542,17 @@ export const state = $state({
     // the web because platform.globalStats() resolves to null there.
     globalStats: { data: null, loading: false, failed: false },
 
+    // The week leaderboards (desktop only, components/LeaderboardView.svelte).
+    // `boards` holds what was fetched per level for the scope on show; the
+    // whole object is replaced on every open, which is the view's signal.
+    leaderboard: { scope: 'global', boards: null, mine: null, loading: false, failed: false },
+    // Counts the openings, so the view can reset its tab on each one without
+    // also resetting it when only the scope is flipped.
+    leaderboardOpens: 0,
+    // What the last finished week was worth and what Steam made of it - see
+    // engine_week.submitWeekScore(). Read by the week's end screen.
+    weekSubmit: null,
+
     // Persistent archive (survives a day restart, mirrored into localStorage).
     // The shape lives in freshArchive() above, which the hard reset uses too.
     archive: freshArchive(),

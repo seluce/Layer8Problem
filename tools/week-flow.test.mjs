@@ -5387,4 +5387,156 @@ await ok('A save from before the change reads as all doors open', () => {
     assert.equal(typeof state.archive.seenOptions, 'object', 'the field is created on first write');
 });
 
+// --- The week leaderboards (Steam) -------------------------------------------
+const lb = await import('../src/engine/leaderboard.js');
+
+await ok('A week is scored in minutes, and a finished week always ranks above a failed one', () => {
+    const at = (day, h, m) => ({ won: false, day, time: h * 60 + m, tickets: 0, a: 0, b: 0 });
+    assert.equal(lb.weekScore(at(1, 8, 0)), 0, 'Monday 08:00 is nothing yet');
+    assert.equal(lb.weekScore(at(3, 14, 12)), 2 * 510 + (14 * 60 + 12 - 480), 'Wednesday 14:12');
+    // A loss AT closing time must stay below the morning it never reached.
+    assert.ok(lb.weekScore(at(3, 16, 30)) < lb.weekScore(at(4, 8, 0)),
+        'a loss at 16:30 on Wednesday outranks Thursday morning');
+    assert.equal(lb.weekScore(at(5, 16, 29)), lb.WEEK_MINUTES - 1);
+    assert.equal(lb.weekScore(at(5, 23, 0)), lb.WEEK_MINUTES - 1, 'a failed week can never reach a finished one');
+
+    const worst = { won: true, day: 5, time: 990, tickets: 10, a: 100, b: 100 };
+    const best = { won: true, day: 5, time: 990, tickets: 0, a: 0, b: 0 };
+    assert.equal(lb.weekScore(worst), lb.WEEK_MINUTES, 'the worst finished week');
+    assert.equal(lb.weekScore(best), lb.WEEK_MINUTES + lb.COMPOSURE_MAX, 'the calmest finished week');
+    assert.equal(lb.composure({ tickets: 3, a: 40, b: 25 }), 60 + 75 + 70);
+    // Out-of-range figures cannot push a score past its bounds.
+    assert.equal(lb.composure({ tickets: -5, a: -20, b: 150 }), 100 + 100 + 0);
+});
+
+await ok('The detail values survive the round trip, in the library\'s broken shape as well', () => {
+    const run = {
+        level: 'hard', won: false, cause: 'rage', day: 3, time: 14 * 60 + 12,
+        tickets: 4, l: 35, a: 100, b: 62, valve: true, warning: false,
+        log: [
+            { dayIndex: 1, endTickets: 1, endL: 10, endA: 20, endB: 15 },
+            { dayIndex: 2, endTickets: 2, endL: 22, endA: 48 },                // endB missing: ?? 0
+        ],
+    };
+    const details = lb.encodeDetails(run);
+    assert.ok(details.length <= 64, `Steam keeps 64 values, this is ${details.length}`);
+    const expect = {
+        level: 'hard', cause: 'rage', won: false, day: 3, time: 852,
+        tickets: 4, l: 35, a: 100, b: 62, valve: true, warning: false,
+        days: [
+            { tickets: 1, l: 10, a: 20, b: 15 },
+            { tickets: 2, l: 22, a: 48, b: 0 },
+            { tickets: 4, l: 35, a: 100, b: 62 },                              // the day it ended on
+            null, null,
+        ],
+    };
+    assert.deepEqual(lb.decodeDetails(details), expect, 'plain numbers, as a fixed library returns them');
+
+    // steamworks-ffi-node 0.11.3: entry j arrives as the first j values. The
+    // padding value is the one this shape loses.
+    const broken = details.map((_, j) => Object.fromEntries(details.slice(0, j).map((v, i) => [i, v])));
+    assert.deepEqual(lb.decodeDetails(broken), expect, 'the shape 0.11.3 returns');
+    assert.deepEqual(lb.decodeDetails(details.map((_, j) => details.slice(0, j))), expect,
+        'the same shape as arrays, which is what main.cjs sends across');
+
+    assert.equal(lb.decodeDetails([]), null, 'no details');
+    assert.equal(lb.decodeDetails(details.slice(0, 12)), null, 'a short list is not read');
+    assert.equal(lb.decodeDetails([99, ...details.slice(1)]), null, 'an unknown format is not read');
+
+    const won = lb.decodeDetails(lb.encodeDetails({ ...run, won: true, cause: 'gala', day: 5 }));
+    assert.equal(won.won, true, 'a gala is a finished week');
+    assert.equal(lb.weekEntry({ ...run, level: 'easy' }).board, 'week_easy');
+});
+
+await ok('The All tab merges the three boards: points first, then the harder level', () => {
+    const merged = lb.mergeBoards({
+        easy:   [{ steamId: 'a', score: 2700, rank: 1 }, { steamId: 'b', score: 1200, rank: 2 }],
+        normal: [{ steamId: 'c', score: 2700, rank: 1 }],
+        hard:   [{ steamId: 'd', score: 2550, rank: 1 }],
+    });
+    assert.deepEqual(merged.map(r => `${r.steamId}:${r.level}`), ['c:normal', 'a:easy', 'd:hard', 'b:easy']);
+    assert.deepEqual(lb.mergeBoards(null), [], 'nothing fetched yet');
+});
+
+await ok('Both endings of a week submit it, with the figures it ended on', async () => {
+    const { platform } = await import('../src/platform.js');
+    const real = { isDesktop: platform.isDesktop, submit: platform.leaderboardSubmit };
+    const sent = [];
+    platform.isDesktop = true;
+    platform.leaderboardSubmit = async (board, score, details) => {
+        sent.push({ board, score, info: lb.decodeDetails(details) });
+        return { ok: true, scoreChanged: true, rank: 3, previousRank: 9 };
+    };
+    try {
+        // A lost Wednesday.
+        resetState();
+        engine.startWeek('hard');
+        state.week.dayIndex = 3;
+        state.week.weekLog = [
+            { dayIndex: 1, endTickets: 1, endL: 10, endA: 20, endB: 15 },
+            { dayIndex: 2, endTickets: 2, endL: 22, endA: 48, endB: 30 },
+        ];
+        state.time = 14 * 60 + 12; state.tickets = 4;
+        state.fl = 35; state.al = 100; state.cr = 62;
+        state.rageWarningReceived = true;           // the valve is spent: 100 is the end
+        engine.checkEndConditions();
+        engine.finishGame();
+        assert.equal(sent.length, 1, 'a lost week was not submitted');
+        assert.equal(sent[0].board, 'week_hard');
+        assert.equal(sent[0].score, 2 * 510 + 372);
+        assert.equal(sent[0].info.cause, 'rage');
+        assert.equal(sent[0].info.valve, true, 'the spent valve did not travel');
+        assert.deepEqual(sent[0].info.days[2], { tickets: 4, l: 35, a: 100, b: 62 }, 'not the figures it ended on');
+        await Promise.resolve();
+        assert.deepEqual(state.weekSubmit, { pending: false, score: 1392, level: 'hard', scoreChanged: true, rank: 3 },
+            'the end screen does not learn what Steam answered');
+
+        // The Friday gala, the other way a week ends.
+        resetState();
+        engine.startWeek('easy');
+        state.week.dayIndex = 5;
+        state.tickets = 1; state.al = 20; state.cr = 30;
+        state.currentPartyKey = 'layer8_party_played';
+        state.isPartyMode = true;
+        state.dayActive = true;
+        state.currentEventId = 'party_finale_gossip';
+        await ensure('party');
+        engine.finishParty('SYNERGY!', 'Testabend.');
+        localStorage.removeItem('layer8_party_played');
+        assert.equal(sent.length, 2, 'the gala did not submit the week');
+        assert.equal(sent[1].board, 'week_easy');
+        assert.equal(sent[1].info.cause, 'gala');
+        assert.equal(sent[1].score, lb.WEEK_MINUTES + lb.composure({ tickets: 1, a: 20, b: 30 }));
+
+        // A browser has no Steam: nothing is sent and the end screen says nothing.
+        resetState();
+        platform.isDesktop = false;
+        engine.startWeek('normal');
+        state.week.dayIndex = 2; state.time = 10 * 60; state.al = 100;
+        state.rageWarningReceived = true;
+        state.weekSubmit = null;
+        engine.checkEndConditions();
+        engine.finishGame();
+        assert.equal(sent.length, 2, 'the web build submitted a week');
+        assert.equal(state.weekSubmit, null);
+    } finally {
+        platform.isDesktop = real.isDesktop;
+        platform.leaderboardSubmit = real.submit;
+        state.weekSubmit = null;
+    }
+});
+
+await ok('The main process allows exactly the boards the game submits to', () => {
+    // main.cjs cannot import leaderboard.js - only docs/ and electron/ are
+    // packaged - so it keeps its own allow-list and its own score ceiling.
+    // A board renamed on one side only would be refused there in silence.
+    const main = readFileSync(new URL('../electron/main.cjs', import.meta.url), 'utf-8');
+    const listed = [...(main.match(/const LEADERBOARDS = \[([^\]]*)\]/) ?? [, ''])[1].matchAll(/'([a-z_]+)'/g)].map(m => m[1]);
+    assert.deepEqual(listed.sort(), Object.values(lb.BOARD_NAMES).sort(), 'main.cjs allows other boards than the game uses');
+    const max = main.match(/const SCORE_MAX = (\d+) \+ (\d+);/);
+    assert.ok(max, 'SCORE_MAX is no longer written as minutes plus bonus');
+    assert.equal(Number(max[1]), lb.WEEK_MINUTES, 'SCORE_MAX: the minutes differ');
+    assert.equal(Number(max[2]), lb.COMPOSURE_MAX, 'SCORE_MAX: the bonus differs');
+});
+
 console.log(`\n${passed} checks passed.`);

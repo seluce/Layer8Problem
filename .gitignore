@@ -30,3 +30,9 @@ voice/trial/
 # a second (`npm run voice:listen`). 3.2 MiB a language that would otherwise
 # change on every edited line.
 voice/index.*.html
+
+# The Steamworks SDK's redistributable_bin, which steamworks-ffi-node loads.
+# Valve's licence keeps it out of npm and out of a public repository; each
+# developer copies it in from their own SDK download (see README). The
+# desktop build packs it from here.
+steamworks_sdk/
