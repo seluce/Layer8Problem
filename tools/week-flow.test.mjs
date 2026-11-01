@@ -4439,7 +4439,7 @@ await ok('Turning the narrator to zero ends the line', () => {
     state.narrationVolume = 0.8;
 });
 
-await ok('Each kind of narration can be switched off, and the button still reads', () => {
+await ok('Each kind of narration can be switched off, and the button still reads', async () => {
     // The settings let a player choose what the narrator reads of its own
     // accord: scenes, the morning, the valves, H.A.L.G.E.R.D. and the lesson.
     // Every one of those is a door that can fail silently - a kind that is
@@ -4489,6 +4489,17 @@ await ok('Each kind of narration can be switched off, and the button still reads
     assert.equal(playing(), null, 'a held morning was read although mornings are switched off');
 
     state.narrationKinds = { events: true, morning: true, valves: true, halgerd: true };
+
+    // And every kind has its switch on the settings page. A kind added to the
+    // defaults without one would be read with no way to turn it off - and
+    // nothing on screen would say that a switch is missing.
+    const { DEFAULT_NARRATION_KINDS } = await import('../src/engine/engine_state.svelte.js');
+    const page = readFileSync(new URL('../src/components/SettingsView.svelte', import.meta.url), 'utf-8');
+    const listed = page.match(/const KINDS = \[([^\]]*)\]/)?.[1].match(/'(\w+)'/g)?.map(k => k.slice(1, -1)) ?? [];
+    assert.deepEqual([...listed].sort(), Object.keys(DEFAULT_NARRATION_KINDS).sort(),
+        'a kind of narration has no switch in the settings');
+    assert.match(page, /onchange=\{\(e\) => engine\.setNarrationKind\(kind, e\.currentTarget\.checked\)\}/,
+        'the kind switches are wired to nothing');
 });
 
 await ok('Resetting the settings resets every one of them', () => {

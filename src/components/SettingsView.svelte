@@ -195,14 +195,12 @@
                     // No `img` yet: every other row has a drawn icon and this
                     // one has none, so it falls back to the emoji rather than
                     // to a missing file. See the note in UEBERGABE.md.
-                    { kind: 'slider', icon: '🎙️', title: t('set.narration.title'),
+                    { kind: 'narrator', icon: '🎙️', title: t('set.narration.title'),
                       desc: t('set.narration.desc'),
                       get: () => game.narrationEnabled, set: (v) => engine.toggleNarration(v),
                       level: () => game.narrationVolume, setLevel: (v) => engine.setNarrationVolume(v),
                       settled: () => engine.previewNarration(),
-                      step: 0.05, levelTitle: t('set.narration.level') },
-                    { kind: 'kinds', icon: '📜', title: t('set.narration.kinds.title'),
-                      desc: t('set.narration.kinds.desc') }
+                      step: 0.05, levelTitle: t('set.narration.level') }
                 ] }
             ]
         },
@@ -371,39 +369,67 @@
 {/snippet}
 
 <!--
-  What the narrator reads of its own accord, one switch a kind. Shown with the
-  narrator off as well, greyed and saying why: a group that appears only once
-  the voice is on is a group nobody finds before deciding whether to turn it
-  on. The button beside the excuse (and V) ignores all of this - the note
-  says so, because that is the question a player who switched everything off
-  asks next.
+  The narrator in one card: the switch, the level, and what it reads of its own
+  accord. They were two cards first - a slider row and a list - and the slider
+  of a full-width row ran across the whole dialog, a bar six hundred pixels
+  long for one setting.
+
+  From md up the level sits in the header between the title and the switch, at
+  a fixed width, which is where a volume control is looked for; on a phone it
+  goes under the title, where there is no room beside it. One grid does both,
+  so there is one slider and not a hidden twin for the other width.
+
+  The kinds are shown with the narrator off as well, greyed and saying why: a
+  group that appears only once the voice is on is a group nobody finds before
+  deciding whether to turn it on. The button beside the excuse (and V)
+  ignores all of this - the note says so, because that is the question a
+  player who switched everything off asks next.
 -->
-{#snippet kindsRow(row)}
+{#snippet narratorRow(row)}
     {@const off = !game.narrationEnabled}
-    <div class="bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 flex flex-col gap-3">
-        <div class="flex items-start gap-3 min-w-0">
-            {@render info(row, 'text-base opacity-70 mt-0.5')}
+    <div class="flex flex-col gap-3 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50">
+        <div class="grid grid-cols-[1fr_auto] md:grid-cols-[1fr_14rem_auto] items-center gap-x-4 gap-y-3">
+            <div class="flex items-start gap-3 min-w-0 col-start-1 row-start-1">
+                {@render info(row, 'text-xl opacity-70 group-hover:opacity-100 transition-opacity mt-0.5')}
+            </div>
+            <div class="flex items-center gap-2 col-span-2 md:col-span-1 row-start-2 md:row-start-1 md:col-start-2 pl-9 md:pl-0
+                        opacity-60 focus-within:opacity-100 hover:opacity-100 transition-opacity">
+                <span class="text-[0.625rem] text-slate-500">🔈</span>
+                <input type="range" min="0" max="1" step={row.step} class={SLIDER}
+                       aria-label={row.levelTitle}
+                       value={row.level()} oninput={(e) => row.setLevel(e.currentTarget.value)}
+                       onchange={() => row.settled?.()}>
+                <span class="text-[0.625rem] text-slate-500">🔊</span>
+            </div>
+            <div class="col-start-2 md:col-start-3 row-start-1 justify-self-end">
+                {@render switchInput(row)}
+            </div>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-2 {off ? 'opacity-50' : ''}">
-            {#each KINDS as kind (kind)}
-                {@const title = t(`set.narration.kind.${kind}.title`)}
-                <div class="flex justify-between items-center gap-3 bg-slate-900/60 border border-slate-700/60 rounded-md px-3 py-2">
-                    <div class="flex flex-col min-w-0">
-                        <span class="text-xs font-bold text-slate-200 leading-tight">{title}</span>
-                        <span class="text-[0.6875rem] text-slate-400 mt-0.5 leading-snug">{t(`set.narration.kind.${kind}.desc`)}</span>
+
+        <div class="border-t border-slate-700/60 pt-3 flex flex-col gap-2">
+            <span class="text-xs font-bold text-slate-200">{t('set.narration.kinds.title')}</span>
+            <span class="text-xs text-slate-400 leading-snug">{t('set.narration.kinds.desc')}</span>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2 mt-1 {off ? 'opacity-50' : ''}">
+                {#each KINDS as kind (kind)}
+                    {@const title = t(`set.narration.kind.${kind}.title`)}
+                    <div class="flex justify-between items-center gap-3 bg-slate-900/60 border border-slate-700/60 rounded-md px-3 py-2">
+                        <div class="flex flex-col min-w-0">
+                            <span class="text-xs font-bold text-slate-200 leading-tight">{title}</span>
+                            <span class="text-[0.6875rem] text-slate-400 mt-0.5 leading-snug">{t(`set.narration.kind.${kind}.desc`)}</span>
+                        </div>
+                        <label class="relative inline-flex items-center shrink-0 {off ? 'cursor-not-allowed' : 'cursor-pointer'}">
+                            <input type="checkbox" class="sr-only peer" aria-label={title} disabled={off}
+                                   checked={game.narrationKinds?.[kind] !== false}
+                                   onchange={(e) => engine.setNarrationKind(kind, e.currentTarget.checked)}>
+                            <div class={SWITCH}></div>
+                        </label>
                     </div>
-                    <label class="relative inline-flex items-center shrink-0 {off ? 'cursor-not-allowed' : 'cursor-pointer'}">
-                        <input type="checkbox" class="sr-only peer" aria-label={title} disabled={off}
-                               checked={game.narrationKinds?.[kind] !== false}
-                               onchange={(e) => engine.setNarrationKind(kind, e.currentTarget.checked)}>
-                        <div class={SWITCH}></div>
-                    </label>
-                </div>
-            {/each}
+                {/each}
+            </div>
+            {#if off}
+                <p class="text-xs text-amber-500/80">{t('set.narration.kinds.off')}</p>
+            {/if}
         </div>
-        {#if off}
-            <p class="text-xs text-amber-500/80">{t('set.narration.kinds.off')}</p>
-        {/if}
     </div>
 {/snippet}
 
@@ -431,8 +457,8 @@
         {@render sliderRow(row)}
     {:else if row.kind === 'select'}
         {@render selectRow(row)}
-    {:else if row.kind === 'kinds'}
-        {@render kindsRow(row)}
+    {:else if row.kind === 'narrator'}
+        {@render narratorRow(row)}
     {:else}
         {@render resetRow(row)}
     {/if}
