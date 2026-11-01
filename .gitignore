@@ -25,3 +25,8 @@ EVENT-DOKTRIN.md
 public/audio/
 voice/master/
 voice/trial/
+
+# The listening index is generated from the manifest and the rendered audio in
+# a second (`npm run voice:listen`). 3.2 MiB a language that would otherwise
+# change on every edited line.
+voice/index.*.html

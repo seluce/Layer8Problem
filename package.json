@@ -39,7 +39,8 @@
     "prebuild": "node tools/check-audio.mjs",
     "voice:models": "node --conditions browser --import ./tools/register.mjs tools/make-audio.mjs --models",
     "voice:voices": "node --conditions browser --import ./tools/register.mjs tools/make-audio.mjs --voices",
-    "voice:audio": "node --conditions browser --import ./tools/register.mjs tools/make-audio.mjs"
+    "voice:audio": "node --conditions browser --import ./tools/register.mjs tools/make-audio.mjs",
+    "voice:listen": "node --conditions browser --import ./tools/register.mjs tools/voice-index.mjs --all --serve"
   },
   "build": {
     "appId": "com.layer8problem.game",

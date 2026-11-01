@@ -434,6 +434,25 @@ anyone noticed; the rule that keeps them out is in `voice-text.mjs` and the
 test reads the handled doors out of `engine_events.js`, so a fourth is covered
 the day it is handled.
 
+### Listening to it: `npm run voice:listen`
+
+```
+npm run voice:listen            # writes voice/index.<lang>.html and serves it
+```
+
+The folder is unreadable by eye, which is the price of naming a file after its
+text. This builds the page that reads it back: every piece with its key, its
+file, its length and the sentence it speaks, searchable and filterable by pool,
+with a play button. Both languages, generated from the manifest in a second,
+and gitignored - it is derived, and 3.2 MiB a language that would change on
+every edited line.
+
+**Served rather than double-clicked**, on `localhost:4180`. The page sits in
+`voice/` and the audio in `docs/audio/` - siblings, and since Firefox 68 a
+`file://` page may only read files in its own directory and below. The buttons
+would have been dead in Firefox and alive in Chrome, which is the worst kind of
+difference to hand someone.
+
 ### The three places a file goes
 
 | Where | What | In the repository? |
