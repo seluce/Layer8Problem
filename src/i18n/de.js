@@ -58,6 +58,7 @@ export const de = {
     'import.error':                'Fehler!',
 
     'excuse.title':                'Notfall-Ausrede erfinden',
+    'excuse.subtitle':             'Der Klassiker unter den Notausgängen',
     'excuse.hint':                 'Das aktuelle Problem wird dadurch nur vertagt und wandert ungelöst zurück in den Pool. Du hast pro Schicht nur begrenzt Ausreden zur Verfügung.',
     'excuse.confirm':              'Bestätigen und fliehen',
 
@@ -300,6 +301,7 @@ export const de = {
     'common.cancel':               'Abbrechen',
 
     'inv.title':                   'DEIN INVENTAR',
+    'inv.subtitle':                'Was du heute mit dir herumträgst',
     'item.confirm.title':          'Gegenstand benutzen',
     'item.confirm.title.discard':  'Gegenstand wegwerfen',
     'item.confirm.effect':         'Wirkung',
@@ -314,6 +316,7 @@ export const de = {
     'item.cooldown.fallback':      '{item} braucht noch etwas Zeit',
 
     'team.title':                  'DAS KOLLEGIUM (Die Verdächtigen)',
+    'team.subtitle':               'Wer dich mag, wer dich hasst, und wie sehr',
     'team.close':                  'Zurück an die Arbeit',
     'team.level.accomplice':       'KOMPLIZE',
     'team.level.allied':           'VERBÜNDET',

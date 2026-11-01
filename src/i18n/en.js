@@ -51,6 +51,7 @@ export const en = {
     'import.error':                'Error!',
 
     'excuse.title':                'Invent an emergency excuse',
+    'excuse.subtitle':             'The classic among the emergency exits',
     'excuse.hint':                 'This only postpones the problem, which goes back into the pool unsolved. You have a limited number of excuses per shift.',
     'excuse.confirm':              'Confirm and flee',
 
@@ -292,6 +293,7 @@ export const en = {
     'common.cancel':               'Cancel',
 
     'inv.title':                   'YOUR INVENTORY',
+    'inv.subtitle':                "What you're carrying around today",
     'item.confirm.title':          'Use item',
     'item.confirm.title.discard':  'Throw item away',
     'item.confirm.effect':         'Effect',
@@ -306,6 +308,7 @@ export const en = {
     'item.cooldown.fallback':      '{item} needs a little more time',
 
     'team.title':                  'THE COLLEAGUES (The Usual Suspects)',
+    'team.subtitle':               'Who likes you, who hates you, and how far',
     'team.close':                  'Back to work',
     'team.level.accomplice':       'ACCOMPLICE',
     'team.level.allied':           'ALLIED',

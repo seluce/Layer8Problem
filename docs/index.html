@@ -22,8 +22,8 @@
 
 
     <style>.platform-desktop{display:none!important}.lang-opt{color:#94a3b8}.lang-opt:hover{color:#e2e8f0}html[lang=de] .lang-opt[data-lang=de],html[lang=en] .lang-opt[data-lang=en]{color:#60a5fa;cursor:default}@keyframes newsScroll{0%{transform:translate(0)}to{transform:translate(-100%)}}</style>
-  <script type="module" crossorigin src="./build/index-Dg2B60HC.js"></script>
-  <link rel="stylesheet" crossorigin href="./build/index-BdNS15OH.css">
+  <script type="module" crossorigin src="./build/index-BwS-FLO4.js"></script>
+  <link rel="stylesheet" crossorigin href="./build/index-DMxSCCU9.css">
 </head>
 <body class="text-xs md:text-sm">
     
@@ -289,15 +289,28 @@
 
 <!-- INVENTAR MODAL START -->		
 	<div id="inventory-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=inv.title" class="fixed inset-0 hidden bg-black/90 z-1100 items-center justify-center p-4">
-        <div class="neon-box accent-amber bg-slate-900 max-w-lg w-full p-6 shadow-2xl relative">
-            <button data-action="closeInventory" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-2 right-4 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
-            <h2 class="text-xl font-bold text-amber-400 mb-6 flex items-center gap-2"><img src="assets/img/ui/ui_inventory.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='🎒'"><span data-i18n="inv.title">YOUR INVENTORY</span></h2>
-            
-            <!-- Rendered by src/components/InventoryFull.svelte -->
-            <div id="full-inventory-grid"></div>
-            
-            <div class="mt-6 text-center">
-                <button data-action="closeInventory" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white px-6 py-2.5 rounded-lg text-[0.6875rem] font-bold uppercase tracking-widest transition-colors" data-i18n="common.close">Close</button>
+        <!-- The header bar of the archive and the statistics. Unlike them
+             this box does not scroll: the item tooltips reach past its edge,
+             and a scroll container would cut them off. -->
+        <div class="neon-box accent-amber bg-slate-900 max-w-lg w-full shadow-2xl relative">
+            <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center gap-3 shrink-0 rounded-t-xs">
+                <div class="flex items-center gap-3 min-w-0">
+                    <img src="assets/img/ui/ui_inventory.webp" alt="" width="28" height="28" class="w-7 h-7 shrink-0 select-none drop-shadow-md" onerror="this.outerHTML='🎒'">
+                    <div class="flex flex-col min-w-0">
+                        <h2 class="text-lg font-black text-slate-100 tracking-widest uppercase mt-0.5 leading-tight" data-i18n="inv.title">YOUR INVENTORY</h2>
+                        <span class="text-[0.625rem] text-amber-400 font-mono" data-i18n="inv.subtitle">What you're carrying around today</span>
+                    </div>
+                </div>
+                <button data-action="closeInventory" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
+            </div>
+
+            <div class="p-5">
+                <!-- Rendered by src/components/InventoryFull.svelte -->
+                <div id="full-inventory-grid"></div>
+
+                <div class="mt-6 text-center">
+                    <button data-action="closeInventory" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white px-6 py-2.5 rounded-lg text-[0.6875rem] font-bold uppercase tracking-widest transition-colors" data-i18n="common.close">Close</button>
+                </div>
             </div>
         </div>
     </div>
@@ -359,15 +372,24 @@
 
 <!-- KOLLEGIUM / TEAM MODAL START -->	
 	<div id="team-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=team.title" class="fixed inset-0 hidden bg-black/90 z-1100 items-center justify-center p-4">
-        <div class="neon-box accent-slate bg-slate-900 max-w-4xl w-full p-6 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-            <button data-action="closeTeam" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-2 right-4 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
-            <h2 class="text-xl font-bold text-white mb-6 flex items-center gap-2"><img src="assets/img/ui/ui_team.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='👥'"><span data-i18n="team.title">THE COLLEAGUES (The Usual Suspects)</span></h2>
-            
-            <div id="team-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="neon-box accent-slate bg-slate-900 max-w-4xl w-full shadow-2xl relative flex flex-col overflow-hidden max-h-[90vh]">
+            <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center gap-3 shrink-0">
+                <div class="flex items-center gap-3 min-w-0">
+                    <img src="assets/img/ui/ui_team.webp" alt="" width="28" height="28" class="w-7 h-7 shrink-0 select-none drop-shadow-md" onerror="this.outerHTML='👥'">
+                    <div class="flex flex-col min-w-0">
+                        <h2 class="text-lg font-black text-slate-100 tracking-widest uppercase mt-0.5 leading-tight" data-i18n="team.title">THE COLLEAGUES (The Usual Suspects)</h2>
+                        <span class="text-[0.625rem] text-sky-300 font-mono" data-i18n="team.subtitle">Who likes you, who hates you, and how far</span>
+                    </div>
                 </div>
-            
-            <div class="mt-6 text-center">
-                <button data-action="closeTeam" class="bg-slate-800 hover:bg-slate-700 text-white px-6 py-2 rounded-sm text-xs font-bold uppercase" data-i18n="team.close">Back to work</button>
+                <button data-action="closeTeam" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
+            </div>
+
+            <div class="p-5 overflow-y-auto flex-1">
+                <div id="team-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+
+                <div class="mt-6 text-center">
+                    <button data-action="closeTeam" class="bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 text-slate-300 hover:text-white px-6 py-2.5 rounded-lg text-[0.6875rem] font-bold uppercase tracking-widest transition-colors" data-i18n="team.close">Back to work</button>
+                </div>
             </div>
         </div>
     </div>
@@ -436,23 +458,32 @@
     <!-- Interrupted workday: appears before the day is picked, when a saved
          state is waiting to be resumed (see engine_core.saveDay). -->
     <div id="resume-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=resume.title" class="fixed inset-0 bg-black/90 z-1000 hidden items-center justify-center p-4">
-        <div class="neon-box accent-blue bg-slate-900 max-w-lg w-full p-6 md:p-8 shadow-2xl text-center">
-            <div class="mb-3"><img src="assets/img/ui/ui_clock.webp" alt="" width="48" height="48" class="w-12 h-12 mx-auto select-none" onerror="this.outerHTML='&lt;span class=&quot;text-4xl&quot;&gt;🕗&lt;/span&gt;'"></div>
-            <h2 class="text-2xl font-black text-white mb-2" data-i18n="resume.title">SESSION INTERRUPTED</h2>
-            <p class="text-slate-400 text-sm mb-1" data-i18n="resume.subtitle">Your last run was never finished.</p>
-            <p id="resume-info" class="text-[0.6875rem] font-mono text-blue-400 mb-6"></p>
-
-            <div class="flex flex-col sm:flex-row gap-3">
-                <button data-action="resumeDay"
-                        class="flex-1 bg-blue-600 hover:bg-blue-500 text-white font-bold uppercase tracking-wider text-sm py-3 rounded-lg transition-colors shadow-lg" data-i18n="resume.continue">
-                    Carry on
-                </button>
-                <button data-action="discardDay"
-                        class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-600 font-bold uppercase tracking-wider text-sm py-3 rounded-lg transition-colors" data-i18n="resume.discard">
-                    Discard
-                </button>
+        <div class="neon-box accent-blue bg-slate-900 max-w-lg w-full shadow-2xl overflow-hidden">
+            <div class="bg-slate-950 p-5 border-b border-slate-800 flex items-center gap-4">
+                <div class="w-14 h-14 shrink-0 flex items-center justify-center rounded-lg bg-slate-900 border border-blue-500/25 shadow-inner">
+                    <img src="assets/img/ui/ui_clock.webp" alt="" width="32" height="32" class="w-8 h-8 select-none" onerror="this.outerHTML='&lt;span class=&quot;text-3xl&quot;&gt;🕗&lt;/span&gt;'">
+                </div>
+                <div class="flex flex-col min-w-0">
+                    <h2 class="text-lg font-black text-slate-100 tracking-widest uppercase leading-tight" data-i18n="resume.title">SESSION INTERRUPTED</h2>
+                    <p class="text-xs text-slate-300 mt-1" data-i18n="resume.subtitle">Your last run was never finished.</p>
+                </div>
             </div>
-            <p class="text-[0.625rem] text-slate-400 mt-4" data-i18n="resume.discardHint">Discarding deletes the unfinished run for good.</p>
+
+            <div class="p-5 space-y-4">
+                <p id="resume-info" class="text-xs font-mono text-blue-300 bg-blue-500/10 border border-blue-500/30 rounded-lg px-3 py-2"></p>
+
+                <div class="flex flex-col sm:flex-row gap-3">
+                    <button data-action="resumeDay"
+                            class="flex-1 bg-blue-600 hover:bg-blue-500 border border-blue-400/40 text-white font-bold uppercase tracking-widest text-[0.6875rem] py-3 rounded-lg transition-colors shadow-lg" data-i18n="resume.continue">
+                        Carry on
+                    </button>
+                    <button data-action="discardDay"
+                            class="flex-1 bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white border border-slate-600 font-bold uppercase tracking-widest text-[0.6875rem] py-3 rounded-lg transition-colors" data-i18n="resume.discard">
+                        Discard
+                    </button>
+                </div>
+                <p class="text-[0.625rem] text-slate-400 text-center" data-i18n="resume.discardHint">Discarding deletes the unfinished run for good.</p>
+            </div>
         </div>
     </div>
 
@@ -902,35 +933,41 @@
 <!-- EXPORT IMPORT MODAL END -->
 
 <!-- EXCUSE MODAL START -->
-<div id="excuse-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=excuse.title" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-10000">
-	<div class="neon-box accent-cyan bg-slate-900 p-6 w-full max-w-lg shadow-2xl relative">
-		<button data-action="closeExcuseModal" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-2 right-4 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
+<div id="excuse-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=excuse.title" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-10000 p-4">
+    <div class="neon-box accent-cyan bg-slate-900 w-full max-w-lg shadow-2xl relative overflow-hidden">
+            <div class="bg-slate-950 p-5 border-b border-slate-800 flex justify-between items-center gap-3 shrink-0">
+                <div class="flex items-center gap-3 min-w-0">
+                    <img src="assets/img/ui/ui_excuse.webp" alt="" width="28" height="28" class="w-7 h-7 shrink-0 select-none drop-shadow-md" onerror="this.outerHTML='🃏'">
+                    <div class="flex flex-col min-w-0">
+                        <h2 class="text-lg font-black text-slate-100 tracking-widest uppercase mt-0.5 leading-tight" data-i18n="excuse.title">Invent an emergency excuse</h2>
+                        <span class="text-[0.625rem] text-cyan-300 font-mono" data-i18n="excuse.subtitle">The classic among the emergency exits</span>
+                    </div>
+                </div>
+                <button data-action="closeExcuseModal" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
+            </div>
 
-		<h2 class="text-lg font-bold text-slate-200 mb-2 uppercase tracking-wider flex items-center gap-2.5">
-			<img src="assets/img/ui/ui_excuse.webp" alt="" width="24" height="24" class="w-6 h-6 shrink-0 select-none" onerror="this.outerHTML='🃏'">
-			<span data-i18n="excuse.title">Invent an emergency excuse</span>
-		</h2>
-		
-		<div class="bg-slate-800 p-4 border border-slate-700 rounded-md mb-6">
-			<!-- Rendered by src/components/ExcuseText.svelte -->
-			<div id="excuse-text-root"></div>
-		</div>
+        <div class="p-5 space-y-4">
+            <div class="bg-slate-950/60 p-4 border border-cyan-500/25 rounded-lg">
+                <!-- Rendered by src/components/ExcuseText.svelte -->
+                <div id="excuse-text-root"></div>
+            </div>
 
-		<p class="text-sm text-slate-400 mb-6" data-i18n="excuse.hint">
-			This only postpones the problem, which goes back into the pool unsolved. You have a limited number of excuses per shift.
-		</p>
+            <p class="text-sm text-slate-300 leading-relaxed" data-i18n="excuse.hint">
+                This only postpones the problem, which goes back into the pool unsolved. You have a limited number of excuses per shift.
+            </p>
 
-		<div class="flex justify-end gap-3 mt-4 border-t border-slate-700 pt-4">
-			<button data-action="closeExcuseModal"
-				class="px-4 py-2 bg-slate-800 text-slate-300 hover:text-white border border-slate-700 hover:border-slate-500 text-sm rounded-sm transition-colors" data-i18n="common.cancel">
-				Cancel
-			</button>
-			<button data-action="confirmExcuse"
-				class="px-4 py-2 bg-blue-600/80 hover:bg-blue-500 text-white font-bold text-sm rounded-sm transition-colors border border-blue-500" data-i18n="excuse.confirm">
-				Confirm and flee
-			</button>
-		</div>
-	</div>
+            <div class="flex justify-end gap-2 pt-1">
+                <button data-action="closeExcuseModal"
+                    class="px-4 py-2.5 rounded-lg border border-slate-700 text-slate-300 hover:text-white hover:border-slate-500 text-[0.6875rem] font-bold uppercase tracking-widest transition-colors" data-i18n="common.cancel">
+                    Cancel
+                </button>
+                <button data-action="confirmExcuse"
+                    class="px-5 py-2.5 rounded-lg bg-cyan-700 hover:bg-cyan-600 border border-cyan-400/40 text-white text-[0.6875rem] font-bold uppercase tracking-widest shadow-lg transition-colors" data-i18n="excuse.confirm">
+                    Confirm and flee
+                </button>
+            </div>
+        </div>
+    </div>
 </div>
 <!-- EXCUSE MODAL END -->
 
