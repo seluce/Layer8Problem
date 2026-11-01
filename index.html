@@ -750,8 +750,10 @@
             </div>
 
             <!-- The ways out. "Quit" stands apart at the right edge and only
-                 turns red when it is meant: a door, not an alarm. -->
-            <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-800">
+                 turns red when it is meant: a door, not an alarm. On a phone
+                 they stack at full width: wrapped as a row, "Main menu" and
+                 "Restart the day" stood one under the other at two widths. -->
+            <div class="grid grid-cols-1 gap-2 pt-3 border-t border-slate-800 sm:flex sm:flex-wrap sm:items-center">
                 <button data-action="returnToMenu" class="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-colors bg-slate-800/80 border-slate-700 text-slate-200 hover:bg-slate-700 hover:border-slate-500">
                     <img src="assets/img/ui/ui_home.webp" alt="" width="20" height="20" class="w-5 h-5 select-none" onerror="this.outerHTML='↩'">
                     <span data-i18n="settings.menu.title">Main menu</span>
