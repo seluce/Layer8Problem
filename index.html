@@ -663,121 +663,165 @@
             <button data-action="closeSettings" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
         </div>
 
-        <div id="menu-main-view" class="p-4 sm:p-6 overflow-y-auto w-full fade-in space-y-6 flex-1 min-h-0">
+        <!-- The menu, as tiles (picked by the operator from three drafts,
+             01.11.2026). It used to be three cards over two long sections of
+             buttons, with "Quit the game" as a bare full-width bar at the
+             foot. The tiles carry the places, the bar below them the ways
+             out. The pages behind "Save game" and "Community" are siblings of
+             the settings page and switch through engine.showMenuPage().
 
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <button data-action="returnToMenu" class="group relative flex flex-col items-center justify-center p-5 bg-linear-to-b from-slate-800 to-slate-900 border border-slate-700 hover:border-purple-500 rounded-xl transition-all shadow-lg overflow-hidden">
-                    <div class="absolute -left-4 -top-4 opacity-5 group-hover:scale-110 transition-transform duration-500 pointer-events-none"><img src="assets/img/ui/mode_week.webp" alt="" width="96" height="96" class="w-24 h-24" onerror="this.outerHTML='&lt;span class=&quot;text-7xl&quot;&gt;↩&lt;/span&gt;'"></div>
-                    <img src="assets/img/ui/ui_home.webp" alt="" width="36" height="36" class="w-9 h-9 mb-2 select-none drop-shadow-md" onerror="this.outerHTML='&lt;span class=&quot;text-3xl mb-2 text-slate-400&quot;&gt;↩&lt;/span&gt;'">
-                    <span class="font-bold text-white text-base relative z-10 text-center leading-tight" data-i18n="settings.menu.title">Main menu</span>
-                    <span class="text-[0.625rem] text-slate-400 uppercase tracking-widest mt-1 relative z-10 text-center" data-i18n="settings.menu.switchMode">Change mode</span>
-                </button>
-                <button id="btn-soft-reset" data-action="softReset" class="group relative flex flex-col items-center justify-center p-5 bg-linear-to-b from-slate-800 to-slate-900 border border-slate-700 hover:border-blue-500 rounded-xl transition-all shadow-lg overflow-hidden">
-                    <div class="absolute -right-4 -top-4 opacity-5 group-hover:scale-110 transition-transform duration-500 pointer-events-none"><img src="assets/img/ui/set_reset.webp" alt="" width="96" height="96" class="w-24 h-24" onerror="this.outerHTML='&lt;span class=&quot;text-7xl&quot;&gt;🔄&lt;/span&gt;'"></div>
-                    <img src="assets/img/ui/set_reset.webp" alt="" width="36" height="36" class="w-9 h-9 mb-2 select-none drop-shadow-md" onerror="this.outerHTML='&lt;span class=&quot;text-3xl mb-2 text-slate-400&quot;&gt;🔄&lt;/span&gt;'">
-                    <span id="text-soft-reset" class="font-bold text-white text-base relative z-10 text-center leading-tight" data-i18n="settings.softReset.day">Restart the day</span>
-                    <span id="sub-soft-reset" class="text-[0.625rem] text-slate-400 uppercase tracking-widest mt-1 relative z-10 text-center" data-i18n="settings.softReset.sub">(08:00)</span>
-                </button>
-                <button data-action="menu.toSettings" class="group relative flex flex-col items-center justify-center p-5 bg-linear-to-b from-slate-800 to-slate-900 border border-slate-700 hover:border-amber-500 rounded-xl transition-all shadow-lg overflow-hidden">
-                    <div class="absolute -left-4 -bottom-4 opacity-5 group-hover:scale-110 transition-transform duration-500 pointer-events-none"><img src="assets/img/ui/ui_menu.webp" alt="" width="96" height="96" class="w-24 h-24" onerror="this.outerHTML='&lt;span class=&quot;text-7xl&quot;&gt;🎛️&lt;/span&gt;'"></div>
-                    <img src="assets/img/ui/ui_menu.webp" alt="" width="36" height="36" class="w-9 h-9 mb-2 select-none drop-shadow-md" onerror="this.outerHTML='&lt;span class=&quot;text-3xl mb-2 text-slate-400&quot;&gt;🎛️&lt;/span&gt;'">
-                    <span class="font-bold text-white text-base relative z-10 text-center leading-tight" data-i18n="settings.title">Settings</span>
-                    <span class="text-[0.625rem] text-slate-400 uppercase tracking-widest mt-1 relative z-10 text-center" data-i18n="settings.section.settings.sub">Audio, UI, gameplay</span>
-                </button>
-            </div>
+             Each shell sees six tiles: Steam's two places on the desktop, and
+             in the browser what stands in for them - the Steam version (the
+             leaderboards and the statistics are what it adds) and the code. -->
+        <div id="menu-main-view" data-menu-page class="p-4 sm:p-6 overflow-y-auto w-full fade-in space-y-4 flex-1 min-h-0">
 
-            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/80 shadow-inner relative overflow-hidden">
-                <div class="absolute right-0 top-0 opacity-[0.02] pointer-events-none translate-x-1/4 -translate-y-1/4"><img src="assets/img/ui/ui_save.webp" alt="" width="128" height="128" class="w-32 h-32" onerror="this.outerHTML='&lt;span class=&quot;text-9xl&quot;&gt;💾&lt;/span&gt;'"></div>
-                
-                <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                    <img src="assets/img/ui/ui_save.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block shrink-0 select-none text-sm" onerror="this.outerHTML='&lt;span class=&quot;text-sm&quot;&gt;💾&lt;/span&gt;'"> <span data-i18n="settings.section.backups">Safety & backups</span>
-                </h3>
-
-                <!-- Desktop build only -->
-                <button data-action="toggleFullscreen" class="platform-desktop w-full mb-3 text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-emerald-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs relative z-10">
-                    <img src="assets/img/ui/ui_fullscreen.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block shrink-0 select-none text-base text-slate-400 group-hover:text-emerald-400 transition-colors" onerror="this.outerHTML='&lt;span class=&quot;text-base text-slate-400 group-hover:text-emerald-400 transition-colors&quot;&gt;🔲&lt;/span&gt;'"> 
-                    <span data-i18n="settings.fullscreen">Toggle full screen / windowed</span>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                <button data-action="closeSettings" class="group flex flex-col items-start gap-1.5 p-4 rounded-xl border text-left transition-colors min-w-0 bg-emerald-500/10 border-emerald-500/40 hover:bg-emerald-500/20 hover:border-emerald-400">
+                    <img src="assets/img/ui/ui_clock.webp" alt="" width="32" height="32" class="w-8 h-8 mb-1 select-none drop-shadow-md" onerror="this.outerHTML='&lt;span class=&quot;text-2xl mb-1&quot;&gt;☕&lt;/span&gt;'">
+                    <span id="text-menu-resume" class="font-bold text-sm leading-tight text-emerald-300" data-i18n="menu.resume">Back to work</span>
+                    <span id="sub-menu-resume" class="text-xs leading-snug text-emerald-100/80" data-i18n="menu.resume.sub">Back to your desk</span>
                 </button>
-                
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3 relative z-10">
-                    <button data-action="settings.toExport" class="w-full text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-emerald-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
-                        <img src="assets/img/ui/ui_export.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block shrink-0 select-none text-base text-slate-400 group-hover:text-emerald-400 transition-colors" onerror="this.outerHTML='&lt;span class=&quot;text-base text-slate-400 group-hover:text-emerald-400 transition-colors&quot;&gt;📤&lt;/span&gt;'"> 
-                        <span data-i18n="settings.export">Export save</span>
-                    </button>
-                    <button data-action="settings.toImport" class="w-full text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-emerald-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
-                        <img src="assets/img/ui/ui_import.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block shrink-0 select-none text-base text-slate-400 group-hover:text-emerald-400 transition-colors" onerror="this.outerHTML='&lt;span class=&quot;text-base text-slate-400 group-hover:text-emerald-400 transition-colors&quot;&gt;📥&lt;/span&gt;'"> 
-                        <span data-i18n="settings.import">Import save</span>
-                    </button>
-                </div>
-                
-                <button id="btn-hard-reset" data-action="triggerHardReset" data-armed="false" class="w-full relative z-10 text-left px-4 py-3 mt-1 bg-red-950/20 hover:bg-red-950/40 border border-red-900/50 hover:border-red-500 rounded-lg transition-all flex items-center gap-3 group shadow-xs">
-                    <!-- The id stays on the wrapper: engine_ui rewrites its
-                         className for the armed state, which would otherwise
-                         strip the image's size classes. -->
-                    <span id="icon-hard-reset" class="shrink-0 grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">
-                        <img src="assets/img/ui/ui_warning.webp" alt="" width="24" height="24" class="w-6 h-6 block select-none" onerror="this.outerHTML='⚠️'">
-                    </span>
-                    <span class="flex flex-col min-w-0">
-                        <span id="text-hard-reset" class="text-red-400 text-sm font-medium" data-i18n="settings.hardReset.title">Delete save permanently</span>
-                        <span class="text-[0.625rem] text-slate-400 leading-snug" data-i18n="settings.hardReset.sub">Archive, achievements and statistics. Cannot be undone.</span>
-                    </span>
+                <button data-action="menu.toSettings" class="group flex flex-col items-start gap-1.5 p-4 rounded-xl border text-left transition-colors min-w-0 bg-amber-500/10 border-amber-500/40 hover:bg-amber-500/20 hover:border-amber-400">
+                    <img src="assets/img/ui/ui_menu.webp" alt="" width="32" height="32" class="w-8 h-8 mb-1 select-none drop-shadow-md" onerror="this.outerHTML='&lt;span class=&quot;text-2xl mb-1&quot;&gt;⚙️&lt;/span&gt;'">
+                    <span class="font-bold text-sm leading-tight text-amber-300" data-i18n="settings.title">Settings</span>
+                    <span class="text-xs leading-snug text-amber-100/80" data-i18n="menu.settings.sub">Audio, display, keys</span>
+                </button>
+                <button data-action="openLeaderboard" data-arg="menu-main-view" class="platform-desktop group flex flex-col items-start gap-1.5 p-4 rounded-xl border text-left transition-colors min-w-0 bg-yellow-400/10 border-yellow-400/40 hover:bg-yellow-400/20 hover:border-yellow-300">
+                    <img src="assets/img/ui/ui_medal.webp" alt="" width="32" height="32" class="w-8 h-8 mb-1 select-none drop-shadow-md" onerror="this.outerHTML='&lt;span class=&quot;text-2xl mb-1&quot;&gt;🏆&lt;/span&gt;'">
+                    <span class="font-bold text-sm leading-tight text-yellow-200" data-i18n="leaderboard.title">Leaderboard</span>
+                    <span class="text-xs leading-snug text-yellow-100/80" data-i18n="menu.leaderboard.sub">Who lasts the longest</span>
+                </button>
+                <button data-action="openGlobalStats" data-arg="menu-main-view" class="platform-desktop group flex flex-col items-start gap-1.5 p-4 rounded-xl border text-left transition-colors min-w-0 bg-purple-500/10 border-purple-500/40 hover:bg-purple-500/20 hover:border-purple-400">
+                    <img src="assets/img/ui/ui_globe.webp" alt="" width="32" height="32" class="w-8 h-8 mb-1 select-none drop-shadow-md" onerror="this.outerHTML='&lt;span class=&quot;text-2xl mb-1&quot;&gt;🌍&lt;/span&gt;'">
+                    <span class="font-bold text-sm leading-tight text-purple-300" data-i18n="menu.stats">Statistics</span>
+                    <span class="text-xs leading-snug text-purple-100/80" data-i18n="menu.stats.sub">You against the rest of the world</span>
+                </button>
+                <button data-action="openExternal" data-arg="https://store.steampowered.com/app/4487580/Layer8Problem/" class="platform-web group flex flex-col items-start gap-1.5 p-4 rounded-xl border text-left transition-colors min-w-0 bg-yellow-400/10 border-yellow-400/40 hover:bg-yellow-400/20 hover:border-yellow-300">
+                    <img src="assets/img/ui/ui_medal.webp" alt="" width="32" height="32" class="w-8 h-8 mb-1 select-none drop-shadow-md" onerror="this.outerHTML='&lt;span class=&quot;text-2xl mb-1&quot;&gt;🏆&lt;/span&gt;'">
+                    <span class="font-bold text-sm leading-tight text-yellow-200" data-i18n="menu.steam">Steam version</span>
+                    <span class="text-xs leading-snug text-yellow-100/80" data-i18n="menu.steam.sub">Leaderboards, statistics, achievements</span>
+                </button>
+                <button data-action="openExternal" data-arg="https://github.com/seluce/Layer8Problem" class="platform-web group flex flex-col items-start gap-1.5 p-4 rounded-xl border text-left transition-colors min-w-0 bg-purple-500/10 border-purple-500/40 hover:bg-purple-500/20 hover:border-purple-400">
+                    <img src="assets/img/ui/ui_code.webp" alt="" width="32" height="32" class="w-8 h-8 mb-1 select-none drop-shadow-md" onerror="this.outerHTML='&lt;span class=&quot;text-2xl mb-1&quot;&gt;💻&lt;/span&gt;'">
+                    <span class="font-bold text-sm leading-tight text-purple-300" data-i18n="menu.github">GitHub</span>
+                    <span class="text-xs leading-snug text-purple-100/80" data-i18n="menu.github.sub">The source code, open to read</span>
+                </button>
+                <button data-action="menu.toSave" class="group flex flex-col items-start gap-1.5 p-4 rounded-xl border text-left transition-colors min-w-0 bg-sky-500/10 border-sky-500/40 hover:bg-sky-500/20 hover:border-sky-400">
+                    <img src="assets/img/ui/ui_save.webp" alt="" width="32" height="32" class="w-8 h-8 mb-1 select-none drop-shadow-md" onerror="this.outerHTML='&lt;span class=&quot;text-2xl mb-1&quot;&gt;💾&lt;/span&gt;'">
+                    <span class="font-bold text-sm leading-tight text-sky-300" data-i18n="menu.save">Save game</span>
+                    <span class="text-xs leading-snug text-sky-100/80" data-i18n="menu.save.sub">Export, import, delete</span>
+                </button>
+                <button data-action="menu.toCommunity" class="group flex flex-col items-start gap-1.5 p-4 rounded-xl border text-left transition-colors min-w-0 bg-pink-500/10 border-pink-500/40 hover:bg-pink-500/20 hover:border-pink-400">
+                    <img src="assets/img/ui/ui_share.webp" alt="" width="32" height="32" class="w-8 h-8 mb-1 select-none drop-shadow-md" onerror="this.outerHTML='&lt;span class=&quot;text-2xl mb-1&quot;&gt;💌&lt;/span&gt;'">
+                    <span class="font-bold text-sm leading-tight text-pink-300" data-i18n="menu.community">Community</span>
+                    <span class="text-xs leading-snug text-pink-100/80" data-i18n="menu.community.sub">Share, feedback</span>
                 </button>
             </div>
 
-            <div class="bg-slate-900/60 p-4 rounded-xl border border-slate-700/80 shadow-inner">
-                <h3 class="text-xs font-bold text-purple-400 uppercase tracking-widest mb-3 flex items-center gap-2">
-                    <img src="assets/img/ui/ui_globe.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block shrink-0 select-none text-sm" onerror="this.outerHTML='&lt;span class=&quot;text-sm&quot;&gt;🌐&lt;/span&gt;'"> <span data-i18n="settings.section.community">Community & support</span>
-                </h3>
-                
-                <div class="flex flex-col gap-2">
-                    <button id="btn-share" data-action="shareGame" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
-                        <img src="assets/img/ui/ui_share.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block shrink-0 select-none text-base text-slate-400 group-hover:text-purple-400 transition-colors" onerror="this.outerHTML='&lt;span class=&quot;text-base text-slate-400 group-hover:text-purple-400 transition-colors&quot;&gt;💌&lt;/span&gt;'"> 
-                        <span id="text-share" data-i18n="settings.share">Share the game with friends</span>
-                    </button>
-                    
-                    <button data-action="settings.toReport" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
-                        <img src="assets/img/ui/ui_bug.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block shrink-0 select-none text-base text-slate-400 group-hover:text-purple-400 transition-colors" onerror="this.outerHTML='&lt;span class=&quot;text-base text-slate-400 group-hover:text-purple-400 transition-colors&quot;&gt;🐞&lt;/span&gt;'"> 
-                        <span data-i18n="settings.report">Report a bug / give feedback</span>
-                    </button>
-
-                    <!-- Web build only: the desktop version links to the store page instead -->
-                    <button data-action="openExternal" data-arg="https://github.com/seluce/Layer8Problem" class="platform-web w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center justify-between group shadow-xs">
-                        <div class="flex items-center gap-3">
-                            <img src="assets/img/ui/ui_code.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block shrink-0 select-none text-base text-slate-400 group-hover:text-purple-400 transition-colors" onerror="this.outerHTML='&lt;span class=&quot;text-base text-slate-400 group-hover:text-purple-400 transition-colors&quot;&gt;💻&lt;/span&gt;'"> 
-                            <span data-i18n="settings.github">Visit the GitHub project page</span>
-                        </div>
-                        <span class="text-xs text-slate-400 group-hover:text-white transition-colors">↗</span>
-                    </button>
-
-                    <!-- Desktop build only: aggregated Steam statistics -->
-                    <button data-action="openGlobalStats" class="platform-desktop w-full text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-purple-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
-                        <img src="assets/img/ui/ui_globe.webp" alt="" width="24" height="24" class="w-6 h-6 inline-block shrink-0 select-none text-slate-400 group-hover:text-purple-400 transition-colors" onerror="this.outerHTML='&lt;span class=&quot;text-xl text-slate-400 group-hover:text-purple-400 transition-colors&quot;&gt;🌍&lt;/span&gt;'"> 
-                        <span data-i18n="settings.globalStats">Global statistics & comparison</span>
-                    </button>
-
-                    <!-- Desktop build only: the week leaderboards on Steam -->
-                    <button data-action="openLeaderboard" class="platform-desktop w-full text-left px-4 py-3 bg-slate-800/80 hover:bg-slate-700 border border-slate-600 hover:border-amber-500/60 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-medium flex items-center gap-3 group shadow-xs">
-                        <img src="assets/img/ui/ui_medal.webp" alt="" width="24" height="24" class="w-6 h-6 inline-block shrink-0 select-none" onerror="this.outerHTML='&lt;span class=&quot;text-xl&quot;&gt;🏆&lt;/span&gt;'">
-                        <span data-i18n="settings.leaderboard">Week leaderboard</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Desktop build only: a browser tab cannot close itself reliably -->
-            <div class="platform-desktop pt-2">
-                <button data-action="quitGame" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500/60 rounded-lg transition-all text-slate-300 hover:text-red-400 text-sm font-medium flex items-center justify-center group shadow-xs">
-                    <span class="tracking-widest uppercase font-bold" data-i18n="settings.quit">Quit the game</span>
+            <!-- The ways out. "Quit" stands apart at the right edge and only
+                 turns red when it is meant: a door, not an alarm. -->
+            <div class="flex flex-wrap items-center gap-2 pt-3 border-t border-slate-800">
+                <button data-action="returnToMenu" class="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-colors bg-slate-800/80 border-slate-700 text-slate-200 hover:bg-slate-700 hover:border-slate-500">
+                    <img src="assets/img/ui/ui_home.webp" alt="" width="20" height="20" class="w-5 h-5 select-none" onerror="this.outerHTML='↩'">
+                    <span data-i18n="settings.menu.title">Main menu</span>
+                </button>
+                <button id="btn-soft-reset" data-action="softReset" class="flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-colors bg-slate-800/80 border-slate-700 text-slate-200 hover:bg-slate-700 hover:border-slate-500">
+                    <img src="assets/img/ui/set_reset.webp" alt="" width="20" height="20" class="w-5 h-5 select-none" onerror="this.outerHTML='🔄'">
+                    <span id="text-soft-reset" data-i18n="settings.softReset.day">Restart the day</span>
+                    <span id="sub-soft-reset" class="text-xs text-slate-400 font-normal" data-i18n="settings.softReset.sub">(08:00)</span>
+                </button>
+                <!-- Desktop build only: the browser has F11 -->
+                <button data-action="toggleFullscreen" class="platform-desktop flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-colors bg-slate-800/80 border-slate-700 text-slate-200 hover:bg-slate-700 hover:border-slate-500">
+                    <img src="assets/img/ui/ui_fullscreen.webp" alt="" width="20" height="20" class="w-5 h-5 select-none" onerror="this.outerHTML='🔲'">
+                    <span data-i18n="menu.fullscreen">Full screen</span>
+                </button>
+                <!-- Desktop build only: a browser tab cannot close itself reliably -->
+                <button data-action="quitGame" class="platform-desktop sm:ml-auto flex items-center gap-2 px-3 py-2 rounded-lg border text-sm font-medium transition-colors bg-transparent border-red-900/70 text-red-300 hover:bg-red-950/50 hover:border-red-500 hover:text-red-200">
+                    <span aria-hidden="true">⏻</span>
+                    <span data-i18n="settings.quit">Quit the game</span>
                 </button>
             </div>
-
         </div>
 
-        <div id="menu-settings-view" class="hidden p-5 space-y-6 overflow-y-auto w-full flex-1 min-h-0">
-            
-            <div>
-                <button data-action="menu.toMain" class="w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-slate-500 rounded-lg transition-all text-slate-300 hover:text-white text-sm font-bold flex items-center gap-2 shadow-xs">
-                    <span>◀</span> <span data-i18n="settings.backToMenu">Back to the main menu</span>
+        <!-- Save game: export, import and the hard reset, as cards in the
+             look of the tiles one page up. The reset keeps its ids - engine_ui
+             dresses and arms it, and writes its class list from HARD_RESET. -->
+        <div id="menu-save-view" data-menu-page class="hidden p-4 sm:p-6 space-y-4 overflow-y-auto w-full flex-1 min-h-0">
+            <button data-action="menu.toMain" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/60 hover:bg-slate-700 hover:border-slate-500 text-slate-300 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">
+                <span aria-hidden="true">◀</span> <span data-i18n="settings.backToMenu">Back to the menu</span>
+            </button>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button data-action="settings.toExport" class="group flex items-center gap-4 p-4 rounded-xl border text-left transition-colors min-w-0 bg-sky-500/10 border-sky-500/40 hover:bg-sky-500/20 hover:border-sky-400">
+                    <span class="w-12 h-12 shrink-0 flex items-center justify-center rounded-lg bg-slate-950/60 border border-sky-500/30">
+                        <img src="assets/img/ui/ui_export.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='📤'">
+                    </span>
+                    <span class="flex flex-col gap-1 min-w-0">
+                        <span class="font-bold text-sm leading-tight text-sky-300" data-i18n="settings.export">Export save</span>
+                        <span class="text-xs leading-snug text-sky-100/80" data-i18n="menu.export.sub">As a code, to carry to another device</span>
+                    </span>
                 </button>
+                <button data-action="settings.toImport" class="group flex items-center gap-4 p-4 rounded-xl border text-left transition-colors min-w-0 bg-indigo-500/10 border-indigo-500/40 hover:bg-indigo-500/20 hover:border-indigo-400">
+                    <span class="w-12 h-12 shrink-0 flex items-center justify-center rounded-lg bg-slate-950/60 border border-indigo-500/30">
+                        <img src="assets/img/ui/ui_import.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='📥'">
+                    </span>
+                    <span class="flex flex-col gap-1 min-w-0">
+                        <span class="font-bold text-sm leading-tight text-indigo-300" data-i18n="settings.import">Import save</span>
+                        <span class="text-xs leading-snug text-indigo-100/80" data-i18n="menu.import.sub">Paste a code. The archive here is replaced.</span>
+                    </span>
+                </button>
+            </div>
+
+            <button id="btn-hard-reset" data-action="triggerHardReset" data-armed="false" class="group w-full flex items-center gap-4 p-4 rounded-xl border text-left transition-colors bg-red-500/10 border-red-500/40 hover:bg-red-500/20 hover:border-red-400">
+                <!-- The id stays on the wrapper: engine_ui rewrites its
+                     className for the armed state, which would otherwise
+                     strip the image's size classes. -->
+                <span class="w-12 h-12 shrink-0 flex items-center justify-center rounded-lg bg-slate-950/60 border border-red-500/30">
+                    <span id="icon-hard-reset" class="shrink-0 grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all">
+                        <img src="assets/img/ui/ui_warning.webp" alt="" width="28" height="28" class="w-7 h-7 block select-none" onerror="this.outerHTML='⚠️'">
+                    </span>
+                </span>
+                <span class="flex flex-col gap-1 min-w-0">
+                    <span id="text-hard-reset" class="font-bold text-sm leading-tight text-red-300" data-i18n="settings.hardReset.title">Delete save permanently</span>
+                    <span class="text-xs leading-snug text-red-100/80" data-i18n="settings.hardReset.sub">Archive, achievements and statistics. Cannot be undone.</span>
+                </span>
+            </button>
+        </div>
+
+        <!-- Community: sharing and feedback, cards like the page beside it. -->
+        <div id="menu-community-view" data-menu-page class="hidden p-4 sm:p-6 space-y-4 overflow-y-auto w-full flex-1 min-h-0">
+            <button data-action="menu.toMain" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/60 hover:bg-slate-700 hover:border-slate-500 text-slate-300 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">
+                <span aria-hidden="true">◀</span> <span data-i18n="settings.backToMenu">Back to the menu</span>
+            </button>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <button id="btn-share" data-action="shareGame" class="group flex items-center gap-4 p-4 rounded-xl border text-left transition-colors min-w-0 bg-pink-500/10 border-pink-500/40 hover:bg-pink-500/20 hover:border-pink-400">
+                    <span class="w-12 h-12 shrink-0 flex items-center justify-center rounded-lg bg-slate-950/60 border border-pink-500/30">
+                        <img src="assets/img/ui/ui_share.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='💌'">
+                    </span>
+                    <span class="flex flex-col gap-1 min-w-0">
+                        <span id="text-share" class="font-bold text-sm leading-tight text-pink-300" data-i18n="settings.share">Share the game with friends</span>
+                        <span class="text-xs leading-snug text-pink-100/80" data-i18n="menu.share.sub">Copy the link, or hand it straight on</span>
+                    </span>
+                </button>
+                <button data-action="settings.toReport" class="group flex items-center gap-4 p-4 rounded-xl border text-left transition-colors min-w-0 bg-purple-500/10 border-purple-500/40 hover:bg-purple-500/20 hover:border-purple-400">
+                    <span class="w-12 h-12 shrink-0 flex items-center justify-center rounded-lg bg-slate-950/60 border border-purple-500/30">
+                        <img src="assets/img/ui/ui_bug.webp" alt="" width="28" height="28" class="w-7 h-7 select-none" onerror="this.outerHTML='🐞'">
+                    </span>
+                    <span class="flex flex-col gap-1 min-w-0">
+                        <span class="font-bold text-sm leading-tight text-purple-300" data-i18n="settings.report">Report a bug / give feedback</span>
+                        <span class="text-xs leading-snug text-purple-100/80" data-i18n="menu.report.sub">Bugs, typos, ideas: straight to the developer</span>
+                    </span>
+                </button>
+            </div>
+        </div>
+
+        <div id="menu-settings-view" data-menu-page class="hidden p-5 space-y-6 overflow-y-auto w-full flex-1 min-h-0">
+
+            <div>
+            <button data-action="menu.toMain" class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-slate-700 bg-slate-800/60 hover:bg-slate-700 hover:border-slate-500 text-slate-300 hover:text-white text-xs font-bold uppercase tracking-widest transition-colors">
+                <span aria-hidden="true">◀</span> <span data-i18n="settings.backToMenu">Back to the menu</span>
+            </button>
             </div>
             
             <div id="settings-list">
@@ -918,18 +962,28 @@
 <!-- EXCUSE MODAL END -->
 
 <!-- REPORT MODAL START -->
-<div id="report-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=report.title" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-10000">
-    <div class="neon-box accent-red bg-slate-900 p-6 w-full max-w-lg shadow-2xl relative">
-        <button data-action="closeReportModal" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-2 right-4 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
-        
-        <h2 class="text-xl font-bold text-white mb-4 flex items-center gap-2">
-            <img src="assets/img/ui/ui_bug.webp" alt="" width="24" height="24" class="w-6 h-6 inline-block select-none" onerror="this.outerHTML='🐞'"> <span data-i18n="report.title">Report a bug / give feedback</span>
-        </h2>
-        
-        <div class="space-y-4">
+<!-- In the look of the save dialogs beside it: icon box, kicker, heading,
+     framed fields. The ids are read by sendReportMail(), and the send button
+     keeps bg-blue-600 / hover:bg-blue-500, which it swaps for green while it
+     says "sent" and puts back afterwards. -->
+<div id="report-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=report.title" class="fixed inset-0 bg-black/90 hidden items-center justify-center z-10000 p-4">
+    <div class="neon-box accent-purple bg-slate-900 max-w-lg w-full shadow-2xl relative overflow-hidden">
+        <button data-action="closeReportModal" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-3 right-4 z-10 w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-xl leading-none text-slate-400 hover:text-white hover:bg-slate-800 transition-colors">✕</button>
+
+        <div class="flex items-center gap-4 p-5 border-b border-slate-800">
+            <div class="w-14 h-14 shrink-0 flex items-center justify-center rounded-lg bg-slate-950 border border-purple-500/25 shadow-inner">
+                <img src="assets/img/ui/ui_bug.webp" alt="" width="30" height="30" class="w-[30px] h-[30px] select-none" onerror="this.outerHTML='🐞'">
+            </div>
+            <div class="flex flex-col min-w-0 pr-8">
+                <span class="text-[0.625rem] font-bold uppercase tracking-widest text-purple-300" data-i18n="report.kicker">A ticket for the developer</span>
+                <h2 class="text-lg font-black text-white leading-tight mt-0.5" data-i18n="report.title">Report a bug / give feedback</h2>
+            </div>
+        </div>
+
+        <div class="p-5 space-y-4">
             <div>
-                <label class="block text-slate-400 text-xs uppercase mb-1" data-i18n="report.category">Category</label>
-                <select id="report-category" class="w-full bg-slate-800 border border-slate-700 text-white p-2 rounded-sm focus:outline-hidden focus:border-blue-500">
+                <label for="report-category" class="block text-[0.625rem] font-bold uppercase tracking-widest text-slate-400 mb-1.5" data-i18n="report.category">Category</label>
+                <select id="report-category" class="w-full bg-slate-950 border border-slate-700 text-white text-sm p-2.5 rounded-lg focus:outline-hidden focus:border-purple-500">
                     <option value="Fehler" data-i18n="report.cat.bug">Bug / crash</option>
                     <option value="Rechtschreibfehler" data-i18n="report.cat.typo">Spelling mistake</option>
                     <option value="Logik" data-i18n="report.cat.logic">Content that makes no sense</option>
@@ -939,22 +993,21 @@
             </div>
 
             <div>
-                <label class="block text-slate-400 text-xs uppercase mb-1" data-i18n="report.description">Description</label>
-                <textarea id="report-desc" data-i18n-attr="placeholder=report.placeholder" rows="4" class="w-full bg-slate-800 border border-slate-700 text-white p-2 rounded-sm focus:outline-hidden focus:border-blue-500" placeholder="What happened? Which event was odd?"></textarea>
+                <label for="report-desc" class="block text-[0.625rem] font-bold uppercase tracking-widest text-slate-400 mb-1.5" data-i18n="report.description">Description</label>
+                <textarea id="report-desc" data-i18n-attr="placeholder=report.placeholder" rows="4" class="w-full bg-slate-950 border border-slate-700 text-slate-200 text-sm p-3 rounded-lg focus:outline-hidden focus:border-purple-500 resize-none custom-scrollbar" placeholder="What happened? Which event was odd?"></textarea>
             </div>
 
-            <div class="bg-slate-800/50 p-2 rounded-sm border border-slate-700/50">
-                <p class="text-[0.625rem] text-slate-400 flex items-start gap-2.5">
-                    <img src="assets/img/ui/ui_info.webp" alt="" width="14" height="14" class="w-3.5 h-3.5 shrink-0 mt-0.5 select-none" onerror="this.outerHTML='ℹ️'"><span data-i18n="report.privacy">For diagnosis the system automatically attaches current data (last event, time, inventory & log excerpt) to your ticket.</span>
-                </p>
+            <div class="bg-slate-950/60 border border-slate-700/60 rounded-lg p-3 flex gap-2.5 items-start">
+                <img src="assets/img/ui/ui_info.webp" alt="" width="18" height="18" class="w-[18px] h-[18px] shrink-0 mt-0.5 select-none" onerror="this.outerHTML='ℹ️'">
+                <span class="text-xs text-slate-300 leading-snug" data-i18n="report.privacy">For diagnosis the system automatically attaches current data (last event, time, inventory & log excerpt) to your ticket.</span>
             </div>
-        </div>
 
-        <div class="flex justify-end gap-2 mt-6">
-            <button data-action="closeReportModal" class="px-4 py-2 text-slate-300 hover:text-white text-sm" data-i18n="common.cancel">Cancel</button>
-            <button data-action="sendReportMail" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-2 rounded-sm font-bold shadow-lg flex items-center gap-2">
-                <img src="assets/img/ui/ui_mail.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block select-none" onerror="this.outerHTML='📧'"> <span data-i18n="report.submit">Open a ticket</span> 
-            </button>
+            <div class="flex justify-end gap-2 pt-1">
+                <button data-action="closeReportModal" class="px-4 py-2.5 rounded-lg border border-slate-700 text-slate-300 hover:text-white hover:border-slate-500 text-[0.6875rem] font-bold uppercase tracking-widest transition-colors" data-i18n="common.cancel">Cancel</button>
+                <button data-action="sendReportMail" class="bg-blue-600 hover:bg-blue-500 border border-blue-400/40 text-white px-5 py-2.5 rounded-lg text-[0.6875rem] font-bold uppercase tracking-widest shadow-lg flex items-center gap-2 transition-colors">
+                    <img src="assets/img/ui/ui_mail.webp" alt="" width="20" height="20" class="w-5 h-5 inline-block select-none" onerror="this.outerHTML='📧'"> <span data-i18n="report.submit">Open a ticket</span>
+                </button>
+            </div>
         </div>
     </div>
 </div>
@@ -983,7 +1036,7 @@
              brings its own loading state. A placeholder here is never
              replaced - mount() appends - and up to 6.4 "Connecting to Steam
              servers..." stood above the figures once they had arrived. -->
-        <div id="global-stats-content" class="p-5 overflow-y-auto w-full space-y-6"></div>
+        <div id="global-stats-content" class="p-5 overflow-y-auto w-full space-y-4"></div>
     </div>
 </div>
 

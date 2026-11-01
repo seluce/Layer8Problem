@@ -85,9 +85,10 @@ const ACTIONS = {
     // --- settings -------------------------------------------------------
     openSettings:       () => engine.openSettings(),
     closeSettings:      () => engine.closeSettings(),
-    openGlobalStats:    () => engine.openGlobalStats(),
+    // The menu tiles pass the page they stand on, so closing leads back there.
+    openGlobalStats:    (from) => engine.openGlobalStats(from || null),
     closeGlobalStats:   () => engine.closeGlobalStats(),
-    openLeaderboard:    () => engine.openLeaderboard(),
+    openLeaderboard:    (from) => engine.openLeaderboard(from || null),
     closeLeaderboard:   () => engine.closeLeaderboard(),
     triggerHardReset:   (arg, el) => engine.triggerHardReset(el),
     shareGame:          (arg, el) => engine.shareGame(el),
@@ -106,15 +107,10 @@ const ACTIONS = {
 
     // --- the seven that used to be two statements in an attribute --------
     // Each of these is one intent, and now says so.
-    'menu.toSettings':  () => {
-        document.getElementById('menu-main-view')?.classList.add('hidden');
-        document.getElementById('menu-settings-view')?.classList.remove('hidden');
-    },
-    'menu.toMain':      () => {
-        engine.cancelBindingKey();
-        document.getElementById('menu-settings-view')?.classList.add('hidden');
-        document.getElementById('menu-main-view')?.classList.remove('hidden');
-    },
+    'menu.toSettings':  () => engine.showMenuPage('menu-settings-view'),
+    'menu.toSave':      () => engine.showMenuPage('menu-save-view'),
+    'menu.toCommunity': () => engine.showMenuPage('menu-community-view'),
+    'menu.toMain':      () => engine.showMenuPage('menu-main-view'),
     'menu.backFromDifficulty': () => {
         engine.hideOverlay('difficulty-modal');
         engine.showOverlay('intro-modal');
@@ -123,9 +119,9 @@ const ACTIONS = {
         engine.hideOverlay('week-modal');
         engine.showOverlay('intro-modal');
     },
-    'settings.toExport': () => { engine.closeSettings(); engine.ui.openExportModal(); },
-    'settings.toImport': () => { engine.closeSettings(); engine.ui.openImportModal(); },
-    'settings.toReport': () => { engine.closeSettings(); engine.openReportModal(); },
+    'settings.toExport': () => { engine.closeSettings(); engine.ui.openExportModal('menu-save-view'); },
+    'settings.toImport': () => { engine.closeSettings(); engine.ui.openImportModal('menu-save-view'); },
+    'settings.toReport': () => { engine.closeSettings(); engine.openReportModal('menu-community-view'); },
 };
 
 /** The names the markup may use. Read by tools/lint-i18n.mjs. */

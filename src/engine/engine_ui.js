@@ -38,6 +38,17 @@ for (const ev of ['pointerdown', 'keydown', 'touchstart']) {
     document.addEventListener?.(ev, () => { playerHasActed = true; }, { once: true, capture: true });
 }
 
+// The hard reset tile on the menu's "Save game" page, in its three states.
+// engine_ui writes the class list whole (dressResetButtons, triggerHardReset),
+// so the three live here once: until the menu became tiles, the timeout that
+// disarms the button wrote a fourth look of its own, a grey bar.
+const HARD_RESET = {
+    idle:  'group w-full flex items-center gap-4 p-4 rounded-xl border text-left transition-colors bg-red-500/10 border-red-500/40 hover:bg-red-500/20 hover:border-red-400',
+    armed: 'group w-full flex items-center gap-4 p-4 rounded-xl border text-left transition-colors bg-red-600/30 border-red-400 animate-pulse',
+    going: 'w-full flex items-center justify-center gap-4 p-4 rounded-xl border bg-red-600 border-red-400 text-white font-bold',
+};
+const HARD_RESET_ICON = 'shrink-0 grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all';
+
 // The windows that can stand over the terminal while a result is on screen -
 // see windowOverTerminal(). The same ones the Escape key closes.
 const WINDOWS_OVER_TERMINAL = [
@@ -136,8 +147,8 @@ export const ui = {
             const textSpan = document.getElementById('text-hard-reset');
             const iconSpan = document.getElementById('icon-hard-reset');
             if (textSpan) textSpan.innerText = t('settings.hardReset.short');
-            if (iconSpan) iconSpan.className = "shrink-0 grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all";
-            resetBtn.className = "w-full relative z-10 text-left px-4 py-3 mt-1 bg-red-950/20 hover:bg-red-950/40 border border-red-900/50 hover:border-red-500 rounded-lg transition-all flex items-center gap-3 group shadow-xs";
+            if (iconSpan) iconSpan.className = HARD_RESET_ICON;
+            resetBtn.className = HARD_RESET.idle;
         }
     },
 
@@ -1509,7 +1520,8 @@ export const ui = {
     // dialog simply never opened.
     ui: {
         // Opens the export dialog
-        openExportModal: function() {
+        openExportModal: function(from = null) {
+            engine.state.menuReturn = from;
             const modal = document.getElementById('save-export-modal');
             const area = document.getElementById('export-area');
             const msg = document.getElementById('export-msg');
@@ -1526,7 +1538,8 @@ export const ui = {
         },
 
         // Opens the import dialog
-        openImportModal: function() {
+        openImportModal: function(from = null) {
+            engine.state.menuReturn = from;
             const modal = document.getElementById('save-import-modal');
             const area = document.getElementById('import-area');
             const msg = document.getElementById('import-msg');
@@ -1542,6 +1555,7 @@ export const ui = {
         closeModals: function() {
             engine.hideOverlay('save-export-modal');
             engine.hideOverlay('save-import-modal');
+            engine.backToMenu();
         },
 
         // Kopier-Funktion
@@ -1710,12 +1724,14 @@ export const ui = {
         platform.fullscreen();
     },
 
-    // Contents are rendered by components/GlobalStatsView.svelte.
-    openGlobalStats: function() {
+    // Contents are rendered by components/GlobalStatsView.svelte. `from` is
+    // the menu page it was opened from, if any - see backToMenu().
+    openGlobalStats: function(from = null) {
         this.closeSettings();
 
         const modal = document.getElementById('global-stats-modal');
         if (!modal) return;
+        this.state.menuReturn = from;
         this.showOverlay(modal);
 
         this.state.globalStats = { data: null, loading: true, failed: false };
@@ -1728,15 +1744,35 @@ export const ui = {
         const modal = document.getElementById('global-stats-modal');
         if (!modal) return;
         this.hideOverlay(modal);
+        this.backToMenu();
+    },
+
+    /**
+     * A window the menu opened leads back to the menu when it closes.
+     *
+     * The statistics, the leaderboard, the save dialogs and the feedback form
+     * are reached from a menu tile or page, and closing one dropped the
+     * player into the game - one level too far, with the menu gone. Each of
+     * them records the page it came from in state.menuReturn when it opens
+     * (null when it was opened from anywhere else: the end screen, the start
+     * screen), and its close calls this. Escape goes the same way, a level up.
+     */
+    backToMenu: function() {
+        const page = this.state.menuReturn;
+        this.state.menuReturn = null;
+        if (!page) return;
+        this.openSettings();
+        if (page !== 'menu-main-view') this.showMenuPage(page);
     },
 
     // The week leaderboards, desktop only. Contents are rendered by
     // components/LeaderboardView.svelte. Opened from the menu and from the
     // end screen of a week, which it stands over.
-    openLeaderboard: function() {
+    openLeaderboard: function(from = null) {
         this.closeSettings();
         const modal = document.getElementById('leaderboard-modal');
         if (!modal) return;
+        this.state.menuReturn = from;
         this.showOverlay(modal);
         this.state.leaderboardOpens++;
         this.loadLeaderboard(this.state.leaderboard.scope ?? 'global');
@@ -1770,6 +1806,7 @@ export const ui = {
         const modal = document.getElementById('leaderboard-modal');
         if (!modal) return;
         this.hideOverlay(modal);
+        this.backToMenu();
     },
 
     triggerHardReset: function(btn) {
@@ -1811,7 +1848,7 @@ export const ui = {
             const textSpan = btn.querySelector('#text-hard-reset');
             textSpan.innerText = t('settings.hardReset.restarting');
             
-            btn.className = "w-full text-left px-4 py-3 bg-red-600 border border-red-500 rounded-lg text-white text-sm font-bold flex justify-center items-center mt-2 shadow-md";
+            btn.className = HARD_RESET.going;
             
             setTimeout(() => {
                 Promise.race([pushed, new Promise(r => setTimeout(r, 4000))])
@@ -1824,16 +1861,16 @@ export const ui = {
             const iconSpan = btn.querySelector('#icon-hard-reset');
             
             textSpan.innerText = t('settings.hardReset.confirm');
-            iconSpan.className = "shrink-0"; 
-            
-            btn.className = "w-full relative z-10 text-left px-4 py-3 mt-1 bg-red-950/50 border border-red-500 rounded-lg transition-all flex items-center gap-3 animate-pulse shadow-xs";
+            iconSpan.className = "shrink-0";
+
+            btn.className = HARD_RESET.armed;
             
             setTimeout(() => {
                 if(btn.dataset.armed === "true") {
                     btn.dataset.armed = "false";
                     textSpan.innerText = t('settings.hardReset.short');
-                    iconSpan.className = "text-base grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all";
-                    btn.className = "w-full text-left px-4 py-3 bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-red-500 rounded-lg transition-all text-red-400 text-sm font-medium flex items-center gap-3 group shadow-xs";
+                    iconSpan.className = HARD_RESET_ICON;
+                    btn.className = HARD_RESET.idle;
                 }
             }, 4000);
         }
@@ -1863,17 +1900,53 @@ export const ui = {
 
         this.dressResetButtons();
 
-        const mainView = document.getElementById('menu-main-view');
-        const settingsView = document.getElementById('menu-settings-view');
-        const title = document.getElementById('settings-title');
-        
-        if (mainView && settingsView && title) {
-            mainView.classList.remove('hidden');
-            settingsView.classList.add('hidden');
-            title.innerText = t('settings.title');
+        // The first tile goes back to where the menu was opened from: the
+        // desk during a day, the start screen before one. "Back to work"
+        // over the start screen would promise a desk that is not there.
+        // The marks follow the words, so a language switch keeps them.
+        // i18n-uses: menu.resume, menu.resume.sub, menu.close, menu.close.sub
+        const startup = this.isStartupOverlayOpen();
+        for (const [id, key] of [['text-menu-resume', startup ? 'menu.close' : 'menu.resume'],
+                                 ['sub-menu-resume', startup ? 'menu.close.sub' : 'menu.resume.sub']]) {
+            const el = document.getElementById(id);
+            if (el) { el.dataset.i18n = key; el.innerText = t(key); }
         }
 
+        // Always back to the tiles: a menu closed on a sub-page opened there
+        // again, with a back button where the player expected the menu.
+        this.showMenuPage('menu-main-view', false);
         this.showOverlay(modal);
+    },
+
+    // The menu's pages: the tiles, the settings, and the two behind "Save
+    // game" and "Community". One stands at a time, and the title names it.
+    // The title's mark follows the page, because applyStaticStrings()
+    // rewrites every data-i18n on a language switch - a fixed key there
+    // would rename whichever page was open.
+    // i18n-uses: menu.title, settings.title, menu.save, menu.community
+    MENU_PAGES: {
+        'menu-main-view': 'menu.title',
+        'menu-settings-view': 'settings.title',
+        'menu-save-view': 'menu.save',
+        'menu-community-view': 'menu.community',
+    },
+
+    showMenuPage: function(id, focus = true) {
+        if (!this.MENU_PAGES[id]) return;
+        // Binding mode listens to the whole document; leaving the key list
+        // has to end it, whichever page the player goes to.
+        this.cancelBindingKey();
+        for (const page of Object.keys(this.MENU_PAGES)) {
+            document.getElementById(page)?.classList.toggle('hidden', page !== id);
+        }
+        const title = document.getElementById('settings-title');
+        if (title) {
+            title.dataset.i18n = this.MENU_PAGES[id];
+            title.innerText = t(this.MENU_PAGES[id]);
+        }
+        // The keyboard follows to the page it is now on, the way it follows a
+        // window into showOverlay(): the button it pressed has just vanished.
+        if (focus) document.getElementById(id)?.querySelector('button')?.focus();
     },
     
     closeSettings: function() {
@@ -2345,14 +2418,16 @@ export const ui = {
     // --- RENDER THE VISUAL HOTKEYS ---
     // --- REPORT SYSTEM ---
 
-    openReportModal: function() {
+    openReportModal: function(from = null) {
         const modal = document.getElementById('report-modal');
+        this.state.menuReturn = from;
         this.showOverlay(modal);
     },
 
     closeReportModal: function() {
         const modal = document.getElementById('report-modal');
         this.hideOverlay(modal);
+        this.backToMenu();
     },
 
     sendReportMail: function() {

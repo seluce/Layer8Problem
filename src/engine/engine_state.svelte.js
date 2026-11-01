@@ -563,6 +563,9 @@ export const state = $state({
     // `boards` holds what was fetched per level for the scope on show; the
     // whole object is replaced on every open, which is the view's signal.
     leaderboard: { scope: 'global', boards: null, mine: null, loading: false, failed: false },
+    // The menu page a window was opened from (engine_ui.backToMenu()): the
+    // statistics and the leaderboard show a way back to it while it is set.
+    menuReturn: null,
     // Counts the openings, so the view can reset its tab on each one without
     // also resetting it when only the scope is flipped.
     leaderboardOpens: 0,

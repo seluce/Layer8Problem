@@ -4565,6 +4565,77 @@ await ok('The reading speed reaches the voice, stays in range and survives a new
         'a new line starts at normal speed: the rate is not applied after the src');
 });
 
+await ok('Every page of the menu is one showMenuPage() knows, and the menu opens on the tiles', () => {
+    // The menu became tiles with pages behind them (settings, save game,
+    // community). showMenuPage() hides every page it knows and shows one; a
+    // page it does not know would stay standing under the next one, and its
+    // title would never be named.
+    const html = readFileSync(new URL('../index.html', import.meta.url), 'utf-8');
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    const actions = readFileSync(new URL('../src/actions.js', import.meta.url), 'utf-8');
+
+    const inMarkup = [...html.matchAll(/<div id="([a-z-]+)" data-menu-page\b/g)].map(m => m[1]).sort();
+    const block = uiSrc.match(/MENU_PAGES: \{([\s\S]*?)\}/)?.[1] ?? '';
+    const known = [...block.matchAll(/'([a-z-]+)':/g)].map(m => m[1]).sort();
+    assert.ok(inMarkup.length >= 4, `only ${inMarkup.length} menu pages in the markup`);
+    assert.deepEqual(known, inMarkup, 'the markup and showMenuPage() disagree about the menu pages');
+
+    // Every way to a page goes through it, to a page that exists.
+    const routed = [...actions.matchAll(/'menu\.to\w+':\s*\(\) => engine\.showMenuPage\('([a-z-]+)'\)/g)].map(m => m[1]);
+    assert.ok(routed.length >= 4, 'the menu actions no longer route through showMenuPage()');
+    for (const id of routed) assert.ok(inMarkup.includes(id), `an action leads to "${id}", which is not a page`);
+
+    assert.match(uiSrc, /this\.showMenuPage\('menu-main-view', false\);\s*this\.showOverlay\(modal\);/,
+        'the menu no longer opens on its tiles');
+});
+
+await ok('A window the menu opened leads back to the menu page it came from', () => {
+    // Closing the statistics dropped the player into the game, with the menu
+    // gone - one level too far. Every window reached from a menu tile or page
+    // records where it came from and goes back there when it closes.
+    const html = readFileSync(new URL('../index.html', import.meta.url), 'utf-8');
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    const actions = readFileSync(new URL('../src/actions.js', import.meta.url), 'utf-8');
+    // A method's body: up to its closing brace, at the depth of the engine
+    // methods or of the nested engine.ui ones, whichever comes first.
+    const body = (name) => {
+        const at = uiSrc.indexOf(`${name}: function`);
+        assert.ok(at >= 0, `${name} is gone`);
+        const ends = ['\n    },', '\n        },'].map(m => uiSrc.indexOf(m, at)).filter(i => i > at);
+        return uiSrc.slice(at, Math.min(...ends));
+    };
+    for (const close of ['closeGlobalStats', 'closeLeaderboard', 'closeReportModal', 'closeModals']) {
+        assert.match(body(close), /backToMenu\(\)/, `${close} no longer leads back to the menu`);
+    }
+    for (const open of ['openGlobalStats', 'openLeaderboard', 'openReportModal', 'openExportModal', 'openImportModal']) {
+        assert.match(body(open), /function\(from = null\)[\s\S]*state\.menuReturn = from;/,
+            `${open} does not record where it was opened from`);
+    }
+    assert.match(body('backToMenu'), /this\.openSettings\(\);\s*if \(page !== 'menu-main-view'\) this\.showMenuPage\(page\);/,
+        'backToMenu() no longer returns to the page');
+
+    // The ways in name their page.
+    assert.match(actions, /'settings\.toExport':[^\n]*openExportModal\('menu-save-view'\)/, 'export forgets the save page');
+    assert.match(actions, /'settings\.toImport':[^\n]*openImportModal\('menu-save-view'\)/, 'import forgets the save page');
+    assert.match(actions, /'settings\.toReport':[^\n]*openReportModal\('menu-community-view'\)/, 'feedback forgets the community page');
+    assert.match(actions, /openGlobalStats:\s*\(from\) => engine\.openGlobalStats\(from \|\| null\)/, 'the stats tile loses its page');
+    assert.match(actions, /openLeaderboard:\s*\(from\) => engine\.openLeaderboard\(from \|\| null\)/, 'the leaderboard tile loses its page');
+    for (const action of ['openGlobalStats', 'openLeaderboard']) {
+        assert.match(html, new RegExp(`data-action="${action}" data-arg="menu-main-view"`), `the ${action} tile does not pass its page`);
+    }
+});
+
+await ok('The hard reset tile has one look per state, written from one place', () => {
+    // The timeout that disarms it used to write a grey bar of its own, unlike
+    // the look it was opened with.
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    const lines = uiSrc.split('\n').filter(l => /(resetBtn|btn)\.className = /.test(l));
+    assert.ok(lines.length >= 4, `only ${lines.length} class writes found - has the reset moved?`);
+    for (const line of lines) {
+        assert.match(line, /className = HARD_RESET\.(idle|armed|going);/, `a literal class list is back: ${line.trim()}`);
+    }
+});
+
 await ok('A half-done key binding never outlives the key list', () => {
     // Binding mode listens to the whole document. Since the key bindings are
     // a tab rather than a window, nothing closes them by itself: another tab,
@@ -4575,8 +4646,12 @@ await ok('A half-done key binding never outlives the key list', () => {
         'changing tabs leaves a key half-bound');
     const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
     assert.match(uiSrc, /closeSettings: function\(\) \{\s*this\.cancelBindingKey\(\);/, 'closing the menu leaves a key half-bound');
+    // Back to the menu - and since the menu has more pages, to any of them:
+    // every page change goes through showMenuPage(), which ends it first.
     const actions = readFileSync(new URL('../src/actions.js', import.meta.url), 'utf-8');
-    assert.match(actions, /'menu\.toMain':\s*\(\) => \{\s*engine\.cancelBindingKey\(\);/, 'going back to the menu leaves a key half-bound');
+    assert.match(actions, /'menu\.toMain':\s*\(\) => engine\.showMenuPage\('menu-main-view'\)/, 'going back to the menu bypasses showMenuPage()');
+    assert.match(uiSrc, /showMenuPage: function\(id, focus = true\) \{\s*if \(!this\.MENU_PAGES\[id\]\) return;[\s\S]{0,200}?this\.cancelBindingKey\(\);/,
+        'changing the menu page leaves a key half-bound');
     // The window the bindings used to have is gone for good, from every list.
     const keys = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
     const html = readFileSync(new URL('../index.html', import.meta.url), 'utf-8');

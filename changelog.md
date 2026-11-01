@@ -16,6 +16,8 @@ Settings:
 * The settings are sorted into four tabs - General, Audio, Display and Controls - with room to say what each option does. The key bindings are one of them now, instead of a window of their own.
 * The narrator can be told what to read: scenes, the morning, the blow-off and the written warning, H.A.L.G.E.R.D. and the tutorial - each on its own.
 * The narrator's speed can be set, from slower to twice as fast. The voice keeps its pitch.
+* The menu is laid out anew: coloured tiles for where you can go, and a bar below them for the ways out. The save game and the community each have a page of their own, and in the browser the menu points to the Steam version and the source code.
+* Closing the statistics, the leaderboard, the save dialogs or the feedback form now leads back to the menu instead of straight into the game. The global statistics and the feedback form come in the new look as well.
 
 The day to day:
 * Items are easy to make out now: they sit on a lighter slot, so the black cable ties, the tie and the headphones no longer vanish into the dark.
