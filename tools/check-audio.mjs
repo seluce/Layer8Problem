@@ -1,6 +1,5 @@
 /**
- * Runs before every build, and refuses one that would silently throw audio
- * away.
+ * Runs before every build, and makes sure the audio survives it.
  *
  * The audio sits in the repository ONCE, in docs/, because that is what GitHub
  * Pages serves. public/audio/ is in .gitignore: it is the local staging area
@@ -16,21 +15,31 @@
  * every audio file and reports success. Nothing in the output says so, and the
  * next commit removes them from the repository too.
  *
- * So: if docs/ holds audio and public/ does not, stop.
+ * Up to 6.4 this script refused that build and told the operator to re-encode
+ * from the masters. That was the wrong half of the job: the files it was
+ * protecting were sitting right there in docs/, and the only thing missing was
+ * a copy. So it copies them now, and a fresh clone builds with one commit of
+ * audio in the history and no render.
+ *
+ * The copy is safe because the filenames are content-addressed (tools/
+ * voice-text.mjs: a piece is filed under the SHA-1 of its text). Same name
+ * means same audio, so a file already staged is never overwritten and never
+ * needs comparing - which is also why a piece that exists only in public/ is
+ * left alone: it is a NEW recording waiting for its first build, not a stray.
  */
-import { existsSync, readdirSync } from 'node:fs';
+import { existsSync, readdirSync, mkdirSync, copyFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 
-/** Languages that have audio, counted by their .opus files. */
+/** The .opus filenames per language, or {} if the folder is not there. */
 function stock(base) {
     if (!existsSync(base)) return {};
     const out = {};
     for (const lang of readdirSync(base, { withFileTypes: true })) {
         if (!lang.isDirectory()) continue;
-        const n = readdirSync(`${base}/${lang.name}`).filter(f => f.endsWith('.opus')).length;
-        if (n) out[lang.name] = n;
+        const files = readdirSync(`${base}/${lang.name}`).filter(f => f.endsWith('.opus'));
+        if (files.length) out[lang.name] = files;
     }
     return out;
 }
@@ -38,24 +47,22 @@ function stock(base) {
 const built = stock(`${ROOT}docs/audio`);
 const staged = stock(`${ROOT}public/audio`);
 
-const lost = Object.keys(built).filter(l => (staged[l] ?? 0) === 0);
-if (lost.length) {
-    console.error('\n✗ This build would delete audio that is in the repository.\n');
-    for (const l of lost) {
-        console.error(`    docs/audio/${l}/    ${built[l]} files`);
-        console.error(`    public/audio/${l}/  empty or missing\n`);
-    }
-    console.error('  vite clears docs/ and refills it from public/, so the files would be gone');
-    console.error('  with no error and no warning. Restore public/audio/ from the masters:\n');
-    console.error('      node tools/make-audio.mjs --lang=<lang>\n');
-    console.error('  (that re-encodes from voice/master/ and only calls the provider for');
-    console.error('   pieces no master exists for).\n');
-    process.exit(1);
+let copied = 0;
+for (const [lang, files] of Object.entries(built)) {
+    const have = new Set(staged[lang] ?? []);
+    const missing = files.filter(f => !have.has(f));
+    if (!missing.length) continue;
+
+    const dir = `${ROOT}public/audio/${lang}`;
+    mkdirSync(dir, { recursive: true });
+    for (const f of missing) copyFileSync(`${ROOT}docs/audio/${lang}/${f}`, `${dir}/${f}`);
+
+    const whole = have.size === 0;
+    console.log(`  ${whole ? '→' : '+'} public/audio/${lang}/: ${missing.length} ${whole ? 'files restored from docs/' : 'missing files topped up from docs/'}`);
+    copied += missing.length;
 }
 
-// A shrunken staging area is the same accident, one step smaller.
-const short = Object.keys(built).filter(l => staged[l] && staged[l] < built[l]);
-for (const l of short) {
-    console.log(`  ! public/audio/${l}/ has ${staged[l]} files, docs/audio/${l}/ has ${built[l]}.`);
-    console.log(`    The build will leave ${built[l] - staged[l]} of them out.`);
+if (copied) {
+    console.log(`    ${copied} in total. vite clears docs/ and refills it from public/, so`);
+    console.log('    without this the build would have dropped them without a word.\n');
 }

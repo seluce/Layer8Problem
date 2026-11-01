@@ -60,11 +60,10 @@ window.engine = engine;
 // are being replaced. Its two reset buttons say more than their marks can, and
 // the armed hard reset kept its flag while losing its question.
 onLanguageChange(() => {
-    // The voice first. A scene repaints itself in the new language and
-    // relocaliseScene() starts the new recording below; a RESULT does not
-    // repaint - it resolves its recipe on the spot - so without this the
-    // narrator would read the German line out over the English text that
-    // replaced it.
+    // The voice first: stop the line that belongs to the old language, so it
+    // cannot read German out over the English text replacing it.
+    // relocaliseScene() starts the new recording - for a scene, which
+    // repaints, and for a result, which does not.
     engine.hushNarration();
     engine.relocaliseScene();
     engine.dressResetButtons();

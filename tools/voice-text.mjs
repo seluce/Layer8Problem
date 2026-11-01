@@ -14,6 +14,8 @@
  */
 import { createHash } from 'node:crypto';
 import { DB, ensure, loadCore, currentLanguage, POOL_NAMES } from '../src/data.js';
+import { de } from '../src/i18n/de.js';
+import { en } from '../src/i18n/en.js';
 
 /** Pools that play in the terminal. A new one is added here and nowhere else. */
 export const TERMINAL = ['coffee', 'server', 'calls', 'sidequests', 'bossfights',
@@ -21,6 +23,51 @@ export const TERMINAL = ['coffee', 'server', 'calls', 'sidequests', 'bossfights'
 
 /** Fields that hold spoken prose. `t` (the button) is deliberately absent. */
 const SPOKEN = new Set(['text', 'r', 'txt']);
+
+/**
+ * The interface strings that are spoken, named one by one.
+ *
+ * The dictionary is labels, and a read-out list of labels is a railway
+ * announcement - so this is a LIST, not a rule. What earns a place here is
+ * prose the player reads on a screen, in the same way a scene is read:
+ *
+ *   - H.A.L.G.E.R.D.'s two notices, the ones that arrive uninvited the first
+ *     time a mail and an emergency ever happen;
+ *   - the tutorial, which is the one stretch of the game where he does ALL
+ *     the talking. A player who switched the narrator on for the reading
+ *     would otherwise meet a silent tutorial and a game that reads itself.
+ *   - the sample the settings play, so the narrator's slider has a preview
+ *     like the other two.
+ *
+ * Read in his own voice, not a machine's. Alexander already reads every one
+ * of the game's three hundred characters; making H.A.L.G.E.R.D. the single
+ * exception would be the inconsistency, not the rule.
+ *
+ * TITLES AND BUTTONS ARE NOT HERE, on purpose - `tutorial.gotIt`,
+ * `tutorial.ask.yes`, every `.title`. Neither is the log, the ticker or the
+ * idle screen: none of them is voiced for the game either.
+ */
+export const SPOKEN_KEYS = [
+    'set.narration.sample',
+
+    'hint.mail.text',
+    'hint.boss.text',
+
+    'tutorial.ask.text',
+    'tutorial.step.call.desc',
+    'tutorial.step.tickets.desc',
+    'tutorial.step.clock.desc',
+    'tutorial.step.coffee.desc',
+    'tutorial.step.errand.desc',
+    'tutorial.step.server.desc',
+    'tutorial.step.stats.desc',
+    'tutorial.step.inv.desc',
+    'tutorial.step.inv.descDonut',
+    'tutorial.step.team.desc',
+    'tutorial.done.text',
+];
+
+const DICTS = { de, en };
 
 /**
  * A door is not a sentence.
@@ -50,15 +97,29 @@ export const TRANSFORM = 1;
  * Said, not spelled. The screen keeps the dots; a voice reading them out
  * letter by letter turns the company system into a hardware list.
  *
- * This fires zero times in the terminal pools today - H.A.L.G.E.R.D. speaks in
- * the start sequence and the chronicle, neither of which is voiced. It stays as
- * a guard for the day the name wanders into an event.
+ * Written for a day that arrived: it fired zero times while only the event
+ * pools were collected, because H.A.L.G.E.R.D. speaks in the start sequence and
+ * the chronicle and neither of those is voiced. The interface keys above put
+ * him on the voiced list, and the rule now rewrites three pieces per language -
+ * his two warnings and the closing screen of the tutorial.
  */
 const SPOKEN_AS = [
     [/H\.A\.L\.G\.E\.R\.D\./g, 'Halgerd'],
 ];
 
-const KNOWN_TAGS = /<br\s*\/?>/gi;
+/**
+ * Markup that is dropped rather than spoken.
+ *
+ * `<br>` is all the data tree carries - lint:voice fails on any other tag, so
+ * that is enforced rather than assumed. The emphasis tags are here for the
+ * INTERFACE strings above, where `<b>` marks the number in a tutorial step.
+ *
+ * Adding them did not make a single rendered piece stale, which is why
+ * TRANSFORM below stays at 1: no voiced string in either tree contains a tag
+ * other than `<br>`, so a rule about `<b>` cannot change what any of them
+ * sounds like. Measured, not assumed - the checker refuses an unknown tag.
+ */
+const KNOWN_TAGS = /<\/?(?:br|b|i|em|strong)\s*\/?>/gi;
 
 export function spokenForm(s) {
     let out = s.replace(KNOWN_TAGS, ' ');
@@ -124,6 +185,10 @@ export async function collectEntries(lang) {
                 if (!SPOKEN.has(k) || !v.trim()) continue;
                 if (INSTRUCTION.test(v.trim())) continue;
                 for (const m of v.match(/<[^>]+>/g) ?? []) {
+                    // The data tree is held to <br> alone: the emphasis tags
+                    // KNOWN_TAGS also drops are there for the interface
+                    // strings, and prose that starts carrying markup is a
+                    // thing to notice, not to swallow.
                     if (!/^<br\s*\/?>$/i.test(m)) unknownTags.set(m, (unknownTags.get(m) ?? 0) + 1);
                 }
                 entries.push({ key: [...base, k].join('/'), src: v });
@@ -137,6 +202,28 @@ export async function collectEntries(lang) {
         const v = DB[pool];
         if (!v) throw new Error(`Pool "${pool}" is not loaded.`);
         collect(v, pool, [pool], '');
+    }
+
+    // The named interface strings, under a prefix of their own so they can
+    // never collide with a pool.
+    const dict = DICTS[lang];
+    for (const key of SPOKEN_KEYS) {
+        const v = dict[key];
+        if (typeof v !== 'string' || !v.trim()) {
+            throw new Error(`Spoken interface key "${key}" is missing from ${lang}.js.`);
+        }
+        // A PLACEHOLDER CANNOT BE SPOKEN. tf() fills {name} at the moment of
+        // display; a recording is made months earlier and would say the braces
+        // out loud, in every game, for ever. There is no half-measure here -
+        // either the sentence is fixed or it does not get a voice.
+        if (v.includes('{')) {
+            throw new Error(`Spoken interface key "${key}" carries a placeholder: ${v}`);
+        }
+        for (const m of v.match(/<[^>]+>/g) ?? []) {
+            if (!KNOWN_TAGS.test(m)) unknownTags.set(m, (unknownTags.get(m) ?? 0) + 1);
+            KNOWN_TAGS.lastIndex = 0;      // /g keeps state between tests
+        }
+        entries.push({ key: `i18n/${key}`, src: v });
     }
 
     const seen = new Set();

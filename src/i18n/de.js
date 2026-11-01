@@ -97,6 +97,9 @@ export const de = {
     'set.narration.title':       'Sprecher',
     'set.narration.desc':        'Liest die Szenen vor. Eine KI-Stimme.',
     'set.narration.level':       'Lautstärke des Sprechers',
+    // Spoken, not shown. The settings play it so the narrator's slider has a
+    // preview like the other two - see tools/voice-text.mjs, SPOKEN_KEYS.
+    'set.narration.sample':      'Testdurchsage. So laut liest der Erzähler, wenn im Terminal etwas passiert.',
     'set.musicStyle.title':      'Musik-Stil',
     'set.musicStyle.desc':       'Wähle deinen musikalischen Wahnsinn.',
     'set.section.display':       'Anzeige & Layout',

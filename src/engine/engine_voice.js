@@ -1,6 +1,6 @@
 import { KEYS } from './keys.js';
 import { voiceHash } from './sha1.js';
-import { language } from '../i18n/i18n.svelte.js';
+import { language, t } from '../i18n/i18n.svelte.js';
 
 /**
  * The narrator.
@@ -78,7 +78,8 @@ export const voice = {
      * so passing nothing is the normal way to stop: going idle, a morning
      * screen, the boot sequence.
      *
-     * NOT WHILE A WINDOW STANDS OVER THE TERMINAL. The same question the
+     * NOT WHILE A WINDOW STANDS OVER THE TERMINAL - that is the whole
+     * difference between this and narrateWindow() below. The same question the
      * keyboard asks before reaching through one, and for a related reason: a
      * door event opens the noticeboard, the intranet or the vending machine
      * over the terminal, and the result underneath it would be read out to a
@@ -88,10 +89,41 @@ export const voice = {
      * PLAYER opened too: the backpack, the archive, the settings.
      */
     narrate: function(text) {
+        this.hushNarration();      // also drops a line that was only paused
+        if (this.windowOverTerminal() || this.state.isEmailOpen) return;
+        this._speak(text);
+    },
+
+    /**
+     * Reads text that belongs to the WINDOW on top, not to the terminal.
+     *
+     * The rule above exists because a covered terminal is a terminal nobody is
+     * reading. It says nothing about the thing doing the covering - and three
+     * of those have something to say: H.A.L.G.E.R.D.'s two warnings, the nine
+     * tutorial bubbles, and the sample line in the settings. Sent through
+     * narrate() every one of them would be refused by the very rule that
+     * protects them, because the window they belong to is the window standing
+     * over the terminal.
+     *
+     * So the gate is the only difference, and it is the caller that knows
+     * which side of it the text is on. Everything after the gate is shared.
+     */
+    narrateWindow: function(text) {
         this.hushNarration();
+        this._speak(text);
+    },
+
+    /**
+     * Plays the recording of `text`, if there is one. No questions about what
+     * is on screen - see the two callers above for those.
+     *
+     * A missing file is a normal answer: the interface strings that were not
+     * recorded, anything written since the last render. The player hears
+     * nothing and the game carries on.
+     */
+    _speak: function(text) {
         if (!text || !this.state.narrationEnabled) return;
         if (this.state.narrationVolume <= 0) return;
-        if (this.windowOverTerminal() || this.state.isEmailOpen) return;
 
         const el = this._element();
         el.src = `audio/${language()}/${voiceHash(text)}.opus`;
@@ -109,13 +141,84 @@ export const voice = {
     hushNarration: function() {
         const el = this.narrator;
         if (el && !el.paused) { el.pause(); el.currentTime = 0; }
+        this.interrupted = false;
         this._done();
+    },
+
+    /**
+     * Holds the line where it is, for something that arrived UNINVITED.
+     *
+     * The distinction is the whole point. Every other window is one the player
+     * opened, and opening a window is a decision to stop listening - those get
+     * hushNarration() and the line is over. A mail drops on a two-second timer
+     * into the middle of a scene, carries a countdown, and has to be read now;
+     * cutting the narrator off for good because the game interrupted the
+     * player would lose the rest of a scene nobody chose to leave.
+     *
+     * So the position is kept and resumeNarration() picks it up again. The
+     * music comes back up meanwhile - a pause is not a duck.
+     */
+    interrupted: false,
+    pauseNarration: function() {
+        const el = this.narrator;
+        if (!this.speaking || !el || el.paused) return;
+        el.pause();
+        this.interrupted = true;
+        this.speaking = false;
+        this.duckMusic(false, 'narration');
+    },
+
+    resumeNarration: function() {
+        if (!this.interrupted) return;
+        this.interrupted = false;
+        const el = this.narrator;
+        // Only if there is still something to say, and nothing has taken the
+        // terminal's place in the meantime.
+        if (!el || !el.src || el.ended) return;
+        if (!this.state.narrationEnabled || this.state.narrationVolume <= 0) return;
+
+        // windowOverTerminal() and NOT state.isEmailOpen, which is the one
+        // question narrate() asks that this one must not.
+        //
+        // All four closing paths call hideOverlay() first and clear the flag
+        // on the next line - so at the moment the line would come back, the
+        // flag still describes the window that is going. Asking it here meant
+        // the resume never once fired: the pause held 10.49 seconds of a
+        // coffee scene and then threw them away. Found in the preview, which
+        // is the only place the order is visible.
+        //
+        // Reordering those four was the other way, and the wrong one: a fifth
+        // closing path would have to remember, and nothing would say so.
+        if (this.windowOverTerminal()) return;
+        this.speaking = true;
+        this.duckMusic(true, 'narration');
+        el.play().catch(() => this._done());
     },
 
     toggleNarration: function(isOn) {
         this.state.narrationEnabled = isOn;
         localStorage.setItem(KEYS.narrationEnabled, isOn);
-        if (!isOn) this.hushNarration();
+        if (!isOn) { this.hushNarration(); return; }
+        this.previewNarration();
+    },
+
+    /**
+     * What the switch and the slider sound like.
+     *
+     * The effects and the music answer the moment they are touched; the
+     * narrator could not, because it had no recording of its own - every one
+     * of its 4,648 files belongs to a scene, and the settings stand over the
+     * terminal where the narrator is not allowed to speak anyway. So it has
+     * one sentence of its own, recorded with the rest.
+     *
+     * Deliberately NOT on every step of the slider: a five-second line
+     * restarting on each tick of a drag is not a volume control, it is a
+     * stutter. The slider plays it when it is let go.
+     *
+     * i18n-uses: set.narration.sample
+     */
+    previewNarration: function() {
+        this.narrateWindow(t('set.narration.sample'));
     },
 
     /**

@@ -90,6 +90,8 @@ export const en = {
     'set.narration.title':       'Narrator',
     'set.narration.desc':        'Reads the scenes out. An AI voice.',
     'set.narration.level':       'Narrator volume',
+    // Spoken, not shown - see tools/voice-text.mjs, SPOKEN_KEYS.
+    'set.narration.sample':      'Test announcement. This is how loud the narrator reads when something happens in the terminal.',
     'set.musicStyle.title':      'Music style',
     'set.musicStyle.desc':       'Choose your particular madness.',
     'set.section.display':       'Display & layout',

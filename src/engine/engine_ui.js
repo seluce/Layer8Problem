@@ -10,6 +10,32 @@ import { drawIndex } from './draw_bag.js';
 // Maximum number of lines kept in the activity log.
 const LOG_MAX_ENTRIES = 50;
 
+/**
+ * Has the player done anything yet?
+ *
+ * showOverlay() hands the keyboard to the window it opens, which is right for
+ * a window somebody asked for and wrong for one that is simply THERE when the
+ * page loads: the start screen, and the question about an interrupted workday.
+ * Those took the keyboard before a single key had been pressed - and the start
+ * screen's first control is the DE/EN switch in the corner, so the game opened
+ * with a ring around "DE".
+ *
+ * Whether that ring is DRAWN is a browser's judgement call. :focus-visible is
+ * meant to say "the player is navigating by keyboard", and with no input at
+ * all to judge by, Firefox says yes and Chromium says no. So this was visible
+ * on one browser and invisible on the other, which is why it is a rule here
+ * rather than something to check by eye.
+ *
+ * The first Tab still lands on the first control - engine.js traps Tab inside
+ * the open dialog and focuses it when the keyboard is outside. The ring then
+ * means what it is supposed to mean.
+ */
+let playerHasActed = false;
+for (const ev of ['pointerdown', 'keydown', 'touchstart']) {
+    // Optional-call: the test bench's document has no listeners.
+    document.addEventListener?.(ev, () => { playerHasActed = true; }, { once: true, capture: true });
+}
+
 // The windows that can stand over the terminal while a result is on screen -
 // see windowOverTerminal(). The same ones the Escape key closes.
 const WINDOWS_OVER_TERMINAL = [
@@ -17,6 +43,17 @@ const WINDOWS_OVER_TERMINAL = [
     'report-modal', 'global-stats-modal', 'inventory-modal', 'team-modal',
     'archive-modal', 'knowledge-modal', 'board-modal', 'excuse-modal', 'settings-modal'
 ];
+
+/**
+ * The windows that INTERRUPT the terminal rather than replace it.
+ *
+ * A mail is not a window the player opened. It drops on a two-second timer in
+ * the middle of a scene and carries a countdown, so the narrator has to get
+ * out of the way - and then hand the line back, because nobody chose to leave
+ * that scene. Everything on WINDOWS_OVER_TERMINAL is the opposite: the player
+ * opened it, which is a decision to stop listening.
+ */
+const INTERRUPTS_TERMINAL = ['email-modal'];
 
 /**
  * A blob as base64, a slice at a time.
@@ -629,6 +666,7 @@ export const ui = {
         // over itself has covered nothing new, and the startup windows stand
         // over a terminal that is not saying anything yet.
         if (!wasOpen && WINDOWS_OVER_TERMINAL.includes(el.id)) this.hushNarration();
+        if (!wasOpen && INTERRUPTS_TERMINAL.includes(el.id)) this.pauseNarration();
 
         // The keyboard follows the window. aria-modal tells a SCREEN READER to
         // ignore what is behind it, but the tab order went on walking through
@@ -648,6 +686,7 @@ export const ui = {
         // offsetParent still reads null.
         setTimeout(() => {
             if (el.classList.contains('hidden')) return;    // closed again already
+            if (!playerHasActed) return;                    // see playerHasActed
             const stops = this.focusablesIn(el);
             // The control the CONFIRM KEY would press, where the window names
             // one - otherwise the ring sits on one button while Space presses
@@ -690,6 +729,9 @@ export const ui = {
         if (wasOpen) {
             const back = this._focusReturn.pop();
             if (back && typeof back.focus === 'function' && back.isConnected) back.focus();
+            // The narrator gets its line back - see INTERRUPTS_TERMINAL. A
+            // no-op unless this window is the one that took it.
+            if (INTERRUPTS_TERMINAL.includes(el.id)) this.resumeNarration();
         }
         return el;
     },

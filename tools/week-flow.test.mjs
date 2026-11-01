@@ -56,6 +56,9 @@ const { hooks } = await import('../src/engine/engine_hooks.js');
 const { inventory } = await import('../src/engine/engine_inventory.js');
 const { vendingMachine, crankDelays } = await import('../src/engine/engine_vending.js');
 const { voice } = await import('../src/engine/engine_voice.js');
+// Hoisted for the bench below. The music tests further down import it again
+// inside their own scope, which is what they did before and is left alone.
+const { audio } = await import('../src/engine/engine_audio.js');
 const { renderRecipe } = await import('../src/engine/recipe.js');
 const { useLanguage, language, t, tf } = await import('../src/i18n/i18n.svelte.js');
 // dayName() and the balance keys: the bench names what it expects through the
@@ -84,7 +87,15 @@ const engine = {
     // given something to say, and finishGame() calls it to stop the voice
     // reading the day's last result over the night screen - a stub there would
     // make that test pass whatever the engine does.
-    ...voice,
+    //
+    // ...audio with it, because the narrator leans on three things that live
+    // there - canSetVolume, duckMusic and audioCtx - and the engine always
+    // carries both. While the voice only ever stopped in this bench none of
+    // them was reached; the first line it actually SPEAKS here walks into all
+    // three (6.4: the hint in front of the first mail). Both are harmless
+    // with no tracks loaded: duckMusic bails on a missing track, and
+    // playMusic/stopMusic below still win as stubs - later spread wins.
+    ...audio, ...voice,
     showOverlay(t) { const id = overlayId(t); calls.overlays.push(id); openOverlays.add(id); },
     hideOverlay(t) { openOverlays.delete(overlayId(t)); },
     // Answered off that set rather than off the fake document. Every element
@@ -795,6 +806,35 @@ await ok('Every overlay answers to Escape, or is a named exception', () => {
     const silent = overlays.filter(id =>
         !allowedOverlays.has(id) && !escChain.includes(`'${id}'`) && !start.includes(`'${id}'`));
     assert.deepEqual(silent, [], `Escape does not reach: ${silent.join(', ')}`);
+});
+await ok('A window shown at page load does not take the keyboard', () => {
+    // showOverlay() hands the keyboard to the window it opens - right for a
+    // window somebody asked for, wrong for one that is simply THERE at load.
+    // intro-modal IS the start screen, so the game opened with the keyboard on
+    // the DE/EN switch in its corner, and Firefox drew a focus ring around it
+    // while Chromium drew none: with no input yet to judge by, the two
+    // browsers disagree about what :focus-visible means. Found on 01.11.2026
+    // by the operator, on Firefox.
+    //
+    // Asserted on the source because the bench's document has no focus and no
+    // listeners; the behaviour itself was measured in the built game.
+    const ui = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+
+    // The flag exists and is set by real input, not by anything the game does.
+    const listener = ui.match(/for \(const ev of \[([^\]]*)\]\)[\s\S]{0,220}?playerHasActed = true/);
+    assert.ok(listener, 'nothing sets playerHasActed from an input event');
+    for (const ev of ['pointerdown', 'keydown', 'touchstart']) {
+        assert.ok(listener[1].includes(ev), `${ev} does not count as the player acting`);
+    }
+
+    // And showOverlay asks before it moves the keyboard. Scoped to the body of
+    // the function, so a guard sitting somewhere else does not pass for it.
+    const show = ui.slice(ui.indexOf('showOverlay: function'), ui.indexOf('Counterpart to showOverlay'));
+    assert.ok(show.length > 200, 'showOverlay could not be read');
+    assert.match(show, /if \(!playerHasActed\) return;/,
+        'showOverlay moves the keyboard before the player has pressed anything');
+    assert.ok(show.indexOf('playerHasActed') < show.indexOf('.focus()'),
+        'the guard stands after the focus it is supposed to guard');
 });
 await ok('A restart clears the end screen out of the state, not only off the screen', () => {
     // Since 6.1 components/EndModal.svelte renders off `modal.open`, so hiding
@@ -4206,6 +4246,73 @@ await ok('The music ducks once for the fall and comes back once', async () => {
     box.state.musicEnabled = false;
     box.duckMusic(true); box.duckMusic(false);
     assert.equal(fades.length, 0, 'music that is switched off was faded');
+});
+
+await ok('An interrupted line keeps its place; a stopped one does not', () => {
+    // The mail is the one window that does not end the line it covers (6.4),
+    // and the whole difference between the two is currentTime. Checked on the
+    // module rather than through a window, because what has to hold is the
+    // bookkeeping: a resume that fires without a pause, or after a hush,
+    // would start a recording nothing on screen belongs to.
+    const el = { paused: false, currentTime: 7.5, ended: false, src: 'a.opus',
+                 pause() { this.paused = true; }, play() { this.paused = false; return Promise.resolve(); } };
+    const box = { ...audio, ...voice, state, narrator: el, speaking: true,
+                  bgmTracks: {}, gainNodes: {},
+                  windowOverTerminal: () => false };
+    state.narrationEnabled = true;
+    state.narrationVolume = 0.8;
+
+    box.pauseNarration();
+    assert.equal(el.paused, true, 'the mail did not quieten the narrator');
+    assert.equal(el.currentTime, 7.5, 'the pause rewound, so the scene would start over');
+    assert.equal(box.interrupted, true, 'nothing recorded that the line is owed back');
+
+    // isEmailOpen is still TRUE here, exactly as it is in the game: every
+    // closing path hides the window first and clears the flag on the next
+    // line. A resume that asked about it would never fire once.
+    state.isEmailOpen = true;
+    box.resumeNarration();
+    state.isEmailOpen = false;
+    assert.equal(el.paused, false, 'the line was never given back');
+    assert.equal(el.currentTime, 7.5, 'the line came back at the wrong place');
+    assert.equal(box.interrupted, false, 'still owed after it was paid');
+
+    // A second close must not start anything.
+    el.paused = true;
+    box.resumeNarration();
+    assert.equal(el.paused, true, 'a window that took nothing gave something back');
+
+    // And a line thrown away stays thrown away: the player opened a window
+    // over the mail, which ends the scene for good.
+    box.speaking = true;
+    el.paused = false;
+    box.pauseNarration();
+    box.hushNarration();
+    assert.equal(box.interrupted, false, 'a hushed line is still waiting to be resumed');
+    el.paused = true;
+    box.resumeNarration();
+    assert.equal(el.paused, true, 'a hushed line was resumed');
+
+    // What the resume still has to refuse: a window the player opened over
+    // the mail. That one ends the scene, flag or no flag.
+    box.speaking = true; el.paused = false;
+    box.pauseNarration();
+    box.windowOverTerminal = () => true;
+    el.paused = true;
+    box.resumeNarration();
+    assert.equal(el.paused, true, 'the line came back behind an open window');
+    box.windowOverTerminal = () => false;
+
+    // A mail arriving into SILENCE must owe nothing. The element keeps the
+    // src of whatever it last played, so a pause that books a debt with
+    // nothing running makes closing the mail replay a scene that is three
+    // clicks in the past.
+    box.speaking = false;
+    el.paused = true;
+    box.pauseNarration();
+    assert.equal(box.interrupted, false, 'silence was recorded as an interrupted line');
+    box.resumeNarration();
+    assert.equal(el.paused, true, 'closing the mail replayed an old recording');
 });
 
 await ok('All six tracks are levelled to one loudness', async () => {

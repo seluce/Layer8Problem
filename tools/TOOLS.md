@@ -19,7 +19,7 @@ the repository root.
 | Coverage simulator | `npm run sim:coverage [days] [--runs=N] [--compare] [--lang=en]` | before every change to the DRAW, no gate |
 | Voice manifest | `npm run voice:manifest` / `npm run lint:voice` | after every change to TERMINAL prose, once audio exists |
 | Generation run | `npm run voice:audio -- [--trial=x] [--pool=p] [--limit=n]` | turns the manifest into audio; costs money, needs `ELEVENLABS_API_KEY` |
-| Audio guard | `node tools/check-audio.mjs` | runs as `prebuild`; refuses a build that would delete committed audio |
+| Audio guard | `node tools/check-audio.mjs` | runs as `prebuild`; restores `public/audio/` from `docs/` so a build cannot drop it |
 | Test suites | `npm test` | before every delivery |
 | Console tool | `tools/dev-week.js` into the browser console | play testing on the live game |
 | String checker | `npm run lint:i18n` | after **every** change to interface strings, gate at 0/0 |
@@ -523,7 +523,7 @@ and how far the plan's remainder still reaches.
 ## 8. `npm test` — the five test suites, in both languages
 
 ```
-npm test        # 17 / 249 / 20 / 46 / 6, then the same five again with --lang=en
+npm test        # 17 / 251 / 20 / 46 / 12, then the same five again with --lang=en
 npm run test:de # one language only, while working
 npm run test:en
 ```
@@ -577,7 +577,23 @@ The fifth suite, and the reason it is its own: every link between a sentence on
 screen and the file that speaks it fails SILENTLY. A digest computed one way in
 Node and another way in the browser does not throw — the narrator is simply
 mute, in the shipped game only. A window that forgets to hush reads a result
-out over the noticeboard. Six checks, twelve mutation probes (01.11.2026).
+out over the noticeboard. Twelve checks, twenty-five mutation probes
+(01.11.2026).
+
+Six of those checks arrived with the voiced interface strings and the two
+behaviours around them, and two of them were written twice. The first version
+of the reachability check searched the raw source for each key and passed while
+the call site was deleted: every voiced key also stands in an `i18n-uses:`
+comment a few rows above, and `tutorial.ask.text` is the mark `dressAskModal()`
+writes besides. It now strips comments, claims only that the key has not been
+RENAMED out from under the list, and the four places that actually speak are
+asserted separately.
+
+Two faults the probes could not have found, because both were in the ORDER of
+things and only the running game shows that: a language switch spoke a tutorial
+bubble that `skip()` had left behind in the state, and the mail's resume asked
+`state.isEmailOpen` — a flag every closing path clears one line AFTER hiding
+the window, so the line was never once given back. Both are covered now.
 
 ## 9. `dev-week.js` — the console tool
 

@@ -2,12 +2,17 @@
 
 Sound:
 * The terminal is read out loud. Every scene, every outcome, in both languages, by a voice that is not a person's - the settings say whose and what made it, and the switch beside the volume turns it off.
+* H.A.L.G.E.R.D. speaks too: the tutorial, and the two warnings before the first email and the first emergency.
+* The narrator's slider has a line of its own to try, the way the sound and the music do.
+* An email arriving no longer ends the scene being read. It waits, and goes on where it stopped once the mail is answered.
+* Changing language mid-scene starts the new language from the top, on an outcome as well as on an event.
 * The music is quieter, and it stays at one loudness now instead of jumping between tracks. It steps back while the narrator speaks.
 
 The day to day:
 * A career that has worked its way through a pool is now shown the scenes where a decision is still untaken, rather than ones it has read to the end. Known scenes still come back - that is what they are for - but the ones with something left come first.
 
 Bug fixes:
+* The start screen no longer opens with the keyboard sitting on the language switch in its corner. The focus ring appears when you press Tab, which is when it means something.
 * On a phone, a very long word no longer pushes text out of its frame. Events, mails, replies and chat messages were all cut off at the edge where one turned up - the coffee machine's revenge was readable up to 'Das Display leuchte' and stopped there.
 
 ---

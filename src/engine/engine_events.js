@@ -2,7 +2,7 @@ import { DB, ensure } from '../data.js';
 import { t } from '../i18n/i18n.svelte.js';
 import { platform } from '../platform.js';
 import { PLAYER_CHAR, charDisplayName } from './chars.js';
-import { findEventById, itemNameValue } from './recipe.js';
+import { findEventById, itemNameValue, renderRecipe } from './recipe.js';
 import { drawIndex } from './draw_bag.js';
 
 /**
@@ -131,6 +131,10 @@ export const events = {
         if (this.state.modal?.open) return false;
         try { localStorage.setItem(key, 'true'); } catch { /* no storage, no second chance */ }
         this.showModal(t(titleKey), t(textKey), false, 'halgerd', then);
+        // narrateWindow, not narrate: showModal has just opened a window over
+        // the terminal, and narrate() refuses to speak behind one. This text
+        // belongs to that window. See engine_voice.narrateWindow().
+        this.narrateWindow(t(textKey));
         return true;
     },
 
@@ -1099,8 +1103,9 @@ export const events = {
      * end in the same pure setTerminalEvent() the first render used.
      *
      * What it no longer has to touch, because those surfaces now follow on
-     * their own: the result screen, the morning's status line, the log and the
-     * bubbles of a phone chat. All four used to be frozen here on the argument
+     * their own: the result screen (its TEXT - the voice over it is a separate
+     * matter, see the result branch below), the morning's status line, the log
+     * and the bubbles of a phone chat. All four used to be frozen here on the argument
      * that a record should keep the language it was written in - and the
      * argument did not survive contact with the running game. The log is the
      * account of everything the player has done, half of it in the other
@@ -1134,6 +1139,41 @@ export const events = {
         if (term.mode === 'morning' && this.state.lastMoodId) {
             const mood = (DB.moods ?? []).find(m => m.id === this.state.lastMoodId);
             if (mood) this.setTerminalMorning(mood.title, mood.text, term.morning?.conditions ?? '');
+            return;
+        }
+
+        /*
+         * The result screen: the text follows on its own, the VOICE cannot.
+         *
+         * A result is drawn from a recipe, so renderRecipe() re-reads it out
+         * of the new tree on the next repaint and the sentence on screen
+         * changes language without anything here. The recording does not -
+         * engine.js has just hushed the German line, and nothing would start
+         * the English one, so a switch on a result screen used to mean
+         * silence until the next click.
+         *
+         * Narrated from the recipe rather than from a stored sentence, which
+         * is what makes it exact: what renderRecipe() answers IS what the
+         * player is reading, and the hash of that is the recording. A recipe
+         * that no longer resolves gives null and stays silent, same as the
+         * screen's own fallback.
+         *
+         * A REFERENCE and nothing else, which is narrower than it first looks
+         * and was measured rather than reasoned:
+         *
+         *   { ref }  the normal option result. It points into the tree, so it
+         *            re-resolves and both the text and the recording follow.
+         *   { k }    a dictionary line. Interface rather than written prose,
+         *            never recorded - the same exclusion the first paint makes
+         *            (resolveTerminal hands over `recipe?.k ? null : res`).
+         *   { msg }  a sentence composed at runtime, for a result that could
+         *            not be located. It is FROZEN: the screen keeps the
+         *            language it was written in. Narrating it would ask for
+         *            the old language's checksum under the new language's
+         *            folder - a 404 every time.
+         */
+        if (term.mode === 'result') {
+            if (term.result?.text?.ref) this.narrate(renderRecipe(term.result.text));
             return;
         }
 

@@ -139,10 +139,11 @@
                   desc: t('set.narration.desc'),
                   get: () => game.narrationEnabled, set: (v) => engine.toggleNarration(v),
                   level: () => game.narrationVolume, setLevel: (v) => engine.setNarrationVolume(v),
+                  settled: () => engine.previewNarration(),
                   step: 0.05, levelTitle: t('set.narration.level') },
 
                 { kind: 'select', icon: '📻', img: 'set_musicstyle', title: t('set.musicStyle.title'),
-                  desc: t('set.musicStyle.desc'),
+                  desc: t('set.musicStyle.desc'), wide: false,
                   focus: 'focus:border-amber-500', options: MUSIC_STYLES,
                   get: () => game.musicStyle, set: (v) => engine.changeMusicStyle(v) }
             ]
@@ -299,16 +300,25 @@
         </div>
         <div class="flex items-center gap-3 mt-1 pl-9 pr-1 opacity-50 focus-within:opacity-100 hover:opacity-100 transition-opacity">
             <span class="text-[0.625rem] text-slate-500">🔈</span>
+            <!-- `onchange` as well as `oninput`: a row may want to answer when
+                 the slider is LET GO rather than on every step of a drag. The
+                 narrator does - its sample is a whole sentence, and restarting
+                 it on each tick would be a stutter, not a volume control. -->
             <input type="range" min="0" max="1" step={row.step} class={SLIDER}
                    aria-label={row.levelTitle}
-                   value={row.level()} oninput={(e) => row.setLevel(e.currentTarget.value)}>
+                   value={row.level()} oninput={(e) => row.setLevel(e.currentTarget.value)}
+                   onchange={() => row.settled?.()}>
             <span class="text-[0.625rem] text-slate-500">🔊</span>
         </div>
     </div>
 {/snippet}
 
 {#snippet selectRow(row)}
-    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 md:col-span-2">
+    <!-- A select spans both columns by default: its control is 13rem wide and
+         wants the room. `wide: false` lets one share a line where the section
+         would otherwise leave a hole - the audio section has three sliders and
+         one select, so without it the third slider stands alone. -->
+    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 sm:gap-4 group bg-slate-800/50 p-3 rounded-lg border border-slate-700/50 {row.wide === false ? '' : 'md:col-span-2'}">
         <div class="flex items-start gap-3 flex-1 w-full">
             {@render info(row, 'text-base opacity-70 group-hover:opacity-100 transition-opacity mt-0.5')}
         </div>
