@@ -230,8 +230,18 @@ ipcMain.handle('write-share-card', (event, { filename, base64 }) => {
     }
 });
 
+// Only web addresses leave the game. shell.openExternal hands anything to
+// the operating system - a file: or a custom scheme opens whatever is
+// registered for it - so the page names the address and this decides
+// whether it is one.
+const isWebUrl = (url) => {
+    try { return ['http:', 'https:'].includes(new URL(String(url)).protocol); }
+    catch { return false; }
+};
+
 // Force external links into the OS default browser
 ipcMain.on('open-external-browser', (event, url) => {
+    if (!isWebUrl(url)) return;
     try {
         shell.openExternal(url);
     } catch (err) {
@@ -291,9 +301,15 @@ function createWindow () {
     fullscreen: true, // Start fullscreen by default
     autoHideMenuBar: true,
     icon: path.join(__dirname, '..', 'build', 'logo.png'),
+    // The page gets no Node and no Electron: it runs sandboxed and isolated,
+    // and reaches the main process only through the twelve functions
+    // preload.cjs hands it. Until 7.0 both doors stood open, because
+    // platform_steam.js required 'electron' itself.
     webPreferences: {
-      nodeIntegration: true,  // required: platform_steam.js uses require()
-      contextIsolation: false // required: same reason
+      preload: path.join(__dirname, 'preload.cjs'),
+      contextIsolation: true,
+      nodeIntegration: false,
+      sandbox: true
     }
   });
 
@@ -331,9 +347,17 @@ function createWindow () {
     win.webContents.setZoomFactor(1); // pin zoom at 100%
   });
 
+  // The game is one page. A link without a target - or anything that ever
+  // managed to inject one - must not turn this window into a browser that
+  // still carries the bridge to the main process. Reloads keep the same
+  // address and pass.
+  win.webContents.on('will-navigate', (event, url) => {
+    if (url !== win.webContents.getURL()) event.preventDefault();
+  });
+
 // Intercept external links: prefer the Steam overlay, fall back to the browser
 win.webContents.setWindowOpenHandler(({ url }) => {
-    if (url.startsWith('http')) {
+    if (isWebUrl(url)) {
       if (steam) {
           try {
               steam.overlay.activateGameOverlayToWebPage(url);

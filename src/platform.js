@@ -105,10 +105,11 @@ export const platform = {
 };
 
 // --- DESKTOP UPGRADE ---
-// main.js runs the renderer with nodeIntegration enabled and contextIsolation
-// off, so `require` exists as a global there and nowhere else. That single
-// check is what separates the two builds; the browser never fetches the bridge.
-if (typeof require !== 'undefined') {
+// The desktop shell's preload (electron/preload.cjs) puts `desktopBridge` on
+// the window, and nothing else does. That single check is what separates the
+// two builds; the browser never fetches the Steam file. Until 7.0 the check
+// was `typeof require`, which existed because the page ran with Node in it.
+if (globalThis.desktopBridge) {
     try {
         const { desktop } = await import('./platform_steam.js');
         Object.assign(platform, desktop);

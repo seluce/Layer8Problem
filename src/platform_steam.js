@@ -5,13 +5,15 @@
  * single place in the renderer that knows about IPC — the engine never talks to
  * Electron directly.
  *
- * The counterpart for every channel used here lives in electron/main.cjs.
+ * Every call here goes through electron/preload.cjs to one channel in
+ * electron/main.cjs.
  */
 
-// window.require rather than a bare require(): the bundler must not try to
-// resolve 'electron' at build time. Electron injects require onto window when
-// nodeIntegration is on, which is the only situation this file is loaded in.
-const { ipcRenderer } = window.require('electron');
+// The twelve functions electron/preload.cjs exposes. The page has no Node and
+// no ipcRenderer of its own any more (contextIsolation, sandbox) - this object
+// is all of the main process it can reach, and platform.js loads this file
+// only where it exists.
+const bridge = window.desktopBridge;
 
 const STORE_URL = 'https://store.steampowered.com/app/4487580/Layer8Problem/';
 
@@ -51,7 +53,7 @@ export const desktop = {
 
     load: async () => {
         try {
-            const raw = await ipcRenderer.invoke('read-savegame');
+            const raw = await bridge.readSave();
             return raw ? JSON.parse(raw) : null;
         } catch (err) {
             console.warn("Cloud save could not be read.", err);
@@ -61,7 +63,7 @@ export const desktop = {
 
     save: (payload) => {
         try {
-            ipcRenderer.send('write-savegame', JSON.stringify(payload));
+            bridge.writeSave(JSON.stringify(payload));
         } catch (err) {
             console.warn("Cloud save could not be written.", err);
         }
@@ -81,7 +83,7 @@ export const desktop = {
      */
     saveSharePicture: async (filename, base64) => {
         try {
-            const res = await ipcRenderer.invoke('write-share-card', { filename, base64 });
+            const res = await bridge.writeShareCard(filename, base64);
             return res?.ok ? res.dir : null;
         } catch (err) {
             console.warn("Share card could not be written.", err);
@@ -91,7 +93,7 @@ export const desktop = {
 
     achievement: (id) => {
         try {
-            ipcRenderer.send('steam-unlock-achievement', id);
+            bridge.unlockAchievement(id);
         } catch (err) {
             console.warn(`Achievement "${id}" could not be reported.`, err);
         }
@@ -103,7 +105,7 @@ export const desktop = {
         const name = STAT_NAMES[key];
         if (!name) return;
         try {
-            ipcRenderer.send('steam-increment-stat', name);
+            bridge.incrementStat(name);
         } catch (err) {
             console.warn(`Stat "${key}" could not be reported.`, err);
         }
@@ -111,7 +113,7 @@ export const desktop = {
 
     presence: (token) => {
         try {
-            ipcRenderer.send('steam-set-status', token);
+            bridge.setStatus(token);
         } catch (err) {
             console.warn("Rich presence could not be set.", err);
         }
@@ -119,7 +121,7 @@ export const desktop = {
 
     fullscreen: () => {
         try {
-            ipcRenderer.send('toggle-fullscreen');
+            bridge.toggleFullscreen();
         } catch (err) {
             console.warn("Fullscreen could not be toggled.", err);
         }
@@ -131,7 +133,7 @@ export const desktop = {
     // it is available, and in the system browser otherwise.
     openExternal: (url) => {
         try {
-            ipcRenderer.send('open-external-browser', url);
+            bridge.openExternal(url);
         } catch (err) {
             console.warn("External link could not be opened.", err);
         }
@@ -141,7 +143,7 @@ export const desktop = {
 
     globalStats: async () => {
         try {
-            return await ipcRenderer.invoke('steam-get-global-stats');
+            return await bridge.globalStats();
         } catch (err) {
             console.warn("Global stats could not be fetched.", err);
             return null;
@@ -153,7 +155,7 @@ export const desktop = {
     // error the player has to read about.
     leaderboardSubmit: async (board, score, details) => {
         try {
-            return await ipcRenderer.invoke('steam-leaderboard-submit', { board, score, details });
+            return await bridge.leaderboardSubmit(board, score, details);
         } catch (err) {
             console.warn("Leaderboard score could not be submitted.", err);
             return null;
@@ -162,7 +164,7 @@ export const desktop = {
 
     leaderboardEntries: async (board, scope) => {
         try {
-            return await ipcRenderer.invoke('steam-leaderboard-entries', { board, scope });
+            return await bridge.leaderboardEntries(board, scope);
         } catch (err) {
             console.warn("Leaderboard could not be fetched.", err);
             return null;
@@ -171,7 +173,7 @@ export const desktop = {
 
     language: async () => {
         try {
-            return await ipcRenderer.invoke('steam-get-language');
+            return await bridge.language();
         } catch (err) {
             // Not worth a warning: detection falls back to the browser, which
             // is the same thing the web build does.

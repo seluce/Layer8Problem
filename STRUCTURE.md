@@ -11,7 +11,8 @@ EVENTS.md               how events are built — the contributor's guide
 changelog.md
 
 electron/
-  main.cjs              Electron main process, loads docs/
+  main.cjs              Electron main process, loads docs/, holds the Steam session
+  preload.cjs           the page's one door to it: twelve named functions
 
 src/
   main.js               entry point: stylesheet, engine, mounting the components
@@ -21,7 +22,7 @@ src/
   data.js               database, split into immediate and deferred
   tutorial.js
   platform.js           platform interface, web version
-  platform_steam.js     Steam bridge, loads itself only under Electron
+  platform_steam.js     Steam bridge over window.desktopBridge, only under Electron
 
   components/           43 Svelte components, 8 of them for the intranet
   engine/               20 modules; engine_state.svelte.js holds the state,

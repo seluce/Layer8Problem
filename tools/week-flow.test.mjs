@@ -5633,6 +5633,61 @@ await ok('Both endings of a week submit it, with the figures it ended on', async
     }
 });
 
+await ok('The desktop page has no Node, and one door to the main process', () => {
+    // Until 7.0 the window ran with nodeIntegration on and contextIsolation
+    // off: the page could require('electron') and reach every channel - and
+    // since the leaderboards, a live Steam session behind them. Now it is
+    // sandboxed, and electron/preload.cjs hands it named functions, one per
+    // channel. The three files have to agree, or a channel goes deaf (a
+    // function with no handler) or stays open with nothing to guard it.
+    const main = readFileSync(new URL('../electron/main.cjs', import.meta.url), 'utf-8');
+    const preload = readFileSync(new URL('../electron/preload.cjs', import.meta.url), 'utf-8');
+    const steam = readFileSync(new URL('../src/platform_steam.js', import.meta.url), 'utf-8');
+
+    const prefs = main.match(/webPreferences: \{([\s\S]*?)\}/)?.[1] ?? '';
+    assert.match(prefs, /contextIsolation: true/, 'contextIsolation is off again');
+    assert.match(prefs, /nodeIntegration: false/, 'the page has Node again');
+    assert.match(prefs, /sandbox: true/, 'the page is no longer sandboxed');
+    assert.match(prefs, /preload: path\.join\(__dirname, 'preload\.cjs'\)/, 'the preload is not loaded');
+
+    // Every channel the preload uses is one main.cjs handles, the same way
+    // round: invoke answers through handle(), send through on().
+    const handled = new Set([...main.matchAll(/ipcMain\.(?:on|handle)\('([a-z-]+)'/g)].map(m => m[1]));
+    const used = [...preload.matchAll(/ipcRenderer\.(send|invoke)\('([a-z-]+)'/g)];
+    assert.deepEqual([...new Set(used.map(m => m[2]))].sort(), [...handled].sort(),
+        'preload.cjs and main.cjs disagree about the channels');
+    for (const [, how, channel] of used) {
+        const kind = how === 'invoke' ? 'handle' : 'on';
+        assert.ok(main.includes(`ipcMain.${kind}('${channel}'`), `"${channel}" is ${how}d but main.cjs answers it with the other kind`);
+    }
+
+    // platform_steam.js calls what the preload exposes, all of it, and nothing else.
+    const exposed = [...preload.matchAll(/^\s+(\w+):\s+\(/gm)].map(m => m[1]).sort();
+    const called = [...new Set([...steam.matchAll(/bridge\.(\w+)\(/g)].map(m => m[1]))].sort();
+    assert.deepEqual(called, exposed, 'platform_steam.js and the bridge disagree');
+
+    // No Node in the page, anywhere in src/.
+    const files = [];
+    const walk = (dir) => {
+        for (const entry of readdirSync(new URL(`../${dir}`, import.meta.url), { withFileTypes: true })) {
+            const p = `${dir}/${entry.name}`;
+            if (entry.isDirectory()) walk(p);
+            else if (/\.(js|svelte)$/.test(entry.name)) files.push(p);
+        }
+    };
+    walk('src');
+    for (const file of files) {
+        const src = readFileSync(new URL(`../${file}`, import.meta.url), 'utf-8');
+        assert.ok(!/\brequire\s*\(|ipcRenderer\./.test(src), `${file} reaches for Node or ipcRenderer`);
+    }
+
+    // And the window stays one page, with only web addresses let out.
+    assert.match(main, /'will-navigate', \(event, url\) => \{\s*if \(url !== win\.webContents\.getURL\(\)\) event\.preventDefault\(\);/,
+        'the window can be navigated away from the game');
+    assert.match(main, /ipcMain\.on\('open-external-browser', \(event, url\) => \{\s*if \(!isWebUrl\(url\)\) return;/,
+        'any address reaches shell.openExternal again');
+});
+
 await ok('The main process allows exactly the boards the game submits to', () => {
     // main.cjs cannot import leaderboard.js - only docs/ and electron/ are
     // packaged - so it keeps its own allow-list and its own score ceiling.
