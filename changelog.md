@@ -17,6 +17,7 @@ Settings:
 * The narrator can be told what to read: scenes, the morning, the blow-off and the written warning, H.A.L.G.E.R.D. and the tutorial - each on its own.
 
 The day to day:
+* Items are easy to make out now: they sit on a lighter slot, so the black cable ties, the tie and the headphones no longer vanish into the dark.
 * A career that has worked its way through a pool is now shown the scenes where a decision is still untaken, rather than ones it has read to the end. Known scenes still come back - that is what they are for - but the ones with something left come first.
 
 Bug fixes:

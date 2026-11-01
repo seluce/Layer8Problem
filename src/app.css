@@ -359,6 +359,29 @@
     }
 
     .inv-slot.used { opacity: 0.4; filter: grayscale(100%); cursor: not-allowed; }
+
+    /* THE GROUND AN ITEM STANDS ON
+       The drawings are ink made for a white page, and the slots were the
+       slate of the panel around them: the black cable ties, the tie, the
+       headphones and the black card all but vanished. A mid slate is the one
+       ground that carries both ends of the collection - the dark plastic reads
+       against it and the white paper stands out from it - where a light tile
+       washed out the letters and lists instead. Measuring luminance alone said
+       otherwise; it ignored colour, and the red stress ball or the pink
+       doughnut are told apart by hue, not by brightness. Looked at, B won.
+
+       A slight top-to-bottom fall and an inner edge make it a slot the item
+       sits in rather than a flat patch. A filled slot is recognised by its
+       picture (:has), so an empty one stays the dark socket it was and the
+       difference between the two is visible at a glance. States keep their
+       coloured borders; the tints they set underneath are covered, which the
+       borders were always there to say. */
+    .item-ground,
+    .inv-slot:has(> img) {
+        background-color: #64748b;
+        background-image: linear-gradient(to bottom, #6f7f96, #586780);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10), inset 0 -2px 4px rgba(0, 0, 0, 0.22);
+    }
     .inv-slot.used::after { content: '✔'; position: absolute; bottom: -2px; right: -2px; font-size: 0.625rem; color: #10b981; }
 
     /* BUTTONS */

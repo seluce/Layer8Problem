@@ -4553,6 +4553,25 @@ await ok('A half-done key binding never outlives the key list', () => {
     }
 });
 
+await ok('An item stands on the same lighter ground wherever it is shown', () => {
+    // The drawings are ink for a white page, and on the panel's slate the
+    // black cable ties, the tie, the headphones and the black card all but
+    // vanished. A mid slate carries both ends of the collection - see the note
+    // in app.css. A slot that holds a picture gets it by itself (:has); the
+    // archive and the window that asks before an item is used say so by class.
+    // Lose any of the three and the items vanish there again, at 0 errors.
+    const css = readFileSync(new URL('../src/app.css', import.meta.url), 'utf-8');
+    assert.match(css, /\.item-ground,\s*\.inv-slot:has\(> img\) \{[^}]*background-image: linear-gradient/,
+        'filled slots are back on the dark ground');
+    const archive = readFileSync(new URL('../src/components/ArchiveView.svelte', import.meta.url), 'utf-8');
+    const border = archive.slice(archive.indexOf('const itemBorder'), archive.indexOf('};', archive.indexOf('const itemBorder')));
+    // Counted inside the class strings only: the comment above them names the
+    // class too, and counting that let a deleted one go unnoticed.
+    assert.equal((border.match(/ item-ground'/g) ?? []).length, 2, 'a found item in the archive is not on the item ground');
+    const html = readFileSync(new URL('../index.html', import.meta.url), 'utf-8');
+    assert.match(html, /id="item-confirm-icon"\s+class="[^"]*\bitem-ground\b/, 'the item in the confirm window is not on the item ground');
+});
+
 await ok('All six tracks are levelled to one loudness', async () => {
     // Measured with ffmpeg's EBU R128 meter, per whole file, and written down
     // in MUSIC_TRIM. The claim the trim makes is that one slider position is

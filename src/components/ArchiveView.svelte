@@ -216,9 +216,11 @@
     // strength, so the grid looks as it did.
     const itemBorder = (unlocked, quest) => {
         if (!unlocked) return 'border-slate-700/50 text-slate-600/50 bg-slate-900/50 border-dashed';
+        // item-ground (app.css): the same slot an item stands on in the
+        // inventory, so a drawing reads the same wherever it is shown.
         return quest
-            ? 'border-amber-500/50 text-amber-100 bg-amber-900/20 shadow-[0_0_10px_rgba(245,158,11,0.1)]'
-            : 'border-slate-500/50 text-slate-200 bg-slate-800';
+            ? 'border-amber-500/60 text-amber-100 item-ground'
+            : 'border-slate-500/50 text-slate-200 item-ground';
     };
 
     // Which tile currently has its tooltip pinned, by item id. Touch and
