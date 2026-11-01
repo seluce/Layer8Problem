@@ -132,6 +132,15 @@
                   level: () => game.musicVolume, setLevel: (v) => engine.setMusicVolume(v),
                   step: 0.01, levelTitle: t('set.music.level') },
 
+                // No `img` yet: every other row has a drawn icon and this one
+                // has none, so it falls back to the emoji rather than to a
+                // missing file. See the note in UEBERGABE.md.
+                { kind: 'slider', icon: '🎙️', title: t('set.narration.title'),
+                  desc: t('set.narration.desc'),
+                  get: () => game.narrationEnabled, set: (v) => engine.toggleNarration(v),
+                  level: () => game.narrationVolume, setLevel: (v) => engine.setNarrationVolume(v),
+                  step: 0.05, levelTitle: t('set.narration.level') },
+
                 { kind: 'select', icon: '📻', img: 'set_musicstyle', title: t('set.musicStyle.title'),
                   desc: t('set.musicStyle.desc'),
                   focus: 'focus:border-amber-500', options: MUSIC_STYLES,

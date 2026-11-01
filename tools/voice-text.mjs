@@ -23,6 +23,23 @@ export const TERMINAL = ['coffee', 'server', 'calls', 'sidequests', 'bossfights'
 const SPOKEN = new Set(['text', 'r', 'txt']);
 
 /**
+ * A door is not a sentence.
+ *
+ * `CMD:OPEN_BOARD` and its two siblings stand in an option's `r` where prose
+ * would stand, and resolveTerminal swaps them for a dictionary line before
+ * anything reaches the screen - see CLAUDE.md. Collected as prose they were
+ * three files that say "C M D colon OPEN underscore BOARD" out loud, bought
+ * and rendered in both languages, and the only way to hear one would have been
+ * for the swap to fail.
+ *
+ * The runtime consequence is the one worth keeping in mind: what the player
+ * reads after such a click is an INTERFACE string, and the interface is not
+ * voiced. So the moment a door opens a window over the terminal, there is
+ * nothing to speak - which is the behaviour wanted anyway.
+ */
+const INSTRUCTION = /^CMD:/;
+
+/**
  * How the written line becomes the spoken one. Bumped when spokenForm()
  * changes, because then every file was made from a different text than the one
  * this version would send - the checksum alone cannot see that.
@@ -51,8 +68,27 @@ export function spokenForm(s) {
 
 export const sha = (s) => createHash('sha1').update(s, 'utf8').digest('hex').slice(0, 12);
 
-/** The audio file a key is filed under. Derived, so it is never stored. */
-export const fileFor = (key) => key.replace(/\//g, '--');
+/**
+ * The audio file a piece is filed under: the checksum of the text it says.
+ *
+ * Content-addressed on purpose, and the reason is a runtime one. The player's
+ * browser has the sentence on screen and has to find the file that speaks it.
+ * Naming the file after its KEY means shipping a key-to-file index of 4651
+ * entries, or threading the key down from every place that fills the terminal
+ * - and a threading mistake there does not fall silent, it plays the
+ * NEIGHBOURING option's result. Naming it after the text means the browser
+ * hashes what it is about to show and asks for that.
+ *
+ * Which also closes drift at the one place it can still bite. `lint:voice`
+ * holds the manifest against the trees and is a gate, so edited prose with
+ * stale audio cannot ship - but if it ever did, a content-addressed name finds
+ * nothing and the narrator says nothing, instead of confidently reading the
+ * sentence that used to be there.
+ *
+ * Which key a file belongs to is a question the manifest answers; it is the
+ * map, and it is in the repository.
+ */
+export const fileFor = (entry) => entry.sha;
 
 /**
  * Every spoken piece of one language tree, with its key, its source string and
@@ -86,6 +122,7 @@ export async function collectEntries(lang) {
         for (const [k, v] of Object.entries(node)) {
             if (typeof v === 'string') {
                 if (!SPOKEN.has(k) || !v.trim()) continue;
+                if (INSTRUCTION.test(v.trim())) continue;
                 for (const m of v.match(/<[^>]+>/g) ?? []) {
                     if (!/^<br\s*\/?>$/i.test(m)) unknownTags.set(m, (unknownTags.get(m) ?? 0) + 1);
                 }
@@ -103,12 +140,24 @@ export async function collectEntries(lang) {
     }
 
     const seen = new Set();
+    const byHash = new Map();
     for (const e of entries) {
         if (seen.has(e.key)) throw new Error(`Duplicate key: ${e.key}`);
         seen.add(e.key);
         e.spoken = spokenForm(e.src);
         e.sha = sha(e.src);
         e.chars = e.spoken.length;
+        // Two pieces of identical text share one file, which is right - they
+        // say the same thing. Two DIFFERENT texts under one checksum would
+        // not: the file name is how the browser finds the line (see fileFor),
+        // so one of them would be spoken in the other's words. 48 bits over
+        // 4651 pieces makes that a 1-in-26-million accident; it is checked
+        // because the failure is silent and the check costs a Map.
+        const clash = byHash.get(e.sha);
+        if (clash !== undefined && clash !== e.src) {
+            throw new Error(`Checksum collision on ${e.sha}: "${clash}" and "${e.src}"`);
+        }
+        byHash.set(e.sha, e.src);
     }
 
     return { entries, unknownTags };

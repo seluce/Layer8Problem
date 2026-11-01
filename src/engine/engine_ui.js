@@ -395,8 +395,12 @@ export const ui = {
         }
 
         // Every change of what the terminal shows runs through here, so this
-        // is the one place the phone layout has to follow.
+        // is the one place the phone layout has to follow - and the one place
+        // the narrator has to. `speak` carries the sentence to read, and its
+        // absence is how every other screen stops the voice: idle, morning,
+        // boot. See engine_voice.narrate().
         this.showTerminal();
+        this.narrate(extra?.speak ?? null);
     },
 
     EVENT_CLASS: 'flex-1 flex flex-col items-center py-3 w-full min-h-full',
@@ -418,7 +422,8 @@ export const ui = {
     setTerminalEvent: function(type, title, text, opts, isChain, charName, nodes) {
         this._setTerminal(this.EVENT_CLASS, {
             mode: 'event',
-            event: { type, title, text, opts: opts || [], isChain: !!isChain, charName: charName || null, nodes: nodes || null }
+            event: { type, title, text, opts: opts || [], isChain: !!isChain, charName: charName || null, nodes: nodes || null },
+            speak: text
         });
     },
 
@@ -438,10 +443,16 @@ export const ui = {
     // showed minutes and the three bars but never this, although the pile is
     // the most common way to lose: 82 options in the stock cost an hour or
     // more, which is two tickets, and the longest costs eight.
-    setTerminalResult: function(text, m, l, a, b, action, buttonKey, buttonColor, tickets = 0) {
+    // `speak` is the same outcome as a SENTENCE, for the narrator - `text` above
+    // it is a recipe, and a recipe has no words until a component resolves it.
+    // Left out where the line comes from the dictionary rather than from the
+    // tree: an interface string has no recording, and asking for one would be
+    // a request for a file that was never made.
+    setTerminalResult: function(text, m, l, a, b, action, buttonKey, buttonColor, tickets = 0, speak = null) {
         this._setTerminal(this.EVENT_CLASS, {
             mode: 'result',
-            result: { text, m, l, a, b, action, buttonKey, buttonColor, tickets }
+            result: { text, m, l, a, b, action, buttonKey, buttonColor, tickets },
+            speak
         });
     },
 
@@ -613,6 +624,11 @@ export const ui = {
         el.classList.remove('hidden');
         el.classList.add('flex');
         if (lockScroll) this.lockScroll(el.id || 'overlay');
+        // The narrator stops when something covers what it is reading. Only on
+        // a window that was CLOSED, and only one from the list - a dialog shown
+        // over itself has covered nothing new, and the startup windows stand
+        // over a terminal that is not saying anything yet.
+        if (!wasOpen && WINDOWS_OVER_TERMINAL.includes(el.id)) this.hushNarration();
 
         // The keyboard follows the window. aria-modal tells a SCREEN READER to
         // ignore what is behind it, but the tab order went on walking through
@@ -948,6 +964,7 @@ export const ui = {
         // makes it true by construction. A failed fetch still opens the book:
         // empty pages beat a dead button.
         try { await ensure('lore'); } catch { /* the book opens with what there is */ }
+        this.hushNarration();
         this.state.loreOpen = true;
         this.state.loreRead = true;          // for tonight's diary
         this.lockScroll('lore');
@@ -982,6 +999,7 @@ export const ui = {
     openIntranet: async function() {
         await ensure('intranet');
         this.buildIntranet();
+        this.hushNarration();
         this.state.intranetOpen = true;
         this.state.intranetVisited = true;   // for tonight's diary
         this.lockScroll('intranet');

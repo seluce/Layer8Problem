@@ -248,7 +248,7 @@ const done = (e) => {
     // and re-buy - a finished run the first time this tool was updated.
     return !!r && r.sha === e.sha && r.model === MODEL
         && (r.voice === undefined || r.voice === VOICE)
-        && existsSync(`${OUT}/${fileFor(e.key)}.opus`);
+        && existsSync(`${OUT}/${fileFor(e)}.opus`);
 };
 
 let todo = entries.filter(e => !done(e));
@@ -364,14 +364,14 @@ async function speak(e) {
         });
 
         if (res.ok) {
-            const mp3 = `${MASTER}/${fileFor(e.key)}.mp3`;
+            const mp3 = `${MASTER}/${fileFor(e)}.mp3`;
             writeFileSync(mp3, Buffer.from(await res.arrayBuffer()));
             // -ac 1: speech is mono, and a stereo copy of a mono signal is
             // twice the bytes for nothing. libopus defaults to the `audio`
             // application, which beats `voip` for narration at this bitrate.
             execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y',
                 '-i', mp3, '-c:a', 'libopus', '-b:a', bitrate, '-ac', '1',
-                `${OUT}/${fileFor(e.key)}.opus`]);
+                `${OUT}/${fileFor(e)}.opus`]);
             ledger[e.key] = { sha: e.sha, model: MODEL, voice: VOICE, chars: e.chars };
             return true;
         }
@@ -442,7 +442,7 @@ if (before && after) {
     }
 }
 const size = todo.reduce((n, e) => {
-    const f = `${OUT}/${fileFor(e.key)}.opus`;
+    const f = `${OUT}/${fileFor(e)}.opus`;
     return n + (existsSync(f) ? statSync(f).size : 0);
 }, 0);
 console.log(`   ${(size / 1024 / 1024).toFixed(1)} MiB of opus at ${bitrate}\n`);

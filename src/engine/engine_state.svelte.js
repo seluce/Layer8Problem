@@ -480,8 +480,18 @@ export const state = $state({
     audioEffects: localStorage.getItem(KEYS.audioEffects) !== 'false',
     audioVolume: parseFloat(localStorage.getItem(KEYS.audioVolume) || '0.5'), // default 50%
     musicEnabled: localStorage.getItem(KEYS.musicEnabled) !== 'false',
-    musicVolume: parseFloat(localStorage.getItem(KEYS.musicVolume) || '0.2'), // default 20%
+    // 15% since 6.4, and the number is derived rather than chosen: the
+    // recordings come in at -23.6 LUFS, the tracks are levelled to -21.9
+    // (engine_audio.MUSIC_TRIM), and 0.15 puts the music 15 dB under the
+    // voice - broadcast practice for a bed under narration. Reaches new
+    // players only; a stored setting is the player's and is not rewritten.
+    musicVolume: parseFloat(localStorage.getItem(KEYS.musicVolume) || '0.15'),
     musicStyle: localStorage.getItem(KEYS.musicStyle) || 'radio',
+    // The narrator. On by default - 15 hours of speech is not an easter egg -
+    // and at the top of its range, because the recordings come in at -23.6
+    // LUFS and the music is levelled 15 dB below that. See engine_audio.MUSIC_TRIM.
+    narrationEnabled: localStorage.getItem(KEYS.narrationEnabled) !== 'false',
+    narrationVolume: parseFloat(localStorage.getItem(KEYS.narrationVolume) || '1'),
     currentMusicTrack: null,
     oneClickItem: localStorage.getItem(KEYS.oneClickItem) === 'true',
     fastChat: localStorage.getItem(KEYS.fastChat) === 'true',

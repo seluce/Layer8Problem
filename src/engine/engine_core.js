@@ -2095,6 +2095,10 @@ export const core = {
         // answering it at 16:25 ends the day from up there - each window was
         // still open the next morning. See engine_ui.closeDayWindows.
         this.closeDayWindows();
+        // And the voice, which would otherwise read the last result of the day
+        // over the night screen: the end screens are overlays of their own and
+        // none of them is on the over-terminal list.
+        this.hushNarration();
 
         if (this.state.pendingEnd) {
             const end = this.state.pendingEnd;

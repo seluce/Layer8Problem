@@ -33,6 +33,8 @@ export const en = {
     'credits.title':               'Credits & licences',
     'credits.dev':                 'Development & design:',
     'credits.music':               'Music licences (Creative Commons BY 4.0):',
+    'credits.voice':               'Narration:',
+    'credits.voice.body':          'The scenes are read by a synthetic voice, generated with ElevenLabs (model eleven_v4_turbo, voice "Alexander - Deep TV Narrator"). No human spoke these recordings. The same voice in both languages, on purpose.',
 
     'export.title':                'Save your progress',
     'export.label':                'Your code',
@@ -85,6 +87,9 @@ export const en = {
     'set.music.title':           'Music',
     'set.music.desc':            'Background noodling & boss beats',
     'set.music.level':           'Music volume',
+    'set.narration.title':       'Narrator',
+    'set.narration.desc':        'Reads the scenes out. An AI voice.',
+    'set.narration.level':       'Narrator volume',
     'set.musicStyle.title':      'Music style',
     'set.musicStyle.desc':       'Choose your particular madness.',
     'set.section.display':       'Display & layout',

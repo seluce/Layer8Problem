@@ -408,6 +408,32 @@ filled from the provider on the first run and written back. "Everything on
 default" is only reproducible while the provider's defaults stay put;
 written down, it is reproducible for good.
 
+### The file name is the checksum of the text
+
+`0ca9ab1281f7.opus`, not `coffee--cof_newbie_1--text.opus`. The browser has the
+sentence on screen and has to find the file that speaks it; naming the file
+after its text means hashing what is about to be shown and asking for that —
+no index to ship, and nothing to thread down from the engine. The manifest is
+the map from key to file, and it is in the repository: to find a scene's
+recording, look its key up there and take the `sha`.
+
+Which also means **edited prose with stale audio goes silent rather than
+lying.** `npm run lint:voice` is in `lint:all` and would stop it shipping
+anyway, but if it ever got past, the player hears nothing instead of the
+sentence that used to be there.
+
+`src/engine/sha1.js` computes the same digest in the browser, because
+`crypto.subtle` needs a secure context and the Electron build loads over
+`file://`. `tools/voice.test.mjs` holds the two implementations against each
+other over all 9,296 pieces.
+
+**A `CMD:` result is not collected.** `CMD:OPEN_BOARD` and its two siblings
+stand where prose stands but are instructions — `resolveTerminal` swaps them
+for a dictionary line. Three of them were bought and rendered in 6.4 before
+anyone noticed; the rule that keeps them out is in `voice-text.mjs` and the
+test reads the handled doors out of `engine_events.js`, so a fourth is covered
+the day it is handled.
+
 ### The three places a file goes
 
 | Where | What | In the repository? |
@@ -475,10 +501,10 @@ inside a plan's included credits has come out cheaper. The line after a run
 reports what was actually spent, in credits, with the rate it worked out to
 and how far the plan's remainder still reaches.
 
-## 8. `npm test` — the four test suites, in both languages
+## 8. `npm test` — the five test suites, in both languages
 
 ```
-npm test        # 17 / 248 / 20 / 46, then the same four again with --lang=en
+npm test        # 17 / 249 / 20 / 46 / 6, then the same five again with --lang=en
 npm run test:de # one language only, while working
 npm run test:en
 ```
@@ -525,6 +551,14 @@ findings, defaults, archive counters.
   helper and stays green although the hook is missing.
 - **Mutation probes are part of it:** reverse the change for a moment, the test
   has to fall, then restore it. A test that does not fall checks nothing.
+
+### `voice.test.mjs` — the narration
+
+The fifth suite, and the reason it is its own: every link between a sentence on
+screen and the file that speaks it fails SILENTLY. A digest computed one way in
+Node and another way in the browser does not throw — the narrator is simply
+mute, in the shipped game only. A window that forgets to hush reads a result
+out over the noticeboard. Six checks, twelve mutation probes (01.11.2026).
 
 ## 9. `dev-week.js` — the console tool
 

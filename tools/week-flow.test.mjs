@@ -55,6 +55,7 @@ const { week } = await import('../src/engine/engine_week.js');
 const { hooks } = await import('../src/engine/engine_hooks.js');
 const { inventory } = await import('../src/engine/engine_inventory.js');
 const { vendingMachine, crankDelays } = await import('../src/engine/engine_vending.js');
+const { voice } = await import('../src/engine/engine_voice.js');
 const { renderRecipe } = await import('../src/engine/recipe.js');
 const { useLanguage, language, t, tf } = await import('../src/i18n/i18n.svelte.js');
 // dayName() and the balance keys: the bench names what it expects through the
@@ -79,6 +80,11 @@ const calls = { overlays: [], end: null, boots: 0, resumeInfo: '' };
 const engine = {
     state,
     ...core, ...events, ...week, ...inventory, ...hooks, ...vendingMachine,
+    // The real narrator, not a stub. It builds no Audio element until it is
+    // given something to say, and finishGame() calls it to stop the voice
+    // reading the day's last result over the night screen - a stub there would
+    // make that test pass whatever the engine does.
+    ...voice,
     showOverlay(t) { const id = overlayId(t); calls.overlays.push(id); openOverlays.add(id); },
     hideOverlay(t) { openOverlays.delete(overlayId(t)); },
     // Answered off that set rather than off the fake document. Every element
@@ -986,7 +992,7 @@ console.log('Music:');
         const key = state.currentMusicTrack;
         assert.equal(mus.bgmTracks[key].volume, 0, 'does not start at 0');
         await wait(750);
-        assert.ok(Math.abs(mus.bgmTracks[key].volume - 0.8) < 0.02, 'does not fade to the target volume');
+        assert.ok(Math.abs(mus.bgmTracks[key].volume - mus.musicTarget(key)) < 0.02, 'does not fade to the target volume');
     });
 
     await ok('The replaced track is paused and reset to its volume', async () => {
@@ -999,7 +1005,7 @@ console.log('Music:');
         await wait(500);
         assert.ok(mus.bgmTracks[previousTrack].paused, 'the old track keeps playing');
         // must not stay at 0, or a later play() without fade would be silent
-        assert.ok(Math.abs(mus.bgmTracks[previousTrack].volume - 0.8) < 0.02, 'the volume was not reset');
+        assert.ok(Math.abs(mus.bgmTracks[previousTrack].volume - mus.musicTarget(previousTrack)) < 0.02, 'the volume was not reset');
     });
 
     await ok('The music follows the tab, but only what it paused itself', async () => {
@@ -1070,7 +1076,7 @@ console.log('Music:');
         const key = state.currentMusicTrack;
         mus.setMusicVolume(0.3);      // in the middle of the fade-in
         await wait(750);
-        assert.ok(Math.abs(mus.bgmTracks[key].volume - 0.3) < 0.02,
+        assert.ok(Math.abs(mus.bgmTracks[key].volume - mus.musicTarget(key)) < 0.02,
                   `the fade overwrites the slider: ${mus.bgmTracks[key].volume}`);
     });
 }
@@ -2594,8 +2600,18 @@ await ok('Toast and item dialog carry identities, not words', () => {
     const invSrc = readFileSync(new URL('../src/engine/engine_inventory.js', import.meta.url), 'utf-8');
     const shell = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
     assert.ok(/dressItemConfirm\s*:/.test(invSrc), 'the item dialog has no repaint method');
-    assert.ok(/onLanguageChange\([\s\S]{0,400}?dressItemConfirm\(\)/.test(shell),
+    // Scoped to the handler's own body rather than to a character count: the
+    // old bound was 400 characters from the call, and a comment added inside
+    // the handler pushed the match out of reach while the code was right.
+    const onSwitch = shell.match(/onLanguageChange\(\(\) => \{([\s\S]*?)\n\}\);/)?.[1];
+    assert.ok(onSwitch, 'the language-switch handler could not be read');
+    assert.ok(/dressItemConfirm\(\)/.test(onSwitch),
               'a language switch does not repaint the item dialog');
+    // And it stops the voice. A scene repaints itself in the new language, but
+    // a RESULT resolves its recipe on the spot and is never repainted - so
+    // without this the narrator reads the old language over the new text.
+    assert.ok(/hushNarration\(\)/.test(onSwitch),
+              'a language switch leaves the narrator reading the old language');
     // ...and askUseItem/askDiscardItem go through it rather than writing again.
     assert.equal((invSrc.match(/getElementById\('item-confirm-title'\)/g) ?? []).length, 1,
                  'the dialog is written from more than one place again');
@@ -3730,7 +3746,10 @@ await ok('The reset buttons are re-dressed after a language switch', () => {
         assert.ok(uiSrc.includes(`getElementById('${id}')`), `${id} is not dressed from the engine any more`);
     }
     assert.ok(/dressResetButtons\s*:/.test(uiSrc), 'the dressing is no longer a method of its own');
-    assert.ok(/onLanguageChange\([\s\S]{0,300}?dressResetButtons\(\)/.test(shell),
+    // Scoped to the handler's body, for the reason given at the item dialog.
+    const onSwitch = shell.match(/onLanguageChange\(\(\) => \{([\s\S]*?)\n\}\);/)?.[1];
+    assert.ok(onSwitch, 'the language-switch handler could not be read');
+    assert.ok(/dressResetButtons\(\)/.test(onSwitch),
               'a language switch no longer re-dresses the reset buttons');
 });
 await ok('The mail log prints the number the bar actually moved', () => {
@@ -4158,18 +4177,64 @@ await ok('The music ducks once for the fall and comes back once', async () => {
         bgmTracks: { elevator: track },
         fadeTrack(key, target) { fades.push([key, +target.toFixed(3)]); },
     };
+    const lvl = (f) => +(0.2 * audio.MUSIC_TRIM.elevator * f).toFixed(3);
     box.duckMusic(false);
     assert.equal(fades.length, 0, 'un-ducking music that was never ducked started a fade');
     box.duckMusic(true); box.duckMusic(true);
-    assert.deepEqual(fades, [['elevator', 0.024]], 'the duck has to fade once, to a fraction of the volume');
+    assert.deepEqual(fades, [['elevator', lvl(audio.DUCK.vending)]],
+        'the duck has to fade once, to a fraction of the levelled volume');
     box.duckMusic(false); box.duckMusic(false);
-    assert.deepEqual(fades[1], ['elevator', 0.2], 'the music has to come back to its own volume');
+    assert.deepEqual(fades[1], ['elevator', lvl(1)], 'the music has to come back to its own volume');
     assert.equal(fades.length, 2, 'the way back faded twice');
+
+    // Two reasons at two depths (6.4). The narrator ducks the music while it
+    // reads; the machine's fall ducks it much further. Whichever is deeper has
+    // to win, and letting go of one while the other still holds must not bring
+    // the music back up - that was the whole reason this stopped being a
+    // boolean.
+    fades.length = 0;
+    box.duckMusic(true, 'narration');
+    assert.deepEqual(fades, [['elevator', lvl(audio.DUCK.narration)]], 'speech does not duck the music');
+    box.duckMusic(true, 'vending');
+    assert.deepEqual(fades[1], ['elevator', lvl(audio.DUCK.vending)], 'the deeper reason did not win');
+    box.duckMusic(false, 'narration');
+    assert.equal(fades.length, 2, 'letting go of the shallower reason moved the volume');
+    box.duckMusic(false, 'vending');
+    assert.deepEqual(fades[2], ['elevator', lvl(1)], 'the music never came back');
 
     fades.length = 0;
     box.state.musicEnabled = false;
     box.duckMusic(true); box.duckMusic(false);
     assert.equal(fades.length, 0, 'music that is switched off was faded');
+});
+
+await ok('All six tracks are levelled to one loudness', async () => {
+    // Measured with ffmpeg's EBU R128 meter, per whole file, and written down
+    // in MUSIC_TRIM. The claim the trim makes is that one slider position is
+    // one loudness: hold each track's own level plus its trim against the
+    // reference and they have to agree within half a decibel. Without this the
+    // table is six numbers nobody can check, and the ten and a half decibels
+    // the music used to span would creep back in unnoticed the next time a
+    // track is added.
+    const { audio } = await import('../src/engine/engine_audio.js');
+    const MEASURED = {          // LUFS, ffmpeg -af ebur128, whole file
+        bossa: -21.9, detective: -21.1, elevator: -19.3,
+        gala: -12.4, boss: -11.3, lofi: -12.2
+    };
+    const INTENT = { boss: 3, gala: 3 };    // dB over the office tracks, on purpose
+    const ref = Math.min(...Object.values(MEASURED));
+    const off = [];
+    for (const [key, lufs] of Object.entries(MEASURED)) {
+        const trim = audio.MUSIC_TRIM[key];
+        assert.ok(typeof trim === 'number', `${key} has no trim`);
+        assert.ok(trim > 0 && trim <= 1, `${key} would be amplified past the element's ceiling`);
+        const played = lufs + 20 * Math.log10(trim);
+        const want = ref + (INTENT[key] ?? 0);
+        if (Math.abs(played - want) > 0.5) off.push(`${key}: plays at ${played.toFixed(1)}, wants ${want.toFixed(1)}`);
+    }
+    assert.deepEqual(off, [], 'a track is not levelled to the reference');
+    assert.deepEqual(Object.keys(audio.MUSIC_TRIM).sort(), Object.keys(MEASURED).sort(),
+        'a track has a trim without a measurement, or a measurement without a trim');
 });
 
 await ok("That evening the diary refuses to write about it", async () => {

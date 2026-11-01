@@ -225,6 +225,43 @@ export const audio = {
     },
 	
     // --- MUSIC SYSTEM ---
+
+    /**
+     * Per-track gain, so that one slider means one loudness.
+     *
+     * The six pieces are not mastered at the same level, and nothing here ever
+     * accounted for it. Measured with ffmpeg's EBU R128 meter over each whole
+     * file:
+     *
+     *     movementproposition  -11.3 LUFS     elevator      -19.3 LUFS
+     *     chillwave            -12.2          hardboiled    -21.1
+     *     discocontutti        -12.4          bossaantiqua  -21.9
+     *
+     * Ten and a half decibels from end to end. In radio mode bossa into lofi
+     * was a jump of 9.7 dB with the slider untouched - audible, and it had
+     * been there since the music went in. It only became a correctness problem
+     * with the narrator: speech sits at -23.6 LUFS, and at the old default of
+     * 0.2 chillwave played 2.6 dB under the voice while elevator played 14.8 dB
+     * under it. No single number can leave room for a voice over both.
+     *
+     * So each track is trimmed to the quietest of them and the slider is
+     * honest. Down to it, never up - the element's volume stops at 1.
+     *
+     * The boss fight and the gala keep 3 dB over the office tracks, and that
+     * part is a DECISION rather than the measurement: those two scenes are
+     * meant to lean on you. The 10.6 dB they had was not a decision, it was
+     * whatever their mastering happened to be.
+     */
+    MUSIC_TRIM: {
+        bossa: 1.00, detective: 0.91, elevator: 0.74,
+        gala: 0.47, boss: 0.42, lofi: 0.33
+    },
+
+    /** How loud `key` is meant to be: the slider, levelled, and ducked. */
+    musicTarget: function(key) {
+        return this.state.musicVolume * (this.MUSIC_TRIM[key] ?? 1) * this.duckLevel();
+    },
+
     bgmTracks: null,
     fadeTimers: {},        // one running fade per track, keyed by track name
     gainNodes: {},         // only on platforms that refuse track.volume, see below
@@ -491,7 +528,7 @@ export const audio = {
                 if (key === this.state.currentMusicTrack && this.state.musicEnabled) {
                     clearInterval(this.fadeTimers[key]);
                     delete this.fadeTimers[key];
-                    this.setTrackVolume(key, this.state.musicVolume);
+                    this.setTrackVolume(key, this.musicTarget(key));
                 }
             }
         }
@@ -544,10 +581,10 @@ export const audio = {
             // through the graph - and a suspended context plays to nobody.
             if (this.audioCtx?.state === 'suspended') this.audioCtx.resume();
             track.play()
-                .then(() => this.fadeTrack(actualTrack, this.state.musicVolume, fadeIn))
+                .then(() => this.fadeTrack(actualTrack, this.musicTarget(actualTrack), fadeIn))
                 .catch(e => {
                     // Autoplay blocked: leave the volume usable for the retry.
-                    this.setTrackVolume(actualTrack, this.state.musicVolume);
+                    this.setTrackVolume(actualTrack, this.musicTarget(actualTrack));
                     console.warn("Music autoplay blocked:", e);
                 });
         }
@@ -567,14 +604,14 @@ export const audio = {
             if (track.paused) continue;
             if (ms <= 0) {
                 track.pause();
-                this.setTrackVolume(key, this.state.musicVolume);   // ready for the next play()
+                this.setTrackVolume(key, this.musicTarget(key));   // ready for the next play()
                 continue;
             }
             this.fadeTrack(key, 0, ms, () => {
                 track.pause();
                 // Restore the target volume, otherwise the track would start
                 // silent the next time it is played without a fade.
-                this.setTrackVolume(key, this.state.musicVolume);
+                this.setTrackVolume(key, this.musicTarget(key));
             });
         }
     },
@@ -587,14 +624,41 @@ export const audio = {
      * track has nothing to duck. Idempotent, so a reactive caller may say
      * false as often as it likes.
      */
-    musicDucked: false,
-    duckMusic: function(on) {
-        if (on === this.musicDucked) return;
-        this.musicDucked = on;
+    DUCK: {
+        // The stairwell: the machine's fall wants near-silence under it.
+        vending: 0.12,
+        // Under speech. Six decibels, on top of the fifteen the levelling
+        // already puts between music and voice - enough to clear the words
+        // without the soundtrack audibly breathing in and out at every line.
+        narration: 0.50
+    },
+    // Built on first use rather than here. The module object is SPREAD into the
+    // engine, and spread copies a reference: one Set written at module scope
+    // would be shared by every spread of it, which in the test bench means one
+    // box's duck showing up in the next one's.
+    duckReasons: null,
+
+    /** The deepest reason wins; no reason is no duck. */
+    duckLevel: function() {
+        let level = 1;
+        for (const r of this.duckReasons ?? []) level = Math.min(level, this.DUCK[r] ?? 1);
+        return level;
+    },
+
+    duckMusic: function(on, reason = 'vending') {
+        const reasons = this.duckReasons ??= new Set();
+        const before = this.duckLevel();
+        if (on) reasons.add(reason); else reasons.delete(reason);
+        const after = this.duckLevel();
+        if (after === before) return;
         const key = this.state.currentMusicTrack;
         const track = this.bgmTracks?.[key];
         if (!this.state.musicEnabled || !track || track.paused) return;
-        this.fadeTrack(key, on ? this.state.musicVolume * 0.12 : this.state.musicVolume, on ? 900 : 700);
+        // Down quickly enough to be under the first syllable, back up slowly
+        // enough not to be a swell of its own. The machine's fall keeps the
+        // slower pair it was tuned with.
+        const slow = reason === 'vending';
+        this.fadeTrack(key, this.musicTarget(key), after < before ? (slow ? 900 : 180) : (slow ? 700 : 450));
     },
 
     setVolume: function(val) {

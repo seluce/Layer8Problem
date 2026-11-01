@@ -1574,7 +1574,8 @@ export const events = {
 
         this.setTerminalResult(recipe ?? { msg: String(res ?? '') },
                                m, l, finalA, finalB, btnAction, btnKey, btnColor,
-                               this.state.tickets - ticketsBefore);
+                               this.state.tickets - ticketsBefore,
+                               recipe?.k ? null : res);
     },
 
     // async: lunch is its own pool and loads on demand like the others.

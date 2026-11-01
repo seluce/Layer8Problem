@@ -61,8 +61,9 @@ const engine = {
     checkForNews() {}, log() {}, unlockAchievement() {},
     generateDiaryEntry: () => 'diary stub',
     // finishGame() closes the day's windows (engine_ui); none is open here, and
-    // week-flow.test.mjs runs the real one.
-    closeDayWindows() {},
+    // week-flow.test.mjs runs the real one. The same goes for the voice it
+    // silences on the way out.
+    closeDayWindows() {}, hushNarration() {},
 };
 window.engine = engine;
 

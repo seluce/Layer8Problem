@@ -1,5 +1,9 @@
 [Unreleased]
 
+Sound:
+* The terminal is read out loud. Every scene, every outcome, in both languages, by a voice that is not a person's - the settings say whose and what made it, and the switch beside the volume turns it off.
+* The music is quieter, and it stays at one loudness now instead of jumping between tracks. It steps back while the narrator speaks.
+
 The day to day:
 * A career that has worked its way through a pool is now shown the scenes where a decision is still untaken, rather than ones it has read to the end. Known scenes still come back - that is what they are for - but the ones with something left come first.
 

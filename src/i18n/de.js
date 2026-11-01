@@ -40,6 +40,8 @@ export const de = {
     'credits.title':               'Credits & Lizenzen',
     'credits.dev':                 'Entwicklung & Design:',
     'credits.music':               'Musik Lizenzen (Creative Commons BY 4.0):',
+    'credits.voice':               'Sprachausgabe:',
+    'credits.voice.body':          'Die Szenen werden von einer künstlichen Stimme gelesen, erzeugt mit ElevenLabs (Modell eleven_v4_turbo, Stimme „Alexander – Deep TV Narrator“). Kein Mensch hat diese Aufnahmen gesprochen. Dieselbe Stimme in beiden Sprachen, absichtlich.',
 
     'export.title':                'Spielstand sichern',
     'export.label':                'Dein Code',
@@ -92,6 +94,9 @@ export const de = {
     'set.music.title':           'Musik',
     'set.music.desc':            'Hintergrund-Gedudel & Boss-Beats',
     'set.music.level':           'Lautstärke der Musik',
+    'set.narration.title':       'Sprecher',
+    'set.narration.desc':        'Liest die Szenen vor. Eine KI-Stimme.',
+    'set.narration.level':       'Lautstärke des Sprechers',
     'set.musicStyle.title':      'Musik-Stil',
     'set.musicStyle.desc':       'Wähle deinen musikalischen Wahnsinn.',
     'set.section.display':       'Anzeige & Layout',
