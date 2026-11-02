@@ -1,4 +1,4 @@
-[7.0.1] - unreleased
+[7.0.1] - 2026-11-02
 
 Fixes after 7.0.
 
