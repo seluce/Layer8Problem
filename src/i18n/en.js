@@ -91,6 +91,7 @@ export const en = {
     'set.narration.level':       'Narrator volume',
     // Spoken, not shown - see tools/voice-text.mjs, SPOKEN_KEYS.
     'set.narration.sample':      'Test announcement. This is how loud the narrator reads when something happens in the terminal.',
+    'set.narration.rateSample':  'Test announcement. This is how fast the narrator reads when something happens in the terminal.',
     'set.musicStyle.title':      'Music style',
     'set.musicStyle.desc':       'The radio moves between all the tracks, any other choice stays with one. Emergencies and the gala have music of their own.',
     'set.textSize.title':        'Text size',
@@ -582,9 +583,12 @@ export const en = {
     'inv.discard.stop':            'Stop selecting',
     'inv.trophies':                'TROPHIES & KEEPSAKES',
 
-    'keybind.opt1':                'Answer 1 (top)',
-    'keybind.opt2':                'Answer 2 (middle)',
-    'keybind.opt3':                'Answer 3 (bottom)',
+    'keybind.opt1':                'Answer 1',
+    'keybind.opt1.hint':           'At the top',
+    'keybind.opt2':                'Answer 2',
+    'keybind.opt2.hint':           'In the middle',
+    'keybind.opt3':                'Answer 3',
+    'keybind.opt3.hint':           'At the bottom',
     'keybind.confirm':             'Continue / confirm',
     'keybind.confirm.hint':        'Also in notices and on the phone',
     'keybind.readAloud.hint':      'Reads the scene out, or stops it',

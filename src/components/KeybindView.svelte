@@ -40,10 +40,15 @@
             { action: 'actCall',   label: 'keybind.actCall' }
         ] },
         { id: 'answers', title: 'keybind.group.answers', rows: [
+            // Where each answer sits is a hint line, not part of the label. In
+            // brackets it decided the row's height by its length: on a phone
+            // "Antwort 1 (oben)" just fitted one line and the other two broke
+            // into two, three rows of one kind at two heights.
             // i18n-uses: keybind.opt1, keybind.opt2, keybind.opt3, keybind.confirm, keybind.confirm.hint
-            { action: 'opt1', label: 'keybind.opt1' },
-            { action: 'opt2', label: 'keybind.opt2' },
-            { action: 'opt3', label: 'keybind.opt3' },
+            // i18n-uses: keybind.opt1.hint, keybind.opt2.hint, keybind.opt3.hint
+            { action: 'opt1', label: 'keybind.opt1', hint: 'keybind.opt1.hint' },
+            { action: 'opt2', label: 'keybind.opt2', hint: 'keybind.opt2.hint' },
+            { action: 'opt3', label: 'keybind.opt3', hint: 'keybind.opt3.hint' },
             { action: 'confirm', label: 'keybind.confirm', hint: 'keybind.confirm.hint', accent: true }
         ] },
         { id: 'voice', title: 'set.section.narration', rows: [

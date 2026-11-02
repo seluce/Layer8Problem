@@ -52,8 +52,8 @@
 
     function slotClass(slot) {
         if (!slot) return 'inv-slot empty';
-        if (slot.hasCooldown && slot.ready) return 'inv-slot relative group cursor-pointer border-green-500 hover:bg-green-900/20';
-        if (slot.isConsumable) return 'inv-slot relative group cursor-pointer border-blue-500 hover:bg-blue-900/20';
+        if (slot.hasCooldown && slot.ready) return 'inv-slot slot-ready relative group cursor-pointer';
+        if (slot.isConsumable) return 'inv-slot slot-usable relative group cursor-pointer';
         return 'inv-slot relative group';
     }
 

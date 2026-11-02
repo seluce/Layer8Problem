@@ -4789,6 +4789,7 @@
   {"key":"special/valveTexts/chef/8","sha":"d08069f03a14","spk":"d08069f03a14","chars":162},
   {"key":"special/valveTexts/chef/9","sha":"9949b659764b","spk":"9949b659764b","chars":154},
   {"key":"i18n/set.narration.sample","sha":"efc4b5a0df43","spk":"efc4b5a0df43","chars":94},
+  {"key":"i18n/set.narration.rateSample","sha":"a8f3f68dee7a","spk":"a8f3f68dee7a","chars":94},
   {"key":"i18n/hint.mail.text","sha":"c660ae9cc3d6","spk":"ab8bb6333152","chars":188},
   {"key":"i18n/hint.boss.text","sha":"6539bc9c9849","spk":"6f8ed0365589","chars":171},
   {"key":"i18n/tutorial.ask.text","sha":"e6edd8c3b5f6","spk":"c1f24f213ab0","chars":192},

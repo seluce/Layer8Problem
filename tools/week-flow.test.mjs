@@ -4515,6 +4515,7 @@ await ok('Resetting the settings resets every one of them', () => {
     const LEFT_ALONE = {
         confirmResetSettings: 'is the reset',
         previewNarration: 'plays a sentence, sets nothing',
+        previewNarrationRate: 'plays a sentence, sets nothing',
         toggleNarration: 'set directly - toggling it on plays the sample over the reset sound',
         resetKeybinds: 'is called by the reset',
     };
@@ -4677,6 +4678,30 @@ await ok('An item stands on the same lighter ground wherever it is shown', () =>
     assert.equal((border.match(/ item-ground'/g) ?? []).length, 2, 'a found item in the archive is not on the item ground');
     const html = readFileSync(new URL('../index.html', import.meta.url), 'utf-8');
     assert.match(html, /id="item-confirm-icon"\s+class="[^"]*\bitem-ground\b/, 'the item in the confirm window is not on the item ground');
+});
+
+await ok('A slot says what it can do in a frame the item ground does not swallow', () => {
+    // The states were Tailwind's 1px 500 borders, made for the dark socket.
+    // On the mid slate a mid blue all but disappeared (7.0, on a phone), so
+    // each state is a class of its own with two pixels and the 400 shade.
+    // Held both ways: the classes must stay strong, and no slot may fall back
+    // to a 1px utility border for a state.
+    const css = readFileSync(new URL('../src/app.css', import.meta.url), 'utf-8');
+    for (const name of ['usable', 'ready', 'lore', 'discard']) {
+        assert.match(css, new RegExp(`\\.inv-slot\\.slot-${name}\\s*\\{\\s*border:\\s*2px solid #`),
+            `slot-${name} is missing or no longer two pixels`);
+    }
+    const full = readFileSync(new URL('../src/components/InventoryFull.svelte', import.meta.url), 'utf-8');
+    const side = readFileSync(new URL('../src/components/InventorySlots.svelte', import.meta.url), 'utf-8');
+    const classes = (src) => src.slice(src.indexOf('function slotClass'), src.indexOf('\n    }', src.indexOf('function slotClass')));
+    for (const [name, src, want] of [['the backpack', full, ['usable', 'ready', 'lore', 'discard']], ['the side panel', side, ['usable', 'ready']]]) {
+        const body = classes(src);
+        for (const w of want) assert.ok(body.includes(` slot-${w} `), `${name} lost the ${w} frame`);
+        // Blue, green and red are the states a player acts on. The trophies'
+        // faint amber stays a utility on purpose: a trophy does nothing, and
+        // its frame should not compete with the chronicle's, which does.
+        assert.ok(!/'[^']*\bborder-(?:blue|green|red)-\d/.test(body), `${name} draws a state in a utility border again`);
+    }
 });
 
 await ok('All six tracks are levelled to one loudness', async () => {
