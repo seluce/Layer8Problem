@@ -44,8 +44,8 @@ const SPOKEN = new Set(['text', 'r', 'txt']);
  *   - the tutorial, which is the one stretch of the game where he does ALL
  *     the talking. A player who switched the narrator on for the reading
  *     would otherwise meet a silent tutorial and a game that reads itself.
- *   - the sample the settings play, so the narrator's slider has a preview
- *     like the other two.
+ *   - the two samples the settings play, so the narrator's sliders have a
+ *     preview like the other two - one says how loud, the other how fast.
  *
  * Read in his own voice, not a machine's. Alexander already reads every one
  * of the game's three hundred characters; making H.A.L.G.E.R.D. the single
@@ -57,6 +57,7 @@ const SPOKEN = new Set(['text', 'r', 'txt']);
  */
 export const SPOKEN_KEYS = [
     'set.narration.sample',
+    'set.narration.rateSample',
 
     'hint.mail.text',
     'hint.boss.text',
@@ -146,6 +147,20 @@ const SPOKEN_AS = {
     de: [
         [/\bRacks\b/g, 'Räcks'],
         [/\bRack\b/g, 'Räck'],
+        // "Booten" came back with the long German o of a boat (7.0, the
+        // morning screen). The verb forms and the hyphenated compounds the
+        // tree holds - Boot-Stick, Boot-Reihenfolge - and nothing that could
+        // BE a boat: "im selben Boot", "Boote" and the U-Boot keep their o.
+        // A new word form is not guessed at here; voice.test.mjs lists every
+        // boot word the rule leaves alone, and a new one has to be named there.
+        [/(?<!U-)\b([Bb])oot(?=(?:en|et|est)\b|-)/g, '$1uht'],
+        // "IT" came back as two German letters, "Ih-Teh" (7.0, Sarah's
+        // "IT-Held"). Capital and both boundaries, so MITTAG, BITTE and FIT
+        // are never touched; the hyphen is a boundary, so IT-Abteilung and
+        // Schatten-IT are. "Ti" rather than "Tie": a voice that knows English
+        // reads "Tie" as the necktie.
+        [/\bIT(?=ler\b)/g, 'Ei-Ti'],
+        [/\bIT\b/g, 'Ei-Ti'],
     ],
     en: [],
 };

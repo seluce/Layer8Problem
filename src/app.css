@@ -389,14 +389,26 @@
        sits in rather than a flat patch. A filled slot is recognised by its
        picture (:has), so an empty one stays the dark socket it was and the
        difference between the two is visible at a glance. States keep their
-       coloured borders; the tints they set underneath are covered, which the
-       borders were always there to say. */
+       coloured borders; the tints they set underneath are covered, so the
+       border carries the state alone - see the slot states below. */
     .item-ground,
     .inv-slot:has(> img) {
         background-color: #64748b;
         background-image: linear-gradient(to bottom, #6f7f96, #586780);
         box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.10), inset 0 -2px 4px rgba(0, 0, 0, 0.22);
     }
+    /* WHAT A SLOT CAN DO
+       Usable, ready after its cooldown, the chronicle, picked for the bin.
+       They were Tailwind's 1px border-blue-500 and its siblings, made for the
+       dark socket - and on the mid slate a mid blue all but disappears, the
+       tint underneath it being covered (7.0, on a phone). Two pixels and the
+       400 shade carry it again. A frame and not a contour: the slot's own
+       border, strengthened, with nothing drawn around the picture - see the
+       die-cut outline that was tried and rejected. */
+    .inv-slot.slot-usable  { border: 2px solid #60a5fa; }   /* blue-400 */
+    .inv-slot.slot-ready   { border: 2px solid #4ade80; }   /* green-400 */
+    .inv-slot.slot-lore    { border: 2px solid #fbbf24; }   /* amber-400 */
+    .inv-slot.slot-discard { border: 2px solid #f87171; }   /* red-400 */
     .inv-slot.used::after { content: '✔'; position: absolute; bottom: -2px; right: -2px; font-size: 0.625rem; color: #10b981; }
 
     /* BUTTONS */

@@ -153,7 +153,7 @@ await ok('only the terminal pools and the named keys are collected', () => {
 
 // --- 6. The named interface strings -----------------------------------------
 //
-// The dictionary is NOT collected wholesale - see voice-text.mjs. Fifteen keys
+// The dictionary is NOT collected wholesale - see voice-text.mjs. Sixteen keys
 // are named by hand, which buys a list that can go out of step in both
 // directions: a key renamed in the dictionary, or a key recorded and then never
 // spoken by anything. Both are silent faults - a recording nobody plays, or a
@@ -179,9 +179,18 @@ await ok(`the ${SPOKEN_KEYS.length} named interface keys are recorded and reacha
                + code('tutorial.js') + code('engine/engine_ui.js');
     const orphans = SPOKEN_KEYS.filter(k => !live.includes(`'${k}'`));
     assert.deepEqual(orphans, [], 'recorded under a name the code no longer uses');
+
+    // The other direction: a window that speaks a fixed key the list does not
+    // name speaks a sentence nobody recorded. Rewriting the manifest does not
+    // notice - it collects what the list says - so the window is silent at
+    // 0 errors and 0 warnings. Literal keys only; the tutorial's computed
+    // ones are held by the wiring check below.
+    const unrecorded = [...live.matchAll(/narrateWindow\(t\('([^']+)'\)/g)].map(m => m[1])
+        .filter(k => !SPOKEN_KEYS.includes(k));
+    assert.deepEqual(unrecorded, [], 'a window speaks a key that is never recorded');
 });
 
-// The wiring, one assertion per voice. Four call sites carry all fifteen keys,
+// The wiring, one assertion per voice. Five call sites carry all sixteen keys,
 // and each of them is a place where deleting one line costs a recording its
 // only way to be heard - at 0 errors and 0 warnings, because a window that
 // stays quiet looks exactly like a window with nothing recorded.
@@ -189,6 +198,13 @@ await ok('H.A.L.G.E.R.D. and the lesson have a voice', () => {
     assert.match(code('engine/engine_voice.js'),
         /previewNarration: function[\s\S]{0,200}?narrateWindow\(t\('set\.narration\.sample'\), 'sample'\)/,
         'the settings sample is not spoken');
+    assert.match(code('engine/engine_voice.js'),
+        /previewNarrationRate: function[\s\S]{0,200}?narrateWindow\(t\('set\.narration\.rateSample'\), 'sample'\)/,
+        'the speed sample is not spoken');
+    // And each slider plays its own: the speed slider used to play the level's
+    // sentence, which says how LOUD.
+    assert.match(markup('components/SettingsView.svelte'), /setNarrationRate\(e\.currentTarget\.value\)\}\s*onchange=\{\(\) => engine\.previewNarrationRate\(\)\}/,
+        'the speed slider does not play the speed sample');
     assert.match(code('engine/engine_events.js'),
         /firstTimeHint: function[\s\S]{0,900}?this\.narrateWindow\(t\(textKey\)\)/,
         'the two first-time warnings are not spoken');
@@ -256,6 +272,56 @@ await ok(`a respelling reaches the ${LANG} tree and only where it belongs`, () =
         // The screen is untouched either way.
         assert.ok(!/Räck/.test(e.src), `${e.key} has the respelling in its PROSE`);
     }
+});
+
+// The two words heard wrong in 7.0. Each held from the tree AND from a few
+// written sentences, because the tree alone cannot show the half that matters
+// most here: the German words that must NOT be touched. "Boot" is a boat
+// before it is a verb, and an office satire will one day put everybody in the
+// same one.
+await ok(`"booten" is sent as the English verb in German and left alone elsewhere`, () => {
+    // Every boot word the German rule leaves alone, by name. A new form - a
+    // "gebootet", a "Reboot" in a scene - is not respelled by guesswork: it
+    // fails here and somebody decides which kind of word it is.
+    const GERMAN_BOOT = ['U-Boot'];
+    const words = (text) => text.match(/[\p{L}-]*boot[\p{L}-]*/giu) ?? [];
+    const written = entries.filter(e => /boot/i.test(e.src));
+    if (LANG === 'de') {
+        assert.ok(written.length >= 8, `expected the boot pieces, found ${written.length}`);
+        for (const e of written) {
+            const left = words(e.spoken).filter(w => !GERMAN_BOOT.includes(w.replace(/[^\p{L}]+$/u, '')));
+            assert.deepEqual(left, [], `${e.key} still sends a boot word the rule has not been told about`);
+        }
+        assert.equal(spokenForm('Der Rechner bootet, du bootest ihn, nach dem Booten der Boot-Stick.', 'de'),
+            'Der Rechner buhtet, du buhtest ihn, nach dem Buhten der Buht-Stick.');
+        for (const boat of ['Wir sitzen alle im selben Boot.', 'Die Boote liegen im Hafen.', 'Ein altes U-Boot.', 'Des Bootes Rumpf.']) {
+            assert.equal(spokenForm(boat, 'de'), boat, `a boat was respelled: ${boat}`);
+        }
+    } else {
+        for (const e of written) assert.ok(!/buht/i.test(e.spoken), `${e.key} carries the German respelling`);
+        assert.equal(spokenForm('The machine boots. Booting takes ages.', 'en'), 'The machine boots. Booting takes ages.');
+    }
+});
+
+await ok(`"IT" is sent as the English letters in German and left alone elsewhere`, () => {
+    const written = entries.filter(e => /\bIT/.test(e.src));
+    if (LANG === 'de') {
+        // Close to two hundred pieces: the floor catches a rule that has
+        // collapsed, not ordinary editing.
+        assert.ok(written.length > 150, `expected the IT pieces, found ${written.length}`);
+        for (const e of written) {
+            assert.ok(!/\bIT(?:ler)?\b/.test(e.spoken), `${e.key} still sends "IT" as two German letters`);
+        }
+        assert.equal(spokenForm("Na, IT-Held? Die Schatten-IT der ITler.", 'de'), "Na, Ei-Ti-Held? Die Schatten-Ei-Ti der Ei-Tiler.");
+        // Capitals inside a word are not the abbreviation.
+        for (const caps of ['MITTAG', 'BITTE', 'FIT', 'KRITISCH', 'ROOTKIT', 'ITEMS']) {
+            assert.equal(spokenForm(caps, 'de'), caps, `${caps} was respelled`);
+        }
+    } else {
+        for (const e of written) assert.ok(!/Ei-Ti/.test(e.spoken), `${e.key} carries the German respelling`);
+        assert.equal(spokenForm('Ask IT. The IT department.', 'en'), 'Ask IT. The IT department.');
+    }
+    for (const e of written) assert.ok(!/Ei-Ti/.test(e.src), `${e.key} has the respelling in its PROSE`);
 });
 
 // --- 7b. The checksum over what is SENT -------------------------------------

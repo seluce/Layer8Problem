@@ -124,14 +124,14 @@
         const modal = document.getElementById('inventory-modal');
         if (!modal) return;
 
-        const beobachter = new MutationObserver(() => {
+        const observer = new MutationObserver(() => {
             if (modal.classList.contains('hidden')) {
                 discardMode = false;
                 pinned = null;
             }
         });
-        beobachter.observe(modal, { attributes: true, attributeFilter: ['class'] });
-        return () => beobachter.disconnect();
+        observer.observe(modal, { attributes: true, attributeFilter: ['class'] });
+        return () => observer.disconnect();
     });
 
     $effect(() => {
@@ -160,23 +160,25 @@
         const ring = pinned === row.key ? ' ring-2 ring-slate-400/70' : '';
 
         // In discard mode every equipment slot looks the same - clickable
-        // and outlined in red. Trophies stay as they are.
+        // and framed in red. Trophies stay as they are. The states are
+        // classes in app.css (WHAT A SLOT CAN DO): the tints these used to
+        // carry are covered by the item ground anyway.
         if (discardMode && !row.quest) {
-            return 'inv-slot inv-slot-lg relative group cursor-pointer border-red-900/60 bg-red-950/40 hover:border-red-600 hover:bg-red-900/50' + ring;
+            return 'inv-slot inv-slot-lg slot-discard relative group cursor-pointer' + ring;
         }
 
         if (row.entry.id === 'corp_chronicles') {
-            return 'inv-slot inv-slot-lg relative group cursor-pointer border-amber-400 bg-amber-900/20 hover:bg-amber-900/40' + ring;
+            return 'inv-slot inv-slot-lg slot-lore relative group cursor-pointer' + ring;
         }
         if (row.quest) return 'inv-slot inv-slot-lg relative group cursor-help border-amber-500/50 bg-amber-900/10' + ring;
 
         if (tree().items[row.entry.id]?.use?.cooldown) {
             return (waitFor(row.entry.id) <= 0
-                ? 'inv-slot inv-slot-lg relative group cursor-pointer border-green-500 hover:bg-green-900/20'
+                ? 'inv-slot inv-slot-lg slot-ready relative group cursor-pointer'
                 : 'inv-slot inv-slot-lg relative group cursor-default cursor-not-allowed') + ring;
         }
         if (isConsumable(row.entry.id)) {
-            return 'inv-slot inv-slot-lg relative group cursor-pointer border-blue-500 hover:bg-blue-900/20' + ring;
+            return 'inv-slot inv-slot-lg slot-usable relative group cursor-pointer' + ring;
         }
         return 'inv-slot inv-slot-lg relative group cursor-default' + ring;
     }
@@ -314,11 +316,16 @@
                     {tf('inv.count', { have: normal.length, max: MIN_SLOTS })}
                 </span>
 
+                <!-- One width for both labels. "Fertig" is shorter than
+                     "Wegwerfen", and on a phone the shorter one let the whole
+                     group back up beside the heading - both controls jumped a
+                     line up on the press that armed them. The width holds the
+                     longest of the four, "Throw away". -->
                 <button type="button"
                         aria-pressed={discardMode}
                         title={discardMode ? t('inv.discard.stop') : t('inv.discard.start')}
                         onclick={() => { discardMode = !discardMode; pinned = null; }}
-                        class="h-8 px-2.5 rounded-md flex items-center gap-1.5
+                        class="h-8 w-28 px-2.5 rounded-md flex items-center justify-center gap-1.5
                                text-[0.6875rem] font-bold transition-colors
                                {discardMode
                                  ? 'bg-red-950/40 border border-red-900/60 text-red-300'

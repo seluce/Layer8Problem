@@ -1,3 +1,14 @@
+[7.0.1] - unreleased
+
+Fixes after 7.0.
+
+* Usable items, items ready after their cooldown and items picked for the bin have a clearer frame again - on the new item ground it had all but disappeared.
+* Arming "Throw away" in the inventory no longer makes the buttons above the items jump.
+* The narrator's speed figure no longer pushes the text beside it down a line when it changes.
+* The speed slider has a test line of its own, which says how fast and not how loud.
+* In the key bindings, where each answer sits is a second line, so the three rows are the same height.
+* The German narrator says „booten" and „IT" the English way.
+
 [7.0.0] - 2026-11-01
 
 The game reads itself out loud, Steam keeps a leaderboard for the working week, and the menu, the settings and the items are new.

@@ -96,9 +96,10 @@ export const de = {
     'set.narration.title':       'Sprecher',
     'set.narration.desc':        'Liest Szenen und Ergebnisse vor. Die Stimme ist eine KI, keine Person – wer sie gemacht hat, steht unter Credits.',
     'set.narration.level':       'Lautstärke des Sprechers',
-    // Spoken, not shown. The settings play it so the narrator's slider has a
-    // preview like the other two - see tools/voice-text.mjs, SPOKEN_KEYS.
+    // Spoken, not shown. The settings play them so the narrator's two sliders
+    // have a preview like the other two - see tools/voice-text.mjs, SPOKEN_KEYS.
     'set.narration.sample':      'Testdurchsage. So laut liest der Erzähler, wenn im Terminal etwas passiert.',
+    'set.narration.rateSample':  'Testdurchsage. So schnell liest der Erzähler, wenn im Terminal etwas passiert.',
     'set.musicStyle.title':      'Musik-Stil',
     'set.musicStyle.desc':       'Das Radio wechselt zwischen allen Stücken, jede andere Wahl bleibt bei einem. Notfälle und die Gala haben ihre eigene Musik.',
     'set.textSize.title':        'Textgröße',
@@ -590,9 +591,12 @@ export const de = {
     'inv.discard.stop':            'Auswahl beenden',
     'inv.trophies':                'TROPHÄEN & ERINNERUNGEN',
 
-    'keybind.opt1':                'Antwort 1 (oben)',
-    'keybind.opt2':                'Antwort 2 (Mitte)',
-    'keybind.opt3':                'Antwort 3 (unten)',
+    'keybind.opt1':                'Antwort 1',
+    'keybind.opt1.hint':           'Ganz oben',
+    'keybind.opt2':                'Antwort 2',
+    'keybind.opt2.hint':           'In der Mitte',
+    'keybind.opt3':                'Antwort 3',
+    'keybind.opt3.hint':           'Ganz unten',
     'keybind.confirm':             'Weiter / Bestätigen',
     'keybind.confirm.hint':        'Auch in Hinweisfenstern und am Handy',
     'keybind.readAloud.hint':      'Liest die Szene vor oder stoppt sie',

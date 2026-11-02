@@ -367,13 +367,14 @@ checksum then fails and the file is simply respoken.
 **Both trees must produce the same keys.** They did on the first run, 4651
 each, no difference in either direction - the same rule that `lint:parity`
 enforces for the data. The fifteen named interface strings bring it to 4663,
-the 118 morning moods (`moods`, the morning screen) to 4781.
+the 118 morning moods (`moods`, the morning screen) to 4781, the twenty lines
+of the two valves to 4801 and the speed slider's own sample to 4802.
 
 | | |
 |---|---|
-| pieces | 4781 per language |
-| characters | 830,693 de · 803,706 en |
-| as speech | 15.4 h · 14.9 h |
+| pieces | 4802 per language |
+| characters | 834,689 de · 806,912 en |
+| as speech | 15.5 h · 14.9 h |
 
 **Every entry carries two checksums, and they answer different questions.**
 `sha` is taken over the text as WRITTEN and is the file name - the browser
@@ -532,7 +533,7 @@ and how far the plan's remainder still reaches.
 ## 8. `npm test` — the five test suites, in both languages
 
 ```
-npm test        # 17 / 270 / 20 / 48 / 17, then the same five again with --lang=en
+npm test        # 17 / 271 / 20 / 48 / 19, then the same five again with --lang=en
 npm run test:de # one language only, while working
 npm run test:en
 ```
@@ -586,8 +587,8 @@ The fifth suite, and the reason it is its own: every link between a sentence on
 screen and the file that speaks it fails SILENTLY. A digest computed one way in
 Node and another way in the browser does not throw — the narrator is simply
 mute, in the shipped game only. A window that forgets to hush reads a result
-out over the noticeboard. Seventeen checks, sixty-two mutation probes
-(01.11.2026).
+out over the noticeboard. Nineteen checks, seventy-three mutation probes
+(02.11.2026).
 
 Six of those checks arrived with the voiced interface strings and the two
 behaviours around them, and two of them were written twice. The first version
@@ -611,6 +612,22 @@ reads `Rack` correctly already. The candidate scan is case-insensitive while
 the rule is not - German capitalises its nouns, so a lowercase `rack` arriving
 in that tree is a gap, and this is where it comes out instead of going quietly
 to the provider.
+
+Two more came with the words heard wrong in 7.0, „booten" and „IT", and
+each is held from the tree AND from written sentences, because the tree alone
+cannot show the half that matters most: the German words that must stay German.
+„Boot" is a boat before it is a verb, so the boot check names every boot word
+the rule leaves alone (`U-Boot`, for now) and fails on any other, and a few
+written boats — „im selben Boot", „Boote", „des Bootes" — must come through
+untouched. The IT check holds MITTAG, BITTE, FIT and their kind against a
+rule that lost its word boundaries. Each with a probe in both directions,
+including the rule moved to `all`, where it would respell the English tree.
+
+The reachability check gained its other half with the speed sample: a window
+that speaks a fixed key the list does not name speaks a sentence nobody
+recorded, and rewriting the manifest does not notice, because it collects what
+the list says. The probe removed the key from the list and rewrote the
+manifest, as somebody would — the old checks were all green after that.
 
 The third is the one that cost the most to learn. `collectEntries()` was called
 once per language in a loop, and the deferred pools are cached on `DB` by NAME:

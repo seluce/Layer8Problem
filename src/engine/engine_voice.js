@@ -442,6 +442,17 @@ export const voice = {
     },
 
     /**
+     * The speed slider's sample. A sentence of its own because the volume's
+     * says "this is how LOUD", and hearing that while setting the tempo is
+     * answering a question nobody asked.
+     *
+     * i18n-uses: set.narration.rateSample
+     */
+    previewNarrationRate: function() {
+        this.narrateWindow(t('set.narration.rateSample'), 'sample');
+    },
+
+    /**
      * The slider. Follows the voice that is speaking right now rather than
      * waiting for the next line - a volume control you cannot hear is a volume
      * control nobody trusts.
@@ -460,7 +471,7 @@ export const voice = {
 
     /**
      * The speed slider. Like the volume it reaches the line that is speaking,
-     * and the sample plays when the slider is let go (row.settled).
+     * and its own sample plays when the slider is let go.
      */
     setNarrationRate: function(val) {
         this.state.narrationRate = clampNarrationRate(val);

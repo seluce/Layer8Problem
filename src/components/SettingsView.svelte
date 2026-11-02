@@ -416,7 +416,8 @@
         </div>
 
         <!-- How fast it reads. The same slider as the level, and like it the
-             sample plays when it is let go, not on every step. -->
+             sample plays when it is let go, not on every step - a sample of
+             its own, which says "fast" where the level's says "loud". -->
         <div class="border-t border-slate-700/60 pt-3 grid grid-cols-[1fr_auto] md:grid-cols-[1fr_14rem_3rem] items-center gap-x-4 gap-y-2">
             <div class="flex flex-col min-w-0 col-start-1 row-start-1">
                 <span class="text-xs font-bold text-slate-200">{t('set.narration.rate.title')}</span>
@@ -427,10 +428,14 @@
                 <input type="range" min={NARRATION_RATE_MIN} max={NARRATION_RATE_MAX} step="0.05" class={SLIDER}
                        aria-label={t('set.narration.rate.title')} aria-valuetext={rateLabel}
                        value={game.narrationRate} oninput={(e) => engine.setNarrationRate(e.currentTarget.value)}
-                       onchange={() => engine.previewNarration()}>
+                       onchange={() => engine.previewNarrationRate()}>
                 <span class="text-[0.625rem] text-slate-400" aria-hidden="true">🐇</span>
             </div>
-            <span class="col-start-2 md:col-start-3 row-start-1 justify-self-end text-xs font-mono font-bold text-amber-400 tabular-nums">{rateLabel}</span>
+            <!-- A width of its own on a phone too. The column there is `auto`,
+                 so "1×" and "1,15×" made it two different widths and the
+                 description beside it re-wrapped and moved down a line on
+                 the first step of the slider. -->
+            <span class="col-start-2 md:col-start-3 row-start-1 justify-self-end w-12 text-right text-xs font-mono font-bold text-amber-400 tabular-nums">{rateLabel}</span>
         </div>
 
         <div class="border-t border-slate-700/60 pt-3 flex flex-col gap-2">
