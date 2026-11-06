@@ -78,8 +78,13 @@
 			<!-- Head: the pitch is read once, so it spans the full width instead
 			     of squeezing the mode choice down the left column. -->
 			<header class="flex flex-col sm:flex-row items-center gap-5 md:gap-8 border-b border-slate-700/50 pb-6 mb-6">
-				<img src="assets/img/logo/logo.png" alt="Layer8Problem logo" data-i18n-attr="alt=intro.logoAlt"
-				     class="w-44 md:w-52 shrink-0 drop-shadow-[0_0_20px_rgba(59,130,246,0.15)] pointer-events-none select-none hover:scale-105 transition-transform duration-700">
+				<!-- The wordmark with the mark above it (7.1): the start screen is
+				     where the name has to be read, so it is the whole logo here,
+				     while the browser tab and the app icon carry the mark alone
+				     (logo.png, favicon.svg). -->
+				<img src="assets/img/logo/logo_title.png" alt="Layer8Problem logo" data-i18n-attr="alt=intro.logoAlt"
+				     width="640" height="488"
+				     class="w-48 md:w-56 h-auto shrink-0 pointer-events-none select-none">
 				<h1 class="sr-only">Layer8Problem</h1>
 				<!-- One string, not six: the sentence carries a <strong> in the
 				     middle, and splitting it would hand a translator fragments
