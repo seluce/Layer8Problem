@@ -163,6 +163,13 @@
             <span class="{style.color} font-black uppercase tracking-widest text-sm wrap-break-word">{t(style.name)}</span>
             <h2 class="text-xl md:text-2xl font-bold text-slate-100 wrap-break-word">{ev.title}</h2>
         </div>
+        <!-- A scene that follows from an earlier decision says so - that it
+             goes on, not with what. self-start puts it level with the
+             category line rather than in the middle of a two-line title. -->
+        {#if ev.followUp}
+            <span class="ml-auto self-start shrink-0 mt-0.5 px-1.5 py-0.5 rounded-sm border border-slate-600 bg-slate-950/60
+                         text-[0.625rem] font-bold uppercase tracking-widest text-slate-300">{t('event.followUp')}</span>
+        {/if}
     </div>
 
     {#if ev.type === 'boss'}

@@ -459,7 +459,7 @@ export const ui = {
         // absence is how every other screen stops the voice: idle, morning,
         // boot. See engine_voice.narrate().
         this.showTerminal();
-        this.narrate(extra?.speak ?? null, extra?.mode === 'morning' ? 'morning' : 'events');
+        this.narrate(extra?.speak ?? null, extra?.kind ?? (extra?.mode === 'morning' ? 'morning' : 'events'));
     },
 
     EVENT_CLASS: 'flex-1 flex flex-col items-center py-3 w-full min-h-full',
@@ -481,11 +481,18 @@ export const ui = {
     // `nodes` rides along so the component can tell whether an option's next
     // names another conversation node (badge: goes on) or a result (ends) -
     // the same lookup the engine does on the click.
-    setTerminalEvent: function(type, title, text, opts, isChain, charName, nodes) {
+    // `followUp` is whether the scene follows from an earlier decision - the
+    // event's reqStory, which is how the draw tells a continuation apart too -
+    // and the card says so in its corner.
+    // An emergency is read as its own kind: while that line runs its clock
+    // waits (engine_events.triggerBossFight), and a player who would rather
+    // read it under pressure switches the kind off.
+    setTerminalEvent: function(type, title, text, opts, isChain, charName, nodes, followUp = false) {
         this._setTerminal(this.EVENT_CLASS, {
             mode: 'event',
-            event: { type, title, text, opts: opts || [], isChain: !!isChain, charName: charName || null, nodes: nodes || null },
-            speak: text
+            event: { type, title, text, opts: opts || [], isChain: !!isChain, charName: charName || null, nodes: nodes || null, followUp: !!followUp },
+            speak: text,
+            kind: type === 'boss' ? 'emergencies' : 'events'
         });
     },
 
@@ -1775,11 +1782,20 @@ export const ui = {
         this.state.menuReturn = from;
         this.showOverlay(modal);
         this.state.leaderboardOpens++;
-        this.loadLeaderboard(this.state.leaderboard.scope ?? 'global');
+        // Opened from an end screen (no page to go back to): the board of the
+        // run that just ended. From the menu: the mode last looked at, the
+        // same remembered choice the archive and the statistics share.
+        const run = from ? null : this.state.scoreSubmit;
+        let tab = null;
+        try { tab = localStorage.getItem(KEYS.statsTab); } catch { /* private mode */ }
+        const mode = run?.mode ?? (tab === 'week' ? 'week' : 'day');
+        this.loadLeaderboard(this.state.leaderboard.scope ?? 'global', mode);
     },
 
     /**
-     * Fetches the three boards for one scope ('global' or 'friends').
+     * Fetches the three boards of one mode ('day' or 'week') for one scope
+     * ('global' or 'friends'). Only the mode on show: six downloads one after
+     * the other would keep the window waiting for boards nobody looks at.
      *
      * One after the other, not at once: each download is a Steam call result
      * the library polls for, and three in flight gain nothing but contention.
@@ -1787,19 +1803,19 @@ export const ui = {
      * takes over, and the older one drops its answer instead of painting it
      * over the newer.
      */
-    loadLeaderboard: async function(scope) {
+    loadLeaderboard: async function(scope, mode = this.state.leaderboard.mode ?? 'day') {
         const token = (this._leaderboardToken = {});
-        this.state.leaderboard = { scope, boards: null, mine: null, loading: true, failed: false };
+        this.state.leaderboard = { scope, mode, boards: null, mine: null, loading: true, failed: false };
         const boards = {}, mine = {};
         let reached = false;
         for (const level of LEVELS) {
-            const res = await platform.leaderboardEntries(BOARD_NAMES[level], scope);
+            const res = await platform.leaderboardEntries(BOARD_NAMES[mode][level], scope);
             if (this._leaderboardToken !== token) return;
             if (res) reached = true;
             boards[level] = res?.entries ?? [];
             mine[level] = res?.mine ?? null;
         }
-        this.state.leaderboard = { scope, boards, mine, loading: false, failed: !reached };
+        this.state.leaderboard = { scope, mode, boards, mine, loading: false, failed: !reached };
     },
 
     closeLeaderboard: function() {

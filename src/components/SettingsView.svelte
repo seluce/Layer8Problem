@@ -119,10 +119,11 @@
 
     // What the narrator reads of its own accord - see DEFAULT_NARRATION_KINDS.
     // i18n-uses: set.narration.kind.events.title, set.narration.kind.events.desc
+    // i18n-uses: set.narration.kind.emergencies.title, set.narration.kind.emergencies.desc
     // i18n-uses: set.narration.kind.morning.title, set.narration.kind.morning.desc
     // i18n-uses: set.narration.kind.valves.title, set.narration.kind.valves.desc
     // i18n-uses: set.narration.kind.halgerd.title, set.narration.kind.halgerd.desc
-    const KINDS = ['events', 'morning', 'valves', 'halgerd'];
+    const KINDS = ['events', 'emergencies', 'morning', 'valves', 'halgerd'];
 
     // Icon, wording and wiring of every row, by tab and section, in the order
     // they appear.

@@ -122,8 +122,11 @@ await ok('a window over the terminal silences the narrator', () => {
 // --- 4. What the terminal hands the narrator --------------------------------
 await ok('every terminal screen decides what it speaks', () => {
     const ui = src('engine/engine_ui.js');
-    assert.match(ui, /this\.narrate\(extra\?\.speak \?\? null, extra\?\.mode === 'morning' \? 'morning' : 'events'\);/,
+    assert.match(ui, /this\.narrate\(extra\?\.speak \?\? null, extra\?\.kind \?\? \(extra\?\.mode === 'morning' \? 'morning' : 'events'\)\);/,
         '_setTerminal no longer drives the narrator, or no longer says which kind of text it hands over');
+    // An emergency is its own kind: its clock waits while it is read
+    // (engine_events.triggerBossFight), and a player can switch it off.
+    assert.match(ui, /kind: type === 'boss' \? 'emergencies' : 'events'/, 'an emergency is read as an ordinary scene again');
     // An event speaks its own text; a result is handed the sentence separately,
     // because what it stores is a recipe.
     assert.match(ui, /mode: 'event',[\s\S]{0,400}?speak: text/, 'an event does not hand over its text');

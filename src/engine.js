@@ -8,6 +8,7 @@ import { ui } from './engine/engine_ui.js';
 import { vendingMachine } from './engine/engine_vending.js';
 import { voice } from './engine/engine_voice.js';
 import { week } from './engine/engine_week.js';
+import { scores } from './engine/engine_scores.js';
 import { switchLanguage, language, onLanguageChange, t } from './i18n/i18n.svelte.js';
 
 const engine = {
@@ -28,6 +29,7 @@ const engine = {
     ...vendingMachine,
     ...voice,
     ...week,
+    ...scores,
 
     // 3. Language. Not a module of its own: these two are all the rest of the
     //    game needs, and the shell reaches them through src/actions.js.

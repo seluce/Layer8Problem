@@ -533,7 +533,7 @@ and how far the plan's remainder still reaches.
 ## 8. `npm test` — the five test suites, in both languages
 
 ```
-npm test        # 17 / 271 / 20 / 48 / 19, then the same five again with --lang=en
+npm test        # 17 / 275 / 20 / 48 / 19, then the same five again with --lang=en
 npm run test:de # one language only, while working
 npm run test:en
 ```
@@ -563,7 +563,7 @@ engine modules, not against dummies.
 | File | What it secures |
 |---|---|
 | `week-foundation.test.mjs` | the foundation of the week module (state, transitions) |
-| `week-flow.test.mjs` | the wired week loop on the real core/events/week; UI and audio stubbed. Also the Steam leaderboards: the score, the detail values in both read shapes, the merged list, both week endings submitting, and the main process's allow-list |
+| `week-flow.test.mjs` | the wired week loop on the real core/events/week; UI and audio stubbed. Also the Steam leaderboards: the score for a day and a week, the detail values in both read shapes, the merged list, both week endings and both day endings submitting, and the main process's allow-list with each board's ceiling. And an emergency's clock waiting for the narrator |
 | `dev-script.test.mjs` | every scenario of `dev-week.js` against the real engine |
 | `i18n.test.mjs` | the language layer: default and detection, the switch without a reload, the fallback for a missing key, the Steam presence and the achievement order against `STEAM_ORDER`; plus four checks on the markup itself: no type size in px, small print readable on the dark panels (slate-400 or lighter, nothing under 10px), mount targets empty in the markup, and flex items that can shrink |
 

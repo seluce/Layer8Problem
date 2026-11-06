@@ -182,17 +182,18 @@
                        week={modal.isWeek ? { mode: modal.weekMode, day: modal.weekDay } : null} />
         {/if}
 
-        <!-- What the week was worth on the leaderboard (desktop only:
-             weekSubmit stays null where there is no Steam). The answer
+        <!-- What the run was worth on the leaderboard (desktop only:
+             scoreSubmit stays null where there is no Steam). The answer
              arrives after the screen does, so the line starts as "sending"
-             and settles. No data-modal-continue - see the note below. -->
-        {#if isFinal && modal.isWeek && game.weekSubmit}
-            {@const sent = game.weekSubmit}
+             and settles. The mode has to match: a day's answer never stands
+             under a week. No data-modal-continue - see the note below. -->
+        {#if isFinal && game.scoreSubmit && game.scoreSubmit.mode === (modal.isWeek ? 'week' : 'day')}
+            {@const sent = game.scoreSubmit}
             {@const points = Number(sent.score).toLocaleString(language())}
             <div class="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs font-mono">
                 <span class="min-w-0 {sent.scoreChanged ? 'text-amber-400 font-bold' : 'text-slate-300'}" aria-live="polite">
-                    {sent.pending ? t('leaderboard.submit.pending')
-                      : sent.failed ? tf('leaderboard.submit.failed', { points })
+                    {sent.pending ? t(sent.mode === 'day' ? 'leaderboard.submit.pendingDay' : 'leaderboard.submit.pending')
+                      : sent.failed ? tf(sent.mode === 'day' ? 'leaderboard.submit.failedDay' : 'leaderboard.submit.failed', { points })
                       : sent.scoreChanged ? tf('leaderboard.submit.best', { points, rank: Number(sent.rank).toLocaleString(language()) })
                       : tf('leaderboard.submit.kept', { points })}
                 </span>

@@ -50,6 +50,7 @@ const { buildDiary, renderDiary } = await import('../src/engine/engine_diary.js'
 const { core } = await import('../src/engine/engine_core.js');
 const { events } = await import('../src/engine/engine_events.js');
 const { week } = await import('../src/engine/engine_week.js');
+const { scores } = await import('../src/engine/engine_scores.js');
 // The hooks travel with the engine in src/engine.js, so the bench composes the
 // same way: without them emit() is missing and the inventory throws.
 const { hooks } = await import('../src/engine/engine_hooks.js');
@@ -83,7 +84,7 @@ await useLanguage(LANG);
 const calls = { overlays: [], end: null, boots: 0, resumeInfo: '' };
 const engine = {
     state,
-    ...core, ...events, ...week, ...inventory, ...hooks, ...vendingMachine,
+    ...core, ...events, ...week, ...scores, ...inventory, ...hooks, ...vendingMachine,
     // The real narrator, not a stub. It builds no Audio element until it is
     // given something to say, and finishGame() calls it to stop the voice
     // reading the day's last result over the night screen - a stub there would
@@ -120,7 +121,7 @@ const engine = {
     playBootSequence(cb) { calls.boots++; cb(); },
     closeSettings() {}, updatePhoneVisibility() {}, checkForNews() {},
     renderTerminal(ev, type) { calls.terminal = [ev, type]; },
-    setTerminalEvent(type, title, text, opts, isChain, charName, nodes) { calls.termEvent = { type, title, charName }; },
+    setTerminalEvent(type, title, text, opts, isChain, charName, nodes, followUp) { calls.termEvent = { type, title, charName, followUp }; },
     setTerminalResult(text, m, l, a, b, action, buttonKey, buttonColor, tickets) { calls.termResult = { m, l, a, b, action, buttonKey, tickets }; },
     // Since 6.0 log() is handed a RECIPE, not a sentence. The stub keeps it as
     // it arrives: a test that asserts on the rendered German would be asserting
@@ -3196,6 +3197,127 @@ await ok('The boss clock runs, holds behind a window, and runs out', async () =>
     }
 });
 
+await ok('An emergency\'s clock waits for the narrator, once, and only for him', async () => {
+    // In 21 of 38 emergencies the recording at 1x outlasts the clock (7.0.1
+    // feedback: the time was up before the scene was read). The clock now
+    // waits while the reading that came WITH the emergency runs. Driven
+    // through the real voice with a stand-in element, and the interval
+    // captured as above.
+    const el = { paused: true, currentTime: 0, ended: false, src: '',
+                 pause() { this.paused = true; }, play() { this.paused = false; return Promise.resolve(); } };
+    const realSet = globalThis.setInterval;
+    const realClear = globalThis.clearInterval;
+    const realNarrator = engine.narrator;
+    // The real terminal hand-over, which the bench stubs: it is what decides
+    // that an emergency is read as its own kind. Only the page around it is
+    // left out.
+    const stubbed = { setTerminalEvent: engine.setTerminalEvent, _setTerminal: engine._setTerminal,
+                      showTerminal: engine.showTerminal, EVENT_CLASS: engine.EVENT_CLASS };
+    Object.assign(engine, { setTerminalEvent: ui.setTerminalEvent, _setTerminal: ui._setTerminal,
+                            showTerminal() {}, EVENT_CLASS: ui.EVENT_CLASS });
+    const realGet = document.getElementById;
+    document.getElementById = (id) => (id === 'terminal' || id === 'terminal-content' ? null : realGet.call(document, id));
+    let tick = null;
+    globalThis.setInterval = (fn) => { tick = fn; return 'boss-interval'; };
+    globalThis.clearInterval = () => {};
+    const fight = async (kinds) => {
+        resetState();
+        await ensure('bossfights');
+        store.set(KEYS.seenFirstBoss, 'true');
+        state.time = 10 * 60;
+        state.narrationEnabled = true;
+        state.narrationVolume = 0.8;
+        state.narrationKinds = kinds;
+        engine.narrator = el;
+        engine.hushNarration();
+        tick = null;
+        engine.triggerBossFight();
+        assert.ok(tick, 'the emergency started without a clock');
+    };
+    const on = { events: true, emergencies: true, morning: true, valves: true, halgerd: true };
+    try {
+        await fight(on);
+        assert.equal(engine.narrationHoldsClock(), true, 'the emergency was not read as one, or did not hold its clock');
+        tick(); tick(); tick();
+        assert.equal(state.bossBarPercent, 100, 'the clock ran while the scene was being read');
+
+        // The recording ends - what its 'ended' event calls - and the clock starts.
+        engine._done();
+        tick();
+        const moved = state.bossBarPercent;
+        assert.ok(moved < 100, 'the clock never started after the reading');
+
+        // V or the button reads it again: that must not stop the clock again.
+        engine.replayNarration();
+        assert.equal(engine.narrationHoldsClock(), false, 'asking for the scene again held the clock again');
+        tick();
+        assert.ok(state.bossBarPercent < moved, 'a replay stopped the clock');
+        // The rule itself, not only the kind the replay happens to pass: a
+        // reading asked for never holds, even filed as an emergency.
+        engine.hushNarration();
+        engine._speak(state.narratable, true, 'terminal', 'emergencies');
+        assert.equal(engine.narrationHoldsClock(), false, 'a reading on demand can hold the clock');
+        engine.hushNarration();
+
+        // Stopping the voice starts the clock at once.
+        await fight(on);
+        engine.replayNarration();               // one press while it speaks: stop
+        assert.equal(engine.narrationHoldsClock(), false, 'stopping the voice did not release the clock');
+        tick();
+        assert.ok(state.bossBarPercent < 100, 'the clock waited for a voice that was stopped');
+
+        // The kind switched off: not read, so nothing to wait for.
+        await fight({ ...on, emergencies: false });
+        assert.equal(engine.narrationHoldsClock(), false, 'an unread emergency held its clock');
+        tick();
+        assert.ok(state.bossBarPercent < 100, 'the clock waited although nothing was read');
+
+        // An ordinary scene never holds anything.
+        engine.hushNarration();
+        engine.narrate('Kaffee.', 'events');
+        assert.equal(engine.narrationHoldsClock(), false, 'an ordinary scene claimed a clock');
+
+        // And a recording that never finishes cannot stop the clock for good.
+        await fight(on);
+        const cap = engine.VOICE_HOLD_MAX_MS / 50;
+        for (let i = 0; i < cap; i++) tick();
+        assert.equal(state.bossBarPercent, 100, 'the cap released early');
+        tick();
+        assert.ok(state.bossBarPercent < 100, 'a voice that never ends held the clock past its cap');
+    } finally {
+        globalThis.setInterval = realSet;
+        globalThis.clearInterval = realClear;
+        engine.hushNarration();
+        engine.narrator = realNarrator;
+        Object.assign(engine, stubbed);
+        document.getElementById = realGet;
+        state.bossTimer = null;
+    }
+});
+
+await ok('A scene that follows from an earlier decision says so, and only such a scene', async () => {
+    // reqStory is how the draw tells a continuation apart (pickFromPool), so
+    // it is what the card's corner says too - for a plain event, for a chain,
+    // and after a language switch, which repaints through the same two paths.
+    await ensure('coffee');
+    const follow = DB.coffee.find(ev => ev.reqStory && !ev.nodes);
+    const plain = DB.coffee.find(ev => !ev.reqStory && !ev.nodes);
+    assert.ok(follow && plain, 'the coffee pool has lost one of the two kinds');
+    engine.renderEventHTML(follow, 'coffee');
+    assert.equal(calls.termEvent.followUp, true, 'a continuation is not marked');
+    engine.renderEventHTML(plain, 'coffee');
+    assert.equal(calls.termEvent.followUp, false, 'a fresh scene is marked as a continuation');
+
+    const pools = ['calls', 'sidequests', 'server', 'coffee'];
+    await ensure(...pools);
+    const chain = pools.flatMap(p => DB[p]).find(ev => ev.reqStory && ev.nodes && ev.startNode);
+    assert.ok(chain, 'no chained continuation left to check');
+    state.currentChainEvent = chain;
+    state.currentChainType = 'calls';
+    engine.renderChainNode(chain.startNode);
+    assert.equal(calls.termEvent.followUp, true, 'a chained continuation is not marked');
+});
+
 await ok('An encounter continuation needs the flag AND the reputation', async () => {
     // The ladder the encounter pool is built on: the opener wants 60, its
     // option pays 15, and the continuation wants 80 - so one encounter cannot
@@ -5519,7 +5641,7 @@ await ok('A save from before the change reads as all doors open', () => {
     assert.equal(typeof state.archive.seenOptions, 'object', 'the field is created on first write');
 });
 
-// --- The week leaderboards (Steam) -------------------------------------------
+// --- The leaderboards (Steam) ------------------------------------------------
 const lb = await import('../src/engine/leaderboard.js');
 
 await ok('A week is scored in minutes, and a finished week always ranks above a failed one', () => {
@@ -5539,6 +5661,32 @@ await ok('A week is scored in minutes, and a finished week always ranks above a 
     assert.equal(lb.composure({ tickets: 3, a: 40, b: 25 }), 60 + 75 + 70);
     // Out-of-range figures cannot push a score past its bounds.
     assert.equal(lb.composure({ tickets: -5, a: -20, b: 150 }), 100 + 100 + 0);
+});
+
+await ok('A day is scored by the week\'s rule, and a finished day always ranks above a failed one', () => {
+    // The day boards (7.1): a player who had only played the day mode found
+    // an empty leaderboard and took it for broken.
+    const at = (h, m) => ({ won: false, time: h * 60 + m, tickets: 0, a: 0, b: 0 });
+    assert.equal(lb.dayScore(at(8, 0)), 0, '08:00 is nothing yet');
+    assert.equal(lb.dayScore(at(14, 12)), 14 * 60 + 12 - 480);
+    assert.equal(lb.dayScore(at(16, 30)), lb.SHIFT_MINUTES - 1, 'a loss at closing time stays below a finished day');
+    assert.equal(lb.dayScore(at(23, 0)), lb.SHIFT_MINUTES - 1);
+    assert.equal(lb.dayScore({ won: true, time: 990, tickets: 10, a: 100, b: 100 }), lb.SHIFT_MINUTES, 'the worst finished day');
+    assert.equal(lb.dayScore({ won: true, time: 990, tickets: 0, a: 0, b: 0 }), lb.DAY_MAX, 'the calmest finished day');
+    assert.equal(lb.DAY_MAX, 810);
+    assert.equal(lb.WEEK_MAX, 2850);
+
+    // Written as a week of one day: one reader for both.
+    const entry = lb.dayEntry({ level: 'hard', won: false, cause: 'chef', time: 11 * 60 + 5,
+                                tickets: 3, l: 12, a: 40, b: 100, valve: false, warning: true });
+    assert.equal(entry.board, 'day_hard');
+    assert.equal(entry.score, 11 * 60 + 5 - 480);
+    const info = lb.decodeDetails(entry.details);
+    assert.equal(info.day, 1);
+    assert.equal(info.cause, 'chef');
+    assert.equal(info.warning, true);
+    assert.deepEqual(info.days, [{ tickets: 3, l: 12, a: 40, b: 100 }, null, null, null, null]);
+    assert.equal(lb.dayEntry({ level: 'nonsense', won: true, time: 990 }).board, 'day_normal', 'an unknown level falls back');
 });
 
 await ok('The detail values survive the round trip, in the library\'s broken shape as well', () => {
@@ -5578,6 +5726,7 @@ await ok('The detail values survive the round trip, in the library\'s broken sha
     const won = lb.decodeDetails(lb.encodeDetails({ ...run, won: true, cause: 'gala', day: 5 }));
     assert.equal(won.won, true, 'a gala is a finished week');
     assert.equal(lb.weekEntry({ ...run, level: 'easy' }).board, 'week_easy');
+    assert.deepEqual(Object.keys(lb.BOARD_NAMES).sort(), [...lb.MODES].sort(), 'a mode without boards, or boards without a mode');
 });
 
 await ok('The All tab merges the three boards: points first, then the harder level', () => {
@@ -5620,7 +5769,7 @@ await ok('Both endings of a week submit it, with the figures it ended on', async
         assert.equal(sent[0].info.valve, true, 'the spent valve did not travel');
         assert.deepEqual(sent[0].info.days[2], { tickets: 4, l: 35, a: 100, b: 62 }, 'not the figures it ended on');
         await Promise.resolve();
-        assert.deepEqual(state.weekSubmit, { pending: false, score: 1392, level: 'hard', scoreChanged: true, rank: 3 },
+        assert.deepEqual(state.scoreSubmit, { pending: false, mode: 'week', score: 1392, level: 'hard', scoreChanged: true, rank: 3 },
             'the end screen does not learn what Steam answered');
 
         // The Friday gala, the other way a week ends.
@@ -5646,15 +5795,85 @@ await ok('Both endings of a week submit it, with the figures it ended on', async
         engine.startWeek('normal');
         state.week.dayIndex = 2; state.time = 10 * 60; state.al = 100;
         state.rageWarningReceived = true;
-        state.weekSubmit = null;
+        state.scoreSubmit = null;
         engine.checkEndConditions();
         engine.finishGame();
         assert.equal(sent.length, 2, 'the web build submitted a week');
-        assert.equal(state.weekSubmit, null);
+        assert.equal(state.scoreSubmit, null);
     } finally {
         platform.isDesktop = real.isDesktop;
         platform.leaderboardSubmit = real.submit;
-        state.weekSubmit = null;
+        state.scoreSubmit = null;
+    }
+});
+
+await ok('A day of the day mode reaches its board, and a day inside a week does not', async () => {
+    const { platform } = await import('../src/platform.js');
+    const real = { isDesktop: platform.isDesktop, submit: platform.leaderboardSubmit };
+    const sent = [];
+    platform.isDesktop = true;
+    platform.leaderboardSubmit = async (board, score, details) => {
+        sent.push({ board, score, info: lb.decodeDetails(details) });
+        return { ok: true, scoreChanged: false, rank: 12 };
+    };
+    try {
+        // A Monday lost to the boss at 11:05.
+        resetState();
+        engine.setDifficulty('hard');
+        state.dayActive = true;
+        state.time = 11 * 60 + 5; state.tickets = 3;
+        state.fl = 12; state.al = 40; state.cr = 100;
+        state.chefWarningReceived = true;           // the warning is spent: 100 is the end
+        engine.checkEndConditions();
+        engine.finishGame();
+        assert.equal(sent.length, 1, 'a lost day was not submitted');
+        assert.equal(sent[0].board, 'day_hard');
+        assert.equal(sent[0].score, 11 * 60 + 5 - 480);
+        assert.equal(sent[0].info.cause, 'chef');
+        assert.deepEqual(sent[0].info.days[0], { tickets: 3, l: 12, a: 40, b: 100 }, 'not the figures it ended on');
+        await Promise.resolve();
+        assert.deepEqual(state.scoreSubmit, { pending: false, mode: 'day', score: 185, level: 'hard', scoreChanged: false, rank: 12 });
+
+        // A Friday seen through to closing time.
+        resetState();
+        engine.setDifficulty('easy');
+        state.dayActive = true;
+        state.time = 16 * 60 + 30; state.tickets = 2; state.al = 30; state.cr = 10;
+        engine.checkEndConditions();
+        engine.finishGame();
+        assert.equal(sent.length, 2, 'a finished day was not submitted');
+        assert.equal(sent[1].board, 'day_easy');
+        assert.equal(sent[1].info.cause, 'time');
+        assert.equal(sent[1].score, lb.SHIFT_MINUTES + lb.composure({ tickets: 2, a: 30, b: 10 }));
+
+        // The gala after a day: the day goes as a gala, once.
+        resetState();
+        engine.setDifficulty('normal');
+        state.tickets = 1; state.al = 20; state.cr = 30;
+        state.currentPartyKey = 'layer8_party_played';
+        state.isPartyMode = true;
+        state.dayActive = true;
+        state.currentEventId = 'party_finale_gossip';
+        await ensure('party');
+        engine.finishParty('SYNERGY!', 'Testabend.');
+        localStorage.removeItem('layer8_party_played');
+        assert.equal(sent.length, 3, 'the gala did not submit the day');
+        assert.equal(sent[2].board, 'day_normal');
+        assert.equal(sent[2].info.cause, 'gala');
+
+        // A day inside a week ends in a night, and a lost one ends the week:
+        // either way the week's board, never the day's.
+        resetState();
+        engine.startWeek('normal');
+        state.week.dayIndex = 2; state.time = 10 * 60; state.al = 100;
+        state.rageWarningReceived = true;
+        engine.checkEndConditions();
+        engine.finishGame();
+        assert.deepEqual(sent.slice(3).map(e => e.board), ['week_normal'], 'a week day went to a day board');
+    } finally {
+        platform.isDesktop = real.isDesktop;
+        platform.leaderboardSubmit = real.submit;
+        state.scoreSubmit = null;
     }
 });
 
@@ -5713,17 +5932,24 @@ await ok('The desktop page has no Node, and one door to the main process', () =>
         'any address reaches shell.openExternal again');
 });
 
-await ok('The main process allows exactly the boards the game submits to', () => {
+await ok('The main process allows exactly the boards the game submits to, each to its ceiling', () => {
     // main.cjs cannot import leaderboard.js - only docs/ and electron/ are
-    // packaged - so it keeps its own allow-list and its own score ceiling.
-    // A board renamed on one side only would be refused there in silence.
+    // packaged - so it keeps its own allow-list and its own score ceilings.
+    // A board renamed on one side only would be refused there in silence, and
+    // a day board under the week's ceiling would take a score no day can earn.
     const main = readFileSync(new URL('../electron/main.cjs', import.meta.url), 'utf-8');
-    const listed = [...(main.match(/const LEADERBOARDS = \[([^\]]*)\]/) ?? [, ''])[1].matchAll(/'([a-z_]+)'/g)].map(m => m[1]);
-    assert.deepEqual(listed.sort(), Object.values(lb.BOARD_NAMES).sort(), 'main.cjs allows other boards than the game uses');
-    const max = main.match(/const SCORE_MAX = (\d+) \+ (\d+);/);
-    assert.ok(max, 'SCORE_MAX is no longer written as minutes plus bonus');
-    assert.equal(Number(max[1]), lb.WEEK_MINUTES, 'SCORE_MAX: the minutes differ');
-    assert.equal(Number(max[2]), lb.COMPOSURE_MAX, 'SCORE_MAX: the bonus differs');
+    const body = main.match(/const LEADERBOARDS = \{([^}]*)\}/)?.[1] ?? '';
+    const listed = Object.fromEntries([...body.matchAll(/([a-z_]+): (DAY_MAX|WEEK_MAX)/g)].map(m => [m[1], m[2]]));
+    const want = Object.fromEntries(lb.MODES.flatMap(mode =>
+        Object.values(lb.BOARD_NAMES[mode]).map(name => [name, mode === 'day' ? 'DAY_MAX' : 'WEEK_MAX'])));
+    assert.deepEqual(listed, want, 'main.cjs allows other boards than the game uses, or under the wrong ceiling');
+    for (const [name, minutes] of [['DAY_MAX', lb.SHIFT_MINUTES], ['WEEK_MAX', lb.WEEK_MINUTES]]) {
+        const max = main.match(new RegExp(`const ${name} = (\\d+) \\+ (\\d+);`));
+        assert.ok(max, `${name} is no longer written as minutes plus bonus`);
+        assert.equal(Number(max[1]), minutes, `${name}: the minutes differ`);
+        assert.equal(Number(max[2]), lb.COMPOSURE_MAX, `${name}: the bonus differs`);
+    }
+    assert.match(main, /points > LEADERBOARDS\[board\]\) return null;/, 'an upload is no longer held to its board\'s ceiling');
 });
 
 console.log(`\n${passed} checks passed.`);

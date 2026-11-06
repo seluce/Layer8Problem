@@ -2144,6 +2144,10 @@ export const core = {
             this.clearDayTimers();
             this.state.emailPending = false;
             
+            // To its board first: the figures are the state's at this moment,
+            // and the day is over. See engine_scores.
+            this.submitDayScore(!!end.isWin, end.cause);
+
             // The day is over, the saved progress can go.
             this.clearDay();
             this.showEnd(end);

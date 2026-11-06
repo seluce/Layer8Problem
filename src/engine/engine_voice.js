@@ -114,6 +114,9 @@ export const voice = {
     },
 
     _done: function() {
+        // Before the early return: a line loaded in a hidden tab never started
+        // speaking, and hushing it still has to release an emergency's clock.
+        this.lineHoldsClock = false;
         if (!this.speaking) return;
         this._setSpeaking(false);
         this.duckMusic(false, 'narration');
@@ -216,6 +219,11 @@ export const voice = {
         this.lineOwner = owner;
         this.lineOnDemand = onDemand;
         this.lineKind = kind;
+        // Only the reading that arrived with the emergency holds its clock:
+        // the button and V come through here as onDemand, so asking for the
+        // scene again cannot stop the clock a second time. Released by
+        // _done() - ended, failed, hushed - whichever comes first.
+        this.lineHoldsClock = owner === 'terminal' && !onDemand && kind === 'emergencies';
         this._setNarratorVolume(this.state.narrationVolume);
         this._applyNarrationRate(el);
         // Where the gain node carries the volume the element is audible only
@@ -270,6 +278,12 @@ export const voice = {
      * a request for silence and a button that then does nothing is worse than
      * no button.
      */
+    /** Whether an emergency's clock waits - see engine_events.triggerBossFight(). */
+    lineHoldsClock: false,
+    narrationHoldsClock: function() {
+        return this.lineHoldsClock;
+    },
+
     /** Whether the narrator reads this kind of text on its own. */
     kindAllowed: function(kind) {
         const kinds = this.state.narrationKinds ?? DEFAULT_NARRATION_KINDS;

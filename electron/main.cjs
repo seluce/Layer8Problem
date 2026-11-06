@@ -67,12 +67,17 @@ ipcMain.on('steam-increment-stat', (event, statName) => {
 
 // --- LEADERBOARDS ---
 //
-// Three boards, one per week level; the renderer builds score and details in
-// src/engine/leaderboard.js. The names are an allow-list here, so nothing
-// from the renderer can create a board of its own choosing - and
-// week-flow.test.mjs holds this list against BOARD_NAMES there.
-const LEADERBOARDS = ['week_easy', 'week_normal', 'week_hard'];
-const SCORE_MAX = 2550 + 300;          // WEEK_MINUTES + COMPOSURE_MAX
+// Three boards per mode, one per level; the renderer builds score and details
+// in src/engine/leaderboard.js. The names are an allow-list here, so nothing
+// from the renderer can create a board of its own choosing, and each board
+// holds uploads to its own ceiling - week-flow.test.mjs holds both against
+// BOARD_NAMES and the maxima there.
+const DAY_MAX = 510 + 300;             // SHIFT_MINUTES + COMPOSURE_MAX
+const WEEK_MAX = 2550 + 300;           // WEEK_MINUTES + COMPOSURE_MAX
+const LEADERBOARDS = {
+    day_easy: DAY_MAX, day_normal: DAY_MAX, day_hard: DAY_MAX,
+    week_easy: WEEK_MAX, week_normal: WEEK_MAX, week_hard: WEEK_MAX,
+};
 const boardHandles = new Map();
 
 async function boardHandle(name) {
@@ -88,12 +93,12 @@ async function boardHandle(name) {
     return info.handle;
 }
 
-// A finished week. Steam keeps the better of this and the stored score
+// A finished day or week. Steam keeps the better of this and the stored score
 // (KeepBest), details included, and says whether it changed.
 ipcMain.handle('steam-leaderboard-submit', async (event, { board, score, details } = {}) => {
-    if (!steam || !LEADERBOARDS.includes(board)) return null;
+    if (!steam || !Object.hasOwn(LEADERBOARDS, board)) return null;
     const points = Math.round(Number(score));
-    if (!Number.isFinite(points) || points < 0 || points > SCORE_MAX) return null;
+    if (!Number.isFinite(points) || points < 0 || points > LEADERBOARDS[board]) return null;
     const values = (Array.isArray(details) ? details : []).slice(0, 64).map(v => Math.round(Number(v)) | 0);
     try {
         const { LeaderboardUploadScoreMethod } = require('steamworks-ffi-node');
@@ -112,7 +117,7 @@ ipcMain.handle('steam-leaderboard-submit', async (event, { board, score, details
 // the player's own entry so the window can say where they stand even outside
 // the top. Names are resolved here - the renderer has no Steam to ask.
 ipcMain.handle('steam-leaderboard-entries', async (event, { board, scope } = {}) => {
-    if (!steam || !LEADERBOARDS.includes(board)) return null;
+    if (!steam || !Object.hasOwn(LEADERBOARDS, board)) return null;
     try {
         const { LeaderboardDataRequest } = require('steamworks-ffi-node');
         const handle = await boardHandle(board);
