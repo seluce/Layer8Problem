@@ -8,6 +8,7 @@ import { WEEK_DIFFS, dayName } from './engine_week.js';
 import { BOARD_NAMES, LEVELS } from './leaderboard.js';
 import { recipeKey, renderRecipe } from './recipe.js';
 import { drawIndex } from './draw_bag.js';
+import { REPORT_FORM } from './report_form.js';
 
 // Maximum number of lines kept in the activity log. A whole day, since the end
 // screen shows the day's log (7.1): 50 used to cut off the morning by the
@@ -2459,13 +2460,9 @@ export const ui = {
     sendReportMail: function() {
         try {
             // --- CONFIG ---
-            // The trailing /viewform has to become /formResponse
-            const FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSc2uwIVCYnmsQ_MpJNpXjc7kX7DlXoHYXMUUZwAWjwrtTHJDg/formResponse";
-            const IDS = {
-                cat: "entry.1431680664",
-                desc: "entry.1740494219",
-                debug: "entry.1066861594"
-            };
+            // In engine/report_form.js, written by tools/report-form.mjs.
+            const FORM_URL = REPORT_FORM.url;
+            const IDS = { cat: REPORT_FORM.cat, desc: REPORT_FORM.desc, debug: REPORT_FORM.debug };
 
             // --- READ INPUTS ---
             // The category is an identifier, not prose: index.html carries the

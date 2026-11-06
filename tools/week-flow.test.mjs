@@ -5961,4 +5961,43 @@ await ok('The main process allows exactly the boards the game submits to, each t
     assert.match(main, /points > LEADERBOARDS\[board\]\) return null;/, 'an upload is no longer held to its board\'s ceiling');
 });
 
+await ok('The bug report goes to one form, written by the tool that reads it', async () => {
+    // The form was deleted in November 2026 and the reports went nowhere for
+    // days: the post is no-cors, so the game said "Sent" every time. The ids
+    // live in one file now, written by tools/report-form.mjs out of the
+    // published page.
+    const { REPORT_FORM } = await import('../src/engine/report_form.js');
+    assert.match(REPORT_FORM.url, /^https:\/\/docs\.google\.com\/forms\/d\/e\/[\w-]+\/formResponse$/, 'not a form\'s post address');
+    const ids = [REPORT_FORM.cat, REPORT_FORM.desc, REPORT_FORM.debug];
+    for (const id of ids) assert.match(id, /^entry\.\d+$/, `"${id}" is not a field id`);
+    assert.equal(new Set(ids).size, 3, 'two fields share an id');
+    // No second copy that a rewrite would miss.
+    const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    assert.ok(!/entry\.\d{5,}|docs\.google\.com\/forms/.test(uiSrc), 'engine_ui.js carries a form address of its own again');
+    assert.match(uiSrc, /const FORM_URL = REPORT_FORM\.url;/, 'the report no longer posts to REPORT_FORM');
+
+    // The reader, on a page shaped like Google's.
+    const tool = await import('./report-form.mjs');
+    const page = (types) => `<script>var FB_PUBLIC_LOAD_DATA_ = ${JSON.stringify([null, [null, [
+        [1, 'Kategorie', null, types[0], [[111, null, 0]]],
+        [2, 'Beschreibung', null, types[1], [[222, null, 0]]],
+        [9, 'A heading', null, 8, null],
+        [3, 'Debug', null, types[2], [[333, null, 0]]],
+    ]]])};</script>`;
+    assert.deepEqual(tool.fieldsOf(tool.readQuestions(page([0, 1, 1]))),
+        { cat: 'entry.111', desc: 'entry.222', debug: 'entry.333' }, 'the ids were read wrong');
+    assert.throws(() => tool.fieldsOf(tool.readQuestions(page([3, 1, 1]))), /short answer/,
+        'a drop-down category was accepted - it would reject every value it does not list');
+    assert.throws(() => tool.readQuestions('<html>closed</html>'), /no form/, 'a page without a form was read');
+    assert.equal(tool.formIdOf('https://docs.google.com/forms/d/e/1FAIpQ_x-y/viewform?usp=pp_url'), '1FAIpQ_x-y');
+    assert.equal(tool.formIdOf('https://docs.google.com/forms/d/abc/edit'), null, 'the editor\'s link was taken for the public one');
+
+    // And the rewrite touches the values and nothing else.
+    const src = readFileSync(new URL('../src/engine/report_form.js', import.meta.url), 'utf-8');
+    const out = tool.rewrite(src, 'https://docs.google.com/forms/d/e/NEW/formResponse', { cat: 'entry.1', desc: 'entry.2', debug: 'entry.3' });
+    assert.ok(out.includes("url: 'https://docs.google.com/forms/d/e/NEW/formResponse',"), 'the address was not rewritten');
+    assert.ok(out.includes("debug: 'entry.3',"), 'a field was not rewritten');
+    assert.equal(out.split('\n').length, src.split('\n').length, 'the rewrite added or lost lines');
+});
+
 console.log(`\n${passed} checks passed.`);

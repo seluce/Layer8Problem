@@ -1,16 +1,26 @@
 [7.1.0] - unreleased
 
-A leaderboard for the working day, and emergencies that wait for the narrator.
+A leaderboard for the working day, emergencies that wait for the narrator, and the day's log at the end of it.
 
+Steam:
 * The working day has leaderboards of its own now, one each for Monday, Wednesday and Friday, the same way the week has them. A day earns a point for every working minute it lasted and, if it made it to closing time, a bonus for how calmly it ended. The leaderboard switches between day and week like the archive.
+
+Narrator:
 * An emergency read out loud no longer runs out while the narrator is still talking: its clock starts when the narrator has finished, or when you stop it. You can still answer earlier. Reading it again with V or the speaker button does not stop the clock a second time.
 * Whether emergencies are read out has a switch of its own in the narrator settings.
+* The narrator settings say less about themselves. Who made the voice is in the credits.
+
+The day to day:
 * A scene that follows from an earlier decision says so in the corner of its card.
 * An outcome shows only the values that changed, a little larger. No more "Aggro +0" beside the numbers that moved.
-* The narrator settings say less about themselves. Who made the voice is in the credits.
+
+End of the day:
 * The end of a day has the day's log beside the curve and the diary, top to bottom the way the day went, with a button that copies it. Until now it disappeared behind the end screen.
 * The logbook on the end screen is called the diary now, which is what it is - "log" is the log.
+
+Bug fixes:
 * A day started from the picker no longer begins with the previous day's lines in the log.
+* Bug reports and feedback from the game arrive again. For a while they went nowhere, although the game said they had been sent.
 
 [7.0.1] - 2026-11-02
 
