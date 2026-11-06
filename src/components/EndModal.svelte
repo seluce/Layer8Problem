@@ -25,6 +25,7 @@
     import DayChart from './DayChart.svelte';
     import DayReport from './DayReport.svelte';
     import DiaryEntry from './DiaryEntry.svelte';
+    import DayLog from './DayLog.svelte';
     import PartyReport from './PartyReport.svelte';
     import WeekBalance from './WeekBalance.svelte';
     import { renderRecipe } from '../engine/recipe.js';
@@ -52,6 +53,7 @@
         if (modal.open) showChart = game.autoChart ?? false;
     });
     let showDiary = $state(false);
+    let showLog = $state(false);
 
     // The colour follows the outcome, not the wording. It used to be picked by
     // searching the title for 'FEIERABEND', 'ÜBERLEBT', 'GEFEUERT' and the
@@ -95,6 +97,7 @@
 
     const hasChart = $derived((game.statHistory?.length ?? 0) > 2);
     const hasDiary = $derived(!!modal.diary);
+    const hasLog = $derived((game.logEntries?.length ?? 0) > 0);
 
     // A finished week day (Monday to Thursday): not an ending, the run
     // carries on tomorrow - so no reload, and the baggage block below.
@@ -245,7 +248,7 @@
             </div>
         {/if}
 
-        {#if (isFinal || isNight) && (hasChart || hasDiary)}
+        {#if (isFinal || isNight) && (hasChart || hasDiary || hasLog)}
             <div class="flex flex-wrap justify-center gap-2 mb-4">
                 {#if hasChart}
                     <button type="button" onclick={() => showChart = !showChart}
@@ -264,6 +267,13 @@
                  onerror={(e) => e.currentTarget.outerHTML = '📖'}>{t('end.toggle.diary')}
                     </button>
                 {/if}
+                {#if hasLog}
+                    <button type="button" onclick={() => showLog = !showLog}
+                            aria-expanded={showLog}
+                            class="text-[0.6875rem] font-mono uppercase tracking-widest text-slate-400 hover:text-amber-400 border border-slate-700 hover:border-amber-600/60 rounded-sm px-3 py-1.5 transition-colors">
+                        {showLog ? '▾' : '▸'} {t('end.toggle.log')}
+                    </button>
+                {/if}
             </div>
 
             {#if showChart}
@@ -277,6 +287,12 @@
             {#if showDiary && hasDiary}
                 <div class="mb-6 py-2">
                     <DiaryEntry diary={modal.diary} />
+                </div>
+            {/if}
+
+            {#if showLog && hasLog}
+                <div class="mb-4 bg-slate-950 border border-slate-700 rounded-lg p-3 shadow-inner">
+                    <DayLog />
                 </div>
             {/if}
         {/if}

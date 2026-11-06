@@ -533,7 +533,7 @@ and how far the plan's remainder still reaches.
 ## 8. `npm test` — the five test suites, in both languages
 
 ```
-npm test        # 17 / 275 / 20 / 48 / 19, then the same five again with --lang=en
+npm test        # 17 / 276 / 20 / 48 / 19, then the same five again with --lang=en
 npm run test:de # one language only, while working
 npm run test:en
 ```

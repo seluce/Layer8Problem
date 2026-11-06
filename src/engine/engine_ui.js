@@ -9,8 +9,12 @@ import { BOARD_NAMES, LEVELS } from './leaderboard.js';
 import { recipeKey, renderRecipe } from './recipe.js';
 import { drawIndex } from './draw_bag.js';
 
-// Maximum number of lines kept in the activity log.
-const LOG_MAX_ENTRIES = 50;
+// Maximum number of lines kept in the activity log. A whole day, since the end
+// screen shows the day's log (7.1): 50 used to cut off the morning by the
+// afternoon. A partial autoplay measured 28 lines in the first two and a half
+// hours, so a day runs to about a hundred; 300 leaves room for a busy one, and
+// the log is part of the saved day, so not unbounded either.
+const LOG_MAX_ENTRIES = 300;
 
 /**
  * Has the player done anything yet?
@@ -1565,7 +1569,7 @@ export const ui = {
             engine.backToMenu();
         },
 
-        // Kopier-Funktion
+        // Copies the export code.
         copyToClipboard: function() {
             const area = document.getElementById('export-area');
             const msg = document.getElementById('export-msg');

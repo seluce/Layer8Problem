@@ -543,7 +543,12 @@ export const en = {
     'end.tally.day':               'Workday no. {no} · {survived} survived',
     'end.carry.title':             'What you take with you into {day}',
     'end.toggle.chart':            'Day curve',
-    'end.toggle.diary':            'Logbook',
+    'end.toggle.diary':            'Diary',
+    'end.toggle.log':              'Log',
+    'end.log.copy':                'Copy',
+    'end.log.copied':              'Copied',
+    'end.log.copyFailed':          'Copying failed. The text is selected; copy it by hand.',
+    'end.log.aria':                "The day's log",
 
     'chart.aria':                  'Laziness, Aggro, Boss Radar and open tickets over the workday',
     // A day recorded before 6.4 carries no ticket counts, so the picture has
@@ -551,7 +556,7 @@ export const en = {
     'chart.aria.noTickets':        'Laziness, Aggro and Boss Radar over the workday',
     'chart.tooFew':                'Too few decisions to draw a curve.',
 
-    'diary.header':                'Logbook — {day}',
+    'diary.header':                'Diary — {day}',
     'diary.personal':              'Personal',
     'diary.empty':                 'No entry. The day was long enough.',
     'diary.listJoin':              '{head} and {last}',

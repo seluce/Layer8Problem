@@ -8,6 +8,9 @@ A leaderboard for the working day, and emergencies that wait for the narrator.
 * A scene that follows from an earlier decision says so in the corner of its card.
 * An outcome shows only the values that changed, a little larger. No more "Aggro +0" beside the numbers that moved.
 * The narrator settings say less about themselves. Who made the voice is in the credits.
+* The end of a day has the day's log beside the curve and the diary, top to bottom the way the day went, with a button that copies it. Until now it disappeared behind the end screen.
+* The logbook on the end screen is called the diary now, which is what it is - "log" is the log.
+* A day started from the picker no longer begins with the previous day's lines in the log.
 
 [7.0.1] - 2026-11-02
 

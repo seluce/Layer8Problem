@@ -1278,13 +1278,18 @@ export const core = {
 
         const mult = level === 'easy' ? 0.8 : level === 'hard' ? 1.25 : 1.0;
 
-        // The log is the one thing that outlives this: init() writes the
-        // version line as the first entry of the SESSION, before any day
+        // The session's version line is the one thing that outlives this:
+        // init() writes it as the first entry of the SESSION, before any day
         // exists, and refreshBootLogEntry() relies on finding it again with
-        // id 1. Clearing it here would take that line away and leave the
-        // restamp with nothing to stamp - so it is carried over by hand.
+        // id 1. Clearing it here would leave the restamp with nothing to
+        // stamp - so it is carried over by hand. And only it: the whole log
+        // used to come along, so a second day started from the picker opened
+        // with the first day's lines - which the end screen's log (7.1) would
+        // then have shown as part of the new day.
         const { logEntries, lastLogMsg } = this.state;
-        Object.assign(this.state, freshDay(mult), { logEntries, lastLogMsg });
+        Object.assign(this.state, freshDay(mult), {
+            logEntries: logEntries.filter(e => e?.id === 1), lastLogMsg
+        });
         this.state.difficultyMult = mult;
 
         // The same seeding every other day-start path does (softReset,

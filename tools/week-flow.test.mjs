@@ -1855,25 +1855,34 @@ await ok('setDifficulty creates a fresh day instead of patching fields', () => {
         assert.equal(state.time, 8 * 60, `${stufe}: clock carried over`);
     }
 });
-await ok('setDifficulty keeps the log - the version line belongs to the session', () => {
+await ok('setDifficulty keeps the version line and only that - the rest was the last day', () => {
     // freshDay() empties logEntries. But init() writes the boot line BEFORE every
-    // day, and refreshBootLogEntry() finds it again through id 1.
+    // day, and refreshBootLogEntry() finds it again through id 1. Until 7.1 the
+    // whole log came along, so a second day from the picker opened with the
+    // first day's lines - and the end screen's log would show them as its own.
     resetState();
     // Put straight into the state: this suite replaces engine.log with a stub, so
     // a call would never reach the log.
     state.logEntries.push({ k: 'log.systemLoaded', v: { version: engine.VERSION },
                             id: 1, time: '08:00', color: '' });
-    const start = state.logEntries.at(-1);
-    const before = state.logEntries.length;
+    state.logEntries.push({ k: 'log.nothingUp', id: 7, time: '16:20', color: '' });
     calls.logs = [];
 
     engine.setDifficulty('normal');
 
-    assert.ok(state.logEntries.some(e => e.id === start.id), 'the boot line is gone');
-    assert.equal(state.logEntries.length, before, 'something was removed from the log');
+    assert.deepEqual(state.logEntries.map(e => e.id), [1], 'the boot line is gone, or the last day came along');
     // The mode line goes through the suite's log stub, not into the state - that
     // is where it is checked.
     assert.ok(calls.logs.some(l => l?.k === 'mode.normal'), 'the mode line is missing');
+});
+
+await ok('The log keeps a whole day', () => {
+    // The end screen shows the day's log (7.1), and 50 lines cut off the
+    // morning by the afternoon. The real log(), on a box of its own.
+    const box = { state: { logEntries: [], time: 8 * 60, lastLogMsg: null }, log: ui.log };
+    for (let i = 0; i < 320; i++) box.log({ msg: `line ${i}` });
+    assert.equal(box.state.logEntries.length, 300, 'the log no longer holds a busy day, or is unbounded');
+    assert.equal(box.state.logEntries[0].msg, 'line 20', 'the oldest lines were not the ones dropped');
 });
 await ok('The Friday 15:00 changeover arms the button to the weekly meeting', () => {
     resetState();
