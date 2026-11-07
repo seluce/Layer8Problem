@@ -4,7 +4,8 @@ A new logo, a leaderboard for the working day, emergencies that wait for the nar
 
 Look:
 * A new logo: seven network layers and an eighth that does not quite sit right. It replaces the burning monitor on the start screen, in the browser tab and as the program icon.
-* The knowledge book is a notebook now: a red margin, ruled lines, and Miller's notes in the same hand as the scenes. The notes still to find are blank lines.
+* The knowledge book is a notebook now: coloured markers for the four categories, the register on squared paper on the left, the open page ruled with a red margin on the right, and Miller's notes in his own handwriting. A name with something new on it is gone over with a highlighter. The notes still to find are blank lines.
+* What Miller writes into the company chronicle himself is in the same handwriting.
 
 Steam:
 * The working day has leaderboards of its own now, one each for Monday, Wednesday and Friday, the same way the week has them. A day earns a point for every working minute it lasted and, if it made it to closing time, a bonus for how calmly it ended. The leaderboard switches between day and week like the archive.
@@ -26,6 +27,7 @@ End of the day:
 
 Bug fixes:
 * A day started from the picker no longer begins with the previous day's lines in the log.
+* Opening the knowledge book no longer marks every new note in a category as read at once - only the page you are looking at.
 * Bug reports and feedback from the game arrive again. For a while they went nowhere, although the game said they had been sent.
 
 Under the hood:

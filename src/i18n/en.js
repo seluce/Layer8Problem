@@ -35,6 +35,7 @@ export const en = {
     'credits.title':               'Credits & licences',
     'credits.dev':                 'Development & design:',
     'credits.music':               'Music licences (Creative Commons BY 4.0):',
+    'credits.fonts':               'Fonts (SIL Open Font License 1.1):',
     'credits.voice':               'Narration:',
     'credits.voice.body':          'The scenes are read by a synthetic voice, generated with ElevenLabs (model eleven_v4_turbo, voice "Alexander - Deep TV Narrator"). No human spoke these recordings. The same voice in both languages, on purpose.',
 

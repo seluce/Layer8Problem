@@ -1524,6 +1524,28 @@ await ok("The knowledge book's notes sit on its ruled lines", () => {
         assert.ok(!/\b(?:my|mt|mb|py|pt|pb)-/.test(cls), 'a row carries vertical spacing, which shifts every line under it');
     }
 });
+await ok('Opening the knowledge book marks the page on screen read, not the whole register', () => {
+    // The open page falls back to the first unread entry, and showing a page
+    // marks it read. Without a pin those two feed each other: the read entry
+    // stops being unread, the page moves on to the next one, that is marked
+    // too - 7 of 7 entries stamped by one open before the fix, with a single page
+    // ever on screen. The component cannot run here, so the three pieces of
+    // the pin are held in its source.
+    const view = readFileSync(new URL('../src/components/KnowledgeView.svelte', import.meta.url), 'utf-8');
+    const current = view.match(/const current = \$derived\(([\s\S]*?)\);/)?.[1];
+    assert.ok(current, 'the open page is no longer a $derived called current');
+    const pinned = current.indexOf('e.id === landedId');
+    assert.ok(pinned >= 0, 'the open page no longer stays on the entry it landed on');
+    assert.ok(pinned < current.indexOf('e.unread'), 'the next unread entry wins over the landed one - the cascade is back');
+
+    const read = view.indexOf('engine.markKnowledgeRead?.(current.id');
+    assert.ok(read >= 0, 'the page is no longer marked read from the component');
+    const branch = view.slice(view.lastIndexOf('if (', read), read);
+    assert.ok(branch.includes('landedId = current.id'), 'the page is marked read without being pinned first');
+
+    const opening = view.slice(view.indexOf('if (open && !wasOpen)'), view.indexOf('if (!open)'));
+    assert.ok(opening.includes('landedId = null'), 'reopening keeps the old pin and hides a new note in the same category');
+});
 
 // --------------------------------------------------- item cooldowns (v5.0)
 console.log('Items with cooldown and cost:');

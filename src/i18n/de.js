@@ -42,6 +42,7 @@ export const de = {
     'credits.title':               'Credits & Lizenzen',
     'credits.dev':                 'Entwicklung & Design:',
     'credits.music':               'Musik Lizenzen (Creative Commons BY 4.0):',
+    'credits.fonts':               'Schriften (SIL Open Font License 1.1):',
     'credits.voice':               'Sprachausgabe:',
     'credits.voice.body':          'Die Szenen werden von einer künstlichen Stimme gelesen, erzeugt mit ElevenLabs (Modell eleven_v4_turbo, Stimme „Alexander – Deep TV Narrator“). Kein Mensch hat diese Aufnahmen gesprochen. Dieselbe Stimme in beiden Sprachen, absichtlich.',
 
