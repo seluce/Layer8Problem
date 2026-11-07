@@ -202,35 +202,37 @@
         </nav>
 
         <!-- OPEN PAGE -->
-        <section class="flex-1 overflow-y-auto {onPage ? 'flex flex-col' : 'hidden md:flex md:flex-col'}">
+        <section class="notebook-page flex-1 overflow-y-auto {onPage ? 'flex flex-col' : 'hidden md:flex md:flex-col'}">
             {#if current}
                 <button onclick={() => (selectedId = null)}
-                        class="md:hidden text-left px-4 py-3 text-[0.6875rem] text-slate-400 hover:text-white border-b border-slate-800 shrink-0">
+                        class="md:hidden text-left pl-12 pr-4 py-3 text-[0.6875rem] text-slate-400 hover:text-white border-b border-slate-800 shrink-0">
                     &larr; {t('knowledge.index')}
                 </button>
 
-                <div class="p-5">
-                    <h3 class="text-lg font-bold {theme.text}">{current.name}</h3>
+                <!-- pl-12 keeps the writing right of the margin line (app.css). -->
+                <div class="py-5 pr-5 pl-12">
+                    <h3 class="text-lg font-bold {theme.text} wrap-break-word">{current.name}</h3>
                     <p class="text-[0.6875rem] text-slate-400 mb-4">{current.role}</p>
 
                     <p class="text-xs text-slate-400 leading-relaxed italic border-l-2 {theme.rule} pl-3 mb-5 wrap-break-word">
                         {current.summary}
                     </p>
 
-                    <ul class="space-y-3">
+                    <!-- Written in the narrator's hand: the serif the event text
+                         uses, on lines exactly one leading-7 apart. -->
+                    <ul class="notebook-lines">
                         {#each current.notes as note}
-                            <li class="text-xs text-slate-300 leading-relaxed flex gap-2.5 wrap-break-word">
+                            <li class="font-serif italic text-sm leading-7 text-slate-300 flex gap-2.5 wrap-break-word">
                                 <span class="{theme.bullet} shrink-0" aria-hidden="true">&ndash;</span>
-                                <span>{note}</span>
+                                <span class="min-w-0">{note}</span>
                             </li>
                         {/each}
 
                         <!-- Missing notes as blank ruled lines: shows the page is
                              unfinished without giving away what belongs there. -->
                         {#each Array(missing) as _, i (i)}
-                            <li class="flex gap-2.5 items-center" aria-hidden="true">
+                            <li class="flex gap-2.5 text-sm leading-7" aria-hidden="true">
                                 <span class="text-slate-700 shrink-0">&ndash;</span>
-                                <span class="flex-1 border-b border-dashed border-slate-800 h-3"></span>
                             </li>
                         {/each}
                     </ul>

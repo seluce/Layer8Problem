@@ -1492,6 +1492,31 @@ await ok('A mail counts as seen, so a mail-only entry can open', async () => {
         assert.equal(live.open, true, `${entry.id} stays shut although its mail was read`);
     }
 });
+await ok("The knowledge book's notes sit on its ruled lines", () => {
+    // The ruling is a background under the list, its pitch the notes' line
+    // height. Change one without the other and the writing drifts off the
+    // lines a little more with every row - nothing errs, the page looks wrong.
+    const css = readFileSync(new URL('../src/app.css', import.meta.url), 'utf-8');
+    const start = css.indexOf('.notebook-lines {');
+    assert.ok(start >= 0, 'the ruling is gone from app.css');
+    const block = css.slice(start, css.indexOf('}', start));
+    const pitch = block.match(/calc\(([\d.]+)rem - 1px\)/)?.[1];
+    assert.ok(pitch, 'the ruling has no pitch in rem');
+    assert.ok(block.includes(`) ${pitch}rem)`), `the ruled line does not end on the ${pitch}rem pitch`);
+
+    const view = readFileSync(new URL('../src/components/KnowledgeView.svelte', import.meta.url), 'utf-8');
+    const ul = view.match(/<ul class="([^"]*\bnotebook-lines\b[^"]*)">/);
+    assert.ok(ul, 'the notes are no longer on the ruled list');
+    assert.ok(!/\bspace-y-/.test(ul[1]), 'the list spaces its rows apart, which shifts every line under it');
+    const list = view.slice(ul.index, view.indexOf('</ul>', ul.index));
+    const rows = [...list.matchAll(/<li class="([^"]*)"/g)].map(m => m[1]);
+    assert.equal(rows.length, 2, 'the notes and the blank lines are no longer the two kinds of row');
+    for (const cls of rows) {
+        const lead = cls.match(/\bleading-(\d+)\b/)?.[1];
+        assert.equal(lead && String(Number(lead) / 4), pitch, `a row with "leading-${lead}" does not match the ${pitch}rem ruling`);
+        assert.ok(!/\b(?:my|mt|mb|py|pt|pb)-/.test(cls), 'a row carries vertical spacing, which shifts every line under it');
+    }
+});
 
 // --------------------------------------------------- item cooldowns (v5.0)
 console.log('Items with cooldown and cost:');

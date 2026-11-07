@@ -411,6 +411,32 @@
     .inv-slot.slot-discard { border: 2px solid #f87171; }   /* red-400 */
     .inv-slot.used::after { content: '✔'; position: absolute; bottom: -2px; right: -2px; font-size: 0.625rem; color: #10b981; }
 
+    /* THE KNOWLEDGE BOOK
+       Müller's notes, so the open page is a page: a red margin down its left
+       edge and a ruled block for the notes, the missing ones as blank lines.
+       Still dark - a light sheet would be the noticeboard's look, and the
+       chronicle already has the cream book.
+
+       The ruling is laid under the list rather than the whole page, because
+       only there is every line the same height. Its pitch is the notes' line
+       height (leading-7 in KnowledgeView, 1.75rem): change one without the
+       other and the writing drifts off the lines, a little more each row.
+       The week suite holds the two together. */
+    .notebook-page {
+        background-image: linear-gradient(to right,
+            transparent 2.25rem,
+            rgba(248, 113, 113, 0.30) 2.25rem,
+            rgba(248, 113, 113, 0.30) calc(2.25rem + 1px),
+            transparent calc(2.25rem + 1px));
+    }
+    .notebook-lines {
+        background-image: repeating-linear-gradient(to bottom,
+            transparent 0,
+            transparent calc(1.75rem - 1px),
+            rgba(148, 163, 184, 0.14) calc(1.75rem - 1px),
+            rgba(148, 163, 184, 0.14) 1.75rem);
+    }
+
     /* BUTTONS */
     .action-btn {
         background: #1e293b; border: 1px solid #334155; transition: all 0.1s;

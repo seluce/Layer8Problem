@@ -4,6 +4,7 @@ A new logo, a leaderboard for the working day, emergencies that wait for the nar
 
 Look:
 * A new logo: seven network layers and an eighth that does not quite sit right. It replaces the burning monitor on the start screen, in the browser tab and as the program icon.
+* The knowledge book is a notebook now: a red margin, ruled lines, and Miller's notes in the same hand as the scenes. The notes still to find are blank lines.
 
 Steam:
 * The working day has leaderboards of its own now, one each for Monday, Wednesday and Friday, the same way the week has them. A day earns a point for every working minute it lasted and, if it made it to closing time, a bonus for how calmly it ended. The leaderboard switches between day and week like the archive.
