@@ -28,6 +28,7 @@ End of the day:
 Bug fixes:
 * A day started from the picker no longer begins with the previous day's lines in the log.
 * Opening the knowledge book no longer marks every new note in a category as read at once - only the page you are looking at.
+* The company chronicle's heading is no longer cut off, and the motto under it shows.
 * Bug reports and feedback from the game arrive again. For a while they went nowhere, although the game said they had been sent.
 
 Under the hood:

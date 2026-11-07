@@ -51,7 +51,11 @@
          role="dialog" aria-modal="true" aria-label={t('a11y.dialog.lore')}>
         <div class="bg-[#fdf6e3] rounded-lg max-w-3xl w-full max-h-[85vh] flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.8)] border-8 border-[#5d4037] relative text-[#3e2723] font-serif">
 
-            <div class="bg-[#3e2723] p-6 text-center border-b-4 border-[#8d6e63] relative overflow-hidden">
+            <!-- shrink-0: overflow-hidden, there for the wood grain, takes away
+                 the header's automatic minimum height, and a long book
+                 squeezed it to 59 of its 108px - the title cut, the motto
+                 gone. -->
+            <div class="bg-[#3e2723] p-6 text-center border-b-4 border-[#8d6e63] relative overflow-hidden shrink-0">
                 <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-wood"></div>
                 <h2 class="text-3xl font-bold text-[#d7ccc8] uppercase tracking-[0.2em] mb-1 relative z-10">{t('lore.title')}</h2>
                 <span class="text-sm text-[#a1887f] italic font-serif relative z-10">{t('lore.motto')}</span>
