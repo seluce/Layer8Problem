@@ -1416,17 +1416,20 @@ export const events = {
         
 	
         // --- INTRANET TRIGGER  ---
+        // The first time, the window also goes into the side panel (7.1);
+        // the log says so below, after the result line.
+        let doorFound = null;
         if (res === "CMD:OPEN_INTRANET") {
             res = t('event.cmd.intranet');
             recipe = { k: 'event.cmd.intranet' };
-            this.openIntranet();
+            if (this.openFromScene('intranet')) doorFound = { k: 'log.door.intranet' };
         }
 
         // --- BOARD TRIGGER ---
         if (res === "CMD:OPEN_BOARD") {
             res = t('event.cmd.board');
             recipe = { k: 'event.cmd.board' };
-            this.openBoard();
+            if (this.openFromScene('board')) doorFound = { k: 'log.door.board' };
         }
 
         // --- VENDING MACHINE TRIGGER (6.3) ---
@@ -1590,6 +1593,7 @@ export const events = {
         this.grantItem(loot);
         
         this.log(recipe ?? { msg: String(res ?? '') });
+        if (doorFound) this.log(doorFound, "text-sky-400");
         this.updateUI();
 
         // Render the UI

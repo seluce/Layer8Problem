@@ -113,7 +113,7 @@ export const core = {
         const out = JSON.parse(JSON.stringify(local ?? {}));
         const c = cloud ?? {};
 
-        for (const key of ['items', 'achievements', 'seenEvents', 'seenFlags']) {
+        for (const key of ['items', 'achievements', 'seenEvents', 'seenFlags', 'doors']) {
             const list = Array.isArray(out[key]) ? out[key] : (out[key] = []);
             const seen = new Set(list.map(x => JSON.stringify(x)));
             for (const x of (Array.isArray(c[key]) ? c[key] : [])) {
@@ -563,6 +563,8 @@ export const core = {
                 for (let [name, val] of Object.entries(this.state.archive.reputation)) {
                     this.state.reputation[name] = val;
                 }
+
+                this.backfillDoors();
 
             } catch(e) { console.error("Savegame Error", e); }
         }

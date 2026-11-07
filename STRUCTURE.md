@@ -24,7 +24,7 @@ src/
   platform.js           platform interface, web version
   platform_steam.js     Steam bridge over window.desktopBridge, only under Electron
 
-  components/           44 Svelte components, 8 of them for the intranet
+  components/           45 Svelte components, 8 of them for the intranet
   engine/               21 modules; engine_state.svelte.js holds the state,
                         engine_week.js the week mode, engine_hooks.js the
                         observer list the tutorial listens on,

@@ -71,7 +71,7 @@ const { useLanguage, language, t, tf } = await import('../src/i18n/i18n.svelte.j
 const { dayName, dayNameValue } = await import('../src/engine/engine_week.js');
 // engine_ui is NOT spread into the harness engine (its functions need the DOM);
 // the boot lines are pure computation, so they are called on it directly.
-const { ui } = await import('../src/engine/engine_ui.js');
+const { ui, DOORS } = await import('../src/engine/engine_ui.js');
 const { intranetPages } = await import('../src/engine/intranet_pages.js');
 const { state, freshDay, freshArchive } = await import('../src/engine/engine_state.svelte.js');
 const { KEYS } = await import('../src/engine/keys.js');
@@ -139,6 +139,12 @@ const engine = {
     // the real one rather than a stub that would answer whatever suits. It
     // only answers honestly because isOverlayOpen above does.
     windowOverTerminal: ui.windowOverTerminal,
+    // The two windows the side panel keeps once a scene has opened them
+    // (7.1). The real ones: they touch the state, the archive and the stubbed
+    // overlay. Only the intranet's page is left out - it needs the DOM - and
+    // the window flag it raises does not.
+    openFromScene: ui.openFromScene, findDoor: ui.findDoor, backfillDoors: ui.backfillDoors,
+    openBoard: ui.openBoard, openIntranet: ui.openIntranet, buildIntranet() {},
 };
 
 const resetState = () => {
@@ -157,6 +163,7 @@ const resetState = () => {
     // Which doors a career has opened (6.5). Nothing else reads it, so
     // clearing it here cannot reach another test.
     state.archive.seenOptions = {};
+    state.archive.doors = [];
     state.achievements = [];
     state.pendingEnd = null;
     state.modal = { open: false };
@@ -4174,13 +4181,130 @@ await ok('A chronicle line gets its figures filled in', () => {
     assert.ok(entries[0].text.includes('4'), 'the figure was not filled in');
     assert.ok(!entries[0].text.includes('{rage}'), 'the placeholder is still there');
 });
-await ok('The noticeboard caps reactive notes so it changes over the week', () => {
-    const src = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
-    const i = src.indexOf('openBoard');
-    const block = src.slice(i, i + 1400);
-    assert.ok(/reqStory && flags\[n\.reqStory\]\)[\s\S]{0,120}sort\(/.test(block),
-        'the reactive notes are not shuffled');
-    assert.ok(block.includes('.slice(0, 4)'), 'no cap on the reactive notes');
+// The board, opened for real. `reactive` are the notes a story flag pins up.
+const boardBench = async () => {
+    await ensure('board');
+    const reactive = DB.board.filter(n => n.reqStory);
+    const isReactive = (id) => reactive.some(n => n.id === id);
+    return { reactive, isReactive };
+};
+await ok('The noticeboard caps reactive notes so it changes over the week', async () => {
+    const { reactive, isReactive } = await boardBench();
+    assert.ok(reactive.length > 4, 'too few reactive notes for the probe to mean anything');
+    const walls = new Set();
+    for (let i = 0; i < 30; i++) {
+        resetState();
+        for (const n of reactive) state.storyFlags[n.reqStory] = true;
+        await engine.openBoard();
+        const pinned = state.boardNotes.filter(isReactive);
+        assert.equal(pinned.length, 4, `${pinned.length} reactive notes pinned - the cap is four`);
+        assert.ok(state.boardNotes.slice(0, 4).every(isReactive), 'the reactive notes are not in front');
+        assert.equal(state.boardNotes.length, 8, 'four reactive notes leave four general ones');
+        walls.add([...pinned].sort().join());
+    }
+    assert.ok(walls.size > 1, 'the reactive notes are not shuffled - the same four every day');
+});
+
+await ok('A later look at the board pins up what happened since, and reshuffles nothing', async () => {
+    // Since 7.1 the side panel opens the board at any hour, and the wall was
+    // drawn ONCE: a look at nine o'clock fixed it before the day had
+    // happened, and every note about the day stayed in the drawer.
+    const { reactive, isReactive } = await boardBench();
+    resetState();
+    await engine.openBoard();
+    const morning = [...state.boardNotes];
+    assert.equal(morning.length, 8, 'a wall without reactions has eight general notes');
+    assert.ok(!morning.some(isReactive), 'a reactive note is up without its flag');
+
+    await engine.openBoard();
+    assert.deepEqual(state.boardNotes, morning, 'a second look with nothing new changed the wall');
+
+    for (const n of reactive.slice(0, 2)) state.storyFlags[n.reqStory] = true;
+    await engine.openBoard();
+    assert.deepEqual([...state.boardNotes.slice(0, 2)].sort(), reactive.slice(0, 2).map(n => n.id).sort(),
+        'what happened since is not pinned up in front');
+    assert.deepEqual(state.boardNotes.slice(2), morning.slice(0, 6),
+        'the general notes were reshuffled, or more than one came down per new note');
+
+    for (const n of reactive) state.storyFlags[n.reqStory] = true;
+    await engine.openBoard();
+    assert.equal(state.boardNotes.filter(isReactive).length, 4, 'a later look got past the cap of four');
+    assert.deepEqual(state.boardNotes.slice(4), morning.slice(0, 4),
+        'the general notes went below four, or moved');
+});
+
+await ok('The door table describes both scenes as they are written', async () => {
+    // backfillDoors() reads a find made before 7.1 by option INDEX, so a
+    // rewritten scene would quietly hand the window to whoever took another
+    // answer, or to nobody.
+    const pools = ['coffee', 'server', 'calls', 'sidequests', 'reputation'];
+    await ensure(...pools);
+    for (const [door, d] of Object.entries(DOORS)) {
+        const scene = pools.flatMap(p => DB[p] ?? []).find(ev => ev.id === d.event);
+        assert.ok(scene, `${d.event} is gone - the ${door} has no scene left`);
+        assert.equal(scene.opts.length, d.count, `${d.event} has ${scene.opts.length} answers, DOORS says ${d.count}`);
+        assert.equal(scene.opts[d.option].r, `CMD:OPEN_${door.toUpperCase()}`,
+            `${d.event} answer ${d.option} no longer opens the ${door}`);
+    }
+});
+
+await ok('A scene finds its window once, and the side panel keeps it', async () => {
+    await ensure('coffee', 'sidequests', 'board', 'intranet');
+    const scenes = { intranet: ['sidequests', 'sidequest'], board: ['coffee', 'coffee'] };
+    for (const [door, [pool, type]] of Object.entries(scenes)) {
+        resetState();
+        engine.startWeek('easy');
+        const opt = DB[pool].find(ev => ev.id === DOORS[door].event).opts[DOORS[door].option];
+        const find = { k: `log.door.${door}` };
+        calls.logs = [];
+        engine.resolveTerminal(opt, type);
+        await new Promise(r => setTimeout(r, 0));     // the window opens after its pool
+        assert.deepEqual(state.archive.doors, [door], `the ${door} was not kept for the side panel`);
+        const at = calls.logs.findIndex(l => l.k === find.k);
+        assert.ok(at > 0, `nobody is told where the ${door} went`);
+        assert.equal(calls.logs[at - 1].k, `event.cmd.${door}`, 'the hint stands before the result it explains');
+        assert.ok(door === 'intranet' ? state.intranetOpen : openOverlays.has('board-modal'),
+            `the scene no longer opens the ${door}`);
+
+        calls.logs = [];
+        engine.resolveTerminal(opt, type);
+        assert.ok(!calls.logs.some(l => l.k === find.k), `the ${door} is announced a second time`);
+        assert.deepEqual(state.archive.doors, [door], 'a second find was written down twice');
+    }
+});
+
+await ok('A find from before 7.1 is read out of the answers taken', () => {
+    const mask = (d, bit) => (d.count << 16) | (1 << bit);
+    resetState();
+    state.archive.seenOptions = {
+        [DOORS.board.event]: mask(DOORS.board, DOORS.board.option),
+        [DOORS.intranet.event]: mask(DOORS.intranet, (DOORS.intranet.option + 1) % DOORS.intranet.count),
+    };
+    store.set(KEYS.archive, JSON.stringify(state.archive));
+    state.archive.doors = [];
+    engine.loadSystem();
+    assert.deepEqual(state.archive.doors, ['board'], 'loading the archive does not backfill the finds, or backfills the wrong answer');
+
+    // A mask written against another option count is a rewritten scene: its
+    // bits name other answers, so they prove nothing.
+    resetState();
+    state.archive.seenOptions = { [DOORS.board.event]: ((DOORS.board.count + 1) << 16) | (1 << DOORS.board.option) };
+    engine.backfillDoors();
+    assert.deepEqual(state.archive.doors, [], 'a mask from a rewritten scene was believed');
+});
+
+await ok('Two machines keep both finds', () => {
+    const out = engine.mergeArchives({ doors: ['board'] }, { doors: ['intranet', 'board'] });
+    assert.deepEqual(out.doors, ['board', 'intranet'], 'the merge loses a window one machine had found');
+});
+
+await ok('The side panel offers what was found, and not at the gala', () => {
+    const src = readFileSync(new URL('../src/components/PanelDoors.svelte', import.meta.url), 'utf-8');
+    for (const door of Object.keys(DOORS)) {
+        assert.ok(src.includes(`doors.includes('${door}')`), `the side panel has no entry for the ${door}`);
+    }
+    assert.match(src, /state\.isPartyMode \? \[\]/, 'the entries stand in the side panel during the gala');
+    assert.ok(!/openFromScene|Visited/.test(src), 'the side panel writes the scene\'s diary note');
 });
 
 await ok('Discarding makes room and hits only that one item', async () => {
@@ -4944,10 +5068,14 @@ await ok('The other easter eggs leave their line in the diary too', async () => 
     day();
     assert.equal(detailOf(buildDiary(state, 'WIN')), null, 'a plain day already has a detail line - the probe would prove nothing');
 
-    day(); await ui.openBoard.call(asUi);
+    day(); ui.openFromScene.call(asUi, 'board'); await new Promise(r => setTimeout(r, 0));
     assert.equal(detailOf(buildDiary(state, 'WIN')), 'detail_board', 'the noticeboard is not in the diary');
-    day(); await ui.openIntranet.call(asUi); ui.closeIntranet.call(asUi);
+    day(); ui.openFromScene.call(asUi, 'intranet'); await new Promise(r => setTimeout(r, 0)); ui.closeIntranet.call(asUi);
     assert.equal(detailOf(buildDiary(state, 'WIN')), 'detail_intranet', 'the intranet is not in the diary');
+    // From the side panel (7.1) neither: the lines tell the scene - Dr.
+    // Wichtig in the doorway, the coffee machine dawdling.
+    day(); await ui.openBoard.call(asUi); await ui.openIntranet.call(asUi); ui.closeIntranet.call(asUi);
+    assert.equal(detailOf(buildDiary(state, 'WIN')), null, 'a visit from the side panel is told as the scene');
     day(); await ui.showLoreModal.call(asUi); ui.closeLoreModal.call(asUi);
     assert.equal(detailOf(buildDiary(state, 'WIN')), 'detail_lore', 'the chronicle is not in the diary');
     day(); ui.noteHrRecord.call(asUi, 'mueller');
@@ -4956,10 +5084,10 @@ await ok('The other easter eggs leave their line in the diary too', async () => 
     assert.equal(detailOf(buildDiary(state, 'WIN')), 'detail_hr_other', "Schnösel's file is not in the diary");
 
     // The intranet and a file on the same day: the file is the secret, it wins.
-    day(); await ui.openIntranet.call(asUi); ui.closeIntranet.call(asUi); ui.noteHrRecord.call(asUi, 'mueller');
+    day(); ui.openFromScene.call(asUi, 'intranet'); await new Promise(r => setTimeout(r, 0)); ui.closeIntranet.call(asUi); ui.noteHrRecord.call(asUi, 'mueller');
     assert.equal(detailOf(buildDiary(state, 'WIN')), 'detail_hr_own', 'the plain intranet outranked the personnel file');
     // Closing the window keeps the note: the diary is written at night.
-    for (const key of ['intranetVisited', 'hrRecordsRead', 'loreRead'])
+    for (const key of ['intranetVisited', 'boardVisited', 'hrRecordsRead', 'loreRead'])
         assert.ok(Object.keys(freshDay(1.0)).includes(key), `${key} would outlive the day`);
 });
 

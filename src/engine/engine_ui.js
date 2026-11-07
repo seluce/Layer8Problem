@@ -54,6 +54,26 @@ const HARD_RESET = {
 };
 const HARD_RESET_ICON = 'shrink-0 grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all';
 
+/**
+ * The two windows a scene finds and the side panel keeps (7.1).
+ *
+ * Until 7.1 each opened from one scene only, and the measured career met the
+ * door late: the noticeboard around day 14 to 27, the intranet around day 22
+ * to 60 - for windows built to be visited again, the intranet redrawing its
+ * pages on every open. Now the first time a scene opens one, it goes into
+ * archive.doors and the side panel offers it from then on. The scenes stay:
+ * neither is about finding the window, and each has two more doors of its own.
+ *
+ * `option` and `count` are for backfillDoors() alone, which reads a find made
+ * before 7.1 out of archive.seenOptions. They describe the scene as it stands;
+ * week-flow.test holds them against both trees, so a rewrite of either scene
+ * fails there instead of quietly losing the backfill.
+ */
+export const DOORS = {
+    intranet: { event: 'sq_boss_snoop',      option: 0, count: 3 },
+    board:    { event: 'cof_bulletin_board', option: 2, count: 3 },
+};
+
 // The windows that can stand over the terminal while a result is on screen -
 // see windowOverTerminal(). The same ones the Escape key closes.
 const WINDOWS_OVER_TERMINAL = [
@@ -1105,8 +1125,50 @@ export const ui = {
         this.buildIntranet();
         this.hushNarration();
         this.state.intranetOpen = true;
-        this.state.intranetVisited = true;   // for tonight's diary
         this.lockScroll('intranet');
+    },
+
+    /**
+     * A scene opened the intranet or the noticeboard (CMD:OPEN_INTRANET,
+     * CMD:OPEN_BOARD). The window is the same one the side panel opens; what
+     * only the scene does is the diary note and the find.
+     *
+     * @returns {boolean} whether this was the first find, for the log line
+     */
+    openFromScene: function(door) {
+        if (door === 'intranet') this.state.intranetVisited = true;
+        if (door === 'board') this.state.boardVisited = true;
+        const first = this.findDoor(door);
+        if (door === 'intranet') this.openIntranet();
+        if (door === 'board') this.openBoard();
+        return first;
+    },
+
+    /** Puts a door into the archive. True if it was not there yet. */
+    findDoor: function(door) {
+        if (!DOORS[door]) return false;
+        const found = this.state.archive.doors ??= [];
+        if (found.includes(door)) return false;
+        found.push(door);
+        this.saveSystem();
+        return true;
+    },
+
+    /**
+     * A career that took a door before 7.1 has it in seenOptions already, and
+     * should not have to wait for the scene a second time. Runs on every load
+     * and writes nothing that is there, so it needs no version of its own.
+     */
+    backfillDoors: function() {
+        const taken = this.state.archive.seenOptions ?? {};
+        for (const [door, d] of Object.entries(DOORS)) {
+            const v = taken[d.event];
+            if (typeof v !== 'number' || (v >>> 16) !== d.count) continue;
+            if (v & (1 << d.option)) {
+                const found = this.state.archive.doors ??= [];
+                if (!found.includes(door)) found.push(door);
+            }
+        }
     },
 
     /**
@@ -1277,26 +1339,39 @@ export const ui = {
      * reactive note whose story flag the player has actually tripped. Those
      * come first - a wall that comments on this morning is worth more than one
      * that repeats itself.
+     *
+     * A later visit pins up the reactive notes that became due since, in
+     * front, and takes down a general one for each, never below four - the
+     * wall a first draw would have given, without reshuffling it. Since the
+     * side panel opens the board at any hour (7.1), a look at nine o'clock
+     * would otherwise have fixed the wall before the day had happened.
      */
     openBoard: async function() {
         await ensure('board');
         const pool = DB.board ?? [];
 
-        if (!this.state.boardNotes?.length && pool.length) {
+        if (pool.length) {
             const flags = this.state.storyFlags ?? {};
+            const pinned = this.state.boardNotes ?? [];
+            const isReactive = new Set(pool.filter(n => n.reqStory).map(n => n.id));
+            const pinnedReactive = pinned.filter(id => isReactive.has(id));
             // Story flags survive the night in week mode. Without shuffling
             // and a cap, the same reactions stayed pinned for five days and
             // crowded out the general notes along the way. Four reactive ones
             // are plenty; the rest get their turn tomorrow.
-            const reactive = pool.filter(n => n.reqStory && flags[n.reqStory])
-                                 .sort(() => Math.random() - 0.5)
-                                 .slice(0, 4);
-            const general = pool.filter(n => !n.reqStory)
-                                .sort(() => Math.random() - 0.5)
-                                .slice(0, Math.max(4, 8 - reactive.length));
-            // Ids only - components/BoardView.svelte reads the notes back out
-            // of the tree, so the wall follows a language switch.
-            this.state.boardNotes = [...reactive, ...general].map(n => n.id);
+            const due = pool.filter(n => n.reqStory && flags[n.reqStory] && !pinned.includes(n.id))
+                            .sort(() => Math.random() - 0.5)
+                            .slice(0, 4 - pinnedReactive.length)
+                            .map(n => n.id);
+            if (!pinned.length || due.length) {
+                const reactive = [...due, ...pinnedReactive];
+                const general = pinned.length
+                    ? pinned.filter(id => !isReactive.has(id))
+                    : pool.filter(n => !n.reqStory).sort(() => Math.random() - 0.5).map(n => n.id);
+                // Ids only - components/BoardView.svelte reads the notes back
+                // out of the tree, so the wall follows a language switch.
+                this.state.boardNotes = [...reactive, ...general.slice(0, Math.max(4, 8 - reactive.length))];
+            }
         }
 
         this.showOverlay('board-modal', false);

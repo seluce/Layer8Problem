@@ -15,6 +15,8 @@ Narrator:
 * The narrator settings say less about themselves. Who made the voice is in the credits.
 
 The day to day:
+* Once a scene has opened the intranet or the noticeboard, it stays in the side panel beside Inventory and Team and opens from there whenever you like. One you found before is there already.
+* The noticeboard pins up new notes when something has happened since your last look.
 * A scene that follows from an earlier decision says so in the corner of its card.
 * An outcome shows only the values that changed, a little larger. No more "Aggro +0" beside the numbers that moved.
 

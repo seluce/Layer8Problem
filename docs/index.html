@@ -22,8 +22,8 @@
 
 
     <style>.platform-desktop{display:none!important}.lang-opt{color:#94a3b8}.lang-opt:hover{color:#e2e8f0}html[lang=de] .lang-opt[data-lang=de],html[lang=en] .lang-opt[data-lang=en]{color:#60a5fa;cursor:default}@keyframes newsScroll{0%{transform:translate(0)}to{transform:translate(-100%)}}</style>
-  <script type="module" crossorigin src="./build/index-B8bLvATl.js"></script>
-  <link rel="stylesheet" crossorigin href="./build/index-BnWGh7nJ.css">
+  <script type="module" crossorigin src="./build/index-DbKdzYei.js"></script>
+  <link rel="stylesheet" crossorigin href="./build/index-CYZtCXeR.css">
 </head>
 <body class="text-xs md:text-sm">
     
@@ -247,6 +247,10 @@
                             <span class="text-[0.625rem] text-emerald-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_knowledge.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='\u{1F4D6}'"><span data-i18n="nav.knowledge">KNOWLEDGE</span></span>
                         </div>
 
+                        <!-- Intranet and noticeboard, once found (7.1):
+                             src/components/PanelDoors.svelte -->
+                        <div id="panel-doors" class="contents"></div>
+
                         <div data-action="openArchive" role="button" tabindex="0" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 transition-colors flex items-center gap-2">
                             <span class="text-[0.625rem] text-purple-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_archive.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='🏆'"><span data-i18n="nav.archive">ARCHIVE</span></span>
                         </div>
@@ -256,7 +260,9 @@
                         </div>
                     </div>
 
-                    <span data-action="toggleLog" role="button" tabindex="0" class="text-[0.625rem] text-slate-400 font-bold cursor-pointer lg:pointer-events-none lg:cursor-default flex items-center gap-1 justify-self-end sm:justify-self-auto sm:ml-auto">
+                    <!-- col-start-3: the right edge on a phone, also when the found
+                         windows (7.1) push it into a row of its own. -->
+                    <span data-action="toggleLog" role="button" tabindex="0" class="text-[0.625rem] text-slate-400 font-bold cursor-pointer lg:pointer-events-none lg:cursor-default flex items-center gap-1 col-start-3 justify-self-end sm:justify-self-auto sm:ml-auto">
                         <span data-i18n="nav.log">LOG</span> <span id="log-arrow" class="text-[0.625rem] lg:hidden">▼</span>
                     </span>
                 </div>
