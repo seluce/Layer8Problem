@@ -24,7 +24,7 @@ src/
   platform.js           platform interface, web version
   platform_steam.js     Steam bridge over window.desktopBridge, only under Electron
 
-  components/           44 Svelte components, 8 of them for the intranet
+  components/           45 Svelte components, 8 of them for the intranet
   engine/               21 modules; engine_state.svelte.js holds the state,
                         engine_week.js the week mode, engine_hooks.js the
                         observer list the tutorial listens on,
@@ -38,6 +38,7 @@ src/
 
 public/
   assets/               copied verbatim, see below
+  licenses/             the font licences, shipped with the fonts
 
 tools/
   lint-data.mjs         data check, npm run lint:data (and :en)
@@ -104,8 +105,9 @@ the reference to the file?**
 `url()` in CSS or from an `import`. Vite then rewrites the URL and appends a
 checksum, so that a browser cache does not serve the old file after an update.
 
-Living there: the two typefaces and the three textures — all referenced from
-`app.css`.
+Living there: the font files (JetBrains Mono in two weights, Kalam) and the
+three textures — all referenced from `app.css`. The fonts' licence texts are
+in `public/licenses/`, since the OFL wants them beside every copy.
 
 **`public/manifest.json`** — a special case for the same reason, but the other
 way round: Vite *could* see the reference from `index.html` and would then write

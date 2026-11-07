@@ -260,7 +260,7 @@
                             sm:flex sm:flex-wrap sm:gap-x-4 sm:gap-y-1
                             border-b border-slate-800 pb-1.5 sm:pb-1 mb-2 shrink-0">
                     <div class="contents">
-                        <div id="btn-inventory" data-action="openInventory" role="button" tabindex="0" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 -ml-1 transition-colors flex items-center gap-2">
+                        <div id="btn-inventory" data-action="openInventory" role="button" tabindex="0" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 transition-colors flex items-center gap-2">
                             <span class="text-[0.625rem] text-amber-500 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_inventory.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='🎒'"><span data-i18n="nav.inventory">INVENTORY</span></span>
                             <!-- Rendered by src/components/InventoryBadge.svelte -->
                             <span id="inv-badge"></span>
@@ -274,6 +274,10 @@
                             <span class="text-[0.625rem] text-emerald-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_knowledge.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='\u{1F4D6}'"><span data-i18n="nav.knowledge">KNOWLEDGE</span></span>
                         </div>
 
+                        <!-- Intranet and noticeboard, once found (7.1):
+                             src/components/PanelDoors.svelte -->
+                        <div id="panel-doors" class="contents"></div>
+
                         <div data-action="openArchive" role="button" tabindex="0" class="cursor-pointer hover:bg-slate-800 rounded-sm px-1 transition-colors flex items-center gap-2">
                             <span class="text-[0.625rem] text-purple-400 font-bold flex items-center gap-1 sm:gap-1.5 whitespace-nowrap overflow-hidden"><img src="assets/img/ui/ui_archive.webp" alt="" width="20" height="20" class="w-5 h-5 shrink-0 select-none" onerror="this.outerHTML='🏆'"><span data-i18n="nav.archive">ARCHIVE</span></span>
                         </div>
@@ -283,7 +287,9 @@
                         </div>
                     </div>
 
-                    <span data-action="toggleLog" role="button" tabindex="0" class="text-[0.625rem] text-slate-400 font-bold cursor-pointer lg:pointer-events-none lg:cursor-default flex items-center gap-1 justify-self-end sm:justify-self-auto sm:ml-auto">
+                    <!-- col-start-3: the right edge on a phone, also when the found
+                         windows (7.1) push it into a row of its own. -->
+                    <span data-action="toggleLog" role="button" tabindex="0" class="text-[0.625rem] text-slate-400 font-bold cursor-pointer lg:pointer-events-none lg:cursor-default flex items-center gap-1 col-start-3 justify-self-end sm:justify-self-auto sm:ml-auto">
                         <span data-i18n="nav.log">LOG</span> <span id="log-arrow" class="text-[0.625rem] lg:hidden">▼</span>
                     </span>
                 </div>
@@ -456,26 +462,16 @@
 
 <!-- WISSEN MODAL START -->
     <div id="knowledge-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=knowledge.title" class="fixed inset-0 bg-black/90 z-9999 hidden flex-col items-center justify-center p-4 fade-in">
-        <div class="neon-box accent-green bg-slate-900 max-w-4xl w-full shadow-2xl relative flex flex-col overflow-hidden h-[85vh] md:h-[78vh]">
-
-            <div class="bg-slate-950 p-4 md:p-5 border-b border-slate-800 flex justify-between items-start shrink-0">
-                <div class="flex items-center gap-3 md:gap-4 mt-1 min-w-0">
-                    <img src="assets/img/ui/ui_knowledge.webp" alt="" width="40" height="40" class="w-9 h-9 md:w-10 md:h-10 shrink-0 select-none drop-shadow-md" onerror="this.outerHTML='\u{1F4D6}'">
-                    <div class="flex flex-col min-w-0">
-                        <h2 class="text-2xl md:text-3xl font-black text-transparent bg-clip-text bg-linear-to-r from-emerald-400 to-teal-400 uppercase tracking-widest mb-1" data-i18n="knowledge.title">
-                            Knowledge
-                        </h2>
-                        <p class="text-xs md:text-sm text-slate-400 font-mono" data-i18n="knowledge.subtitle">What you have worked out about this place.</p>
-                    </div>
-                </div>
-                <button data-action="closeKnowledge" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="w-9 h-9 flex items-center justify-center shrink-0 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 transition-colors text-2xl leading-none">&times;</button>
-            </div>
+        <!-- The book: a dark cover, and on it the page markers and two pages,
+             drawn by src/components/KnowledgeView.svelte. The title is
+             written on the register page now, not printed above it. -->
+        <div class="notebook-cover max-w-5xl w-full relative flex flex-col h-[85vh] md:h-[80vh] px-2 pb-2 md:px-3 md:pb-3">
+            <button data-action="closeKnowledge" aria-label="Close" title="Close" data-i18n-attr="aria-label=common.close;title=common.close" class="absolute top-1 right-1.5 z-20 w-8 h-8 flex items-center justify-center rounded-md text-slate-400 hover:text-white hover:bg-white/10 transition-colors text-2xl leading-none">&times;</button>
 
             <!-- Fixed height, not max-height: switching tabs changes how many
                  entries are listed, and a modal that grows and shrinks under
                  the cursor is unpleasant to click through. -->
-            <div id="knowledge-content" class="flex flex-col flex-1 overflow-hidden"></div>
-
+            <div id="knowledge-content" class="flex flex-col flex-1 min-h-0"></div>
         </div>
     </div>
 <!-- WISSEN MODAL END -->
@@ -884,6 +880,10 @@
                         by Kevin MacLeod (<a href="https://incompetech.com" target="_blank" class="text-blue-400 hover:underline pointer-events-auto">incompetech.com</a>).<br>
                         Licensed under Creative Commons: By Attribution 4.0 License <br>
                         <a href="http://creativecommons.org/licenses/by/4.0/" target="_blank" class="text-blue-400 hover:underline pointer-events-auto break-all">http://creativecommons.org/licenses/by/4.0/</a>
+                    </p>
+                    <p><strong class="text-slate-300 font-sans" data-i18n="credits.fonts">Fonts (SIL Open Font License 1.1):</strong><br>
+                        JetBrains Mono by The JetBrains Mono Project Authors, Kalam by Indian Type Foundry.<br>
+                        <a href="https://openfontlicense.org" target="_blank" class="text-blue-400 hover:underline pointer-events-auto break-all">https://openfontlicense.org</a>
                     </p>
                     <p><strong class="text-slate-300 font-sans" data-i18n="credits.voice">Narration:</strong><br>
                         <span data-i18n="credits.voice.body">The scenes are read by a synthetic voice, generated with ElevenLabs (model eleven_v4_turbo, voice "Alexander - Deep TV Narrator"). No human spoke these recordings. The same voice in both languages, on purpose.</span>

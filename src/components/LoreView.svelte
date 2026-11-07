@@ -51,7 +51,11 @@
          role="dialog" aria-modal="true" aria-label={t('a11y.dialog.lore')}>
         <div class="bg-[#fdf6e3] rounded-lg max-w-3xl w-full max-h-[85vh] flex flex-col shadow-[0_0_50px_rgba(0,0,0,0.8)] border-8 border-[#5d4037] relative text-[#3e2723] font-serif">
 
-            <div class="bg-[#3e2723] p-6 text-center border-b-4 border-[#8d6e63] relative overflow-hidden">
+            <!-- shrink-0: overflow-hidden, there for the wood grain, takes away
+                 the header's automatic minimum height, and a long book
+                 squeezed it to 59 of its 108px - the title cut, the motto
+                 gone. -->
+            <div class="bg-[#3e2723] p-6 text-center border-b-4 border-[#8d6e63] relative overflow-hidden shrink-0">
                 <div class="absolute top-0 left-0 w-full h-full opacity-10 bg-wood"></div>
                 <h2 class="text-3xl font-bold text-[#d7ccc8] uppercase tracking-[0.2em] mb-1 relative z-10">{t('lore.title')}</h2>
                 <span class="text-sm text-[#a1887f] italic font-serif relative z-10">{t('lore.motto')}</span>
@@ -89,12 +93,10 @@
                         <!-- Handwriting: another ink, a slight tilt, ruled lines -->
                         <div class="mb-5 pl-4 py-2 border-l-2 border-[#7a6a52]"
                              style="rotate:-0.4deg">
-                            <p class="text-[#33475b] text-[1.0625rem] leading-[1.875rem]"
-                               style="font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive">
+                            <p class="font-hand text-[#33475b] text-[1.0625rem] leading-[1.875rem]">
                                 {entry.text}
                             </p>
-                            <span class="block text-right text-[0.6875rem] text-[#7a6a52] mt-1"
-                                  style="font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive">
+                            <span class="font-hand block text-right text-[0.6875rem] text-[#7a6a52] mt-1">
                                 {tf('lore.entry.sign', { day: entry.day })}
                             </span>
                         </div>
@@ -106,16 +108,13 @@
                              there while the daily lines come and go. -->
                         <div class="mb-5 mt-8 pl-4 py-3 border-l-4 border-[#b3627a] bg-[#f3e3e8]/60 rounded-r-sm"
                              style="rotate:0.3deg">
-                            <span class="block text-[0.625rem] uppercase tracking-[0.2em] text-[#b3627a] mb-1"
-                                  style="font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive">
+                            <span class="font-hand block text-[0.625rem] uppercase tracking-[0.2em] text-[#b3627a] mb-1">
                                 {t('lore.gala.label')}
                             </span>
-                            <p class="text-[#33475b] text-[1.0625rem] leading-[1.875rem]"
-                               style="font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive">
+                            <p class="font-hand text-[#33475b] text-[1.0625rem] leading-[1.875rem]">
                                 {gala.text}
                             </p>
-                            <span class="block text-right text-[0.6875rem] text-[#7a6a52] mt-1"
-                                  style="font-family: 'Segoe Script', 'Bradley Hand', 'Comic Sans MS', cursive">
+                            <span class="font-hand block text-right text-[0.6875rem] text-[#7a6a52] mt-1">
                                 {tf('lore.entry.sign', { day: gala.day })}
                             </span>
                         </div>

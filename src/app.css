@@ -26,6 +26,18 @@
     font-display: swap;
 }
 
+/* Müller's hand: Kalam, for the knowledge book and the pages he adds to the
+   chronicle. Latin subset from @fontsource/kalam 5.3.0, 22 KB, under the
+   SIL Open Font License 1.1 - the licence text ships in public/licenses/,
+   which the licence requires of every copy of the font. */
+@font-face {
+    font-family: 'Kalam';
+    src: url('./assets/fonts/kalam-latin-400-normal.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
 /* Tailwind 4 replaces the three @tailwind directives and the JS config file.
    source(none) turns off automatic file discovery so the @source list below
    is the single source of truth — same set of files the old
@@ -410,6 +422,66 @@
     .inv-slot.slot-lore    { border: 2px solid #fbbf24; }   /* amber-400 */
     .inv-slot.slot-discard { border: 2px solid #f87171; }   /* red-400 */
     .inv-slot.used::after { content: '✔'; position: absolute; bottom: -2px; right: -2px; font-size: 0.625rem; color: #10b981; }
+
+    /* THE KNOWLEDGE BOOK
+       Müller's own notebook, so it is paper, like the chronicle and the
+       noticeboard and unlike every panel around them: a dark cover, the
+       register on squared paper on the left, the open page ruled on the
+       right, the notes in his hand. Ink on paper is slate-600 or darker.
+
+       The ruling of the open page is laid under the notes list, which fills
+       the page to its foot, because only there is every line the same
+       height. Its pitch is the notes' line height (leading-8 in
+       KnowledgeView, 2rem): change one without the other and the writing
+       drifts off the lines, a little more each row. The week suite holds
+       the two together. */
+    .notebook-cover {
+        background: linear-gradient(160deg, #233044, #151c28);
+        border-radius: 8px;
+        box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+    }
+    .notebook-paper { background-color: #fbf7ee; color: #1e293b; }
+    /* The fold: each page darkens towards the spine, and the paper stack
+       shows a little at the outer edges. */
+    .notebook-left {
+        box-shadow: inset -22px 0 28px -18px rgba(60, 40, 20, 0.35),
+                    -1px 1px 0 #e6dfcd, -2px 2px 0 #d6cdb6;
+    }
+    .notebook-right {
+        box-shadow: inset 22px 0 28px -18px rgba(60, 40, 20, 0.35),
+                    1px 1px 0 #e6dfcd, 2px 2px 0 #d6cdb6;
+    }
+    .notebook-squared {
+        background-image:
+            linear-gradient(to right, rgba(100, 116, 139, 0.14) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(100, 116, 139, 0.14) 1px, transparent 1px);
+        background-size: 1.25rem 1.25rem;
+        background-attachment: local;
+    }
+    .notebook-margin {
+        background-image: linear-gradient(to right,
+            transparent 2.25rem,
+            rgba(239, 68, 68, 0.45) 2.25rem,
+            rgba(239, 68, 68, 0.45) calc(2.25rem + 1px),
+            transparent calc(2.25rem + 1px));
+    }
+    .notebook-lines {
+        background-image: repeating-linear-gradient(to bottom,
+            transparent 0,
+            transparent calc(2rem - 1px),
+            rgba(59, 130, 246, 0.28) calc(2rem - 1px),
+            rgba(59, 130, 246, 0.28) 2rem);
+    }
+    /* font-size-adjust holds the reading size if the file does not load and
+       the browser falls back to whatever cursive face it has. */
+    .font-hand { font-family: 'Kalam', cursive; font-size-adjust: 0.5; }
+    /* An unread entry is gone over with a highlighter. */
+    .marker {
+        background: linear-gradient(to bottom, transparent 30%, rgba(250, 204, 21, 0.6) 30%,
+                                    rgba(250, 204, 21, 0.6) 88%, transparent 88%);
+        box-decoration-break: clone;
+        -webkit-box-decoration-break: clone;
+    }
 
     /* BUTTONS */
     .action-btn {

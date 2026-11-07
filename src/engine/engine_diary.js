@@ -202,9 +202,9 @@ function factsOf(state, endReason) {
         lunch: !!state.lunchDone,
         leet: !!state.leetSeen,
         vending: !!state.vendingVisited,
-        // boardNotes is drawn on the board's first open of the day, so a
-        // filled list is the visit.
-        board: (state.boardNotes?.length ?? 0) > 0,
+        // Only what a scene opened: the lines tell the scene, and a window
+        // opened from the side panel would put them in nearly every evening.
+        board: !!state.boardVisited,
         intranet: !!state.intranetVisited,
         hrOwn: (state.hrRecordsRead ?? []).includes('mueller'),
         hrOther: (state.hrRecordsRead ?? []).includes('schnoesel'),

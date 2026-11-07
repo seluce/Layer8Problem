@@ -686,6 +686,7 @@ export const diary = {
         {
             // The noticeboard, opened while the coffee machine dawdles
             // (cof_bulletin_board). Rank 2: it draws against the day's figures.
+            // Only when the scene opened it, not the side panel (7.1).
             id: "detail_board", rank: 2, when: d => d.board,
             lines: [
                 "Beim Warten auf den Kaffee das Schwarze Brett gelesen. Ich weiß jetzt Dinge über dieses Haus, nach denen ich nicht gefragt habe.",
@@ -695,7 +696,8 @@ export const diary = {
         },
         {
             // The intranet, opened in a panic with Dr. Wichtig in the doorway
-            // (sq_boss_snoop). Rank 2, like the board.
+            // (sq_boss_snoop). Rank 2, like the board, and like it only when
+            // the scene opened it.
             id: "detail_intranet", rank: 2, when: d => d.intranet,
             lines: [
                 "Als Dr. Wichtig in der Tür stand, war auf meinem Bildschirm zufällig das Intranet offen. Er wirkte zufrieden.",

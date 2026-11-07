@@ -5,9 +5,10 @@
   component fills the pinboard. Until v4.0.0 the notes were markup in there
   too, which meant the same six pieces of paper forever.
 
-  Which notes are pinned up is decided once per day by engine_ui.openBoard()
-  and kept in state.boardNotes - reopening the board must not reshuffle it, or
-  the wall stops feeling like a place.
+  Which notes are pinned up is decided on the day's first open by
+  engine_ui.openBoard() and kept in state.boardNotes. A later visit pins up
+  what became due since, but never reshuffles the wall, or it stops feeling
+  like a place.
 
   The text fields carry <strong>, <em> and <br>, so they go through {@html}.
   They come from data/data_board.js and are never player input.

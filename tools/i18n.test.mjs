@@ -811,7 +811,7 @@ await ok('Every element a component mounts into is empty in the markup', async (
     assert.deepEqual(offenders, [], 'a mount target carries markup the component will never replace');
 });
 
-await ok('A flex item that wraps long words can shrink', async () => {
+await ok('A flex item that wraps long words can shrink, and a clipped one in a capped column cannot', async () => {
     // A flex item keeps min-width:auto, so it refuses to shrink below its
     // longest UNBREAKABLE word - and overflow-wrap:break-word does not lower
     // that minimum, it only breaks once the box is already narrow enough.
@@ -908,6 +908,7 @@ await ok('A flex item that wraps long words can shrink', async () => {
         (!has(cls, 'flex-col') || /(?:^|[\s'"`{}])[a-z0-9]+:flex-row(?:[\s'"`{}]|$)/.test(cls));
 
     const offenders = [];
+    const squeezed = [];
     for (const file of files) {
         const src = readFileSync(root + file, 'utf8');
         const stack = [];
@@ -919,6 +920,21 @@ await ok('A flex item that wraps long words can shrink', async () => {
                 continue;
             }
             const cls = classOf(tag.raw);
+            // The other axis, the other way round. In a column with a capped
+            // height the scrolling child is the one meant to give way - but a
+            // sibling with a clipped overflow has lost its automatic
+            // min-height as well, so it gives way too. The chronicle's
+            // header, clipped for its wood grain, was squeezed to 59 of its
+            // 108px: the title cut, the motto gone. shrink-0 holds such a
+            // child; flex-1 or min-h-0 says it is the one meant to give.
+            const holder = stack[stack.length - 1];
+            if (holder && has(holder.cls, 'flex') && has(holder.cls, 'flex-col')
+                && /(?:^|[\s'"`{}])(?:[a-z0-9]+:)?(?:max-h|h)-/.test(holder.cls)
+                && has(cls, 'overflow(?:-[xy])?-(?:hidden|clip)')
+                && !has(cls, 'shrink-0|flex-none|flex-1|grow|flex-auto|min-h-0')) {
+                squeezed.push(`${file}:${tag.line} <${tag.name}> clips its overflow in a column `
+                            + `with a capped height and has no shrink-0`);
+            }
             if (has(cls, WRAP)) {
                 // The other way a flex box refuses to shrink: on the CROSS
                 // axis an item is only as wide as its container while the
@@ -951,6 +967,8 @@ await ok('A flex item that wraps long words can shrink', async () => {
     }
     assert.deepEqual([...new Set(offenders)], [],
         'a flex child that holds wrapping prose cannot shrink without min-w-0');
+    assert.deepEqual(squeezed, [],
+        'a clipped child of a capped column is squeezed along with the scroller');
 });
 
 console.log(`\n${passed} checks passed.`);

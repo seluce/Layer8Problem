@@ -29,9 +29,10 @@ export function freshDay(mult = 1.0) {
         // nothing about whether you are getting it right just now.
         repAtStart: {},
 
-        // Which notes are pinned to the board today. Drawn once by
-        // engine_ui.openBoard(); reopening must not reshuffle them, or the
-        // wall stops feeling like a place.
+        // Which notes are pinned to the board today. Drawn on the first open
+        // by engine_ui.openBoard(); a later visit only pins up what became
+        // due since, and never reshuffles, or the wall stops feeling like a
+        // place.
         // Note IDS, not the notes themselves. A note is prose and belongs in
         // the tree; what the day decided is only WHICH ones are pinned up.
         boardNotes: [],
@@ -45,17 +46,23 @@ export function freshDay(mult = 1.0) {
 
         // What the day's easter eggs left behind, for tonight's diary (6.3,
         // data_diary.js, the detail slot). Day-scoped on purpose: a reloaded
-        // day still knows, and the next morning forgets. The noticeboard needs
-        // no field of its own - boardNotes above is drawn on its first open.
+        // day still knows, and the next morning forgets.
         //   vendingVisited  the machine on the third floor was opened -
         //                   Mueller then refuses to write about it
-        //   intranetVisited the intranet was opened
+        //   intranetVisited the SCENE opened the intranet (sq_boss_snoop),
+        //   boardVisited    the scene opened the noticeboard
+        //                   (cof_bulletin_board). Since 7.1 both windows
+        //                   also open from the side panel once found, and
+        //                   the diary lines tell the scene - Dr. Wichtig in
+        //                   the doorway, the coffee machine dawdling - so a
+        //                   visit from the panel sets neither.
         //   hrRecordsRead   which personnel files were opened behind the HR
         //                   login: 'schnoesel', 'mueller' (record ids from
         //                   data_intranet.js, hr.page.accounts)
         //   loreRead        the company chronicle was opened
         vendingVisited: false,
         intranetVisited: false,
+        boardVisited: false,
         hrRecordsRead: [],
         loreRead: false,
 
@@ -367,6 +374,9 @@ export function freshArchive() {
         // believed. A map and not a list of `id#i` strings: 33 KB against 80
         // when full, beside the 24 that seenEvents already takes.
         seenOptions: {},
+        // The windows a scene opened once and the side panel keeps since
+        // (7.1): 'intranet', 'board'. See engine_ui.DOORS.
+        doors: [],
         // Per compendium entry: how many notes had been read the last time it
         // was opened. An entry counts as unread again once it has more than
         // that, so a later note re-flags an entry that was already seen.
