@@ -42,13 +42,14 @@ await useLanguage(LANG);
 const { core } = await import('../src/engine/engine_core.js');
 const { events } = await import('../src/engine/engine_events.js');
 const { week } = await import('../src/engine/engine_week.js');
+const { scores } = await import('../src/engine/engine_scores.js');
 const { hooks } = await import('../src/engine/engine_hooks.js');
 const { state, freshDay } = await import('../src/engine/engine_state.svelte.js');
 
 const calls = { end: null, terminal: null, modal: null };
 const engine = {
     state,
-    ...core, ...events, ...week, ...hooks,
+    ...core, ...events, ...week, ...scores, ...hooks,
     showOverlay() {}, hideOverlay() {}, renderHeader() {}, updateUI() {}, disableButtons() {},
     setTerminalIdle() {}, setTerminalMorning() {}, setTerminalResult() {}, setTerminalEvent() {},
     showModal(t, x) { calls.modal = t; },

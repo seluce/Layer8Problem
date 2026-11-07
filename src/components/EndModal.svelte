@@ -25,6 +25,7 @@
     import DayChart from './DayChart.svelte';
     import DayReport from './DayReport.svelte';
     import DiaryEntry from './DiaryEntry.svelte';
+    import DayLog from './DayLog.svelte';
     import PartyReport from './PartyReport.svelte';
     import WeekBalance from './WeekBalance.svelte';
     import { renderRecipe } from '../engine/recipe.js';
@@ -52,6 +53,7 @@
         if (modal.open) showChart = game.autoChart ?? false;
     });
     let showDiary = $state(false);
+    let showLog = $state(false);
 
     // The colour follows the outcome, not the wording. It used to be picked by
     // searching the title for 'FEIERABEND', 'ÜBERLEBT', 'GEFEUERT' and the
@@ -95,6 +97,7 @@
 
     const hasChart = $derived((game.statHistory?.length ?? 0) > 2);
     const hasDiary = $derived(!!modal.diary);
+    const hasLog = $derived((game.logEntries?.length ?? 0) > 0);
 
     // A finished week day (Monday to Thursday): not an ending, the run
     // carries on tomorrow - so no reload, and the baggage block below.
@@ -182,17 +185,18 @@
                        week={modal.isWeek ? { mode: modal.weekMode, day: modal.weekDay } : null} />
         {/if}
 
-        <!-- What the week was worth on the leaderboard (desktop only:
-             weekSubmit stays null where there is no Steam). The answer
+        <!-- What the run was worth on the leaderboard (desktop only:
+             scoreSubmit stays null where there is no Steam). The answer
              arrives after the screen does, so the line starts as "sending"
-             and settles. No data-modal-continue - see the note below. -->
-        {#if isFinal && modal.isWeek && game.weekSubmit}
-            {@const sent = game.weekSubmit}
+             and settles. The mode has to match: a day's answer never stands
+             under a week. No data-modal-continue - see the note below. -->
+        {#if isFinal && game.scoreSubmit && game.scoreSubmit.mode === (modal.isWeek ? 'week' : 'day')}
+            {@const sent = game.scoreSubmit}
             {@const points = Number(sent.score).toLocaleString(language())}
             <div class="mt-3 flex flex-wrap items-center justify-center gap-x-3 gap-y-2 text-xs font-mono">
                 <span class="min-w-0 {sent.scoreChanged ? 'text-amber-400 font-bold' : 'text-slate-300'}" aria-live="polite">
-                    {sent.pending ? t('leaderboard.submit.pending')
-                      : sent.failed ? tf('leaderboard.submit.failed', { points })
+                    {sent.pending ? t(sent.mode === 'day' ? 'leaderboard.submit.pendingDay' : 'leaderboard.submit.pending')
+                      : sent.failed ? tf(sent.mode === 'day' ? 'leaderboard.submit.failedDay' : 'leaderboard.submit.failed', { points })
                       : sent.scoreChanged ? tf('leaderboard.submit.best', { points, rank: Number(sent.rank).toLocaleString(language()) })
                       : tf('leaderboard.submit.kept', { points })}
                 </span>
@@ -244,7 +248,7 @@
             </div>
         {/if}
 
-        {#if (isFinal || isNight) && (hasChart || hasDiary)}
+        {#if (isFinal || isNight) && (hasChart || hasDiary || hasLog)}
             <div class="flex flex-wrap justify-center gap-2 mb-4">
                 {#if hasChart}
                     <button type="button" onclick={() => showChart = !showChart}
@@ -263,6 +267,13 @@
                  onerror={(e) => e.currentTarget.outerHTML = '📖'}>{t('end.toggle.diary')}
                     </button>
                 {/if}
+                {#if hasLog}
+                    <button type="button" onclick={() => showLog = !showLog}
+                            aria-expanded={showLog}
+                            class="text-[0.6875rem] font-mono uppercase tracking-widest text-slate-400 hover:text-amber-400 border border-slate-700 hover:border-amber-600/60 rounded-sm px-3 py-1.5 transition-colors">
+                        {showLog ? '▾' : '▸'} {t('end.toggle.log')}
+                    </button>
+                {/if}
             </div>
 
             {#if showChart}
@@ -276,6 +287,12 @@
             {#if showDiary && hasDiary}
                 <div class="mb-6 py-2">
                     <DiaryEntry diary={modal.diary} />
+                </div>
+            {/if}
+
+            {#if showLog && hasLog}
+                <div class="mb-4 bg-slate-950 border border-slate-700 rounded-lg p-3 shadow-inner">
+                    <DayLog />
                 </div>
             {/if}
         {/if}

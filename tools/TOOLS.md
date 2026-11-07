@@ -28,6 +28,7 @@ the repository root.
 | String pass | `node tools/scan-strings.mjs [path …] [--sentences] [--nouns] [--all-attrs]` | before claiming a **code** surface is done, no gate |
 | Steam presence | `node tools/make-steam-presence.mjs` | when a `presence.*` string changes; upload the output to Steamworks |
 | Steam achievements | `node tools/make-steam-achievements.mjs` | when an achievement title or `hint` changes, or an achievement is added |
+| Report form | `npm run report:form -- <public link> [--write]` | when the Google form for bug reports is recreated; then send one test report |
 
 **The order of a content session:** write in German → `lint:data` →
 `report-prose` → translate → `scan-fields` as proof of completeness →
@@ -533,7 +534,7 @@ and how far the plan's remainder still reaches.
 ## 8. `npm test` — the five test suites, in both languages
 
 ```
-npm test        # 17 / 271 / 20 / 48 / 19, then the same five again with --lang=en
+npm test        # 17 / 277 / 20 / 48 / 19, then the same five again with --lang=en
 npm run test:de # one language only, while working
 npm run test:en
 ```
@@ -563,7 +564,7 @@ engine modules, not against dummies.
 | File | What it secures |
 |---|---|
 | `week-foundation.test.mjs` | the foundation of the week module (state, transitions) |
-| `week-flow.test.mjs` | the wired week loop on the real core/events/week; UI and audio stubbed. Also the Steam leaderboards: the score, the detail values in both read shapes, the merged list, both week endings submitting, and the main process's allow-list |
+| `week-flow.test.mjs` | the wired week loop on the real core/events/week; UI and audio stubbed. Also the Steam leaderboards: the score for a day and a week, the detail values in both read shapes, the merged list, both week endings and both day endings submitting, and the main process's allow-list with each board's ceiling. And an emergency's clock waiting for the narrator |
 | `dev-script.test.mjs` | every scenario of `dev-week.js` against the real engine |
 | `i18n.test.mjs` | the language layer: default and detection, the switch without a reload, the fallback for a missing key, the Steam presence and the achievement order against `STEAM_ORDER`; plus four checks on the markup itself: no type size in px, small print readable on the dark panels (slate-400 or lighter, nothing under 10px), mount targets empty in the markup, and flex items that can shrink |
 
@@ -1073,3 +1074,36 @@ each other.
 > `english`, because back then there was only one language) — identical apart
 > from the language line. All 27 descriptions there are the `hint`, none a
 > `desc`.
+
+---
+
+## `report-form.mjs` — the bug-report form's field ids
+
+```bash
+npm run report:form -- https://docs.google.com/forms/d/e/<id>/viewform          # show
+npm run report:form -- https://docs.google.com/forms/d/e/<id>/viewform --write  # write
+```
+
+The in-game report posts to a Google form, and a form's fields are addressed
+by ids (`entry.1755901744`) that change when the form or a question is made
+anew. They used to be found by hand - a pre-filled link, or the network tab
+while sending the form once - and the pre-filled link stopped carrying them for
+some forms. They are in the published page all along: Google ships the form as
+`FB_PUBLIC_LOAD_DATA_`, and this reads them from there and, with `--write`,
+puts them into `src/engine/report_form.js`, the one place the game takes them
+from.
+
+**The link is the public one** (`/forms/d/e/<id>/viewform`, under "Send" or
+"Publish"), not the editor's (`/forms/d/<id>/edit`). A form created since 2025
+also has to be **published** and open to "anyone with the link", or the page
+holds no form and the tool says so.
+
+**Three questions, in order:** category as a *short answer*, description and
+debug block as *paragraphs*. The tool refuses anything else, because a
+category as a drop-down rejects every value it does not list - and the post
+goes out `no-cors`, so the game never sees Google's answer and says "Sent"
+either way. That is how the reports went missing in November 2026: the form
+was gone, and every report still read as sent. **After writing, build and
+send one test report from the game**, then look for it under the form's
+responses - nothing else can tell whether they arrive.
+

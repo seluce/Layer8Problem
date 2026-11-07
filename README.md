@@ -129,8 +129,9 @@ development gets a few technical conveniences on Steam:
   at the desktop in the evening
 - **Dynamic status** — your friends list finds out whether you are currently
   *"Hiding in the server room"* or *"Surviving the Synergy Gala"*
-- **Leaderboards** — one per week level, plus all three in one list: who lasts
-  the longest, how the week ended, and on which values
+- **Leaderboards** — for the day and for the week, one per level, plus all
+  three in one list: who lasts the longest, how the run ended, and on which
+  values
 
 Both versions run on the same content.
 

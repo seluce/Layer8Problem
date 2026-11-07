@@ -1,9 +1,14 @@
 <!--
-  The week leaderboards, desktop only.
+  The leaderboards, desktop only.
 
-  Three Steam boards, one per week level, and an "All" tab that merges them
-  in the game (engine/leaderboard.js, mergeBoards). Steam ranks within one
-  board, so the numbers on "All" are the combined list's own.
+  Two modes, the day and the week (7.1), the switch on top the same as the
+  archive's and remembered with it. Per mode three Steam boards, one per
+  level, and an "All" tab that merges them in the game
+  (engine/leaderboard.js, mergeBoards). Steam ranks within one board, so the
+  numbers on "All" are the combined list's own.
+
+  A day has no days to show, so its bar is the shift itself: filled as far
+  as the day lasted, in the colour of what ended it.
 
   The look is draft A of three the operator was shown (01.11.2026): the top
   three on a podium in gold, silver and bronze, everyone below on a row with a
@@ -25,29 +30,60 @@
     import { engine } from '../engine.js';
     import { formatClock } from '../engine/engine_state.svelte.js';
     import { dayName } from '../engine/engine_week.js';
-    import { decodeDetails, mergeBoards, LEVELS, WEEK_MINUTES, COMPOSURE_MAX } from '../engine/leaderboard.js';
+    import { decodeDetails, mergeBoards, LEVELS, SHIFT_START, SHIFT_MINUTES, WEEK_MINUTES, COMPOSURE_MAX } from '../engine/leaderboard.js';
+    import { KEYS } from '../engine/keys.js';
     import { t, tf, language } from '../i18n/i18n.svelte.js';
 
     const view = $derived(game.leaderboard);
+    const mode = $derived(view.mode === 'week' ? 'week' : 'day');
 
-    // Which tab opens: the level of the week that just ended, else the
-    // player's preset, else everything. A tab picked by hand holds until the
-    // window is opened again - leaderboardOpens counts the openings.
+    // i18n-uses: stats.mode.day, stats.mode.week
+    const MODES = [
+        { key: 'day',  on: 'bg-slate-800 text-blue-400 border-blue-500/60' },
+        { key: 'week', on: 'bg-slate-800 text-purple-400 border-purple-500/60' }
+    ];
+    function setMode(key) {
+        if (key === mode) return;
+        try { localStorage.setItem(KEYS.statsTab, key); } catch { /* private mode */ }
+        open = null;
+        engine.loadLeaderboard(view.scope, key);
+    }
+
+    // Which tab opens: the level of the run that just ended (when the window
+    // was opened from its end screen and shows its mode), else the player's
+    // preset for the mode, else everything. A tab picked by hand holds until
+    // the window is opened again or the mode changes - leaderboardOpens counts
+    // the openings.
     let picked = $state(null);
     $effect(() => {
         game.leaderboardOpens;
+        mode;
         picked = null;
     });
-    const preset = $derived(LEVELS.includes(game.defaultWeekDiff) ? game.defaultWeekDiff : 'all');
-    const tab = $derived(picked ?? game.weekSubmit?.level ?? preset);
+    const preset = $derived.by(() => {
+        const choice = mode === 'week' ? game.defaultWeekDiff : game.defaultDiff;
+        return LEVELS.includes(choice) ? choice : 'all';
+    });
+    const fromRun = $derived(!game.menuReturn && game.scoreSubmit?.mode === mode ? game.scoreSubmit.level : null);
+    const tab = $derived(picked ?? fromRun ?? preset);
+
+    // The level names: the weekday a day was played as, the state a week was
+    // begun in - the same keys the archive uses.
+    // i18n-uses: week.day.fri, week.day.wed, week.day.mon
+    // i18n-uses: week.diff.easy, week.diff.normal, week.diff.hard
+    const LEVEL_NAME = {
+        day:  { easy: 'week.day.fri',    normal: 'week.day.wed',     hard: 'week.day.mon' },
+        week: { easy: 'week.diff.easy',  normal: 'week.diff.normal', hard: 'week.diff.hard' }
+    };
+    const levelName = (level) => t(LEVEL_NAME[mode][level]);
 
     // Whole class names, never composed - see CLAUDE.md.
-    // i18n-uses: leaderboard.tab.all, week.diff.easy, week.diff.normal, week.diff.hard
+    // i18n-uses: leaderboard.tab.all
     const TABS = [
-        { key: 'all',    label: 'leaderboard.tab.all', on: 'bg-yellow-400/15 text-yellow-200 border-yellow-400/70' },
-        { key: 'easy',   label: 'week.diff.easy',      on: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/70' },
-        { key: 'normal', label: 'week.diff.normal',    on: 'bg-amber-500/15 text-amber-300 border-amber-500/70' },
-        { key: 'hard',   label: 'week.diff.hard',      on: 'bg-rose-500/15 text-rose-300 border-rose-500/70' }
+        { key: 'all',    on: 'bg-yellow-400/15 text-yellow-200 border-yellow-400/70' },
+        { key: 'easy',   on: 'bg-emerald-500/15 text-emerald-300 border-emerald-500/70' },
+        { key: 'normal', on: 'bg-amber-500/15 text-amber-300 border-amber-500/70' },
+        { key: 'hard',   on: 'bg-rose-500/15 text-rose-300 border-rose-500/70' }
     ];
     const LEVEL = {
         easy:   { avatar: 'bg-emerald-400 text-emerald-950', pill: 'text-emerald-300 border-emerald-500/50 bg-emerald-500/10' },
@@ -103,6 +139,10 @@
 
     const outcomeOf = (info) => (!info ? null : info.won ? (info.cause === 'gala' ? 'gala' : 'won') : info.cause);
 
+    // A day's bar: the shift, filled as far as it lasted.
+    const dayFill = (info) => (!info ? 0 : info.won ? 100
+        : Math.max(2, Math.min(100, Math.round((info.time - SHIFT_START) / SHIFT_MINUTES * 100))));
+
     // Five segments: the days before the end in a quieter green, the day it
     // ended in the colour of what ended it, the rest not reached.
     function segments(info) {
@@ -144,6 +184,10 @@
 
     function result(info) {
         if (!info) return '';
+        if (mode === 'day') {
+            if (info.won) return t(info.cause === 'gala' ? 'leaderboard.result.galaDay' : 'leaderboard.result.wonDay');
+            return tf('leaderboard.result.lostDay', { cause: t(`leaderboard.cause.${info.cause}`), time: formatClock(info.time) });
+        }
         if (info.won) return t(info.cause === 'gala' ? 'leaderboard.result.gala' : 'leaderboard.result.won');
         return tf('leaderboard.result.lost', {
             cause: t(`leaderboard.cause.${info.cause}`),
@@ -165,17 +209,23 @@
 {/snippet}
 
 {#snippet levelPill(level)}
-    <span class="shrink-0 text-[0.625rem] font-bold uppercase tracking-widest border rounded-full px-2 py-px {LEVEL[level].pill}">{t(`week.diff.${level}`)}</span>
+    <span class="shrink-0 text-[0.625rem] font-bold uppercase tracking-widest border rounded-full px-2 py-px {LEVEL[level].pill}">{levelName(level)}</span>
 {/snippet}
 
 <!-- The title is for the pointer: the result in words without opening the
      row. A screen reader gets it from the sr-only line beside the bar. -->
 {#snippet bar(info, width)}
-    <span class="flex gap-0.5 shrink-0 {width}" aria-hidden="true" title={result(info)}>
-        {#each segments(info) as seg, i (i)}
-            <span class="flex-1 h-2 rounded-xs {seg}"></span>
-        {/each}
-    </span>
+    {#if mode === 'day'}
+        <span class="flex shrink-0 h-2 rounded-xs bg-slate-800 overflow-hidden {width}" aria-hidden="true" title={result(info)}>
+            <span class="h-full {OUTCOME[outcomeOf(info)]?.seg ?? 'bg-slate-500'}" style="width: {dayFill(info)}%"></span>
+        </span>
+    {:else}
+        <span class="flex gap-0.5 shrink-0 {width}" aria-hidden="true" title={result(info)}>
+            {#each segments(info) as seg, i (i)}
+                <span class="flex-1 h-2 rounded-xs {seg}"></span>
+            {/each}
+        </span>
+    {/if}
 {/snippet}
 
 {#snippet details(entry)}
@@ -187,6 +237,7 @@
                     <span class="font-mono px-1.5 py-0.5 rounded-sm {chip.cls}">{chip.text}</span>
                 {/each}
             </div>
+            {#if mode === 'week'}
             <div>
                 <div class="text-[0.625rem] font-bold uppercase tracking-widest text-slate-400 mb-1.5">{t('leaderboard.days')}</div>
                 <ul class="space-y-1 font-mono">
@@ -204,6 +255,7 @@
                     {/each}
                 </ul>
             </div>
+            {/if}
             {#if entry.info.valve || entry.info.warning}
                 <div class="flex flex-wrap gap-2">
                     {#if entry.info.valve}
@@ -257,13 +309,25 @@
         </button>
     </div>
 
+    <!-- The mode first: it decides what every number below it means. -->
+    <div class="flex items-center gap-1.5">
+        {#each MODES as m (m.key)}
+            <button type="button" onclick={() => setMode(m.key)}
+                    aria-pressed={mode === m.key}
+                    class="flex-1 text-xs font-bold uppercase tracking-widest py-2 rounded-lg border transition-colors
+                           {mode === m.key ? m.on : 'bg-slate-900/40 text-slate-400 border-slate-700/40 hover:text-slate-200 hover:border-slate-600'}">
+                {t(`stats.mode.${m.key}`)}
+            </button>
+        {/each}
+    </div>
+
     <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
         {#each TABS as item (item.key)}
             <button type="button" onclick={() => { picked = item.key; open = null; }}
                     aria-pressed={tab === item.key}
                     class="min-w-0 truncate text-[0.625rem] font-bold uppercase tracking-widest py-2 px-1 rounded-lg border transition-colors
                            {tab === item.key ? item.on : 'bg-slate-900/40 text-slate-400 border-slate-700/40 hover:text-slate-200 hover:border-slate-600'}">
-                {t(item.label)}
+                {item.key === 'all' ? t('leaderboard.tab.all') : levelName(item.key)}
             </button>
         {/each}
     </div>
@@ -271,7 +335,7 @@
     <div class="flex items-center justify-between gap-3 flex-wrap">
         <div class="flex gap-1 bg-slate-950/60 border border-slate-800 rounded-lg p-1">
             {#each SCOPES as scope (scope)}
-                <button type="button" onclick={() => engine.loadLeaderboard(scope)}
+                <button type="button" onclick={() => engine.loadLeaderboard(scope, mode)}
                         aria-pressed={view.scope === scope}
                         class="text-xs font-bold px-3 py-1 rounded-md transition-colors
                                {view.scope === scope ? 'bg-slate-700 text-white' : 'text-slate-400 hover:text-slate-200'}">
@@ -295,7 +359,9 @@
             <img src="assets/img/ui/ui_medal.webp" alt="" width="48" height="48" class="w-12 h-12 mx-auto mb-3 opacity-60 grayscale select-none"
                  onerror={(e) => e.currentTarget.remove()}>
             <p class="text-slate-300 text-sm leading-relaxed max-w-sm mx-auto">
-                {t(view.scope === 'friends' ? 'leaderboard.emptyFriends' : 'leaderboard.empty')}
+                {view.scope === 'friends'
+                    ? t(mode === 'day' ? 'leaderboard.emptyFriendsDay' : 'leaderboard.emptyFriends')
+                    : t(mode === 'day' ? 'leaderboard.emptyDay' : 'leaderboard.empty')}
             </p>
         </div>
     {:else}
@@ -346,7 +412,7 @@
     {/if}
 
     {#if mineMissing}
-        <p class="text-xs text-slate-400 italic">{t('leaderboard.noEntry')}</p>
+        <p class="text-xs text-slate-400 italic">{t(mode === 'day' ? 'leaderboard.noEntryDay' : 'leaderboard.noEntry')}</p>
     {/if}
 
     <div class="border-t border-slate-800 pt-3 flex flex-col gap-3">
@@ -359,7 +425,9 @@
             <img src="assets/img/ui/ui_info.webp" alt="" width="18" height="18" class="w-[18px] h-[18px] shrink-0 mt-0.5 select-none"
                  onerror={(e) => e.currentTarget.remove()}>
             <div class="flex flex-col gap-1.5 text-xs text-slate-300 leading-snug min-w-0">
-                <p>{tf('leaderboard.scoring', { max: num(WEEK_MINUTES), bonus: num(COMPOSURE_MAX) })}</p>
+                <p>{mode === 'day'
+                    ? tf('leaderboard.scoringDay', { max: num(SHIFT_MINUTES), bonus: num(COMPOSURE_MAX) })
+                    : tf('leaderboard.scoring', { max: num(WEEK_MINUTES), bonus: num(COMPOSURE_MAX) })}</p>
                 {#if tab === 'all'}<p class="text-slate-400">{t('leaderboard.allNote')}</p>{/if}
             </div>
         </div>

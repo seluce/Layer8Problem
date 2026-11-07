@@ -20,20 +20,22 @@
     // the same corner of the card, above the continue button.
     const canRead = $derived(engine.canReplayNarration());
 
-    // Time is only worth a pill when any actually passed. Tickets likewise -
-    // and they are the pill this card was missing: the pile is the most
-    // common way to lose, every half hour the clock steps over adds one, and
-    // nothing on screen tied the two together. A call that clears one shows
-    // -1 here for the same reason. Hidden for anyone playing with the ticket
-    // counter switched off, which is what that setting asks for.
+    // A pill is a change, so a value that did not move has none. The three
+    // bars used to show "Aggro +0" beside the two that did move, and the eye
+    // had to sort the news from the noise; the floating numbers never showed
+    // a zero either. Time and tickets were already shown only when they
+    // moved. Tickets are the pill this card was missing for long: the pile is
+    // the most common way to lose, every half hour the clock steps over adds
+    // one, and nothing on screen tied the two together. A call that clears
+    // one shows -1 here for the same reason. Hidden for anyone playing with
+    // the ticket counter switched off, which is what that setting asks for.
     const pills = $derived([
-        ...(view.m > 0 ? [{ label: t('result.minutes'), value: view.m, tone: 'text-blue-400' }] : []),
-        ...(view.tickets && !state.blindTickets
-            ? [{ label: t('stat.tickets'), value: view.tickets, tone: 'text-purple-400' }] : []),
+        { label: t('result.minutes'),  value: view.m ?? 0, tone: 'text-blue-400' },
+        { label: t('stat.tickets'),    value: state.blindTickets ? 0 : (view.tickets ?? 0), tone: 'text-purple-400' },
         { label: t('stat.lazy'),       value: view.l ?? 0, tone: 'text-green-400' },
         { label: t('stat.aggro'),      value: view.a ?? 0, tone: 'text-orange-400' },
         { label: t('stat.boss.short'), value: view.b ?? 0, tone: 'text-red-500' }
-    ]);
+    ].filter(pill => pill.value !== 0));
 
     const sign = (n) => (n > 0 ? '+' : '') + n;
 
@@ -68,7 +70,9 @@
          default stretch would have grown every pill to its height. -->
     <div class="flex flex-wrap items-center gap-2 mt-4">
         {#each pills as pill (pill.label)}
-            <span class="inline-flex items-center gap-1 px-2 py-1 rounded-sm text-xs font-bold bg-slate-950/70 border border-slate-700">
+            <!-- A size up since the zeros went: fewer pills, and each one is
+                 news. -->
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm text-sm font-bold bg-slate-950/70 border border-slate-700">
                 <span class={pill.tone}>{pill.label}</span>
                 <span class="text-white font-mono ml-0.5">{sign(pill.value)}</span>
             </span>

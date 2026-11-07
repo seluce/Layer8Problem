@@ -42,6 +42,9 @@ export const events = {
     // How often an unlocked follow-up beats a fresh event in the day mode.
     // The week leans further as it runs out of days; see followUpChance().
     FOLLOWUP_CHANCE: 0.30,
+    // How long an emergency's clock may wait for the narrator at most - see
+    // triggerBossFight(). The longest scene runs 17.5 s at 1x, 23 s at 0.75x.
+    VOICE_HOLD_MAX_MS: 45000,
 
     // How long an open mail waits before it resolves itself. ONE number: the
     // countdown bar in EmailView.svelte reads it for its animation duration -
@@ -937,6 +940,7 @@ export const events = {
         let totalTimeMs = boss.timer * 1000;
         let currentTimeMs = totalTimeMs;
         const updateInterval = 50;
+        let heldForVoice = 0;
 
         this.state.bossTimer = setInterval(() => {
             // The clock runs while the fight is ON SCREEN. Open the settings,
@@ -947,6 +951,20 @@ export const events = {
             // same question the keyboard asks before reaching through a
             // window, so the list cannot drift apart.
             if (this.windowOverTerminal()) return;
+
+            // And it waits while the narrator reads the scene out. In 21 of 38
+            // emergencies the recording at 1x is longer than the clock - a
+            // median of 12 seconds of speech against 8 to 20 - so a listener
+            // lost before the last sentence, and even at 2x the worst of them
+            // took most of the time. Answering early still works, stopping the
+            // voice starts the clock, and a reading asked for again with V or
+            // the button does not stop it a second time (narrationHoldsClock).
+            // The cap is a guard against a recording that never finishes
+            // loading, at twice the longest one at the slowest speed.
+            if (heldForVoice < this.VOICE_HOLD_MAX_MS && this.narrationHoldsClock()) {
+                heldForVoice += updateInterval;
+                return;
+            }
 
             currentTimeMs -= updateInterval;
 
@@ -1077,13 +1095,13 @@ export const events = {
         const charName = charDisplayName(('char' in node) ? node.char : ev.char);
 
         // Build the shared HTML
-        this.setTerminalEvent(type, ev.title || t('event.title.call'), node.text, node.opts, true, charName, ev.nodes);
+        this.setTerminalEvent(type, ev.title || t('event.title.call'), node.text, node.opts, true, charName, ev.nodes, !!ev.reqStory);
     },
 
     // 2. OLD SYSTEM (simple events)
     // Hands the event to the terminal component, which renders it.
     renderEventHTML: function(ev, type) {
-        this.setTerminalEvent(type, ev.title, ev.text, ev.opts, false, charDisplayName(ev.char));
+        this.setTerminalEvent(type, ev.title, ev.text, ev.opts, false, charDisplayName(ev.char), null, !!ev.reqStory);
     },
 
     /**
@@ -1970,6 +1988,10 @@ export const events = {
             balance = this.buildWeekBalance({ isWin: true });
             this.submitWeekScore(true, 'gala');
             this.endWeek();
+        } else {
+            // The day the evening followed. It went to no board at 16:30 -
+            // the party took that turn - so it goes now, as a gala.
+            this.submitDayScore(true, 'gala');
         }
 
         this.showEnd({

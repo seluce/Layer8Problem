@@ -24,12 +24,13 @@ src/
   platform.js           platform interface, web version
   platform_steam.js     Steam bridge over window.desktopBridge, only under Electron
 
-  components/           43 Svelte components, 8 of them for the intranet
-  engine/               20 modules; engine_state.svelte.js holds the state,
+  components/           44 Svelte components, 8 of them for the intranet
+  engine/               21 modules; engine_state.svelte.js holds the state,
                         engine_week.js the week mode, engine_hooks.js the
                         observer list the tutorial listens on,
                         engine_vending.js the machine on the third floor,
-                        leaderboard.js what a week is worth on Steam
+                        leaderboard.js what a day or a week is worth on
+                        Steam, engine_scores.js the sending of it
   data/de/              24 data files, the German source
   data/en/              the same 24, in English
   i18n/                 language selection and interface strings
@@ -507,18 +508,25 @@ knew only "from twelve" and could therefore be pushed into the afternoon; it now
 has a window up to 14:00. For the same reason Friday only ends after the weekly
 meeting — between 15:00 and 16:30 there are only 90 minutes of buffer.
 
-## The week leaderboards (Steam)
+## The leaderboards (Steam)
 
-Three Steam boards, one per week level, and an "All" tab that merges them in
-the game. One board for everything would fill from the top with rested weeks:
-`npm run sim:week` has a sensible player finishing 85 % of those and 35 % of
-the hardest. `engine/leaderboard.js` is pure - score, detail values, the merge
-- so the tests hold it without a game around it.
+Three Steam boards per mode, one per level, and an "All" tab that merges them
+in the game; the window switches between the day and the week like the
+archive does, and remembers the choice with it (`KEYS.statsTab`). One board
+for everything would fill from the top with the easy level: `npm run
+sim:week` has a sensible player finishing 85 % of the rested weeks and 35 %
+of the hardest. `engine/leaderboard.js` is pure - score, detail values, the
+merge - so the tests hold it without a game around it.
 
-**The score is minutes first.** One point per working minute survived (2,550
-for the week), and a finished week earns up to 300 more for a calm Friday:
-little aggro, little boss radar, few open tickets. A failed week is held below
-2,550, so it never outranks a finished one.
+The day boards came in 7.1. Until then only a week was scored, and a player
+who had played the day mode - the first one the start screen offers - found
+the leaderboard empty and took it for broken.
+
+**The score is minutes first.** One point per working minute survived (510
+for a day, 2,550 for the week), and a finished run earns up to 300 more for a
+calm ending: little aggro, little boss radar, few open tickets. A failed run
+is held below its minutes, so it never outranks a finished one. A day is
+written in the week's layout, as a week of one day.
 
 **The detail values are a wire format.** Steam keeps up to 64 int32 per entry
 and hands them back by position, so a position never changes its meaning: a
@@ -530,9 +538,11 @@ value; `normalizeDetails()` reads both that shape and a corrected one.
 
 **Two paths end a week** - `finishWeek()` and the Friday gala in
 `engine_events` - and both call `submitWeekScore()` before `endWeek()`
-empties what it reads. `electron/main.cjs` keeps its own list of the three
-board names and the score ceiling, because it cannot import from `src/`; the
-week suite holds the two together.
+empties what it reads. **Two end a day of the day mode** - `finishGame()`
+and the gala that follows a day - and both call `submitDayScore()`. All of
+it lives in `engine_scores.js`. `electron/main.cjs` keeps its own list of the
+six board names, each with its ceiling, because it cannot import from
+`src/`; the week suite holds the two together.
 
 **The Steamworks SDK is not in the repository.** steamworks-ffi-node loads
 `steamworks_sdk/redistributable_bin/` from beside the app, and Valve's licence

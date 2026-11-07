@@ -422,13 +422,14 @@ export function clampNarrationRate(v) {
  * on its own in the settings. The button beside the excuse (and V) reads any
  * scene regardless: it is the player asking, not the narrator offering.
  *
- *   events   the terminal's scenes and outcomes
- *   morning  the morning screen
- *   valves   the rage valve and the written warning
- *   halgerd  H.A.L.G.E.R.D.'s two first words and the tutorial
+ *   events       the terminal's scenes and outcomes
+ *   emergencies  an emergency's scene - while it is read, its clock waits
+ *   morning      the morning screen
+ *   valves       the rage valve and the written warning
+ *   halgerd      H.A.L.G.E.R.D.'s two first words and the tutorial
  */
 export const DEFAULT_NARRATION_KINDS = Object.freeze({
-    events: true, morning: true, valves: true, halgerd: true
+    events: true, emergencies: true, morning: true, valves: true, halgerd: true
 });
 
 /** A stored kinds object made safe: unknown keys dropped, missing ones filled. */
@@ -562,16 +563,17 @@ export const state = $state({
     // The week leaderboards (desktop only, components/LeaderboardView.svelte).
     // `boards` holds what was fetched per level for the scope on show; the
     // whole object is replaced on every open, which is the view's signal.
-    leaderboard: { scope: 'global', boards: null, mine: null, loading: false, failed: false },
+    leaderboard: { scope: 'global', mode: 'day', boards: null, mine: null, loading: false, failed: false },
     // The menu page a window was opened from (engine_ui.backToMenu()): the
     // statistics and the leaderboard show a way back to it while it is set.
     menuReturn: null,
     // Counts the openings, so the view can reset its tab on each one without
     // also resetting it when only the scope is flipped.
     leaderboardOpens: 0,
-    // What the last finished week was worth and what Steam made of it - see
-    // engine_week.submitWeekScore(). Read by the week's end screen.
-    weekSubmit: null,
+    // What the last finished run was worth and what Steam made of it, with
+    // the mode it belongs to - see engine_scores.sendScore(). Read by the end
+    // screen and by the leaderboard, which opens on that run's board.
+    scoreSubmit: null,
 
     // Persistent archive (survives a day restart, mirrored into localStorage).
     // The shape lives in freshArchive() above, which the hard reset uses too.

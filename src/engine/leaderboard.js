@@ -1,16 +1,21 @@
 /**
- * The week leaderboards: what a finished week is worth, and what travels with
- * the score to Steam.
+ * The leaderboards: what a finished day or week is worth, and what travels
+ * with the score to Steam.
  *
  * Pure on purpose - no state, no DOM, no runes - so the Node tests can hold the
- * scoring and the wire format without a game around them. engine_week builds a
- * run from the state and hands the result to platform.leaderboardSubmit();
+ * scoring and the wire format without a game around them. engine_scores builds
+ * a run from the state and hands the result to platform.leaderboardSubmit();
  * components/LeaderboardView.svelte reads entries back through decodeDetails().
  *
- * Three boards, one per week level. A single list would be filled from the
- * top by "rested" weeks: in npm run sim:week a sensible player finishes 85 %
- * of them and only 35 % of the hardest, so a finished hard week would sink
- * among easy ones. The "All" tab merges the three in the game instead.
+ * Three boards per mode, one per level. A single list would be filled from the
+ * top by the easy level: in npm run sim:week a sensible player finishes 85 %
+ * of the "rested" weeks and only 35 % of the hardest, so a finished hard week
+ * would sink among easy ones. The "All" tab merges the three in the game
+ * instead.
+ *
+ * The day boards came in 7.1. Until then only a week was scored, and a player
+ * who had played the day mode - the one the start screen offers first - found
+ * an empty leaderboard and took it for broken.
  */
 
 /** The working day runs 08:00 to 16:30, in minutes since midnight. */
@@ -19,15 +24,24 @@ export const SHIFT_END = 16 * 60 + 30;
 export const SHIFT_MINUTES = SHIFT_END - SHIFT_START;        // 510
 export const WEEK_MINUTES = 5 * SHIFT_MINUTES;               // 2550
 
-/** What a finished week can earn on top of its minutes. */
+/** What a finished day or week can earn on top of its minutes. */
 export const COMPOSURE_MAX = 300;
 
+/** The ceilings, which the main process holds every upload to. */
+export const DAY_MAX = SHIFT_MINUTES + COMPOSURE_MAX;        // 810
+export const WEEK_MAX = WEEK_MINUTES + COMPOSURE_MAX;        // 2850
+
 /**
- * Steam's API names for the boards. The main process keeps its own copy as an
- * allow-list (electron/main.cjs cannot import this file: only docs/ and
- * electron/ are packaged), and week-flow.test.mjs holds the two together.
+ * Steam's API names for the boards, by mode and level. The main process keeps
+ * its own copy as an allow-list (electron/main.cjs cannot import this file:
+ * only docs/ and electron/ are packaged), and week-flow.test.mjs holds the two
+ * together.
  */
-export const BOARD_NAMES = { easy: 'week_easy', normal: 'week_normal', hard: 'week_hard' };
+export const MODES = ['day', 'week'];
+export const BOARD_NAMES = {
+    day:  { easy: 'day_easy',  normal: 'day_normal',  hard: 'day_hard' },
+    week: { easy: 'week_easy', normal: 'week_normal', hard: 'week_hard' },
+};
 
 /** Ids, in the order their codes are written. The index IS the code on the wire. */
 export const LEVELS = ['easy', 'normal', 'hard'];
@@ -53,8 +67,8 @@ const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
 const int = (v) => Math.round(Number(v) || 0);
 
 /**
- * How calm the Friday ended: up to 100 each for little aggro, little boss
- * radar and few open tickets. Laziness is shown but not scored - in this game
+ * How calm the run ended - the day at closing time, the week on Friday: up to
+ * 100 each for little aggro, little boss radar and few open tickets. Laziness is shown but not scored - in this game
  * it is a risk and a virtue at once.
  */
 export function composure({ tickets, a, b }) {
@@ -75,7 +89,21 @@ export function weekScore(run) {
 }
 
 /**
+ * Points for a day, by the week's rule: one per working minute survived, and
+ * for a finished day the composure bonus on top - so a finished day always
+ * outranks one that failed, however late.
+ */
+export function dayScore(run) {
+    if (run.won) return SHIFT_MINUTES + composure(run);
+    return clamp(int(run.time) - SHIFT_START, 0, SHIFT_MINUTES - 1);
+}
+
+/**
  * The detail values for a run.
+ *
+ * A day is written in the same layout as a week, as a week of one day: day 1,
+ * no ledger, and its figures in the first day's place. One format, one reader,
+ * and the board it was sent to says which kind it is.
  *
  * `log` is week.weekLog - one row per day already slept on. The day the week
  * ended on is not in it yet; its figures are the run's own, taken at the
@@ -118,9 +146,15 @@ export function encodeDetails(run) {
     return out;
 }
 
-/** Everything a submitted week needs: the score and its details. */
+/** Everything a submitted week needs: the board, the score and its details. */
 export function weekEntry(run) {
-    return { board: BOARD_NAMES[run.level] ?? BOARD_NAMES.normal, score: weekScore(run), details: encodeDetails(run) };
+    return { board: BOARD_NAMES.week[run.level] ?? BOARD_NAMES.week.normal, score: weekScore(run), details: encodeDetails(run) };
+}
+
+/** The same for a day; see encodeDetails() for how a day is written. */
+export function dayEntry(run) {
+    const day = { ...run, day: 1, log: [] };
+    return { board: BOARD_NAMES.day[run.level] ?? BOARD_NAMES.day.normal, score: dayScore(day), details: encodeDetails(day) };
 }
 
 /**
