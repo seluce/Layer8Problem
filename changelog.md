@@ -1,4 +1,4 @@
-[7.1.0] - unreleased
+[7.1.0] - 2026-11-07
 
 A new logo, a leaderboard for the working day, emergencies that wait for the narrator, and the day's log at the end of it.
 
@@ -24,6 +24,9 @@ End of the day:
 Bug fixes:
 * A day started from the picker no longer begins with the previous day's lines in the log.
 * Bug reports and feedback from the game arrive again. For a while they went nowhere, although the game said they had been sent.
+
+Under the hood:
+* The Steam version runs on a newer Electron. Nothing in the game changes with it.
 
 [7.0.1] - 2026-11-02
 

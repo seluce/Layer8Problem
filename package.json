@@ -1,6 +1,6 @@
 {
   "name": "layer8problem",
-  "version": "7.0.1",
+  "version": "7.1.0",
   "description": "A satirical sysadmin simulator - you are GlobalCorp's entire IT department.",
   "author": "seluce",
   "license": "MIT",
@@ -74,7 +74,7 @@
     "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@tailwindcss/vite": "^4.3.3",
     "acorn": "^8.19.0",
-    "electron": "^45.2.1",
+    "electron": "^45.2.3",
     "electron-builder": "^26.18.0",
     "svelte": "^5.57.3",
     "tailwindcss": "^4.3.3",
