@@ -29,7 +29,7 @@ export const voice = {
     // back while another still stands, and whose line ends with a window.
     lineOwner: null,
     lineOnDemand: false,    // started by the button: the switch does not apply
-    lineKind: null,         // events / emergencies / mails / morning / valves / halgerd / sample
+    lineKind: null,         // events / emergencies / mails / excuses / morning / valves / halgerd / sample
 
     // A terminal line that arrived while an uninvited window stood over the
     // terminal - see narrate(). Spoken when the last of them closes.
@@ -465,7 +465,16 @@ export const voice = {
     resumeNarration: function() {
         // A window the player opened on top ends the scene for good - nothing
         // stays owed, neither the paused line nor one held behind the notice.
-        if (this.windowOverTerminal()) { this.interrupted = false; this.heldLine = null; return; }
+        // Except the window's OWN line: the excuse (7.1) or the settings'
+        // sample, paused by a mail that dropped onto that very window, which
+        // is still open and still showing what was being read.
+        if (this.windowOverTerminal()) {
+            const own = this.interrupted && this.lineOwner === 'window';
+            this.interrupted = false;
+            this.heldLine = null;
+            if (own) this._unpause();
+            return;
+        }
 
         // Another uninvited window still stands - a mail that dropped onto a
         // notice, say. Only a line that belongs to a window may come back

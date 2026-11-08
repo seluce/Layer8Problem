@@ -156,6 +156,8 @@ export const en = {
     'set.narration.kind.emergencies.desc': 'The clock starts once it has finished reading.',
     'set.narration.kind.mails.title': 'Mails',
     'set.narration.kind.mails.desc': 'What follows from your reply, not the mail itself.',
+    'set.narration.kind.excuses.title': 'Excuses',
+    'set.narration.kind.excuses.desc': 'The excuse you slip out of a scene with.',
     'set.narration.kind.morning.title': 'The morning after',
     'set.narration.kind.morning.desc': 'How the day already starts badly.',
     'set.narration.kind.valves.title': 'Blow-off and written warning',

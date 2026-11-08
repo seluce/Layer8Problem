@@ -1007,11 +1007,24 @@ export const ui = {
         }
 
         this.showOverlay(modal);
+
+        // The excuse is the window's own text (7.1), so it goes through the
+        // window's door: showOverlay has just hushed the scene underneath, and
+        // narrate() would refuse it for standing over the terminal. Read from
+        // the recipe, as ExcuseText shows it, so the checksum is the one the
+        // collector took (SPOKEN_LISTS). The fallback is an interface string
+        // and has no recording.
+        const line = this.state.currentExcuse?.ref ? renderRecipe(this.state.currentExcuse) : null;
+        if (line) this.narrateWindow(line, 'excuses');
     },
 
     closeExcuseModal: function() {
         const modal = document.getElementById('excuse-modal');
         if (modal) {
+            // A window's own voice ends with its window. Nothing else would
+            // stop it: this window is not one that takes the line and gives it
+            // back (INTERRUPTS_TERMINAL), so hideOverlay leaves the voice alone.
+            if (this.lineOwner === 'window' && this.lineKind === 'excuses') this.hushNarration();
             this.hideOverlay(modal);
         }
     },
