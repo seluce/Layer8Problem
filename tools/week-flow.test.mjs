@@ -2684,6 +2684,135 @@ await ok('An open mail follows a language switch', async () => {
     assert.equal(state.email.subj, 'STALE', 'a closed mail was repainted');
 });
 
+await ok('An answered mail shows its outcome, and moves on only when closed', async () => {
+    // Until 7.1 the window closed on the click and the outcome went to the
+    // log alone, which a phone keeps folded away: the bars moved and nobody
+    // read why. The window now stays with the outcome on it, and everything
+    // that used to follow the answer at once waits for closeEmail().
+    resetState();
+    await ensure('emails');
+    const realFinish = engine.finishGame;
+    let finished = 0;
+    engine.finishGame = () => { finished++; };
+    try {
+        await engine.triggerEmail('mail_cake_1');
+        assert.equal(state.isEmailOpen, true, 'the mail did not open - this check has no subject');
+        const opt = state.email.opts.find(o => o.nextEmail && !o.ignoreEmail);
+        assert.ok(opt, 'mail_cake_1 lost the reply with a follow-up - pick another subject');
+
+        // Room on both bars: at a floor the bar stays put while the pill says
+        // -5, which is what the terminal's result does too (finalA).
+        state.al = 50; state.cr = 20;
+        const crBefore = state.cr, alBefore = state.al;
+        state.pendingEnd = { isWin: false, cause: 'probe' };   // as if the answer had ended the day
+        engine.resolveEmail(opt);
+
+        const out = state.emailOutcome;
+        assert.equal(state.isEmailOpen, true, 'the window closed on the answer - the outcome is unread');
+        assert.ok(engine.isOverlayOpen('email-modal'), 'the overlay went with the answer');
+        assert.equal(out?.index, state.email.opts.indexOf(opt), 'the outcome does not say which reply was sent');
+        assert.equal(out.expired, false);
+        // The pills show what the bars moved, not what the data says.
+        assert.equal(out.b, state.cr - crBefore, 'the radar pill disagrees with the bar');
+        assert.equal(out.a, state.al - alBefore, 'the aggro pill disagrees with the bar');
+        assert.equal(out.next, opt.nextEmail);
+        assert.equal(state.emailChainTimer, null, 'the follow-up was queued before the outcome was read');
+        assert.equal(finished, 0, 'the day ended over the unread outcome');
+
+        // A second press on the same letter answers nothing twice.
+        const crAnswered = state.cr;
+        engine.resolveEmail(opt);
+        assert.equal(state.cr, crAnswered, 'an answered mail was answered again');
+
+        engine.closeEmail();
+        assert.equal(state.isEmailOpen, false, 'closeEmail left the window open');
+        assert.equal(state.emailOutcome, null, 'the outcome outlived its window');
+        assert.ok(!engine.isOverlayOpen('email-modal'), 'the overlay stayed');
+        assert.notEqual(state.emailChainTimer, null, 'the follow-up was lost on the way');
+        assert.equal(finished, 1, 'the ending the answer caused never came');
+        engine.clearDayTimers();
+
+        // A letter left to run out shows its penalty and closes by itself.
+        resetState();
+        await engine.triggerEmail('mail_cake_1');
+        const crIdle = state.cr;
+        engine.resolveEmail(null, true);
+        assert.equal(state.emailOutcome?.expired, true, 'the expired letter shows no outcome');
+        assert.equal(state.emailOutcome.index, -1);
+        assert.equal(state.emailOutcome.b, state.cr - crIdle, 'the penalty pill disagrees with the bar');
+        assert.notEqual(state.emailTimer, null, 'the expired letter waits for a press nobody is there to give');
+        clearTimeout(state.emailTimer);
+        engine.closeEmail(true);
+        assert.equal(state.isEmailOpen, false);
+        assert.notEqual(state.emailCooldownTimer, null, 'no cooldown after a letter without a follow-up');
+        engine.clearDayTimers();
+    } finally {
+        engine.finishGame = realFinish;
+        engine.clearDayTimers();
+        state.pendingEnd = null;
+    }
+
+    // A warning the answer earns waits for the window. Shown at once it
+    // opened BEHIND the mail, and its voice read the warning out over an
+    // outcome the player was still reading.
+    resetState();
+    await engine.triggerEmail('mail_cake_1');
+    const risky = state.email.opts.find(o => (o.b ?? 0) > 0);
+    assert.ok(risky, 'mail_cake_1 has no reply that raises the radar - pick another subject');
+    state.cr = 99;
+    engine.resolveEmail(risky);
+    engine.checkEndConditions();   // what the answer's updateUI() runs in the game - a no-op on this bench
+    assert.equal(state.chefWarningReceived, false, 'the warning opened behind the unread outcome');
+    assert.ok(state.cr >= 100, 'the radar did not overflow - this check has no subject');
+    engine.closeEmail();
+    assert.equal(state.chefWarningReceived, true, 'closing the mail never showed the warning the answer earned');
+    assert.equal(state.modal?.open, true, 'the warning was booked but not shown');
+    engine.dismissModal?.();
+    engine.clearDayTimers();
+
+    // Every path that shuts the window takes the outcome with it - the
+    // emergency, the end of the day and the gala force it shut on their own.
+    // Left behind, it would stand on a closed mail for the rest of the day.
+    for (const f of ['engine_events.js', 'engine_core.js']) {
+        const code = readFileSync(new URL(`../src/engine/${f}`, import.meta.url), 'utf-8');
+        const closes = code.match(/this\.state\.isEmailOpen = false;\n\s*(.*)/g) ?? [];
+        assert.ok(closes.length > 0, `${f} no longer closes a mail - update this check`);
+        for (const c of closes) {
+            assert.match(c, /this\.state\.emailOutcome = null;$/,
+                `${f} closes a mail and leaves its outcome behind`);
+        }
+    }
+
+    // A save taken while it stood open restores neither the flag nor the
+    // outcome: no window comes back, and the flag alone would stop every mail.
+    resetState();
+    engine.applyRestoredDay({ isEmailOpen: true, emailOutcome: { index: 0 } });
+    assert.equal(state.isEmailOpen, false, 'a restored day came back with a mail open and no window');
+    assert.equal(state.emailOutcome, null);
+
+    // The window and the keys. The outcome replaces #email-actions, which is
+    // where the number keys look, and its button is the confirm key's - ahead
+    // of the modals, because a mail can drop onto a notice that is still open
+    // and stands above it.
+    const view = readFileSync(new URL('../src/components/EmailView.svelte', import.meta.url), 'utf-8');
+    const start = view.indexOf('{#if outcome}\n');
+    const replies = view.indexOf('{:else}\n    <!-- Keeps the id');
+    assert.ok(start > -1 && replies > start, 'the answered state is gone from EmailView');
+    assert.ok(view.indexOf('<div id="email-actions"') > replies, 'the replies stand beside the outcome, not instead of it');
+    const answered = view.slice(start, replies);
+    assert.match(answered, /data-continue[\s\S]{0,120}?onclick=\{\(\) => engine\.closeEmail\(\)\}/,
+        'the outcome has no continue button');
+    assert.ok(!answered.includes('id="email-actions"'), 'the number keys would press the outcome');
+    assert.match(answered, /<ResultPills /, 'the outcome shows no values');
+
+    const keys = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
+    const confirm = keys.indexOf("document.querySelector('#email-modal button[data-continue]')");
+    assert.ok(confirm > -1, 'the confirm key does not close an answered mail');
+    assert.ok(confirm < keys.indexOf('// B: modals'), 'the confirm key presses a warning through the mail');
+    assert.match(keys, /if \(isVisible\('email-modal'\) && engine\.state\.emailOutcome\) \{ engine\.closeEmail\(\); return; \}\s*if \(engine\.isStartupOverlayOpen\(\)/,
+        'Escape does not close an answered mail, or the unanswered one closes too');
+});
+
 await ok('Toast and item dialog carry identities, not words', () => {
     // The toast: both fields are recipes now, like the log line written four
     // lines above them in the same function. Asserted on the source because
@@ -3784,8 +3913,10 @@ await ok('Mails and items are drawn on the day curve', async () => {
     assert.equal(state.statHistory.length, beforeMail + 1, 'the mail left no point behind');
 
     // The TIMED-OUT letter too - the branch the first pass missed, and the
-    // laziest radar source of all.
+    // laziest radar source of all. A fresh letter is an unanswered one, as
+    // triggerEmail() makes it: the first is still on screen with its outcome.
     state.isEmailOpen = true;
+    state.emailOutcome = null;
     state.email = { id: 'probe2', opts: [] };
     const beforeTimeout = state.statHistory.length;
     engine.resolveEmail(null, true);
@@ -4699,6 +4830,111 @@ await ok('A notice holds the screen behind it and hands it over on closing', () 
     close('modal-overlay');
     assert.equal(playing(), null, 'a held line was spoken behind a window the player opened');
     assert.equal(box.heldLine, null, 'a held line survived a window that ends the scene');
+});
+
+await ok('An answered mail reads its outcome, and the scene it paused comes back', () => {
+    // The outcome is the window's own text (7.1), but narrateWindow() hushes
+    // first - and the scene the mail paused would be lost, the fault the pause
+    // was built to cure. One element, so the paused line is put aside and
+    // given back when the window closes.
+    const { el, box, file, playing } = voiceBench();
+    const open = (id) => { (box._interruptions ??= new Set()).add(id); box.pauseNarration(); };
+    const close = (id) => { box._interruptions.delete(id); box.resumeNarration(); };
+    const answerAndClose = (text) => {
+        box.narrateOverPause(text, 'mails');
+        const heard = playing();
+        box.giveBackLine();               // closeEmail(), before the window goes
+        close('email-modal');
+        return heard;
+    };
+
+    box.narrate('A coffee scene.');
+    el.currentTime = 10.49;
+    open('email-modal');
+    assert.equal(playing(), null, 'the mail did not quieten the scene');
+    assert.equal(answerAndClose('The reply went to three hundred people.'),
+                 file('The reply went to three hundred people.'), 'the outcome was not read');
+    assert.equal(playing(), file('A coffee scene.'), 'the scene the mail paused never came back');
+    assert.equal(el.currentTime, 10.49, 'the scene came back at the wrong place');
+
+    // With mails switched off nothing is put aside, and the scene waits in
+    // the element as it always did.
+    state.narrationKinds = { ...state.narrationKinds, mails: false };
+    open('email-modal');
+    assert.equal(answerAndClose('Deleted without comment.'), null, 'a mail was read with mails switched off');
+    assert.equal(playing(), file('A coffee scene.'), 'switching mails off lost the scene');
+    state.narrationKinds = { ...state.narrationKinds, mails: true };
+
+    // A screen that arrived behind the mail wins, as it wins over any pause.
+    open('email-modal');
+    box.narrate('The lunch break.');
+    answerAndClose('The reply went to three hundred people.');
+    assert.equal(playing(), file('The lunch break.'), 'an old scene came back over the new one');
+
+    // A mail into silence gives nothing back - the outcome ends with it.
+    box.hushNarration();
+    open('email-modal');
+    answerAndClose('Deleted without comment.');
+    assert.equal(playing(), null, 'the outcome read on after its window closed, or an old line came back');
+
+    // A mail that dropped onto a warning hands the warning its voice back.
+    open('modal-overlay');
+    box.narrateWindow('The boss looms behind you.');
+    open('email-modal');
+    answerAndClose('Deleted without comment.');
+    assert.equal(playing(), file('The boss looms behind you.'), 'the warning under the mail lost its voice');
+    close('modal-overlay');
+    box.hushNarration();
+
+    // The scene given back and paused again before it loaded leaves its
+    // position on the element; the next line must not start from it.
+    box.narrate('A coffee scene.');
+    el.currentTime = 1.94;
+    open('email-modal');
+    box.narrateOverPause('Deleted without comment.', 'mails');
+    box.giveBackLine();
+    close('email-modal');
+    open('modal-overlay');
+    box.narrateWindow('You stare at the microwave.');
+    assert.equal(el.currentTime, 0, 'the warning started where the scene before it had stopped');
+    close('modal-overlay');
+    box.hushNarration();
+
+    // And a hush owes nothing - not the line put aside either.
+    box.narrate('A coffee scene.');
+    open('email-modal');
+    box.narrateOverPause('The reply went to three hundred people.', 'mails');
+    box.hushNarration();
+    box.giveBackLine();
+    close('email-modal');
+    assert.equal(playing(), null, 'a hushed narrator gave back the line it had put aside');
+    // ...and the next mail, arriving into silence, does not find it either.
+    open('email-modal');
+    answerAndClose('Deleted without comment.');
+    assert.equal(playing(), null, 'a line put aside for an earlier mail came back with a later one');
+});
+
+await ok('A line cut short does not take the next line\'s flag', async () => {
+    // play() settles later than it is asked. The scene the mail gives back is
+    // paused a moment later by the warning the answer earned, its promise
+    // rejects after the warning has started, and the music came back up under
+    // the warning's voice.
+    const { el, box, file, playing } = voiceBench();
+    const pending = [];
+    el.play = function() { this.paused = false; return new Promise((_, reject) => pending.push(reject)); };
+    const settle = () => new Promise(r => setTimeout(r, 0));
+
+    box.narrate('A coffee scene.');
+    box.narrateWindow('The boss looms behind you.');
+    pending.shift()(new Error('AbortError'));        // the scene's late answer
+    await settle();
+    assert.equal(playing(), file('The boss looms behind you.'));
+    assert.equal(box.speaking, true, 'a line cut short took the flag of the line after it');
+
+    // A refusal of the line that IS playing still ends it: no file, no gesture.
+    pending.shift()(new Error('NotSupportedError'));
+    await settle();
+    assert.equal(box.speaking, false, 'a line that failed to start still counts as speaking');
 });
 
 await ok('The narrator stops for a tab nobody is looking at', () => {

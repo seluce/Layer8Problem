@@ -154,6 +154,8 @@ export const en = {
     'set.narration.kind.events.desc': 'Every scene in the terminal and what follows from your choice.',
     'set.narration.kind.emergencies.title': 'Emergencies',
     'set.narration.kind.emergencies.desc': 'The clock starts once it has finished reading.',
+    'set.narration.kind.mails.title': 'Mails',
+    'set.narration.kind.mails.desc': 'What follows from your reply, not the mail itself.',
     'set.narration.kind.morning.title': 'The morning after',
     'set.narration.kind.morning.desc': 'How the day already starts badly.',
     'set.narration.kind.valves.title': 'Blow-off and written warning',
@@ -575,6 +577,7 @@ export const en = {
     'event.useExcuse':             'Use an excuse ({left} left)',
 
     'email.delete':                'Delete',
+    'email.expired':               'No reply. The time ran out.',
 
     'item.notFound':               'Not found yet.',
     'item.noInfo':                 '"No further information."',

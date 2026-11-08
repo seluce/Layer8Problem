@@ -19,7 +19,7 @@ const flag = (n, d) => { const h = args.find(a => a.startsWith(`--${n}=`)); retu
 const LANG = flag('lang', 'de');
 
 const { sha1Hex, voiceHash } = await import('../src/engine/sha1.js');
-const { collectEntries, TERMINAL, SPOKEN_KEYS, fileFor, spokenForm } = await import('./voice-text.mjs');
+const { collectEntries, TERMINAL, MAIL_POOL, SPOKEN_KEYS, fileFor, spokenForm, oneCallPerText } = await import('./voice-text.mjs');
 
 let passed = 0;
 const ok = async (name, fn) => {
@@ -140,18 +140,49 @@ await ok('every terminal screen decides what it speaks', () => {
 
 // --- 5. Nothing is voiced that the terminal never shows ---------------------
 //
-// The mails, the phone, the intranet, the board and the books are read at the
-// player's own pace and are deliberately not recorded. A pool wandering into
-// the voiced list would be 15 hours of speech growing by however much it holds,
-// bought before anyone noticed.
-await ok('only the terminal pools and the named keys are collected', () => {
+// The letters, the phone, the intranet, the board and the books are read at
+// the player's own pace and are deliberately not recorded. A pool wandering
+// into the voiced list would be 15 hours of speech growing by however much it
+// holds, bought before anyone noticed. The one exception is named: what came
+// of an answered mail (7.1), its outcome and nothing else of it.
+await ok('only the terminal pools, the mail outcomes and the named keys are collected', () => {
     const dupes = TERMINAL.filter((p, i) => TERMINAL.indexOf(p) !== i);
     assert.deepEqual(dupes, [], 'a pool is listed twice and would be collected twice');
+    assert.ok(!TERMINAL.includes(MAIL_POOL), 'the mail pool is walked like a terminal pool - its letters would be bought');
     // `i18n` is the one prefix that is not a pool: the named interface strings
     // of section 6, each one listed by hand.
-    const allowed = [...TERMINAL, 'i18n'];
+    const allowed = [...TERMINAL, MAIL_POOL, 'i18n'];
     const stray = [...new Set(entries.map(e => e.key.split('/')[0]))].filter(p => !allowed.includes(p));
     assert.deepEqual(stray, [], 'a piece was collected from a pool the terminal never shows');
+
+    // Of a mail, the outcome alone: the sender, the subject and the body are
+    // a character writing, emoji and all.
+    const mails = entries.filter(e => e.key.startsWith(`${MAIL_POOL}/`));
+    const odd = mails.filter(e => !/^emails\/[^/]+\/opts\/\d+\/r$/.test(e.key)).map(e => e.key);
+    assert.deepEqual(odd, [], 'something other than an outcome was collected from a mail');
+    assert.ok(mails.length > 0, 'no mail outcome is collected - the window would read nothing');
+});
+
+// --- 5b. One text, one call ---------------------------------------------------
+//
+// The file is named after the text, but the run worked through keys and sent
+// the mail pool's delete line 128 times a language for one file.
+await ok('the generation run pays once for a text that stands under several keys', () => {
+    const mails = entries.filter(e => e.key.startsWith(`${MAIL_POOL}/`));
+    const { calls, twins } = oneCallPerText(mails);
+    assert.equal(calls.length, new Set(mails.map(e => e.sha)).size, 'a text is still sent more than once');
+    assert.equal(calls.length + twins.length, mails.length, 'a piece was dropped instead of booked');
+    for (const [twin, lead] of twins) assert.equal(twin.src, lead.src, 'a twin was booked under a different text');
+    // Twins agree on what is SENT too: a respelling that reaches one key and
+    // not another is two recordings, not one.
+    const a = { key: 'a', sha: 'x', spk: 'p' }, b = { key: 'b', sha: 'x', spk: 'q' };
+    assert.equal(oneCallPerText([a, b]).calls.length, 2, 'two spoken forms were booked as one recording');
+
+    const run = readFileSync(`${ROOT}tools/make-audio.mjs`, 'utf8');
+    assert.match(run, /const \{ calls, twins \} = oneCallPerText\(todo\);/, 'the generation run sends every key again');
+    assert.match(run, /catch \(err\) \{\s*bookTwins\(\);\s*saveLedger\(\);/,
+        'an aborted run forgets the twins of what it finished');
+    assert.match(run, /const booked = bookTwins\(\);\s*saveLedger\(\);/, 'a finished run never books its twins');
 });
 
 // --- 6. The named interface strings -----------------------------------------
@@ -399,6 +430,31 @@ await ok('a mail pauses the narrator and gives the line back', () => {
         'a result is read out behind the written warning again');
 });
 
+// --- 8a. An answered mail reads what came of it ---------------------------
+//
+// The window's own text, read over the scene the mail paused rather than
+// instead of it - narrateWindow() hushes first, and the scene would be gone.
+await ok('an answered mail reads its outcome and gives the scene back', () => {
+    const ev = code('engine/engine_events.js');
+    const body = (fn) => {
+        const start = ev.indexOf(`${fn}: function`);
+        assert.ok(start >= 0, `${fn} is gone`);
+        return ev.slice(start, ev.indexOf('\n    },', start));
+    };
+    assert.match(body('resolveEmail'), /this\.narrateOverPause\(opt\.r, 'mails'\)/,
+        'the answered mail does not read its outcome, or not as a mail');
+    assert.ok(!/narrateWindow\(/.test(body('resolveEmail')), 'the outcome hushes the scene the mail paused');
+    assert.match(body('closeEmail'), /this\.giveBackLine\(\);\s*this\.hideOverlay\('email-modal'\);/,
+        'closing the mail does not give the scene back before the resume');
+    assert.match(body('relocaliseMail'), /this\.narrateOverPause\(r, 'mails'\)/,
+        'a language switch leaves the answered mail silent');
+
+    // A hush owes nothing, the line put aside included.
+    const voice = src('engine/engine_voice.js');
+    assert.match(voice, /hushNarration: function[\s\S]{0,500}?this\.stashedLine = null;/,
+        'a hushed narrator would still give back a line it put aside');
+});
+
 // --- 8b. The two valves have a voice ----------------------------------------
 //
 // Ten lines each, drawn at random, framed on screen by a sentence with a
@@ -484,14 +540,18 @@ await ok('the read-aloud button reads the terminal, past the switch', () => {
     assert.ok(!/narrateWindow: function[\s\S]{0,400}?narratable/.test(voice),
         'window text would be offered as the terminal line');
 
-    // The switch is skipped for this caller and the volume is not.
+    // The switch is skipped for this caller and the volume is not. One gate,
+    // _mayRead(), asked by _speak and by the answered mail's door alike.
     assert.match(voice, /_speak: function\(text, onDemand = false, owner = 'terminal', kind = 'events'\)/, 'there is no on-demand door');
+    assert.match(voice, /_speak: function[\s\S]{0,200}?if \(!this\._mayRead\(kind, onDemand\)\) return;/,
+        'a line is spoken without asking the gate');
+    const gate = voice.slice(voice.indexOf('_mayRead: function'), voice.indexOf('\n    },', voice.indexOf('_mayRead: function')));
     // The button is past the kinds as well as past the switch.
-    assert.match(voice, /if \(!onDemand && kind !== 'sample' && !this\.kindAllowed\(kind\)\) return;/,
+    assert.match(gate, /if \(!onDemand && kind !== 'sample' && !this\.kindAllowed\(kind\)\) return false;/,
         'the kinds stop the button too, or stop the settings sample');
-    assert.match(voice, /if \(!onDemand && !this\.state\.narrationEnabled\) return;/,
+    assert.match(gate, /if \(!onDemand && !this\.state\.narrationEnabled\) return false;/,
         'the button is refused by the narrator switch');
-    assert.match(voice, /if \(this\.state\.narrationVolume <= 0\) return;/,
+    assert.match(gate, /return this\.state\.narrationVolume > 0;/,
         'a volume of zero would still speak');
     assert.match(voice, /replayNarration: function[\s\S]{0,400}?this\._speak\(this\.state\.narratable, true,/,
         'the button does not read the terminal line on demand');

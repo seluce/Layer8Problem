@@ -207,6 +207,9 @@ export const events = {
         // Everything the window shows comes from here; components/
         // EmailView.svelte does the rendering, including the countdown bar.
         this.state.email = email;
+        // A fresh letter, unanswered. A window closed from outside (an
+        // emergency, the end of the day) can leave the last outcome behind.
+        this.state.emailOutcome = null;
 
         // The overlay itself belongs to index.html, so its visibility is still
         // toggled here. EmailView.svelte only renders the contents.
@@ -563,24 +566,28 @@ export const events = {
 
     resolveEmail: function(opt, timeout = false) {
         // NEW SPAM GUARD ---
-        if (!this.state.isEmailOpen) return;
+        // An answered mail stays open until closeEmail(), so an open window
+        // is not yet an unanswered one: a second click on the outcome would
+        // otherwise answer it twice.
+        if (!this.state.isEmailOpen || this.state.emailOutcome) return;
         // -------------------------
-        
+
         this.markDayStarted();
         // ---------------------------------------------
-		
+
         this.playAudio('ui');
         if(this.state.emailTimer) clearTimeout(this.state.emailTimer);
-        
-        const modal = document.getElementById('email-modal');
-        if(modal) {
-            this.hideOverlay(modal);
-        }
-        
-        // --- CHANGE 1: block the system straight away ---
-        this.state.isEmailOpen = false;
-        this.state.emailPending = true; // blocks checkRandomEmail
-        // -------------------------------------------
+        this.state.emailTimer = null;
+
+        // The window stays (7.1). Until then it closed here, before the
+        // effects, and what the answer led to went to the log alone - folded
+        // away on a phone, so a player saw the bars move and never read why.
+        // It now shows the outcome the way the terminal shows a result, and
+        // closeEmail() does the rest when the player moves on. Still open, the
+        // window keeps the narrator paused and the keyboard off the terminal.
+
+        // What the outcome shows: the values that moved, as applied.
+        const outcome = { index: -1, expired: !opt, next: null, m: 0, tickets: 0, l: 0, a: 0, b: 0 };
 
         // Game logic. `message` is a RECIPE, not a sentence - see
         // engine/recipe.js. The mail on screen and the index of the option
@@ -602,6 +609,7 @@ export const events = {
             // radar source stayed invisible on it.
             this.recordStatPoint();
             this.state.emailsIgnored++;
+            outcome.b = penalty;
             message = { k: 'log.email.ignoredRadar', v: { value: penalty } };
             color = "text-red-500 font-bold";
         } else if(opt) {
@@ -640,6 +648,7 @@ export const events = {
             this.addStat('fl', addedL);
             this.addStat('al', addedA);
             this.addStat('cr', addedB);
+            Object.assign(outcome, { index: optIndex, next: opt.nextEmail ?? null, l: addedL, a: addedA, b: addedB });
 
             // --- Floating text for mails ---
             if (addedL !== 0) this.showFloatingText('val-fl', addedL);
@@ -662,8 +671,12 @@ export const events = {
 
             // 2. TIME LOGIC (opt.m) - through the shared clock: mail time
             // used to pass without booking the half-hour boundary tickets
-            // every other path books.
+            // every other path books. Counted around the call for the
+            // outcome's ticket pill, the way resolveTerminal counts them.
+            const ticketsBefore = this.state.tickets;
             if (opt.m) this.advanceClock(opt.m);
+            outcome.m = opt.m || 0;
+            outcome.tickets = this.state.tickets - ticketsBefore;
 
             // 3. REPUTATION LOGIC (opt.rep)
             this.applyReputation(opt.rep);
@@ -680,31 +693,80 @@ export const events = {
                 }
             }
 
-            if (opt.nextEmail) {
-                // --- CHAIN-TIMER ---
-                if (this.state.emailChainTimer) clearTimeout(this.state.emailChainTimer);
-                
-                this.state.emailChainTimer = setTimeout(() => {
-                    this.triggerEmail(opt.nextEmail);
-                }, 2500);
-                // ----------------------------
-            }
         }
-        
-        // --- SYSTEM FREIGEBEN ---
-        // No option chosen (timeout or ignore) and no follow-up queued
-        if (!opt || !opt.nextEmail) {
+
+        this.state.emailOutcome = outcome;
+
+        // The outcome is read like a result in the terminal (7.1) - the
+        // narrator's prose, where the letter above it is a character's and
+        // stays for reading. The exact string the window shows, so the
+        // checksum finds its recording. Over the paused scene, not instead
+        // of it: closeEmail() gives that line back.
+        if (opt?.r && !/^CMD:/.test(opt.r)) this.narrateOverPause(opt.r, 'mails');
+
+        // A letter that ran out has nothing to read beyond the penalty, and
+        // the player was not there to answer it - it closes by itself. The
+        // mail's own timer field, so every path that kills the countdown
+        // (an emergency, the end of the day, a restart) kills this too.
+        if (outcome.expired) {
+            this.state.emailTimer = setTimeout(() => this.closeEmail(true), this.EMAIL_EXPIRED_MS);
+        }
+
+        if (message) this.log(message, color);
+        // updateUI runs checkEndConditions. An ending the answer caused waits
+        // for closeEmail(): finished here, it closed the window over the
+        // outcome before anybody had read it.
+        this.updateUI();
+    },
+
+    /** How long an expired letter stays on screen with its penalty. */
+    EMAIL_EXPIRED_MS: 2500,
+
+    /**
+     * Closes an answered mail: its continue button, the confirm key, Escape,
+     * or the expired letter's own timer (`byTimer`, which makes no sound).
+     *
+     * Everything that used to follow the answer at once waits for this: the
+     * follow-up mail, the cooldown before the next one, and an ending the
+     * answer caused. hideOverlay first and the flag after it, like every
+     * closing path - the narrator's resume is booked by the window, not read
+     * off the flag (CLAUDE.md).
+     */
+    closeEmail: function(byTimer = false) {
+        const outcome = this.state.emailOutcome;
+        if (!this.state.isEmailOpen || !outcome) return;
+
+        if (!byTimer) this.playAudio('ui');
+        if (this.state.emailTimer) clearTimeout(this.state.emailTimer);
+        this.state.emailTimer = null;
+
+        // Its voice ends with it, and the scene it paused goes back in place
+        // for the resume that hideOverlay() is about to trigger.
+        this.giveBackLine();
+        this.hideOverlay('email-modal');
+        this.state.isEmailOpen = false;
+        this.state.emailOutcome = null;
+        this.state.emailPending = true; // blocks checkRandomEmail
+
+        if (outcome.next) {
+            // --- CHAIN-TIMER ---
+            if (this.state.emailChainTimer) clearTimeout(this.state.emailChainTimer);
+            this.state.emailChainTimer = setTimeout(() => {
+                this.triggerEmail(outcome.next);
+            }, 2500);
+        } else {
+            // --- SYSTEM FREIGEBEN ---
+            // No follow-up queued: the mail system opens again after five seconds
             if (this.state.emailCooldownTimer) clearTimeout(this.state.emailCooldownTimer);
-            
-            // Unblocks the mail system after five seconds
             this.state.emailCooldownTimer = setTimeout(() => {
                 this.state.emailPending = false;
-            }, 5000); 
+            }, 5000);
         }
-        // ----------------------------------------------
-        
-        if (message) this.log(message, color);
-        this.updateUI();
+
+        // What the answer's own updateUI() held back: a notice, or the end of
+        // the day (see checkEndConditions). The window is gone by now, so a
+        // warning opens in front and reads its line to someone looking at it.
+        this.checkEndConditions();
         if (this.state.pendingEnd) this.finishGame();
     },
     
@@ -882,6 +944,7 @@ export const events = {
         if (emailModal) {
             this.hideOverlay(emailModal);
             this.state.isEmailOpen = false;
+            this.state.emailOutcome = null;
         }
         // ------------------------------------------
 		
@@ -1233,7 +1296,15 @@ export const events = {
         const id = this.state.email?.id;
         if (!id) return;
         const fresh = (DB.emails ?? []).find(m => m.id === id);
-        if (fresh) this.state.email = fresh;
+        if (!fresh) return;
+        this.state.email = fresh;
+        // An answered one is read again in the new language, like a result
+        // screen: the outcome is an index into the letter, so the sentence
+        // on screen IS the new tree's, and its checksum is the new recording.
+        // The switch has just hushed the old line (engine.js).
+        const out = this.state.emailOutcome;
+        const r = out && out.index > -1 ? fresh.opts?.[out.index]?.r : null;
+        if (r && !/^CMD:/.test(r)) this.narrateOverPause(r, 'mails');
     },
 
     /**

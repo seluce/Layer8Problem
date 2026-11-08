@@ -172,6 +172,12 @@ export function freshDay(mult = 1.0) {
         // components/EmailView.svelte renders it, isEmailOpen the overlay.
         email: null,
         isEmailOpen: false,
+        // Set once the mail is answered: the window stays open and shows what
+        // came of it until engine.closeEmail(). Which reply (an index into
+        // email.opts, -1 when the time ran out), the values that moved, and the
+        // follow-up mail it queues. An index rather than the words, so the
+        // outcome follows a language switch with the rest of the letter.
+        emailOutcome: null,
         emailPending: false,
         lastEmailTime: 0,
         lastEmailEventId: null,
@@ -434,12 +440,13 @@ export function clampNarrationRate(v) {
  *
  *   events       the terminal's scenes and outcomes
  *   emergencies  an emergency's scene - while it is read, its clock waits
+ *   mails        what came of an answered mail (7.1), never the letter
  *   morning      the morning screen
  *   valves       the rage valve and the written warning
  *   halgerd      H.A.L.G.E.R.D.'s two first words and the tutorial
  */
 export const DEFAULT_NARRATION_KINDS = Object.freeze({
-    events: true, emergencies: true, morning: true, valves: true, halgerd: true
+    events: true, emergencies: true, mails: true, morning: true, valves: true, halgerd: true
 });
 
 /** A stored kinds object made safe: unknown keys dropped, missing ones filled. */

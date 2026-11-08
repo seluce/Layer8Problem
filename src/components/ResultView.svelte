@@ -13,6 +13,7 @@
     import { t } from '../i18n/i18n.svelte.js';
     import { renderRecipe } from '../engine/recipe.js';
     import ReadButton from './ReadButton.svelte';
+    import ResultPills from './ResultPills.svelte';
 
     const view = $derived(state.terminal.result ?? {});
 
@@ -20,24 +21,7 @@
     // the same corner of the card, above the continue button.
     const canRead = $derived(engine.canReplayNarration());
 
-    // A pill is a change, so a value that did not move has none. The three
-    // bars used to show "Aggro +0" beside the two that did move, and the eye
-    // had to sort the news from the noise; the floating numbers never showed
-    // a zero either. Time and tickets were already shown only when they
-    // moved. Tickets are the pill this card was missing for long: the pile is
-    // the most common way to lose, every half hour the clock steps over adds
-    // one, and nothing on screen tied the two together. A call that clears
-    // one shows -1 here for the same reason. Hidden for anyone playing with
-    // the ticket counter switched off, which is what that setting asks for.
-    const pills = $derived([
-        { label: t('result.minutes'),  value: view.m ?? 0, tone: 'text-blue-400' },
-        { label: t('stat.tickets'),    value: state.blindTickets ? 0 : (view.tickets ?? 0), tone: 'text-purple-400' },
-        { label: t('stat.lazy'),       value: view.l ?? 0, tone: 'text-green-400' },
-        { label: t('stat.aggro'),      value: view.a ?? 0, tone: 'text-orange-400' },
-        { label: t('stat.boss.short'), value: view.b ?? 0, tone: 'text-red-500' }
-    ].filter(pill => pill.value !== 0));
-
-    const sign = (n) => (n > 0 ? '+' : '') + n;
+    // The pills are ResultPills.svelte, shared with the answered mail.
 
     // Result texts are plain text, not HTML, so no data field can carry
     // markup into the document by accident. To keep links usable anyway, bare
@@ -69,14 +53,7 @@
     <!-- items-center: the button is a little taller than a pill, and the
          default stretch would have grown every pill to its height. -->
     <div class="flex flex-wrap items-center gap-2 mt-4">
-        {#each pills as pill (pill.label)}
-            <!-- A size up since the zeros went: fewer pills, and each one is
-                 news. -->
-            <span class="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-sm text-sm font-bold bg-slate-950/70 border border-slate-700">
-                <span class={pill.tone}>{pill.label}</span>
-                <span class="text-white font-mono ml-0.5">{sign(pill.value)}</span>
-            </span>
-        {/each}
+        <ResultPills m={view.m} tickets={view.tickets} l={view.l} a={view.a} b={view.b} />
         {#if canRead}<span class="ml-auto"><ReadButton /></span>{/if}
     </div>
 

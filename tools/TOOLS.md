@@ -346,12 +346,15 @@ separate things which CAN drift apart: edit a line and the file still says
 the old one, at 0 errors and 0 warnings. Every entry therefore carries the
 checksum of its source string, and `--check` is the gate that notices.
 
-**What gets a voice: the terminal.** Eleven pools, listed in `TERMINAL` at
-the top of the tool - a new one is added there and nowhere else. Mails, the
-phone, the intranet, the board, the vending machine, the log and the books
-stay for reading: they run at the player's own pace, or they differ from run
-to run. Scenes marked `kind: 'phone'` are skipped inside the terminal pools
-as well.
+**What gets a voice: the terminal, and what came of an answered mail.** Twelve
+pools, listed in `TERMINAL` at the top of the tool - a new one is added there
+and nowhere else. Of the mail pool (`MAIL_POOL`) one field is collected, an
+option's `r`: since 7.1 the window shows it once the mail is answered, and it
+is the narrator's prose. The sender, the subject and the body are a character
+writing and stay for reading, like the phone, the intranet, the board, the
+vending machine, the log and the books: they run at the player's own pace, or
+they differ from run to run. Scenes marked `kind: 'phone'` are skipped inside
+the terminal pools as well.
 
 **Option labels are deliberately absent.** 3470 files for 114 minutes, and a
 read-out list of buttons sounds like a railway announcement. Whoever needs
@@ -369,13 +372,15 @@ checksum then fails and the file is simply respoken.
 each, no difference in either direction - the same rule that `lint:parity`
 enforces for the data. The fifteen named interface strings bring it to 4663,
 the 118 morning moods (`moods`, the morning screen) to 4781, the twenty lines
-of the two valves to 4801 and the speed slider's own sample to 4802.
+of the two valves to 4801, the speed slider's own sample to 4802 and the 416
+mail outcomes to 5218 - 289 different texts, since the delete line stands 128
+times.
 
 | | |
 |---|---|
-| pieces | 4802 per language |
-| characters | 834,689 de · 806,912 en |
-| as speech | 15.5 h · 14.9 h |
+| pieces | 5218 per language |
+| characters | 888,824 de · 858,954 en (twins counted) |
+| as speech | 16.5 h · 15.9 h |
 
 **Every entry carries two checksums, and they answer different questions.**
 `sha` is taken over the text as WRITTEN and is the file name - the browser
@@ -391,9 +396,9 @@ bumping it marked 4663 pieces changed and re-rendered none of them. A checksum
 per piece is exact in both directions: adding the German `Rack` respelling
 marked 109 pieces and left the other 4554 alone.
 
-**Not part of `lint:all` yet.** Until the audio exists the manifest is a
-plan, and gating every data edit on a plan is noise. It joins the gate with
-the first generated file.
+**Part of `lint:all`** since the first generated files (`npm run lint:voice`).
+A new piece in the tree with no entry in the manifest fails it; an entry with
+no audio yet does not - that is the generation run's ledger to report.
 
 ## 7. `make-audio.mjs` — the generation run
 
@@ -412,6 +417,15 @@ yet, and writes two files per piece: the provider's MP3 into
 written to a file, a log line or an error message — the wrapper around
 `fetch` re-throws a reason of its own, because the original error can carry
 the request headers.
+
+**One text, one call.** The file is named after the text, so identical prose
+under several keys is one recording - but the run used to work through keys
+and sent the sentence once for each. The mail pool's delete line made that 127
+needless calls a language. `oneCallPerText()` in `voice-text.mjs` now sends
+the first of each text and books the rest ("twins") in the ledger once it is
+done; a text already rendered under another key on an earlier run is booked
+without a call. Twins must agree on what is written AND sent (`sha`, `spk`).
+`--limit` counts calls.
 
 **Who speaks is in `voice/run.<lang>.json`**, which is committed: voice id,
 model, output format, opus bitrate. `voiceSettings` starts as `null` and is
@@ -436,7 +450,7 @@ sentence that used to be there.
 `src/engine/sha1.js` computes the same digest in the browser, because
 `crypto.subtle` needs a secure context and the Electron build loads over
 `file://`. `tools/voice.test.mjs` holds the two implementations against each
-other over all 9,296 pieces.
+other over every piece of both languages.
 
 **A `CMD:` result is not collected.** `CMD:OPEN_BOARD` and its two siblings
 stand where prose stands but are instructions — `resolveTerminal` swaps them

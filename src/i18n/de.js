@@ -162,6 +162,8 @@ export const de = {
     'set.narration.kind.events.desc': 'Jede Szene im Terminal und was aus deiner Wahl folgt.',
     'set.narration.kind.emergencies.title': 'Notfälle',
     'set.narration.kind.emergencies.desc': 'Die Uhr läuft erst, wenn er fertig gelesen hat.',
+    'set.narration.kind.mails.title': 'Mails',
+    'set.narration.kind.mails.desc': 'Was aus deiner Antwort folgt, nicht die Mail selbst.',
     'set.narration.kind.morning.title': 'Der Morgen danach',
     'set.narration.kind.morning.desc': 'Wie der Tag schon schlecht anfängt.',
     'set.narration.kind.valves.title': 'Ventil und Abmahnung',
@@ -583,6 +585,7 @@ export const de = {
     'event.useExcuse':             'Ausrede nutzen ({left} übrig)',
 
     'email.delete':                'Löschen',
+    'email.expired':               'Keine Antwort. Die Zeit ist abgelaufen.',
 
     'item.notFound':               'Noch nicht gefunden.',
     'item.noInfo':                 '"Keine weiteren Informationen."',

@@ -711,6 +711,12 @@ export const core = {
         this.state.activeEvent = false;
         this.state.pendingEnd = null;
         this.state.phone = { open: false, notification: false, appName: '', messages: [], options: [], node: null };
+        // No window comes back with a save, so neither does an open mail. An
+        // answered one stays on screen until it is closed (7.1), and a save
+        // taken meanwhile would otherwise restore the flag without the window:
+        // checkRandomEmail asks isEmailOpen first, and no mail would come again.
+        this.state.isEmailOpen = false;
+        this.state.emailOutcome = null;
     },
 
     /**
@@ -1979,6 +1985,11 @@ export const core = {
         if (this.state.isPartyMode) return;
         // An ending is already queued - checking again would duplicate it
         if (this.state.pendingEnd) return;
+        // An answered mail stands over everything (7.1), so what the answer
+        // led to waits until it is closed - closeEmail() runs this chain
+        // again. Shown at once, a written warning opened BEHIND the mail and
+        // read its line out over the outcome the player was still reading.
+        if (this.state.isEmailOpen && this.state.emailOutcome) return;
 
         // One box at a time, and nothing gets lost.
         //
@@ -2103,6 +2114,7 @@ export const core = {
             const emailModal = document.getElementById('email-modal');
             if (emailModal) this.hideOverlay(emailModal);
             this.state.isEmailOpen = false;
+            this.state.emailOutcome = null;
         }
 
         // The day's windows the same way (6.3): intranet, noticeboard,
@@ -2196,6 +2208,7 @@ export const core = {
             if (this.state.emailTimer) { clearTimeout(this.state.emailTimer); this.state.emailTimer = null; }
             this.hideOverlay('email-modal');
             this.state.isEmailOpen = false;
+            this.state.emailOutcome = null;
         }
         this.playAudio('ui');
         

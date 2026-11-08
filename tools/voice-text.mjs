@@ -4,9 +4,10 @@
  * two copies of this walk would drift and the drift would be inaudible: the
  * generator would buy audio for a text the manifest never recorded.
  *
- * What gets a voice: the terminal, the morning screen included. Mails, the phone, the intranet, the board,
- * the vending machine, the log and the books stay for reading - they are read
- * at the player's own pace, or they change from run to run.
+ * What gets a voice: the terminal, the morning screen included, and what came
+ * of an answered mail (7.1). The letter itself, the phone, the intranet, the
+ * board, the vending machine, the log and the books stay for reading - they
+ * are read at the player's own pace, or they change from run to run.
  *
  * What does NOT get one: option labels. 3470 files for 114 minutes, and a
  * read-out list of buttons sounds like a railway announcement. Someone who
@@ -28,6 +29,19 @@ import { en } from '../src/i18n/en.js';
 export const TERMINAL = ['coffee', 'server', 'calls', 'sidequests', 'bossfights',
                          'lunch', 'meetings', 'reputation', 'party', 'special', 'tutorial',
                          'moods'];
+
+/**
+ * The mail pool, of which ONE field is spoken: an option's `r`, the outcome
+ * the window shows once the mail is answered (7.1). It is the narrator's prose
+ * - "Deine Antwort geht an dreihundert Empfänger" - and reads like a result in
+ * the terminal. Everything else in a mail is a character writing, emoji and
+ * all: the sender, the subject and the body stay for reading, which is why
+ * this pool is not walked like the terminal ones but picked by hand.
+ *
+ * 416 outcomes and 289 different texts a language: the delete line stands
+ * 128 times and is one recording (see oneCallPerText).
+ */
+export const MAIL_POOL = 'emails';
 
 /** Fields that hold spoken prose. `t` (the button) is deliberately absent. */
 const SPOKEN = new Set(['text', 'r', 'txt']);
@@ -235,6 +249,33 @@ export const sha = (s) => createHash('sha1').update(s, 'utf8').digest('hex').sli
 export const fileFor = (entry) => entry.sha;
 
 /**
+ * ONE TEXT, ONE FILE, ONE CALL.
+ *
+ * The file is named after the text, so identical prose under several keys is
+ * one recording - but the generation run worked through KEYS, and sent the
+ * same sentence once for each of them. The mail pool made that expensive: its
+ * delete line stands 128 times a language, which was 127 calls for a file that
+ * already existed. This splits pieces still to do into the calls worth making
+ * and the twins that only need booking once their first has been rendered.
+ *
+ * Same text means the same written AND sent form: `sha` names the file, `spk`
+ * says what went to the provider, and a twin must agree on both.
+ */
+export function oneCallPerText(pieces) {
+    const first = new Map();
+    const calls = [];
+    const twins = [];
+    for (const e of pieces) {
+        const id = `${e.sha}|${e.spk}`;
+        const lead = first.get(id);
+        if (lead) { twins.push([e, lead]); continue; }
+        first.set(id, e);
+        calls.push(e);
+    }
+    return { calls, twins };
+}
+
+/**
  * Every spoken piece of one language tree, with its key, its source string and
  * the form that goes to the provider.
  *
@@ -296,6 +337,19 @@ export async function collectEntries(lang) {
         const v = DB[pool];
         if (!v) throw new Error(`Pool "${pool}" is not loaded.`);
         collect(v, pool, [pool], '');
+    }
+
+    const mails = DB[MAIL_POOL];
+    if (!Array.isArray(mails) || !mails.length) throw new Error(`Pool "${MAIL_POOL}" is not loaded.`);
+    for (const mail of mails) {
+        (mail.opts ?? []).forEach((opt, i) => {
+            const v = opt?.r;
+            if (typeof v !== 'string' || !v.trim() || INSTRUCTION.test(v.trim())) return;
+            // Shown as it stands, so a hole in it would be heard as braces.
+            if (v.includes('{')) throw new Error(`Mail outcome ${mail.id}/opts/${i}/r carries a placeholder: ${v}`);
+            for (const m of v.match(/<[^>]+>/g) ?? []) unknownTags.set(m, (unknownTags.get(m) ?? 0) + 1);
+            entries.push({ key: `${MAIL_POOL}/${mail.id}/opts/${i}/r`, src: v });
+        });
     }
 
     for (const path of SPOKEN_LISTS) {
