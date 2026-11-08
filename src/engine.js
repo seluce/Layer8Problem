@@ -187,6 +187,9 @@ document.addEventListener('keydown', (event) => {
         //    tutorial question because it is a question, and the mail because
         //    it is an open decision: it has no close button, and every option
         //    including deleting it counts. Escape must not become the way out.
+        //    Once ANSWERED it is a window showing an outcome (7.1), and closes
+        //    like one.
+        if (isVisible('email-modal') && engine.state.emailOutcome) { engine.closeEmail(); return; }
         if (engine.isStartupOverlayOpen() || isVisible('tut-ask-modal') || isVisible('email-modal')) return;
 
         // B. The lore book
@@ -285,6 +288,12 @@ document.addEventListener('keydown', (event) => {
             if (startBtn) { press(startBtn); return; }
         }
         
+        // A2: an answered mail (7.1). Before the modals, because it stands
+        //     above them: a warning that the answer triggered opens BEHIND the
+        //     mail, still rendered, and its button would be pressed through it.
+        const mailCont = document.querySelector('#email-modal button[data-continue]');
+        if (mailCont && mailCont.offsetParent !== null) { press(mailCont); return; }
+
         // B: modals (warning letter, ending, item confirm)
         // The continue button carries data-modal-continue (EndModal.svelte).
         // "First button in the modal" stopped being it in 6.1, when the

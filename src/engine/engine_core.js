@@ -711,6 +711,12 @@ export const core = {
         this.state.activeEvent = false;
         this.state.pendingEnd = null;
         this.state.phone = { open: false, notification: false, appName: '', messages: [], options: [], node: null };
+        // No window comes back with a save, so neither does an open mail. An
+        // answered one stays on screen until it is closed (7.1), and a save
+        // taken meanwhile would otherwise restore the flag without the window:
+        // checkRandomEmail asks isEmailOpen first, and no mail would come again.
+        this.state.isEmailOpen = false;
+        this.state.emailOutcome = null;
     },
 
     /**

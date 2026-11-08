@@ -8,12 +8,18 @@
   without a transition, then to 0% with one, so the browser animates it. The
   engine's own timeout decides what actually happens when it runs out — the bar
   is only the visible half of that.
+
+  Answered, the window stays (7.1) and shows what came of it in place of the
+  replies: the reply that was sent, the outcome, the values it moved, and a
+  continue button - the terminal's rhythm of choose, read, continue. Before,
+  the outcome went to the log alone, which a phone keeps folded away.
 -->
 <script>
     import { state, formatClock } from '../engine/engine_state.svelte.js';
     import { engine } from '../engine.js';
 
     import { t } from '../i18n/i18n.svelte.js';
+    import ResultPills from './ResultPills.svelte';
     const mail = $derived(state.email ?? {});
     const paragraphs = $derived((mail.body ?? '').split('\n'));
 
@@ -97,6 +103,15 @@
         e.preventDefault();
         engine.resolveEmail(opt, false);
     }
+
+    // The answered state. The reply is read back out of the letter by index,
+    // so the outcome follows a language switch with everything above it.
+    const outcome = $derived(state.emailOutcome);
+    const sent = $derived(outcome && outcome.index > -1 ? (mail.opts ?? [])[outcome.index] : null);
+
+    // The keyboard moves on to the continue button the moment it appears: the
+    // reply button that held it is gone, and focus would fall to the page.
+    const focusOnShow = (node) => { node.focus(); };
 </script>
 
 <!--
@@ -104,7 +119,10 @@
   would run behind a hidden overlay and be half gone by the time it appears.
 -->
 {#if state.isEmailOpen}
-<div class="w-full max-w-lg bg-slate-900 border border-slate-600 rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] flex flex-col font-sans animate-pop-in">
+<!-- Capped at the screen: the outcome makes the window taller than the
+     replies did, and the overlay does not scroll. The letter's body is the
+     part that gives way and scrolls; the outcome below it never does. -->
+<div class="w-full max-w-lg max-h-[calc(100dvh-2rem)] bg-slate-900 border border-slate-600 rounded-lg shadow-[0_0_50px_rgba(0,0,0,0.8)] flex flex-col font-sans animate-pop-in">
 
     <div class="h-1 w-full bg-slate-800 rounded-t-lg overflow-hidden shrink-0">
         <!--
@@ -112,12 +130,18 @@
           mail. Reusing it would keep the running transition and the bar would
           not restart.
         -->
-        {#key mail.id ?? mail.subj}
-            <!-- Duration from the engine's own constant, so the bar and the
-                 timeout can never drift apart again. -->
-            <div class="h-full bg-blue-500 email-timer-bar"
-                 style="animation-duration: {engine.EMAIL_DURATION_MS}ms"></div>
-        {/key}
+        {#if !outcome}
+            {#key mail.id ?? mail.subj}
+                <!-- Duration from the engine's own constant, so the bar and the
+                     timeout can never drift apart again. -->
+                <div class="h-full bg-blue-500 email-timer-bar"
+                     style="animation-duration: {engine.EMAIL_DURATION_MS}ms"></div>
+            {/key}
+        {:else if outcome.expired}
+            <!-- An expired letter closes by itself; the bar shows how soon. -->
+            <div class="h-full bg-slate-500 email-timer-bar"
+                 style="animation-duration: {engine.EMAIL_EXPIRED_MS}ms"></div>
+        {/if}
     </div>
 
     <div class="p-4 border-b border-slate-700 flex gap-3 items-start shrink-0">
@@ -143,6 +167,40 @@
         {#each paragraphs as line, i}{#if i > 0}<br>{/if}{line}{/each}
     </div>
 
+    {#if outcome}
+    <!-- No #email-actions here, so the number keys find nothing to press.
+         The continue button carries data-continue for the confirm key. -->
+    <div class="p-3 border-t border-slate-700 space-y-3 shrink-0">
+        {#if sent}
+            <div class="flex items-start min-w-0 px-3 py-2 rounded-sm border text-xs font-medium
+                        {sent.ignoreEmail ? 'bg-red-950/30 border-red-500/40 text-red-300' : 'bg-blue-900/30 border-blue-500/40 text-blue-300'}">
+                <span class="mr-2 text-base leading-none shrink-0">
+                    {#if sent.ignoreEmail}
+                        <img src="assets/img/ui/ui_trash.webp" alt={t('email.delete')}
+                             width="18" height="18" class="w-5 h-5 select-none"
+                             onerror={(e) => e.currentTarget.outerHTML = '🗑️'}>
+                    {:else}➥{/if}
+                </span>
+                <span class="wrap-break-word min-w-0 leading-tight py-1">{sent.t}</span>
+            </div>
+            {#if sent.r}
+                <p class="font-serif italic text-base text-slate-300 leading-relaxed wrap-break-word hyphens-auto">{sent.r}</p>
+            {/if}
+        {:else}
+            <p class="font-serif italic text-base text-slate-300 leading-relaxed">{t('email.expired')}</p>
+        {/if}
+
+        <div class="flex flex-wrap items-center gap-2">
+            <ResultPills m={outcome.m} tickets={outcome.tickets} l={outcome.l} a={outcome.a} b={outcome.b} />
+        </div>
+
+        <button type="button" data-continue {@attach focusOnShow}
+                onclick={() => engine.closeEmail()}
+                class="w-full py-2.5 rounded-sm bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold uppercase tracking-wider transition-colors duration-75">
+            {t('terminal.btn.continue')}
+        </button>
+    </div>
+    {:else}
     <!-- Keeps the id: the keyboard shortcuts in engine.js look up the reply
          buttons through it. -->
     <div id="email-actions" class="p-3 border-t border-slate-700 space-y-2 shrink-0">
@@ -172,6 +230,7 @@
             </button>
         {/each}
     </div>
+    {/if}
 </div>
 {/if}
 

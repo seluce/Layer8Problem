@@ -172,6 +172,12 @@ export function freshDay(mult = 1.0) {
         // components/EmailView.svelte renders it, isEmailOpen the overlay.
         email: null,
         isEmailOpen: false,
+        // Set once the mail is answered: the window stays open and shows what
+        // came of it until engine.closeEmail(). Which reply (an index into
+        // email.opts, -1 when the time ran out), the values that moved, and the
+        // follow-up mail it queues. An index rather than the words, so the
+        // outcome follows a language switch with the rest of the letter.
+        emailOutcome: null,
         emailPending: false,
         lastEmailTime: 0,
         lastEmailEventId: null,

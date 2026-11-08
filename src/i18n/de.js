@@ -583,6 +583,7 @@ export const de = {
     'event.useExcuse':             'Ausrede nutzen ({left} übrig)',
 
     'email.delete':                'Löschen',
+    'email.expired':               'Keine Antwort. Die Zeit ist abgelaufen.',
 
     'item.notFound':               'Noch nicht gefunden.',
     'item.noInfo':                 '"Keine weiteren Informationen."',

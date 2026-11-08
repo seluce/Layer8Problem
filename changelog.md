@@ -20,6 +20,7 @@ The day to day:
 * The noticeboard pins up new notes when something has happened since your last look.
 * A scene that follows from an earlier decision says so in the corner of its card.
 * An outcome shows only the values that changed, a little larger. No more "Aggro +0" beside the numbers that moved.
+* An answered mail shows what came of it in the mail itself: your reply, the outcome and the values that changed. Continue or Space takes you back. Until now that only went to the log.
 
 End of the day:
 * The end of a day has the day's log beside the curve and the diary, top to bottom the way the day went, with a button that copies it. Until now it disappeared behind the end screen.

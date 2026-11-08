@@ -2684,6 +2684,104 @@ await ok('An open mail follows a language switch', async () => {
     assert.equal(state.email.subj, 'STALE', 'a closed mail was repainted');
 });
 
+await ok('An answered mail shows its outcome, and moves on only when closed', async () => {
+    // Until 7.1 the window closed on the click and the outcome went to the
+    // log alone, which a phone keeps folded away: the bars moved and nobody
+    // read why. The window now stays with the outcome on it, and everything
+    // that used to follow the answer at once waits for closeEmail().
+    resetState();
+    await ensure('emails');
+    const realFinish = engine.finishGame;
+    let finished = 0;
+    engine.finishGame = () => { finished++; };
+    try {
+        await engine.triggerEmail('mail_cake_1');
+        assert.equal(state.isEmailOpen, true, 'the mail did not open - this check has no subject');
+        const opt = state.email.opts.find(o => o.nextEmail && !o.ignoreEmail);
+        assert.ok(opt, 'mail_cake_1 lost the reply with a follow-up - pick another subject');
+
+        // Room on both bars: at a floor the bar stays put while the pill says
+        // -5, which is what the terminal's result does too (finalA).
+        state.al = 50; state.cr = 20;
+        const crBefore = state.cr, alBefore = state.al;
+        state.pendingEnd = { isWin: false, cause: 'probe' };   // as if the answer had ended the day
+        engine.resolveEmail(opt);
+
+        const out = state.emailOutcome;
+        assert.equal(state.isEmailOpen, true, 'the window closed on the answer - the outcome is unread');
+        assert.ok(engine.isOverlayOpen('email-modal'), 'the overlay went with the answer');
+        assert.equal(out?.index, state.email.opts.indexOf(opt), 'the outcome does not say which reply was sent');
+        assert.equal(out.expired, false);
+        // The pills show what the bars moved, not what the data says.
+        assert.equal(out.b, state.cr - crBefore, 'the radar pill disagrees with the bar');
+        assert.equal(out.a, state.al - alBefore, 'the aggro pill disagrees with the bar');
+        assert.equal(out.next, opt.nextEmail);
+        assert.equal(state.emailChainTimer, null, 'the follow-up was queued before the outcome was read');
+        assert.equal(finished, 0, 'the day ended over the unread outcome');
+
+        // A second press on the same letter answers nothing twice.
+        const crAnswered = state.cr;
+        engine.resolveEmail(opt);
+        assert.equal(state.cr, crAnswered, 'an answered mail was answered again');
+
+        engine.closeEmail();
+        assert.equal(state.isEmailOpen, false, 'closeEmail left the window open');
+        assert.equal(state.emailOutcome, null, 'the outcome outlived its window');
+        assert.ok(!engine.isOverlayOpen('email-modal'), 'the overlay stayed');
+        assert.notEqual(state.emailChainTimer, null, 'the follow-up was lost on the way');
+        assert.equal(finished, 1, 'the ending the answer caused never came');
+        engine.clearDayTimers();
+
+        // A letter left to run out shows its penalty and closes by itself.
+        resetState();
+        await engine.triggerEmail('mail_cake_1');
+        const crIdle = state.cr;
+        engine.resolveEmail(null, true);
+        assert.equal(state.emailOutcome?.expired, true, 'the expired letter shows no outcome');
+        assert.equal(state.emailOutcome.index, -1);
+        assert.equal(state.emailOutcome.b, state.cr - crIdle, 'the penalty pill disagrees with the bar');
+        assert.notEqual(state.emailTimer, null, 'the expired letter waits for a press nobody is there to give');
+        clearTimeout(state.emailTimer);
+        engine.closeEmail(true);
+        assert.equal(state.isEmailOpen, false);
+        assert.notEqual(state.emailCooldownTimer, null, 'no cooldown after a letter without a follow-up');
+        engine.clearDayTimers();
+    } finally {
+        engine.finishGame = realFinish;
+        engine.clearDayTimers();
+        state.pendingEnd = null;
+    }
+
+    // A save taken while it stood open restores neither the flag nor the
+    // outcome: no window comes back, and the flag alone would stop every mail.
+    resetState();
+    engine.applyRestoredDay({ isEmailOpen: true, emailOutcome: { index: 0 } });
+    assert.equal(state.isEmailOpen, false, 'a restored day came back with a mail open and no window');
+    assert.equal(state.emailOutcome, null);
+
+    // The window and the keys. The outcome replaces #email-actions, which is
+    // where the number keys look, and its button is the confirm key's - ahead
+    // of the modals, because a warning the answer raised opens BEHIND the
+    // mail and is still rendered there.
+    const view = readFileSync(new URL('../src/components/EmailView.svelte', import.meta.url), 'utf-8');
+    const start = view.indexOf('{#if outcome}\n');
+    const replies = view.indexOf('{:else}\n    <!-- Keeps the id');
+    assert.ok(start > -1 && replies > start, 'the answered state is gone from EmailView');
+    assert.ok(view.indexOf('<div id="email-actions"') > replies, 'the replies stand beside the outcome, not instead of it');
+    const answered = view.slice(start, replies);
+    assert.match(answered, /data-continue[\s\S]{0,120}?onclick=\{\(\) => engine\.closeEmail\(\)\}/,
+        'the outcome has no continue button');
+    assert.ok(!answered.includes('id="email-actions"'), 'the number keys would press the outcome');
+    assert.match(answered, /<ResultPills /, 'the outcome shows no values');
+
+    const keys = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
+    const confirm = keys.indexOf("document.querySelector('#email-modal button[data-continue]')");
+    assert.ok(confirm > -1, 'the confirm key does not close an answered mail');
+    assert.ok(confirm < keys.indexOf('// B: modals'), 'the confirm key presses a warning through the mail');
+    assert.match(keys, /if \(isVisible\('email-modal'\) && engine\.state\.emailOutcome\) \{ engine\.closeEmail\(\); return; \}\s*if \(engine\.isStartupOverlayOpen\(\)/,
+        'Escape does not close an answered mail, or the unanswered one closes too');
+});
+
 await ok('Toast and item dialog carry identities, not words', () => {
     // The toast: both fields are recipes now, like the log line written four
     // lines above them in the same function. Asserted on the source because
@@ -3784,8 +3882,10 @@ await ok('Mails and items are drawn on the day curve', async () => {
     assert.equal(state.statHistory.length, beforeMail + 1, 'the mail left no point behind');
 
     // The TIMED-OUT letter too - the branch the first pass missed, and the
-    // laziest radar source of all.
+    // laziest radar source of all. A fresh letter is an unanswered one, as
+    // triggerEmail() makes it: the first is still on screen with its outcome.
     state.isEmailOpen = true;
+    state.emailOutcome = null;
     state.email = { id: 'probe2', opts: [] };
     const beforeTimeout = state.statHistory.length;
     engine.resolveEmail(null, true);

@@ -575,6 +575,7 @@ export const en = {
     'event.useExcuse':             'Use an excuse ({left} left)',
 
     'email.delete':                'Delete',
+    'email.expired':               'No reply. The time ran out.',
 
     'item.notFound':               'Not found yet.',
     'item.noInfo':                 '"No further information."',

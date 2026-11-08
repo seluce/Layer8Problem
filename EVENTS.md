@@ -832,8 +832,11 @@ Three conventions:
 - Follow-up mails run through `nextEmail: "mail_x_2"` rather than through story
   flags. The follow-up mail gets `linked: true` — then it is never delivered at
   random, only through the chain.
-- The result text `r` ends up in the log, with "Re: " in front of it for a mail
-  that was answered. It therefore reads best as a terse line, not as a paragraph.
+- The result text `r` stands in the mail window under the reply that was sent,
+  with the values that moved beneath it, until the player presses Continue
+  (since 7.1). It also goes into the log, with "Re: " in front of it. It reads
+  best as a few sentences rather than a paragraph: on a phone the window has
+  little room.
 
 On rhythm: mails only arrive after an action (server room, coffee, errand, call),
 at the earliest 25 game minutes after the last one, and never during a boss fight
