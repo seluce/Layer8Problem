@@ -29,7 +29,7 @@ export const voice = {
     // back while another still stands, and whose line ends with a window.
     lineOwner: null,
     lineOnDemand: false,    // started by the button: the switch does not apply
-    lineKind: null,         // events / morning / valves / halgerd / sample
+    lineKind: null,         // events / emergencies / mails / morning / valves / halgerd / sample
 
     // A terminal line that arrived while an uninvited window stood over the
     // terminal - see narrate(). Spoken when the last of them closes.
@@ -39,6 +39,11 @@ export const voice = {
     // A line paused, or held back before it started, because the tab is not
     // being looked at - see syncNarrationToVisibility().
     pausedByTab: false,
+
+    // The line an answered mail's voice took the element from, and whether
+    // the line now running is that voice - see narrateOverPause().
+    stashedLine: null,
+    overPause: false,
 
     /** Built on first use; a player with the narrator off never makes one. */
     _element: function() {
@@ -194,6 +199,81 @@ export const voice = {
     },
 
     /**
+     * Reads a window's own text WITHOUT ending the line the window paused.
+     *
+     * narrateWindow() hushes first, and for H.A.L.G.E.R.D. and the valves that
+     * is right: they end the scene they cover. The answered mail (7.1) does
+     * not - a mail only PAUSES the terminal (see pauseNarration), and the
+     * scene it dropped into is still owed when it closes. Hushing here threw
+     * that away, the very fault the pause was built to cure: 10.49 seconds of
+     * a coffee scene lost to a letter.
+     *
+     * There is one element, so the paused line cannot simply wait in it. It
+     * is put aside - which file, where it stood, whose it was - and
+     * giveBackLine() puts it back when the window goes, paused where it was,
+     * for resumeNarration() to pick up as if it had never left.
+     *
+     * The gate is asked FIRST: with the kind switched off nothing is put
+     * aside, and the paused line stays in the element as it always did.
+     */
+    narrateOverPause: function(text, kind) {
+        if (!text || !this._mayRead(kind, false)) return;
+        const el = this.narrator;
+        // Written every time, null when nothing was paused: a line put aside
+        // for an earlier mail must never come back with a later one.
+        this.stashedLine = (this.interrupted && el?.src)
+            ? { src: el.src, time: el.currentTime, owner: this.lineOwner,
+                kind: this.lineKind, onDemand: this.lineOnDemand }
+            : null;
+        this.interrupted = false;
+        this.overPause = true;
+        this._speak(text, false, 'window', kind);
+    },
+
+    /**
+     * Ends the window's own line and returns the one it borrowed the element
+     * from. Called by closeEmail() BEFORE the window goes, so that the resume
+     * hideOverlay() triggers finds the old line where the pause left it. A
+     * screen held behind the window still wins over it there (heldLine), the
+     * way it wins over any paused line.
+     *
+     * Setting currentTime before the file has loaded is allowed: it becomes
+     * the position playback starts from. The listener is for an engine that
+     * does not keep it.
+     */
+    giveBackLine: function() {
+        if (!this.overPause) return;
+        this.overPause = false;
+        const el = this.narrator;
+        if (el && !el.paused) { el.pause(); el.currentTime = 0; }
+        this._done();
+        const s = this.stashedLine;
+        this.stashedLine = null;
+        if (!s || !el) return;
+        el.src = s.src;
+        el.currentTime = s.time;
+        if (!(el.readyState >= 1)) {
+            el.addEventListener?.('loadedmetadata', () => { if (el.src === s.src) el.currentTime = s.time; }, { once: true });
+        }
+        this.lineOwner = s.owner;
+        this.lineKind = s.kind;
+        this.lineOnDemand = s.onDemand;
+        this.interrupted = true;
+    },
+
+    /**
+     * Whether a line of this kind may be read. The button (`onDemand`) goes
+     * past the switch and the kinds - see replayNarration(); the VOLUME
+     * decides either way, since zero is a request for silence.
+     */
+    _mayRead: function(kind, onDemand) {
+        if (!onDemand && !this.state.narrationEnabled) return false;
+        // The settings' sample always plays - it is what the slider sounds like.
+        if (!onDemand && kind !== 'sample' && !this.kindAllowed(kind)) return false;
+        return this.state.narrationVolume > 0;
+    },
+
+    /**
      * Plays the recording of `text`, if there is one. No questions about what
      * is on screen - see the two callers above for those.
      *
@@ -204,18 +284,19 @@ export const voice = {
     _speak: function(text, onDemand = false, owner = 'terminal', kind = 'events') {
         if (!text) return;
         // `onDemand` is the button, and it is the one caller allowed past the
-        // switch - see replayNarration() for why. The VOLUME still decides
-        // either way: zero is a request for silence, not a preference about
-        // automatic reading.
-        if (!onDemand && !this.state.narrationEnabled) return;
-        // And past the kinds, for the same reason: switching off the morning
-        // screen means "do not read it to me", not "never let me hear it".
-        // The settings' sample always plays - it is what the slider sounds like.
-        if (!onDemand && kind !== 'sample' && !this.kindAllowed(kind)) return;
-        if (this.state.narrationVolume <= 0) return;
+        // switch - see replayNarration() for why - and past the kinds, for the
+        // same reason: switching off the morning screen means "do not read it
+        // to me", not "never let me hear it". The VOLUME still decides either
+        // way: zero is a request for silence, not a preference.
+        if (!this._mayRead(kind, onDemand)) return;
 
         const el = this._element();
         el.src = `audio/${language()}/${voiceHash(text)}.opus`;
+        // From its first word. A position set on a line that never loaded -
+        // the scene the mail gave back, paused again by a warning before its
+        // file arrived - is kept by the browser as the start of whatever loads
+        // NEXT: the warning's voice began 1.94 s in. Found in the preview (7.1).
+        el.currentTime = 0;
         this.lineOwner = owner;
         this.lineOnDemand = onDemand;
         this.lineKind = kind;
@@ -237,7 +318,22 @@ export const voice = {
 
         this._setSpeaking(true);
         this.duckMusic(true, 'narration');
-        el.play().catch(() => this._done());    // no gesture yet, or no file
+        this._play(el);
+    },
+
+    /**
+     * Starts the element. A refusal ends the line - no gesture yet, or no
+     * file - but only while the element still holds THAT line.
+     *
+     * play() answers later than it is asked. A line cut short before its
+     * promise settled - a scene given back by the mail and paused a moment
+     * later by the warning the answer earned - rejects after the next line
+     * has started, and its _done() then took the next line's flag: the music
+     * came back up under the warning's voice. Found in the preview (7.1).
+     */
+    _play: function(el) {
+        const src = el.src;
+        el.play().catch(() => { if (el.src === src) this._done(); });
     },
 
     /** Plays the element from where it stands. The one place a held-back line starts. */
@@ -248,7 +344,7 @@ export const voice = {
         if (this.state.narrationVolume <= 0) return;
         this._setSpeaking(true);
         this.duckMusic(true, 'narration');
-        el.play().catch(() => this._done());
+        this._play(el);
     },
 
     /**
@@ -325,6 +421,8 @@ export const voice = {
         this.heldLine = null;
         this.heldKind = null;
         this.pausedByTab = false;
+        this.stashedLine = null;
+        this.overPause = false;
         this._done();
     },
 

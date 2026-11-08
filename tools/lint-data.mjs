@@ -1073,6 +1073,15 @@ for (const ev of DB.emails) {
       for (const [k, v] of Object.entries(obj)) if (!NOT_PROSE.has(k)) walk(v, where);
   };
   for (const p of POOLS) for (const ev of DB[p]) if (ev.kind !== 'phone') walk(ev, `${p}/${ev.id}`);
+  // A mail's outcome is the narrator's too since 7.1 - the window shows it
+  // once the mail is answered and it is read aloud. The letter around it is
+  // the sender typing and keeps its emoji.
+  for (const mail of DB.emails ?? []) {
+    (mail.opts ?? []).forEach((opt, i) => {
+      const hit = typeof opt.r === 'string' && opt.r.match(PICTURE);
+      if (hit) err(`[emails/${mail.id}] emoji ${hit[0]} in the outcome of reply ${i + 1} - the narrator reads it; describe it instead ("${opt.r.slice(0, 40)}…")`);
+    });
+  }
 }
 
 /* ---------- 9) Unknown fields ---------- */

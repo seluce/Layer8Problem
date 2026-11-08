@@ -21,7 +21,7 @@
  */
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { collectEntries, TERMINAL } from './voice-text.mjs';
+import { collectEntries, TERMINAL, MAIL_POOL } from './voice-text.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const args = process.argv.slice(2);
@@ -64,7 +64,7 @@ const gone = [...oldBy.keys()].filter(k => !seen.has(k));
 const chars = entries.reduce((n, e) => n + e.chars, 0);
 const todo = fresh.length + changed.length;
 
-console.log(`\nVoice manifest (${LANG}) - ${TERMINAL.length} terminal pools`);
+console.log(`\nVoice manifest (${LANG}) - ${TERMINAL.length} terminal pools and the ${MAIL_POOL} outcomes`);
 console.log(`  ${entries.length} pieces, ${chars.toLocaleString('de-DE')} characters to speak`);
 console.log(`  ${(chars / 900 / 60).toFixed(1)} h at 900 characters a minute\n`);
 if (old) {

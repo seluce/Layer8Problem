@@ -289,8 +289,9 @@ document.addEventListener('keydown', (event) => {
         }
         
         // A2: an answered mail (7.1). Before the modals, because it stands
-        //     above them: a warning that the answer triggered opens BEHIND the
-        //     mail, still rendered, and its button would be pressed through it.
+        //     above them: a mail drops on its timer onto a notice that is
+        //     still open (the ticket jam the same click raised), and that
+        //     notice's button, still rendered, would be pressed through it.
         const mailCont = document.querySelector('#email-modal button[data-continue]');
         if (mailCont && mailCont.offsetParent !== null) { press(mailCont); return; }
 

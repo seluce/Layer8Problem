@@ -837,6 +837,10 @@ Three conventions:
   (since 7.1). It also goes into the log, with "Re: " in front of it. It reads
   best as a few sentences rather than a paragraph: on a phone the window has
   little room.
+- The narrator reads `r` aloud, like a result in the terminal - it is his
+  prose, where the letter is a character's. So `r` follows the narration rules
+  (no emoji, no placeholders), and a rewritten one falls silent until the next
+  render. Sender, subject and body are never read.
 
 On rhythm: mails only arrive after an action (server room, coffee, errand, call),
 at the earliest 25 game minutes after the last one, and never during a boss fight

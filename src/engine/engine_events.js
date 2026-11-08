@@ -697,6 +697,13 @@ export const events = {
 
         this.state.emailOutcome = outcome;
 
+        // The outcome is read like a result in the terminal (7.1) - the
+        // narrator's prose, where the letter above it is a character's and
+        // stays for reading. The exact string the window shows, so the
+        // checksum finds its recording. Over the paused scene, not instead
+        // of it: closeEmail() gives that line back.
+        if (opt?.r && !/^CMD:/.test(opt.r)) this.narrateOverPause(opt.r, 'mails');
+
         // A letter that ran out has nothing to read beyond the penalty, and
         // the player was not there to answer it - it closes by itself. The
         // mail's own timer field, so every path that kills the countdown
@@ -733,6 +740,9 @@ export const events = {
         if (this.state.emailTimer) clearTimeout(this.state.emailTimer);
         this.state.emailTimer = null;
 
+        // Its voice ends with it, and the scene it paused goes back in place
+        // for the resume that hideOverlay() is about to trigger.
+        this.giveBackLine();
         this.hideOverlay('email-modal');
         this.state.isEmailOpen = false;
         this.state.emailOutcome = null;
@@ -753,6 +763,10 @@ export const events = {
             }, 5000);
         }
 
+        // What the answer's own updateUI() held back: a notice, or the end of
+        // the day (see checkEndConditions). The window is gone by now, so a
+        // warning opens in front and reads its line to someone looking at it.
+        this.checkEndConditions();
         if (this.state.pendingEnd) this.finishGame();
     },
     
@@ -930,6 +944,7 @@ export const events = {
         if (emailModal) {
             this.hideOverlay(emailModal);
             this.state.isEmailOpen = false;
+            this.state.emailOutcome = null;
         }
         // ------------------------------------------
 		
@@ -1281,7 +1296,15 @@ export const events = {
         const id = this.state.email?.id;
         if (!id) return;
         const fresh = (DB.emails ?? []).find(m => m.id === id);
-        if (fresh) this.state.email = fresh;
+        if (!fresh) return;
+        this.state.email = fresh;
+        // An answered one is read again in the new language, like a result
+        // screen: the outcome is an index into the letter, so the sentence
+        // on screen IS the new tree's, and its checksum is the new recording.
+        // The switch has just hushed the old line (engine.js).
+        const out = this.state.emailOutcome;
+        const r = out && out.index > -1 ? fresh.opts?.[out.index]?.r : null;
+        if (r && !/^CMD:/.test(r)) this.narrateOverPause(r, 'mails');
     },
 
     /**

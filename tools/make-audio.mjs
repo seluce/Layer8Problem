@@ -45,7 +45,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync, renameSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { collectEntries, fileFor } from './voice-text.mjs';
+import { collectEntries, fileFor, oneCallPerText } from './voice-text.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const args = process.argv.slice(2);
@@ -302,7 +302,38 @@ const done = (e) => {
 let todo = entries.filter(e => !done(e));
 if (POOL) todo = todo.filter(e => e.key.startsWith(`${POOL}/`));
 if (KEY) todo = todo.filter(e => e.key.includes(KEY));
+
+// ONE TEXT, ONE CALL - see oneCallPerText. A twin of a text this run renders
+// is booked once its first is done; a text already rendered under another
+// key on an earlier run is booked without a call at all. Before --limit, so
+// the limit counts calls rather than keys.
+const onDisk = new Map();
+for (const r of Object.values(ledger)) {
+    if (r.model === MODEL && r.voice === VOICE && r.spk) onDisk.set(`${r.sha}|${r.spk}`, r);
+}
+const { calls, twins } = oneCallPerText(todo);
+const early = [];
+todo = calls.filter(e => {
+    const r = onDisk.get(`${e.sha}|${e.spk}`);
+    if (r && existsSync(`${OUT}/${fileFor(e)}.opus`)) { early.push([e, r]); return false; }
+    return true;
+});
 if (LIMIT) todo = todo.slice(0, LIMIT);
+
+/** Books every twin whose first is finished. Returns how many it booked. */
+let pendingTwins = twins;
+const bookTwins = () => {
+    let n = 0;
+    for (const [e, r] of early.splice(0)) { ledger[e.key] = { ...r, chars: e.chars }; n++; }
+    pendingTwins = pendingTwins.filter(([e, lead]) => {
+        const r = ledger[lead.key];
+        if (!r || r.sha !== lead.sha || r.spk !== lead.spk || r.model !== MODEL || r.voice !== VOICE) return true;
+        ledger[e.key] = { ...r, chars: e.chars };
+        n++;
+        return false;
+    });
+    return n;
+};
 
 const chars = todo.reduce((n, e) => n + e.chars, 0);
 const ctxChars = CONTEXT ? todo.reduce((n, e) => n + (openingFor(e.key)?.length ?? 0), 0) : 0;
@@ -314,6 +345,9 @@ console.log(`  model   ${MODEL}`);
 console.log(`  out     ${OUT.slice(ROOT.length)}`);
 if (KEY) console.log(`  only    keys containing "${KEY}"`);
 console.log(`  to do   ${todo.length} of ${entries.length} pieces, ${chars.toLocaleString('de-DE')} characters`);
+if (twins.length + early.length) {
+    console.log(`  twins   ${twins.length + early.length} more say a text already on this list or on disk - booked, not bought`);
+}
 if (trusted) console.log(`  ! ${trusted} finished pieces predate a field this tool checks and are taken on trust`);
 if (CONTEXT) console.log(`  context ${ctxChars.toLocaleString('de-DE')} characters as previous_text (billing unknown)`);
 // At the published pay-as-you-go rate, which is the dearest way to buy it:
@@ -321,7 +355,16 @@ if (CONTEXT) console.log(`  context ${ctxChars.toLocaleString('de-DE')} characte
 console.log(`  at most $${(chars / 1000 * rate).toFixed(2)} at the published rate`
           + (CONTEXT ? `, $${((chars + ctxChars) / 1000 * rate).toFixed(2)} if context is billed` : ''));
 
-if (!todo.length) { console.log('\n✅ Nothing to do.\n'); process.exit(0); }
+if (!todo.length) {
+    if (!DRY && (early.length || pendingTwins.length)) {
+        mkdirSync(MASTER, { recursive: true });
+        const n = bookTwins();
+        saveLedger();
+        if (n) console.log(`\n  ${n} twins booked.`);
+    }
+    console.log('\n✅ Nothing to do.\n');
+    process.exit(0);
+}
 if (DRY) { console.log('\n  (dry run - nothing sent)\n'); process.exit(0); }
 
 // ------------------------------------------------------------- the voice check
@@ -463,12 +506,15 @@ async function worker() {
 try {
     await Promise.all(Array.from({ length: JOBS }, worker));
 } catch (err) {
+    bookTwins();
     saveLedger();
     console.error(`\n✗ stopped: ${err.message}`);
     console.error('  Everything finished so far is in the ledger. Run again to continue.\n');
     process.exit(1);
 }
+const booked = bookTwins();
 saveLedger();
+if (booked) console.log(`  ${booked} twins booked without a call`);
 
 // ----------------------------------------------------------------- the report
 

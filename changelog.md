@@ -1,6 +1,6 @@
-[7.1.0] - 2026-11-07
+[7.1.0] - 2026-11-08
 
-A new logo, a leaderboard for the working day, emergencies that wait for the narrator, and the day's log at the end of it.
+Leaderboards for the working day, the knowledge book as a notebook in Miller's hand, mails that show what came of your reply, and emergencies that wait for the narrator.
 
 Look:
 * A new logo: seven network layers and an eighth that does not quite sit right. It replaces the burning monitor on the start screen, in the browser tab and as the program icon.
@@ -14,6 +14,7 @@ Narrator:
 * An emergency read out loud no longer runs out while the narrator is still talking: its clock starts when the narrator has finished, or when you stop it. You can still answer earlier. Reading it again with V or the speaker button does not stop the clock a second time.
 * Whether emergencies are read out has a switch of its own in the narrator settings.
 * The narrator settings say less about themselves. Who made the voice is in the credits.
+* What came of your answer to a mail is read out too, with a switch of its own. The mail itself stays for reading.
 
 The day to day:
 * Once a scene has opened the intranet or the noticeboard, it stays in the side panel beside Inventory and Team and opens from there whenever you like. One you found before is there already.
@@ -31,6 +32,7 @@ Bug fixes:
 * Opening the knowledge book no longer marks every new note in a category as read at once - only the page you are looking at.
 * The company chronicle's heading is no longer cut off, and the motto under it shows.
 * Bug reports and feedback from the game arrive again. For a while they went nowhere, although the game said they had been sent.
+* When a mail's answer set off a warning in the middle of a scene, the music came back up under the narrator.
 
 Under the hood:
 * The Steam version runs on a newer Electron. Nothing in the game changes with it.

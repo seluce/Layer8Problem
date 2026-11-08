@@ -440,12 +440,13 @@ export function clampNarrationRate(v) {
  *
  *   events       the terminal's scenes and outcomes
  *   emergencies  an emergency's scene - while it is read, its clock waits
+ *   mails        what came of an answered mail (7.1), never the letter
  *   morning      the morning screen
  *   valves       the rage valve and the written warning
  *   halgerd      H.A.L.G.E.R.D.'s two first words and the tutorial
  */
 export const DEFAULT_NARRATION_KINDS = Object.freeze({
-    events: true, emergencies: true, morning: true, valves: true, halgerd: true
+    events: true, emergencies: true, mails: true, morning: true, valves: true, halgerd: true
 });
 
 /** A stored kinds object made safe: unknown keys dropped, missing ones filled. */
