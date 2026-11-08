@@ -164,6 +164,8 @@ export const de = {
     'set.narration.kind.emergencies.desc': 'Die Uhr läuft erst, wenn er fertig gelesen hat.',
     'set.narration.kind.mails.title': 'Mails',
     'set.narration.kind.mails.desc': 'Was aus deiner Antwort folgt, nicht die Mail selbst.',
+    'set.narration.kind.excuses.title': 'Ausreden',
+    'set.narration.kind.excuses.desc': 'Die Ausrede, mit der du dich aus einer Szene davonmachst.',
     'set.narration.kind.morning.title': 'Der Morgen danach',
     'set.narration.kind.morning.desc': 'Wie der Tag schon schlecht anfängt.',
     'set.narration.kind.valves.title': 'Ventil und Abmahnung',

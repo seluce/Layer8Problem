@@ -4769,6 +4769,43 @@ const voiceBench = () => {
     return { el, box, file, playing };
 };
 
+await ok('A mail that drops onto the excuse window gives the excuse its voice back', () => {
+    // The excuse (7.1) is the voice of a window the PLAYER opened, and such a
+    // window used to end everything owed on a resume - right for a scene
+    // underneath it, wrong for the window's own line. A mail drops on its
+    // timer onto whatever is open, so it paused the excuse, and closing the
+    // mail threw the rest of it away while the excuse stood there unfinished.
+    const { box, file, playing } = voiceBench();
+    const open = (id) => { (box._interruptions ??= new Set()).add(id); box.pauseNarration(); };
+    const close = (id) => { box._interruptions.delete(id); box.resumeNarration(); };
+    box.windowOverTerminal = () => true;          // the excuse window stands
+
+    box.narrateWindow('My lasagne lid is not pressed down.', 'excuses');
+    assert.equal(playing(), file('My lasagne lid is not pressed down.'), 'the excuse was not read');
+    open('email-modal');
+    assert.equal(playing(), null, 'the mail did not quieten the excuse');
+    close('email-modal');
+    assert.equal(playing(), file('My lasagne lid is not pressed down.'), 'the excuse lost its voice to a mail');
+
+    // A terminal line paused under a window the player opened stays ended:
+    // the screen behind is covered, which is what the old rule was for.
+    box.hushNarration();
+    box.windowOverTerminal = () => false;
+    box.narrate('A scene.');
+    box.windowOverTerminal = () => true;
+    open('email-modal');
+    close('email-modal');
+    assert.equal(playing(), null, 'a scene came back behind a window the player opened');
+
+    // And the excuses have their own switch.
+    box.hushNarration();
+    box.setNarrationKind('excuses', false);
+    box.narrateWindow('My lasagne lid is not pressed down.', 'excuses');
+    assert.equal(playing(), null, 'an excuse was read with its kind switched off');
+    box.setNarrationKind('excuses', true);
+    box.windowOverTerminal = () => false;
+});
+
 await ok('A notice holds the screen behind it and hands it over on closing', () => {
     // Found by the audit: the written warning and the rage valve open from
     // checkEndConditions() INSIDE the click that produces the result, and

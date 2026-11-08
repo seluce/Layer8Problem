@@ -15,6 +15,7 @@ Narrator:
 * Whether emergencies are read out has a switch of its own in the narrator settings.
 * The narrator settings say less about themselves. Who made the voice is in the credits.
 * What came of your answer to a mail is read out too, with a switch of its own. The mail itself stays for reading.
+* The excuses are read out too, with a switch of their own.
 
 The day to day:
 * Once a scene has opened the intranet or the noticeboard, it stays in the side panel beside Inventory and Team and opens from there whenever you like. One you found before is there already.

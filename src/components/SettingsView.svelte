@@ -121,10 +121,11 @@
     // i18n-uses: set.narration.kind.events.title, set.narration.kind.events.desc
     // i18n-uses: set.narration.kind.emergencies.title, set.narration.kind.emergencies.desc
     // i18n-uses: set.narration.kind.mails.title, set.narration.kind.mails.desc
+    // i18n-uses: set.narration.kind.excuses.title, set.narration.kind.excuses.desc
     // i18n-uses: set.narration.kind.morning.title, set.narration.kind.morning.desc
     // i18n-uses: set.narration.kind.valves.title, set.narration.kind.valves.desc
     // i18n-uses: set.narration.kind.halgerd.title, set.narration.kind.halgerd.desc
-    const KINDS = ['events', 'emergencies', 'mails', 'morning', 'valves', 'halgerd'];
+    const KINDS = ['events', 'emergencies', 'mails', 'excuses', 'morning', 'valves', 'halgerd'];
 
     // Icon, wording and wiring of every row, by tab and section, in the order
     // they appear.

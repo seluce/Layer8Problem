@@ -94,20 +94,26 @@ export const SPOKEN_KEYS = [
  * Lists of bare strings that are spoken, named by their path.
  *
  * The walk below collects a string only as the value of a `text`, `r` or
- * `txt` field, which is what a scene is made of. These two are not scenes but
- * lists - one line is drawn when a valve opens - so the walk steps over them,
- * and that is right for every other list in the trees. Named here instead,
- * like the interface keys: a list that lands here is bought.
+ * `txt` field, which is what a scene is made of. These are not scenes but
+ * lists - one line is drawn when a valve or the excuse window opens - so the
+ * walk steps over them, and that is right for every other list in the trees.
+ * Named here instead, like the interface keys: a list that lands here is bought.
  *
  * The rage valve and the written warning. What is SPOKEN is the drawn line on
  * its own (engine_core.openRageValve / issueChefWarning): the window frames it
  * with "(Aggro set to 50%)" and on hard with an extra sentence, and neither of
  * those has a recording - the first carries a number, the second would double
  * every piece for one flourish.
+ *
+ * The excuses (7.1), forty a language, one drawn when the player opens the
+ * excuse window (engine_ui.openExcuseModal). The window puts quotation marks
+ * around the line; those are markup in the component, not part of the string,
+ * so the line is spoken and hashed as it stands here.
  */
 export const SPOKEN_LISTS = [
     ['special', 'valveTexts', 'rage'],
     ['special', 'valveTexts', 'chef'],
+    ['excuses'],
 ];
 
 const DICTS = { de, en };

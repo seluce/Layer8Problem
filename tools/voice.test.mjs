@@ -19,7 +19,7 @@ const flag = (n, d) => { const h = args.find(a => a.startsWith(`--${n}=`)); retu
 const LANG = flag('lang', 'de');
 
 const { sha1Hex, voiceHash } = await import('../src/engine/sha1.js');
-const { collectEntries, TERMINAL, MAIL_POOL, SPOKEN_KEYS, fileFor, spokenForm, oneCallPerText } = await import('./voice-text.mjs');
+const { collectEntries, TERMINAL, MAIL_POOL, SPOKEN_KEYS, SPOKEN_LISTS, fileFor, spokenForm, oneCallPerText } = await import('./voice-text.mjs');
 
 let passed = 0;
 const ok = async (name, fn) => {
@@ -150,9 +150,14 @@ await ok('only the terminal pools, the mail outcomes and the named keys are coll
     assert.deepEqual(dupes, [], 'a pool is listed twice and would be collected twice');
     assert.ok(!TERMINAL.includes(MAIL_POOL), 'the mail pool is walked like a terminal pool - its letters would be bought');
     // `i18n` is the one prefix that is not a pool: the named interface strings
-    // of section 6, each one listed by hand.
+    // of section 6, each one listed by hand. A named list may live in a pool
+    // the terminal never shows - the excuses (7.1) - and then that list is
+    // all that is taken from it.
+    const listed = SPOKEN_LISTS.map(path => path.join('/'));
     const allowed = [...TERMINAL, MAIL_POOL, 'i18n'];
-    const stray = [...new Set(entries.map(e => e.key.split('/')[0]))].filter(p => !allowed.includes(p));
+    const stray = [...new Set(entries
+        .filter(e => !listed.some(l => e.key.startsWith(`${l}/`)))
+        .map(e => e.key.split('/')[0]))].filter(p => !allowed.includes(p));
     assert.deepEqual(stray, [], 'a piece was collected from a pool the terminal never shows');
 
     // Of a mail, the outcome alone: the sender, the subject and the body are
@@ -484,6 +489,36 @@ await ok('the rage valve and the written warning read their line', () => {
         assert.match(b, /this\.showModal\([\s\S]*?this\.narrateWindow\(line, 'valves'\)/,
             `${fn} does not speak its line as a valve, or speaks it before its window is up`);
     }
+});
+
+// --- 8c. The excuse window reads its excuse (7.1) ---------------------------
+//
+// Forty lines a language, one drawn per scene. Collected from the list as it
+// stands, spoken from the recipe the window shows: the same string, or the
+// file is bought and never found.
+await ok('the excuse window reads its excuse and stops when it closes', async () => {
+    const { DB } = await import('../src/data.js');
+    const got = entries.filter(e => e.key.startsWith('excuses/'));
+    assert.ok(DB.excuses?.length, 'the excuse pool is not loaded');
+    assert.deepEqual(got.map(e => e.src), DB.excuses,
+        `the collected excuses are not the ${DB.excuses.length} lines as written`);
+
+    const ui = code('engine/engine_ui.js');
+    const body = (fn) => {
+        const start = ui.indexOf(`${fn}: function`);
+        assert.ok(start >= 0, `${fn} is gone`);
+        return ui.slice(start, ui.indexOf('\n    },', start));
+    };
+    const open = body('openExcuseModal');
+    // As an excuse, after its window is up: narrateWindow hushes what is
+    // running, and before showOverlay the hush there would cut its own line.
+    assert.match(open, /this\.showOverlay\(modal\);[\s\S]*?renderRecipe\(this\.state\.currentExcuse\)[\s\S]*?this\.narrateWindow\(line, 'excuses'\)/,
+        'the excuse is not spoken as an excuse, or before its window is up');
+    // narrate() refuses anything while a window stands over the terminal, and
+    // this window is one of them.
+    assert.ok(!/this\.narrate\(/.test(open), 'the excuse goes through the terminal door and is never heard');
+    assert.match(body('closeExcuseModal'), /this\.lineKind === 'excuses'\) this\.hushNarration\(\);\s*this\.hideOverlay\(modal\);/,
+        'closing the excuse window leaves its voice running');
 });
 
 // --- 9. A language switch on a result screen --------------------------------
