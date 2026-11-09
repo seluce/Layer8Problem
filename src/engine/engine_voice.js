@@ -1,6 +1,8 @@
 import { KEYS } from './keys.js';
 import { DEFAULT_NARRATION_KINDS, clampNarrationRate } from './engine_state.svelte.js';
 import { voiceHash } from './sha1.js';
+import { chapterNarration } from './spoken.js';
+import { DB } from '../data.js';
 import { language, t } from '../i18n/i18n.svelte.js';
 
 /**
@@ -29,7 +31,7 @@ export const voice = {
     // back while another still stands, and whose line ends with a window.
     lineOwner: null,
     lineOnDemand: false,    // started by the button: the switch does not apply
-    lineKind: null,         // events / emergencies / mails / excuses / morning / valves / halgerd / sample
+    lineKind: null,         // a kind (DEFAULT_NARRATION_KINDS), sample, or chronicle
 
     // A terminal line that arrived while an uninvited window stood over the
     // terminal - see narrate(). Spoken when the last of them closes.
@@ -44,6 +46,10 @@ export const voice = {
     // the line now running is that voice - see narrateOverPause().
     stashedLine: null,
     overPause: false,
+
+    // The chapter the book's button asked for, handed to _speak() - see
+    // readChapter() and state.narratingChapter.
+    chapterAsked: null,
 
     /** Built on first use; a player with the narrator off never makes one. */
     _element: function() {
@@ -300,6 +306,7 @@ export const voice = {
         this.lineOwner = owner;
         this.lineOnDemand = onDemand;
         this.lineKind = kind;
+        this.state.narratingChapter = kind === 'chronicle' ? (this.chapterAsked ?? null) : null;
         // Only the reading that arrived with the emergency holds its clock:
         // the button and V come through here as onDemand, so asking for the
         // scene again cannot stop the clock a second time. Released by
@@ -397,6 +404,26 @@ export const voice = {
         try { localStorage.setItem(KEYS.narrationKinds, JSON.stringify(this.state.narrationKinds)); }
         catch { /* no storage: the choice lasts the session */ }
         if (!on && this.speaking && this.lineKind === kind && !this.lineOnDemand) this.hushNarration();
+    },
+
+    /**
+     * The button beside a chapter of the chronicle (7.1): read it, or stop it.
+     *
+     * Asked for, like the read-aloud button, so past the master switch and the
+     * kinds - a book is read when somebody opens a chapter, never on its own -
+     * and the volume still decides, which is why LoreView shows the button
+     * only above zero. The chapter is the window's own text, the book standing
+     * over the terminal, and it ends with the book: closeLoreModal().
+     */
+    readChapter: function(index) {
+        const reading = this.speaking && this.lineKind === 'chronicle'
+            && this.state.narratingChapter === index;
+        this.hushNarration();
+        if (reading) return;
+        const text = chapterNarration(DB.lore?.chapters?.[index]);
+        if (!text) return;
+        this.chapterAsked = index;
+        this._speak(text, true, 'window', 'chronicle');
     },
 
     canReplayNarration: function() {

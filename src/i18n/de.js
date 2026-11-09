@@ -166,6 +166,8 @@ export const de = {
     'set.narration.kind.mails.desc': 'Was aus deiner Antwort folgt, nicht die Mail selbst.',
     'set.narration.kind.excuses.title': 'Ausreden',
     'set.narration.kind.excuses.desc': 'Die Ausrede, mit der du dich aus einer Szene davonmachst.',
+    'set.narration.kind.endings.title': 'Feierabend und Ende',
+    'set.narration.kind.endings.desc': 'Die Schlusszeile, wenn der Tag oder die Woche endet.',
     'set.narration.kind.morning.title': 'Der Morgen danach',
     'set.narration.kind.morning.desc': 'Wie der Tag schon schlecht anfängt.',
     'set.narration.kind.valves.title': 'Ventil und Abmahnung',

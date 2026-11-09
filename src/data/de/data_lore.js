@@ -26,40 +26,40 @@ export const lore = {
             year: "1899",
             title: "Der Baron und die Dampf-Bürokratie",
             paragraphs: [
-                "Baron Wilhelm von Gier gründete GlobalCorp ursprünglich im Sauerland als <strong>\\\"Kaiserliche Manufaktur für Formulare & Selbstzweck\\\"</strong>. Seine Vision war revolutionär: Er wollte Probleme verkaufen, für die nur er die Lösung hatte.",
-                "Sein erstes Patent war der <em>\\\"Endlos-Stempelautomat\\\"</em>, eine dampfbetriebene Maschine, die Anträge gleichzeitig genehmigte, ablehnte und schredderte. Das erzeugte maximalen Umsatz bei minimalem Ergebnis. Ein Geschäftsmodell war geboren."
+                "Baron Wilhelm von Gier gründete GlobalCorp ursprünglich im Sauerland als <strong>\"Kaiserliche Manufaktur für Formulare & Selbstzweck\"</strong>. Seine Vision war revolutionär: Er wollte Probleme verkaufen, für die nur er die Lösung hatte.",
+                "Sein erstes Patent war der <em>\"Endlos-Stempelautomat\"</em>, eine dampfbetriebene Maschine, die Anträge gleichzeitig genehmigte, ablehnte und schredderte. Das erzeugte maximalen Umsatz bei minimalem Ergebnis. Ein Geschäftsmodell war geboren."
             ]
         },
         {
             year: "1955",
             title: "Das Beton-Zeitalter",
             paragraphs: [
-                "Im Wirtschaftswunder erkannte GlobalCorp, dass glückliche Mitarbeiter unproduktiv sind (weil sie zu viel reden). Die Lösung war die Erfindung des <strong>Grautons \\\"RAL 7035\\\"</strong>.",
-                "Das Management führte das revolutionäre Konzept des \\\"Open Space Warzones\\\" ein: Großraumbüros ohne Schallschutz, in denen das Tippen des Nachbarn den eigenen Willen bricht. Zudem wurde Kaffee als offizielles Grundnahrungsmittel eingeführt – nicht um wach zu bleiben, sondern um das Zittern der Hände als \\\"dynamische Energie\\\" zu verkaufen."
+                "Im Wirtschaftswunder erkannte GlobalCorp, dass glückliche Mitarbeiter unproduktiv sind (weil sie zu viel reden). Die Lösung war die Erfindung des <strong>Grautons \"RAL 7035\"</strong>.",
+                "Das Management führte das revolutionäre Konzept des \"Open Space Warzones\" ein: Großraumbüros ohne Schallschutz, in denen das Tippen des Nachbarn den eigenen Willen bricht. Zudem wurde Kaffee als offizielles Grundnahrungsmittel eingeführt – nicht um wach zu bleiben, sondern um das Zittern der Hände als \"dynamische Energie\" zu verkaufen."
             ]
         },
         {
             year: "1982",
             title: "Die Fax-Revolution",
             paragraphs: [
-                "GlobalCorp vernetzte die Welt. Zumindest alle Teile der Welt, die ein piepsendes Modem besaßen. Das Management führte die \\\"Krawatten-Pflicht\\\" auch für Telefonate ein, da man glaubte, man könne \\\"Kompetenz durch die Leitung hören\\\".",
-                "In dieser Zeit entstand auch die legendäre Abteilung \\\"Human Resources\\\". Der Name war Programm: Menschen wurden endlich wie Ressourcen behandelt – abbaubar, verbrauchbar und leicht zu ersetzen."
+                "GlobalCorp vernetzte die Welt. Zumindest alle Teile der Welt, die ein piepsendes Modem besaßen. Das Management führte die \"Krawatten-Pflicht\" auch für Telefonate ein, da man glaubte, man könne \"Kompetenz durch die Leitung hören\".",
+                "In dieser Zeit entstand auch die legendäre Abteilung \"Human Resources\". Der Name war Programm: Menschen wurden endlich wie Ressourcen behandelt – abbaubar, verbrauchbar und leicht zu ersetzen."
             ]
         },
         {
             year: "1999",
             title: "Das Internet-Missverständnis",
             paragraphs: [
-                "Dr. Wichtig Sr. kaufte für 500 Millionen Mark \\\"das Internet\\\". Er erhielt eine AOL-CD-ROM und ein 56k-Modem. Um das Gesicht zu wahren, wurde die \\\"Cloud\\\" erfunden.",
-                "<strong>Fakt ist:</strong> Unsere Cloud ist kein Netzwerk. Es ist ein stillgelegter Salzstollen in Bottrop, in dem \\\"Der Archivar\\\" (ein Mitarbeiter, der seit 1974 das Tageslicht nicht gesehen hat) wichtige E-Mails auf Mikrofilm abfotografiert. Das erklärt die Ladezeiten beim Login."
+                "Dr. Wichtig Sr. kaufte für 500 Millionen Mark \"das Internet\". Er erhielt eine AOL-CD-ROM und ein 56k-Modem. Um das Gesicht zu wahren, wurde die \"Cloud\" erfunden.",
+                "<strong>Fakt ist:</strong> Unsere Cloud ist kein Netzwerk. Es ist ein stillgelegter Salzstollen in Bottrop, in dem \"Der Archivar\" (ein Mitarbeiter, der seit 1974 das Tageslicht nicht gesehen hat) wichtige E-Mails auf Mikrofilm abfotografiert. Das erklärt die Ladezeiten beim Login."
             ]
         },
         {
             year: "2024",
             title: "Synergie & KI-Wahnsinn",
             paragraphs: [
-                "Heute sind wir \\\"Agil\\\". Das bedeutet: Wir rennen im Kreis, schreien \\\"Sprint!\\\" und hoffen, dass niemand merkt, dass wir kein Ziel haben.",
-                "Unsere neue KI <strong>\\\"H.A.L.G.E.R.D.\\\"</strong> überwacht nun jeden Mausklick. Sie berechnet in Echtzeit, ob Ihre Pinkelpause \\\"geschäftsrelevant\\\" war. Sollte Ihre Produktivität unter 120% fallen, wird Ihr Bürostuhl automatisch unbequemer eingestellt. Willkommen in der Zukunft."
+                "Heute sind wir \"Agil\". Das bedeutet: Wir rennen im Kreis, schreien \"Sprint!\" und hoffen, dass niemand merkt, dass wir kein Ziel haben.",
+                "Unsere neue KI <strong>\"H.A.L.G.E.R.D.\"</strong> überwacht nun jeden Mausklick. Sie berechnet in Echtzeit, ob Ihre Pinkelpause \"geschäftsrelevant\" war. Sollte Ihre Produktivität unter 120% fallen, wird Ihr Bürostuhl automatisch unbequemer eingestellt. Willkommen in der Zukunft."
             ]
         }
     ],

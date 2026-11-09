@@ -986,6 +986,14 @@ export const ui = {
         };
         const overlay = document.getElementById('modal-overlay');
         this.showOverlay(overlay);
+
+        // The closing line is read out (7.1), after the window is up: showing
+        // an end on modal-overlay hushes whatever was running. In a week a
+        // fail line arrives wrapped in a note naming the day (week.endsOn),
+        // and the voice reads the line inside alone - the frame carries a
+        // value, and a value cannot be recorded. The valves do the same.
+        const line = end.lead?.k === 'week.endsOn' ? end.lead.v?.base : end.lead;
+        if (line?.k && !line.v) this.narrateWindow(t(line.k), 'endings');
     },
     
     // --- EXCUSE SYSTEM ---
@@ -1108,6 +1116,8 @@ export const ui = {
     },
 
     closeLoreModal: function() {
+        // A chapter being read ends with the book (7.1, engine_voice.readChapter).
+        if (this.lineKind === 'chronicle') this.hushNarration();
         this.state.loreOpen = false;
         this.releaseScroll('lore');
     },
