@@ -1084,6 +1084,27 @@ for (const ev of DB.emails) {
   }
 }
 
+/* ---------- 8c) A backslash in front of a quotation mark ---------- */
+// Escaping one level too deep: `\\\"` in the source is a backslash AND a quote
+// in the string, and the screen shows both. The German chronicle carried it in
+// all ten paragraphs of the printed book, 30 times, from 6.0 to 7.1 - its
+// English twin was escaped once and read correctly, so nothing compared them.
+// No string in either tree needs a backslash before a quote; a path such as
+// C:\Windows has none, and stays allowed.
+{
+  const walk = (obj, where) => {
+    if (typeof obj === 'string') {
+      const at = obj.search(/\\["']/);
+      if (at >= 0) err(`[${where}] a backslash in front of a quotation mark is shown as it stands ("…${obj.slice(Math.max(0, at - 20), at + 20)}…")`);
+      return;
+    }
+    if (Array.isArray(obj)) return obj.forEach((v, i) => walk(v, `${where}/${i}`));
+    if (obj && typeof obj === 'object')
+      for (const [k, v] of Object.entries(obj)) walk(v, `${where}/${k}`);
+  };
+  for (const [name, pool] of Object.entries(DB)) walk(pool, name);
+}
+
 /* ---------- 9) Unknown fields ---------- */
 // The quietest bug in the data: a misspelt key parses fine, lints clean and is
 // silently dropped at runtime - `ep` instead of `rep` cost one sidequest its

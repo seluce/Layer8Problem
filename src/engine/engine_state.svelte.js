@@ -442,13 +442,14 @@ export function clampNarrationRate(v) {
  *   emergencies  an emergency's scene - while it is read, its clock waits
  *   mails        what came of an answered mail (7.1), never the letter
  *   excuses      the excuse offered when the player flees a scene (7.1)
+ *   endings      the closing line of the end screen (7.1)
  *   morning      the morning screen
  *   valves       the rage valve and the written warning
  *   halgerd      H.A.L.G.E.R.D.'s two first words and the tutorial
  */
 export const DEFAULT_NARRATION_KINDS = Object.freeze({
-    events: true, emergencies: true, mails: true, excuses: true, morning: true, valves: true,
-    halgerd: true
+    events: true, emergencies: true, mails: true, excuses: true, endings: true, morning: true,
+    valves: true, halgerd: true
 });
 
 /** A stored kinds object made safe: unknown keys dropped, missing ones filled. */
@@ -645,6 +646,10 @@ export const state = $state({
     // Neither is in the save: both are outside freshDay().
     narratable: null,
     narrating: false,
+    // Which chapter of the chronicle the running line reads, for the glyph
+    // on its button (7.1). Written by _speak() for every line, null for any
+    // that is not a chapter, so it can never outlive the reading.
+    narratingChapter: null,
     oneClickItem: localStorage.getItem(KEYS.oneClickItem) === 'true',
     fastChat: localStorage.getItem(KEYS.fastChat) === 'true',
     blindStats: localStorage.getItem(KEYS.blindStats) === 'true',

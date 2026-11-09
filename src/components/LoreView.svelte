@@ -69,10 +69,37 @@
                     </p>
                 </div>
 
-                {#each CHRONICLE as entry (entry.year)}
+                {#each CHRONICLE as entry, ci (entry.year)}
                     <div class="relative pl-8 border-l-4 border-[#8d6e63]">
                         <div class="absolute left-[-2.3rem] top-0 bg-[#8d6e63] text-[#fdf6e3] w-14 h-14 flex items-center justify-center rounded-full font-bold text-xl shadow-lg">{entry.year}</div>
-                        <h3 class="font-bold text-2xl mb-2 text-[#5d4037]">{entry.title}</h3>
+                        <div class="flex items-start justify-between gap-3 mb-2">
+                            <h3 class="min-w-0 font-bold text-2xl text-[#5d4037]">{entry.title}</h3>
+                            <!-- Read the chapter, or stop it (7.1). Asked for, so it
+                                 plays with the narrator switched off; not shown at
+                                 volume zero, where it could only stay silent. -->
+                            {#if state.narrationVolume > 0}
+                                <button type="button"
+                                        class={state.narrating && state.narratingChapter === ci
+                                            ? 'shrink-0 p-2 rounded-lg border transition-all bg-[#5d4037] border-[#5d4037] text-[#fdf6e3]'
+                                            : 'shrink-0 p-2 rounded-lg border transition-all bg-transparent border-[#8d6e63] text-[#5d4037] hover:bg-[#efe3c8]'}
+                                        title={state.narrating && state.narratingChapter === ci ? t('term.narrate.stop') : t('term.narrate.read')}
+                                        aria-label={state.narrating && state.narratingChapter === ci ? t('term.narrate.stop') : t('term.narrate.read')}
+                                        onclick={() => engine.readChapter(ci)}>
+                                    {#if state.narrating && state.narratingChapter === ci}
+                                        <svg viewBox="0 0 24 24" width="16" height="16" class="w-4 h-4" aria-hidden="true">
+                                            <rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor" />
+                                        </svg>
+                                    {:else}
+                                        <svg viewBox="0 0 24 24" width="16" height="16" class="w-4 h-4" aria-hidden="true"
+                                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor" />
+                                            <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+                                            <path d="M18.5 5.5a9 9 0 0 1 0 13" />
+                                        </svg>
+                                    {/if}
+                                </button>
+                            {/if}
+                        </div>
                         {#each entry.paragraphs as text, i}
                             <p class={i === 0 ? 'mb-4' : ''}>{@html text}</p>
                         {/each}

@@ -1,4 +1,4 @@
-[7.1.0] - 2026-11-08
+[7.1.0] - 2026-11-09
 
 Leaderboards for the working day, the knowledge book as a notebook in Miller's hand, mails that show what came of your reply, and emergencies that wait for the narrator.
 
@@ -16,6 +16,8 @@ Narrator:
 * The narrator settings say less about themselves. Who made the voice is in the credits.
 * What came of your answer to a mail is read out too, with a switch of its own. The mail itself stays for reading.
 * The excuses are read out too, with a switch of their own.
+* The closing line at the end of a day or a week is read out, with a switch of its own.
+* Each chapter of the company chronicle has a button that reads it out.
 
 The day to day:
 * Once a scene has opened the intranet or the noticeboard, it stays in the side panel beside Inventory and Team and opens from there whenever you like. One you found before is there already.
@@ -32,6 +34,7 @@ Bug fixes:
 * A day started from the picker no longer begins with the previous day's lines in the log.
 * Opening the knowledge book no longer marks every new note in a category as read at once - only the page you are looking at.
 * The company chronicle's heading is no longer cut off, and the motto under it shows.
+* The German company chronicle no longer shows a backslash in front of quotation marks.
 * Bug reports and feedback from the game arrive again. For a while they went nowhere, although the game said they had been sent.
 * When a mail's answer set off a warning in the middle of a scene, the music came back up under the narrator.
 

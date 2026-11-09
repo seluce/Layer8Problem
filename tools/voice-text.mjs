@@ -16,6 +16,7 @@
 import { createHash } from 'node:crypto';
 import { DB, ensure, loadCore, setLanguage, currentLanguage, POOL_NAMES } from '../src/data.js';
 import { de } from '../src/i18n/de.js';
+import { chapterNarration } from '../src/engine/spoken.js';
 import { en } from '../src/i18n/en.js';
 
 /**
@@ -59,7 +60,10 @@ const SPOKEN = new Set(['text', 'r', 'txt']);
  *     the talking. A player who switched the narrator on for the reading
  *     would otherwise meet a silent tutorial and a game that reads itself.
  *   - the two samples the settings play, so the narrator's sliders have a
- *     preview like the other two - one says how loud, the other how fast.
+ *     preview like the other two - one says how loud, the other how fast;
+ *   - the closing line of the end screen (7.1): the five endings and the
+ *     gala's two (engine_ui.showEnd). In a week a fail line arrives wrapped in
+ *     `week.endsOn`, which names the day; the line inside is what is spoken.
  *
  * Read in his own voice, not a machine's. Alexander already reads every one
  * of the game's three hundred characters; making H.A.L.G.E.R.D. the single
@@ -88,6 +92,14 @@ export const SPOKEN_KEYS = [
     'tutorial.step.inv.descDonut',
     'tutorial.step.team.desc',
     'tutorial.done.text',
+
+    'end.dayLead',
+    'end.weekLead',
+    'end.firedLead',
+    'end.ticketsLead',
+    'end.rageQuit',
+    'party.end.leadDay',
+    'party.end.leadWeek',
 ];
 
 /**
@@ -115,6 +127,16 @@ export const SPOKEN_LISTS = [
     ['special', 'valveTexts', 'chef'],
     ['excuses'],
 ];
+
+/**
+ * The chronicle's five printed chapters (7.1), one piece each - the book's
+ * button beside a chapter reads all of it (engine_voice.readChapter). Not a
+ * list of strings: a chapter is two paragraphs, put together by
+ * chapterNarration(), which the engine calls as well, so the checksum the
+ * book asks for is the one recorded here. The handwritten lines at the back
+ * stay silent - they carry numbers.
+ */
+export const CHRONICLE = ['lore', 'chapters'];
 
 const DICTS = { de, en };
 
@@ -192,13 +214,14 @@ const SPOKEN_AS = {
  * that is enforced rather than assumed. The emphasis tags are here for the
  * INTERFACE strings above, where `<b>` marks the number in a tutorial step.
  *
- * Adding them made not one rendered piece stale: no voiced string in either
- * tree contains a tag other than `<br>`, so a rule about `<b>` cannot change
- * what any of them sounds like. Measured, not assumed - and it is the `spk`
- * checksum below that measures it now, rather than somebody's judgement. The
- * checker refuses an unknown tag either way.
+ * A break is a space, emphasis is nothing: `<strong>"Selbstzweck"</strong>.`
+ * in the chronicle went out as `"Selbstzweck" .` while every tag was a space
+ * (7.1). Of the pieces rendered before, one German tutorial step changed by
+ * it - `<b>10 Tickets</b>,` - which the `spk` checksum names for a re-render.
+ * The checker refuses an unknown tag either way.
  */
 const KNOWN_TAGS = /<\/?(?:br|b|i|em|strong)\s*\/?>/gi;
+const BREAK_TAG = /<br\s*\/?>/gi;
 
 export function spokenForm(s, lang) {
     const own = SPOKEN_AS[lang];
@@ -206,7 +229,7 @@ export function spokenForm(s, lang) {
     // otherwise get the shared rules alone and silently buy German prose read
     // as German, which is the fault this argument exists for.
     if (!own) throw new Error(`spokenForm: no spoken-form rules for language "${lang}".`);
-    let out = s.replace(KNOWN_TAGS, ' ');
+    let out = s.replace(BREAK_TAG, ' ').replace(KNOWN_TAGS, '');
     for (const [from, to] of [...SPOKEN_AS.all, ...own]) out = out.replace(from, to);
     return out.replace(/\s+/g, ' ').trim();
 }
@@ -371,6 +394,22 @@ export async function collectEntries(lang) {
             entries.push({ key: [...path, String(i)].join('/'), src: v });
         });
     }
+
+    const chapters = CHRONICLE.reduce((node, k) => node?.[k], DB);
+    if (!Array.isArray(chapters) || !chapters.length) {
+        throw new Error(`The chronicle's chapters are missing or empty in ${lang}.`);
+    }
+    chapters.forEach((chapter, i) => {
+        const v = chapterNarration(chapter);
+        if (!v || !v.trim()) throw new Error(`Chronicle chapter ${i} has nothing to read.`);
+        if (v.includes('{')) throw new Error(`Chronicle chapter ${i} carries a placeholder.`);
+        // The book is emphasis through and through; anything past what
+        // spokenForm() drops would be read out as a tag.
+        for (const m of v.match(/<[^>]+>/g) ?? []) {
+            if (!new RegExp(`^${KNOWN_TAGS.source}$`, 'i').test(m)) unknownTags.set(m, (unknownTags.get(m) ?? 0) + 1);
+        }
+        entries.push({ key: [...CHRONICLE, String(i)].join('/'), src: v });
+    });
 
     // The named interface strings, under a prefix of their own so they can
     // never collide with a pool.

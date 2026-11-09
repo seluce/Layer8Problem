@@ -4806,6 +4806,49 @@ await ok('A mail that drops onto the excuse window gives the excuse its voice ba
     box.windowOverTerminal = () => false;
 });
 
+await ok('A chapter of the chronicle is read on its button and stopped on the second press', async () => {
+    // The book's button (7.1) is asked for, like the read-aloud button: it
+    // plays with the narrator switched off, and the glyph follows the chapter
+    // being read - by index, so a second press on another chapter changes
+    // the reading instead of stopping it.
+    const { chapterNarration } = await import('../src/engine/spoken.js');
+    await ensure('lore');
+    const { box, file, playing } = voiceBench();
+    box.windowOverTerminal = () => true;          // the book stands over the terminal
+    const chapter = (i) => file(chapterNarration(DB.lore.chapters[i]));
+    state.narrationEnabled = false;
+
+    box.readChapter(0);
+    assert.equal(playing(), chapter(0), 'the chapter was not read with the narrator switched off');
+    assert.equal(state.narratingChapter, 0, 'the book does not know which chapter is being read');
+    assert.equal(state.narrating, true, 'the glyph would not turn into a stop square');
+
+    box.readChapter(2);
+    assert.equal(playing(), chapter(2), 'a second chapter did not take over from the first');
+    assert.equal(state.narratingChapter, 2);
+
+    box.readChapter(2);
+    assert.equal(playing(), null, 'a second press on the same chapter did not stop it');
+    assert.equal(state.narrating, false, 'the stop square stayed after the reading ended');
+
+    // Any other line clears the mark, or the book would show a chapter as
+    // being read while an excuse plays.
+    box.readChapter(1);
+    state.narrationEnabled = true;
+    box.narrateWindow('My lasagne lid is not pressed down.', 'sample');
+    assert.equal(playing(), file('My lasagne lid is not pressed down.'));
+    assert.equal(state.narratingChapter, null, 'a chapter stayed marked under another line');
+
+    // Zero is silence, asked for or not.
+    box.hushNarration();
+    state.narrationVolume = 0;
+    box.readChapter(1);
+    assert.equal(playing(), null, 'a chapter was read at volume zero');
+    state.narrationVolume = 0.8;
+    state.narrationEnabled = true;
+    box.windowOverTerminal = () => false;
+});
+
 await ok('A notice holds the screen behind it and hands it over on closing', () => {
     // Found by the audit: the written warning and the rage valve open from
     // checkEndConditions() INSIDE the click that produces the result, and

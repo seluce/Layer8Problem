@@ -19,7 +19,7 @@ const flag = (n, d) => { const h = args.find(a => a.startsWith(`--${n}=`)); retu
 const LANG = flag('lang', 'de');
 
 const { sha1Hex, voiceHash } = await import('../src/engine/sha1.js');
-const { collectEntries, TERMINAL, MAIL_POOL, SPOKEN_KEYS, SPOKEN_LISTS, fileFor, spokenForm, oneCallPerText } = await import('./voice-text.mjs');
+const { collectEntries, TERMINAL, MAIL_POOL, SPOKEN_KEYS, SPOKEN_LISTS, CHRONICLE, fileFor, spokenForm, oneCallPerText } = await import('./voice-text.mjs');
 
 let passed = 0;
 const ok = async (name, fn) => {
@@ -153,7 +153,7 @@ await ok('only the terminal pools, the mail outcomes and the named keys are coll
     // of section 6, each one listed by hand. A named list may live in a pool
     // the terminal never shows - the excuses (7.1) - and then that list is
     // all that is taken from it.
-    const listed = SPOKEN_LISTS.map(path => path.join('/'));
+    const listed = [...SPOKEN_LISTS, CHRONICLE].map(path => path.join('/'));
     const allowed = [...TERMINAL, MAIL_POOL, 'i18n'];
     const stray = [...new Set(entries
         .filter(e => !listed.some(l => e.key.startsWith(`${l}/`)))
@@ -215,7 +215,7 @@ await ok(`the ${SPOKEN_KEYS.length} named interface keys are recorded and reacha
     // below. Comments do not count: every voiced key also stands in an
     // `i18n-uses:` line, so the raw source answers yes for a dead call.
     const live = code('engine/engine_voice.js') + code('engine/engine_events.js')
-               + code('tutorial.js') + code('engine/engine_ui.js');
+               + code('tutorial.js') + code('engine/engine_ui.js') + code('engine/engine_core.js');
     const orphans = SPOKEN_KEYS.filter(k => !live.includes(`'${k}'`));
     assert.deepEqual(orphans, [], 'recorded under a name the code no longer uses');
 
@@ -229,7 +229,8 @@ await ok(`the ${SPOKEN_KEYS.length} named interface keys are recorded and reacha
     assert.deepEqual(unrecorded, [], 'a window speaks a key that is never recorded');
 });
 
-// The wiring, one assertion per voice. Five call sites carry all sixteen keys,
+// The wiring, one assertion per voice. Five call sites carry the first sixteen
+// keys (the end screen's seven are held in 8e),
 // and each of them is a place where deleting one line costs a recording its
 // only way to be heard - at 0 errors and 0 warnings, because a window that
 // stays quiet looks exactly like a window with nothing recorded.
@@ -361,6 +362,16 @@ await ok(`"IT" is sent as the English letters in German and left alone elsewhere
         assert.equal(spokenForm('Ask IT. The IT department.', 'en'), 'Ask IT. The IT department.');
     }
     for (const e of written) assert.ok(!/Ei-Ti/.test(e.src), `${e.key} has the respelling in its PROSE`);
+});
+
+await ok('a break is sent as a space and emphasis as nothing', () => {
+    // Every tag was a space until the chronicle (7.1), and the chronicle sets
+    // its quoted names in <strong> right before the full stop - so the voice
+    // was sent `"Selbstzweck" .` with a pause in front of the stop.
+    assert.equal(spokenForm('Bis <b>16:30</b>, dann<br>Feierabend.', LANG), 'Bis 16:30, dann Feierabend.');
+    const marked = entries.filter(e => /<(?:b|i|em|strong)>/i.test(e.src));
+    assert.ok(marked.length >= 5, `expected the chapters and the tutorial steps, found ${marked.length}`);
+    for (const e of marked) assert.ok(!/\s[,.;:!?]/.test(e.spoken), `${e.key} sends a space in front of a stop`);
 });
 
 // --- 7b. The checksum over what is SENT -------------------------------------
@@ -519,6 +530,51 @@ await ok('the excuse window reads its excuse and stops when it closes', async ()
     assert.ok(!/this\.narrate\(/.test(open), 'the excuse goes through the terminal door and is never heard');
     assert.match(body('closeExcuseModal'), /this\.lineKind === 'excuses'\) this\.hushNarration\(\);\s*this\.hideOverlay\(modal\);/,
         'closing the excuse window leaves its voice running');
+});
+
+// --- 8d. The chronicle reads a chapter on its button (7.1) -------------------
+//
+// Two paragraphs a chapter, put together by one function on both sides - the
+// book asks for the checksum of what chapterNarration() returns, and the
+// collector records exactly that.
+await ok('the chronicle reads a chapter on its button and stops with the book', async () => {
+    const { DB } = await import('../src/data.js');
+    const { chapterNarration } = await import('../src/engine/spoken.js');
+    const got = entries.filter(e => e.key.startsWith(`${CHRONICLE.join('/')}/`));
+    assert.ok(DB.lore?.chapters?.length, 'the chronicle is not loaded');
+    assert.deepEqual(got.map(e => e.src), DB.lore.chapters.map(chapterNarration),
+        'the recorded chapters are not the chapters the book reads');
+
+    const voice = code('engine/engine_voice.js');
+    assert.match(voice, /readChapter: function\(index\)[\s\S]*?chapterNarration\(DB\.lore\?\.chapters\?\.\[index\]\)[\s\S]*?this\._speak\(text, true, 'window', 'chronicle'\)/,
+        'a chapter is not read from the chronicle, or not on demand, or not as the window\'s own line');
+    assert.match(markup('components/LoreView.svelte'), /onclick=\{\(\) => engine\.readChapter\(ci\)\}/,
+        'the book has no button that reads its chapter');
+    const ui = code('engine/engine_ui.js');
+    assert.match(ui, /closeLoreModal: function\(\) \{\s*if \(this\.lineKind === 'chronicle'\) this\.hushNarration\(\);/,
+        'closing the book leaves the chapter being read');
+});
+
+// --- 8e. The end screen reads its closing line (7.1) -------------------------
+//
+// Seven keys: the five endings and the gala's two. Every lead the end screen
+// can show has to be among them, or that ending stays silent at 0 errors.
+await ok('the end screen reads its closing line', () => {
+    const leads = [...(code('engine/engine_core.js') + code('engine/engine_events.js'))
+        .matchAll(/lead: (?:this\.weekFailLead\()?(?:isWeek \? )?\{ k: '([^']+)' \}(?: : \{ k: '([^']+)' \})?/g)]
+        .flatMap(m => [m[1], m[2]]).filter(Boolean);
+    assert.ok(leads.length >= 7, `expected the seven leads in the source, found ${leads.length}`);
+    const silent = leads.filter(k => !SPOKEN_KEYS.includes(k));
+    assert.deepEqual(silent, [], 'an ending shows a closing line nobody recorded');
+
+    const ui = code('engine/engine_ui.js');
+    const start = ui.indexOf('showEnd: function');
+    const body = ui.slice(start, ui.indexOf('\n    },', start));
+    assert.match(body, /this\.showOverlay\(overlay\);[\s\S]*?this\.narrateWindow\(t\(line\.k\), 'endings'\)/,
+        'the closing line is not spoken as an ending, or before its window is up');
+    // In a week the line arrives inside week.endsOn - the voice reads the line.
+    assert.match(body, /end\.lead\?\.k === 'week\.endsOn' \? end\.lead\.v\?\.base : end\.lead/,
+        'a week\'s fail line is not unwrapped, and its frame has no recording');
 });
 
 // --- 9. A language switch on a result screen --------------------------------
