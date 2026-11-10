@@ -58,7 +58,6 @@ export const de = {
     'import.hint':                 'Füge den Code ein, den du auf dem anderen Gerät kopiert hast.',
     'import.warning':              'Dein bisheriges Archiv wird ersetzt: Gegenstände, Erfolge, Statistiken und Ruf. Ein angefangener Arbeitstag oder eine laufende Woche werden dabei verworfen.',
     'import.confirm':              'Spielstand ersetzen',
-    'import.error':                'Fehler!',
 
     'excuse.title':                'Notfall-Ausrede erfinden',
     'excuse.subtitle':             'Der Klassiker unter den Notausgängen',

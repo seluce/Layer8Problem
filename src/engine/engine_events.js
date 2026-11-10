@@ -162,6 +162,20 @@ export const events = {
             this.state.emailPending = false;
             return;
         }
+
+        // A window the player opened stands over the terminal: the mail waits
+        // until it closes, the way an emergency's clock does (audit after
+        // 7.1). Dropped on top, it ran out on its timer while the player sat
+        // in the excuse or the menu, and what it led to landed UNDER that
+        // window - the written warning hidden and pressed away by Space, the
+        // end of the day beneath an excuse whose button then saved the
+        // finished day. It keeps its place (emailPending) and asks again on
+        // a timer every day restart clears. A notice is not such a window:
+        // a mail still drops onto that.
+        if (this.windowOverTerminal()) {
+            this.state.emailDelayTimer = setTimeout(() => this.triggerEmail(forcedId), this.MAIL_WAIT_MS);
+            return;
+        }
         // -------------------------------
 		
 		this.playAudio('email');
@@ -721,6 +735,9 @@ export const events = {
 
     /** How long an expired letter stays on screen with its penalty. */
     EMAIL_EXPIRED_MS: 2500,
+
+    /** How often a mail waiting for a window (triggerEmail) asks again. */
+    MAIL_WAIT_MS: 500,
 
     /**
      * Closes an answered mail: its continue button, the confirm key, Escape,

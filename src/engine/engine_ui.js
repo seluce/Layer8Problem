@@ -54,6 +54,39 @@ const HARD_RESET = {
 };
 const HARD_RESET_ICON = 'shrink-0 grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all';
 
+// The line under the button of the two code dialogs (export, import). It
+// stands EMPTY until there is something to say and is emptied again once it
+// has faded. Up to 7.1 it carried "Code copied!" from the start, hidden only
+// by its opacity, and on a phone a long press under the button selected the
+// invisible line - Copy then put "Code copied!" on the clipboard instead of
+// the code. role="status" in the markup has a screen reader announce it.
+const CODE_LINE = {
+    ok:  'text-xs text-center text-green-500 font-bold h-4 transition-opacity',
+    err: 'text-xs text-center text-red-500 font-bold h-4 transition-opacity',
+};
+const codeLineTimers = new WeakMap();
+
+// i18n-uses: export.copied, export.copyFailed, export.empty
+// i18n-uses: import.accepted, import.unreadable
+function sayCodeLine(el, key, tone, fadeAfter = 0) {
+    clearTimeout(codeLineTimers.get(el));
+    el.textContent = t(key);
+    el.className = CODE_LINE[tone];
+    el.style.opacity = '1';
+    if (!fadeAfter) return;
+    codeLineTimers.set(el, setTimeout(() => {
+        el.style.opacity = '0';
+        // after the 150 ms fade, so the words do not vanish mid-transition
+        codeLineTimers.set(el, setTimeout(() => { el.textContent = ''; }, 200));
+    }, fadeAfter));
+}
+
+function clearCodeLine(el) {
+    clearTimeout(codeLineTimers.get(el));
+    el.textContent = '';
+    el.style.opacity = '0';
+}
+
 /**
  * The two windows a scene finds and the side panel keeps (7.1).
  *
@@ -65,7 +98,7 @@ const HARD_RESET_ICON = 'shrink-0 grayscale opacity-80 group-hover:opacity-100 g
  * neither is about finding the window, and each has two more doors of its own.
  *
  * `option` and `count` are for backfillDoors() alone, which reads a find made
- * before 7.1 out of archive.seenOptions. They describe the scene as it stands;
+ * under 7.0 out of archive.seenOptions. They describe the scene as it stands;
  * week-flow.test holds them against both trees, so a rewrite of either scene
  * fails there instead of quietly losing the backfill.
  */
@@ -757,6 +790,16 @@ export const ui = {
         setTimeout(() => {
             if (el.classList.contains('hidden')) return;    // closed again already
             if (!playerHasActed) return;                    // see playerHasActed
+            // A window that drops UNINVITED onto a decision keeps the keyboard
+            // on itself (data-focus-self, the mail). Its first control is an
+            // answer: the ring sat on it 30 ms after the letter arrived, and
+            // Space pressed for the screen behind answered the letter. Tab
+            // still walks into the answers from here.
+            if (el.hasAttribute('data-focus-self')) {
+                el.setAttribute('tabindex', '-1');
+                el.focus();
+                return;
+            }
             const stops = this.focusablesIn(el);
             // The control the CONFIRM KEY would press, where the window names
             // one - otherwise the ring sits on one button while Space presses
@@ -860,8 +903,10 @@ export const ui = {
     /**
      * Closes the windows that belong to the working day, for finishGame().
      *
-     * A mail can drop over any of them on its two-second timer, and answering
-     * it near closing time ends the day from up there. Until 6.3 every one of
+     * A mail used to drop over any of them on its two-second timer, and
+     * answering it near closing time ended the day from up there; it waits
+     * for them since the audit after 7.1 (triggerEmail), but a day can end
+     * on another timer too, the phone's. Until 6.3 every one of
      * them outlived the day: the intranet stood over the next morning's
      * terminal, the noticeboard too - empty, because the new day had cleared
      * its notes - the vending machine with its take unspent, and the
@@ -874,6 +919,10 @@ export const ui = {
         if (this.state.loreOpen) this.closeLoreModal();
         if (this.state.vendingOpen) this.closeVending();
         if (this.isOverlayOpen('board-modal')) this.closeBoard();
+        // The excuse belongs to the scene, and the scene ends with the day.
+        // It stands ABOVE the end screen (10000 over 1500), and its button
+        // then spent an excuse and saved the finished day (audit after 7.1).
+        if (this.isOverlayOpen('excuse-modal')) this.closeExcuseModal();
     },
 
     /**
@@ -1178,9 +1227,12 @@ export const ui = {
     },
 
     /**
-     * A career that took a door before 7.1 has it in seenOptions already, and
+     * A career that took a door under 7.0 has it in seenOptions already, and
      * should not have to wait for the scene a second time. Runs on every load
      * and writes nothing that is there, so it needs no version of its own.
+     *
+     * Older finds are not in there: seenOptions has been written since 7.0.0,
+     * so a door taken in 6.x waits for its scene once more.
      */
     backfillDoors: function() {
         const taken = this.state.archive.seenOptions ?? {};
@@ -1642,7 +1694,7 @@ export const ui = {
             // reads whatever lands in the textarea - so this one is a label,
             // not a developer message.
             area.value = code || t('export.buildFailed');
-            msg.style.opacity = '0'; // Reset Message
+            clearCodeLine(msg);
 
             engine.showOverlay(modal);
         },
@@ -1654,9 +1706,8 @@ export const ui = {
             const area = document.getElementById('import-area');
             const msg = document.getElementById('import-msg');
 
-            area.value = ""; // Leeren
-            msg.style.opacity = '0'; 
-            msg.innerText = "";
+            area.value = "";
+            clearCodeLine(msg);
 
             engine.showOverlay(modal);
         },
@@ -1676,16 +1727,9 @@ export const ui = {
             area.select();
             area.setSelectionRange(0, 99999); 
 
-            navigator.clipboard.writeText(area.value).then(() => {
-                msg.innerText = t('export.copied');
-                msg.className = "text-xs text-green-500 font-bold transition-opacity";
-                msg.style.opacity = '1';
-                setTimeout(() => { msg.style.opacity = '0'; }, 2000);
-            }).catch(err => {
-                msg.innerText = t('export.copyFailed');
-                msg.className = "text-xs text-red-500 font-bold transition-opacity";
-                msg.style.opacity = '1';
-            });
+            navigator.clipboard.writeText(area.value)
+                .then(() => sayCodeLine(msg, 'export.copied', 'ok', 2000))
+                .catch(() => sayCodeLine(msg, 'export.copyFailed', 'err'));
         },
 
         // Import function (robust, and fixed)
@@ -1697,9 +1741,7 @@ export const ui = {
             let code = area.value.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
 
             if (!code) {
-                msg.innerText = t('export.empty');
-                msg.className = "text-xs text-red-500 font-bold transition-opacity";
-                msg.style.opacity = '1';
+                sayCodeLine(msg, 'export.empty', 'err');
                 return;
             }
 
@@ -1801,17 +1843,13 @@ export const ui = {
                 engine.state.archive = mergedArchive;
                 engine.syncRun(true);
 
-                msg.innerText = t('import.accepted');
-                msg.className = "text-xs text-green-500 font-bold transition-opacity";
-                msg.style.opacity = '1';
+                sayCodeLine(msg, 'import.accepted', 'ok');
 
                 setTimeout(() => location.reload(), 800);
 
             } catch (e) {
                 console.error(e);
-                msg.innerText = t('import.unreadable');
-                msg.className = "text-xs text-red-500 font-bold transition-opacity";
-                msg.style.opacity = '1';
+                sayCodeLine(msg, 'import.unreadable', 'err');
             }
         }
     },

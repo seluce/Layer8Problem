@@ -27,11 +27,11 @@ export const scores = {
      */
     submitWeekScore: function(won, cause) {
         if (!platform.isDesktop) return;
-        const s = this.state, w = s.week;
+        const s = this.state, w = s.week, f = this.closingDay();
         this.sendScore('week', w.level, weekEntry({
             level: w.level, won, cause: won && cause !== 'gala' ? 'time' : cause,
-            day: w.dayIndex, time: s.time,
-            tickets: s.tickets, l: s.fl, a: s.al, b: s.cr,
+            day: w.dayIndex, time: f.time,
+            tickets: f.tickets, l: f.fl, a: f.al, b: f.cr,
             valve: s.rageWarningReceived, warning: s.chefWarningReceived,
             log: w.weekLog,
         }));
@@ -44,13 +44,24 @@ export const scores = {
      */
     submitDayScore: function(won, cause) {
         if (!platform.isDesktop || this.state.week.active) return;
-        const s = this.state, level = this.difficultyKey();
+        const s = this.state, level = this.difficultyKey(), f = this.closingDay();
         this.sendScore('day', level, dayEntry({
             level, won, cause: won && cause !== 'gala' ? 'time' : cause,
-            time: s.time,
-            tickets: s.tickets, l: s.fl, a: s.al, b: s.cr,
+            time: f.time,
+            tickets: f.tickets, l: f.fl, a: f.al, b: f.cr,
             valve: s.rageWarningReceived, warning: s.chefWarningReceived,
         }));
+    },
+
+    /**
+     * The figures the working day ended on. Usually the state itself; after
+     * a gala, what it held at 16:30 - startParty() wipes the three stats and
+     * sets the clock to 17:00, and the run is the day, not the evening.
+     * buildWeekBalance() reads the same, so a Friday's row on the balance
+     * sheet and on the leaderboard cannot tell two different stories.
+     */
+    closingDay: function() {
+        return this.state.closingFigures ?? this.state;
     },
 
     /**

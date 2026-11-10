@@ -130,11 +130,12 @@ const engine = {
     log(spec) { (calls.logs ??= []).push(spec); },
     unlockAchievement(id) { calls.achs.push(id); calls.achStufen.push(engine.difficultyTier()); },
     generateDiaryEntry: () => 'diary stub',
-    // finishGame() closes the day's windows through engine_ui. These five touch
+    // finishGame() closes the day's windows through engine_ui. These six touch
     // nothing but state, the stubbed overlay and the fake document, so the real
     // ones run here: a stub would make the day-end test pass whatever they do.
     closeDayWindows: ui.closeDayWindows, closeIntranet: ui.closeIntranet,
     closeLoreModal: ui.closeLoreModal, closeBoard: ui.closeBoard,
+    closeExcuseModal: ui.closeExcuseModal,
     // The boss clock asks this before every tick (6.4), so the bench carries
     // the real one rather than a stub that would answer whatever suits. It
     // only answers honestly because isOverlayOpen above does.
@@ -844,6 +845,76 @@ await ok('A window shown at page load does not take the keyboard', () => {
         'showOverlay moves the keyboard before the player has pressed anything');
     assert.ok(show.indexOf('playerHasActed') < show.indexOf('.focus()'),
         'the guard stands after the focus it is supposed to guard');
+});
+await ok('A mail stands above every window, and no key answers it by accident', () => {
+    // Found together in the audit after 7.1, measured in the built game with
+    // real key presses. A mail drops on its timer onto whatever is open, and
+    // at z-2000 it landed BEHIND the menu, the archive, the chronicle and the
+    // other fullscreen views: invisible, the countdown running, the keyboard
+    // on its first answer. showOverlay() put the ring there 30 ms after any
+    // mail arrived, so Space meant for the screen behind answered the letter.
+    // With the ring anywhere else Space reached THROUGH the letter to the
+    // terminal's continue, which can read closing time. And a confirm key
+    // bound to anything but Space or Enter did nothing on a focused button.
+    //
+    // Asserted on the source: the bench has no layout, no focus and no
+    // listeners. The behaviour was measured in the preview.
+    const html = readFileSync(new URL('../index.html', import.meta.url), 'utf-8');
+    const compDir = new URL('../src/components/', import.meta.url);
+    const sources = [['index.html', html], ...readdirSync(compDir, { recursive: true })
+        .filter(f => f.endsWith('.svelte'))
+        .map(f => [f, readFileSync(new URL(f, compDir), 'utf-8')])];
+
+    // Every dialog, the state-flag ones in the components included, with the
+    // layer it opens on. A dialog without a z-index of its own is reported
+    // rather than skipped: it would stack by document order, which nobody
+    // decides on purpose.
+    const layers = [];
+    for (const [file, text] of sources) {
+        for (const m of text.matchAll(/<[a-z]+\b[^<]*?role="dialog"[^<]*?>/g)) {
+            const id = (m[0].match(/\bid="([^"]+)"/) ?? [, file])[1];
+            const z = m[0].match(/\bz-(\d+)\b/);
+            assert.ok(z, `the dialog ${id} has no z-index of its own`);
+            layers.push({ id, z: Number(z[1]) });
+        }
+    }
+    assert.ok(layers.length >= 23, `only ${layers.length} dialogs found - has the markup changed?`);
+    const mail = layers.find(l => l.id === 'email-modal');
+    assert.ok(mail, 'the mail window is gone from the markup');
+    const over = layers.filter(l => l !== mail && l.z >= mail.z).map(l => `${l.id} (${l.z})`);
+    assert.deepEqual(over, [], `a mail would drop behind ${over.join(', ')}`);
+
+    // The keyboard stays on the window, not on an answer.
+    assert.match(html.match(/<div id="email-modal"[^>]*>/)[0], /\sdata-focus-self[\s>]/,
+        'the mail does not ask to keep the keyboard on itself');
+    const ui = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    const show = ui.slice(ui.indexOf('showOverlay: function'), ui.indexOf('Counterpart to showOverlay'));
+    const self = show.search(/if \(el\.hasAttribute\('data-focus-self'\)\) \{\s*el\.setAttribute\('tabindex', '-1'\);\s*el\.focus\(\);\s*return;/);
+    assert.ok(self > 0, 'showOverlay hands the mail\'s keyboard to its first answer');
+    assert.ok(self < show.indexOf('this.focusablesIn(el)'), 'the window is focused only after a control was picked');
+
+    // Shift+Tab from the window itself stays inside it.
+    const kb = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
+    assert.match(kb, /if \(here === dialog \|\| !dialog\.contains\(here\)\) \{ event\.preventDefault\(\);/,
+        'the Tab trap lets Shift+Tab walk out of a window that holds the keyboard on itself');
+
+    // The confirm key: a rebound one presses the focused button, and an open
+    // mail swallows what its own continue did not take - after that continue,
+    // before the notice, the phone and the terminal behind it.
+    const confirm = kb.slice(kb.indexOf('// 3. CONFIRM'), kb.indexOf('// 3b. READ ALOUD'));
+    assert.ok(confirm.length > 500, 'the confirm branch could not be read');
+    assert.match(confirm, /engine\.topmostDialog\(\)\?\.contains\(here\)\) \{\s*if \(key !== 'space' && key !== 'enter'\) press\(here\);\s*return;/,
+        'a rebound confirm key does nothing on a focused button');
+    const swallow = confirm.search(/if \(engine\.state\.isEmailOpen\) \{ event\.preventDefault\(\); return; \}/);
+    assert.ok(swallow > 0, 'the confirm key reaches through an open mail');
+    assert.ok(swallow > confirm.indexOf("querySelector('#email-modal button[data-continue]')"),
+        'the open mail swallows the key before its own continue can take it');
+    for (const behind of ["querySelector('#modal-content button", "getElementById('phone-notification')",
+                          "querySelector('#terminal-content button[data-continue]')"]) {
+        const at = confirm.indexOf(behind);
+        assert.ok(at > 0, `${behind} is gone from the confirm branch`);
+        assert.ok(swallow < at, `the confirm key reaches ${behind} through an open mail`);
+    }
 });
 await ok('A restart clears the end screen out of the state, not only off the screen', () => {
     // Since 6.1 components/EndModal.svelte renders off `modal.open`, so hiding
@@ -4622,6 +4693,9 @@ await ok('A day that ends with its windows open closes them', async () => {
     state.intranetOpen = true;
     state.loreOpen = true;
     engine.showOverlay('board-modal');   // the board is a plain overlay, so it is opened as one
+    // The excuse too (audit after 7.1): it stands above the end screen, and
+    // its button spent an excuse and saved the finished day.
+    engine.showOverlay('excuse-modal');
     let boardClosed = false;
     const closeBoard = engine.closeBoard;
     engine.closeBoard = function() { boardClosed = true; return closeBoard.call(this); };
@@ -4636,6 +4710,47 @@ await ok('A day that ends with its windows open closes them', async () => {
     assert.equal(state.intranetOpen, false, 'the intranet outlived the day');
     assert.equal(state.loreOpen, false, 'the chronicle outlived the day');
     assert.ok(boardClosed, 'the noticeboard is not closed at the end of the day');
+    assert.equal(engine.isOverlayOpen('excuse-modal'), false, 'the excuse stood over the end of the day');
+});
+
+await ok('A mail waits for a window the player opened, and drops onto a notice', async () => {
+    // Dropped on top of the excuse or the menu, a mail ran out on its timer
+    // while the player sat there, and what it led to landed UNDER that
+    // window: the written warning hidden and pressed away by Space, the end
+    // of the day beneath an excuse that then saved the finished day.
+    // Measured in the built game (audit after 7.1).
+    resetState();
+    await ensure('emails');
+    store.set(KEYS.seenFirstMail, 'true');
+    const wait = () => new Promise(r => setTimeout(r, events.MAIL_WAIT_MS + 100));
+    try {
+        for (const open of [() => engine.showOverlay('excuse-modal'), () => { state.loreOpen = true; }]) {
+            state.emailPending = true;
+            open();
+            await engine.triggerEmail('mail_cake_2');
+            assert.equal(state.isEmailOpen, false, 'a mail dropped onto a window the player opened');
+            assert.equal(state.emailPending, true, 'the waiting mail gave up its place');
+            await wait();
+            assert.equal(state.isEmailOpen, false, 'the mail stopped waiting while the window stood');
+            openOverlays.delete('excuse-modal');
+            state.loreOpen = false;
+            await wait();
+            assert.equal(state.isEmailOpen, true, 'the mail never came once the window closed');
+            clearTimeout(state.emailTimer);
+            openOverlays.delete('email-modal');
+            state.isEmailOpen = false;
+        }
+
+        // A notice does not hold it back: the mail stands above those.
+        engine.showOverlay('modal-overlay');
+        await engine.triggerEmail('mail_cake_2');
+        assert.equal(state.isEmailOpen, true, 'a mail waited for a notice');
+    } finally {
+        clearTimeout(state.emailTimer);
+        clearTimeout(state.emailDelayTimer);
+        state.isEmailOpen = false;
+        state.loreOpen = false;
+    }
 });
 
 await ok('The music ducks once for the fall and comes back once', async () => {
@@ -4838,6 +4953,22 @@ await ok('A chapter of the chronicle is read on its button and stopped on the se
     box.narrateWindow('My lasagne lid is not pressed down.', 'sample');
     assert.equal(playing(), file('My lasagne lid is not pressed down.'));
     assert.equal(state.narratingChapter, null, 'a chapter stayed marked under another line');
+
+    // A mail that drops into a chapter and is answered reads its outcome
+    // over the pause, and the chapter comes back - as the chapter. Given back
+    // without its mark (audit after 7.1), the glyph showed "read" while the
+    // chapter played, and a press started it over instead of stopping it.
+    box.readChapter(3);
+    (box._interruptions ??= new Set()).add('email-modal');
+    box.pauseNarration();
+    box.narrateOverPause('Deleted without comment.', 'mails');
+    box.giveBackLine();
+    box._interruptions.delete('email-modal');
+    box.resumeNarration();
+    assert.equal(playing(), chapter(3), 'the chapter did not come back after the mail');
+    assert.equal(state.narratingChapter, 3, 'the chapter came back without its mark');
+    box.readChapter(3);
+    assert.equal(playing(), null, 'a press on the chapter given back did not stop it');
 
     // Zero is silence, asked for or not.
     box.hushNarration();
@@ -5043,6 +5174,51 @@ await ok('The narrator stops for a tab nobody is looking at', () => {
     box.hushNarration();
     globalThis.document.hidden = false; box.syncNarrationToVisibility();
     assert.equal(playing(), null, 'a hushed line came back with the tab');
+});
+
+await ok('A line the tab paused is not lost to a mail, and not to its own window', () => {
+    // Three ways the tab and a window took a line between them (audit after
+    // 7.1). A mail runs out on its own timer, so it closes in a tab nobody is
+    // looking at, and the resume played the scene to an empty room. A mail
+    // that dropped while the tab was away found nothing to pause, and the tab
+    // coming back handed the line to nobody. And the excuse, a chapter of the
+    // chronicle or the settings' sample, paused by the tab, stood over the
+    // terminal on the way back and were refused as if they were the scene.
+    const { el, box, file, playing } = voiceBench();
+    const open = (id) => { (box._interruptions ??= new Set()).add(id); box.pauseNarration(); };
+    const close = (id) => { box._interruptions.delete(id); box.resumeNarration(); };
+    const away = () => { globalThis.document.hidden = true;  box.syncNarrationToVisibility(); };
+    const back = () => { globalThis.document.hidden = false; box.syncNarrationToVisibility(); };
+
+    box.narrate('A coffee scene.');
+    el.currentTime = 10.49;
+    open('email-modal');
+    away();
+    close('email-modal');                         // closeEmail(true), on its timer
+    assert.equal(playing(), null, 'a mail that ran out in a hidden tab started the scene for nobody');
+    back();
+    assert.equal(playing(), file('A coffee scene.'), 'the scene did not come back with the tab');
+    assert.equal(el.currentTime, 10.49, 'the scene came back at the wrong place');
+
+    box.hushNarration();
+    box.narrate('A coffee scene.');
+    el.currentTime = 3.5;
+    away();
+    open('email-modal');                          // dropped while the tab was away
+    back();
+    assert.equal(playing(), null, 'the scene read on under the mail');
+    close('email-modal');
+    assert.equal(playing(), file('A coffee scene.'), 'the scene the tab paused was lost to the mail');
+    assert.equal(el.currentTime, 3.5, 'the scene came back at the wrong place');
+
+    box.hushNarration();
+    box.windowOverTerminal = () => true;          // the excuse window stands
+    box.narrateWindow('My lasagne lid is not pressed down.', 'excuses');
+    away();
+    back();
+    assert.equal(playing(), file('My lasagne lid is not pressed down.'),
+                 'the excuse lost its voice to a tab switch');
+    box.hushNarration();
 });
 
 await ok('Turning the narrator to zero ends the line', () => {
@@ -6229,6 +6405,19 @@ await ok('The detail values survive the round trip, in the library\'s broken sha
     assert.deepEqual(Object.keys(lb.BOARD_NAMES).sort(), [...lb.MODES].sort(), 'a mode without boards, or boards without a mode');
 });
 
+await ok('Every way a day can end has a code on the wire', () => {
+    // encodeDetails() writes CAUSES.indexOf(cause), and an unknown cause
+    // comes out as 0 - which is 'time', a won run. A fifth ending added to
+    // checkEndConditions() without a code would stand on the leaderboard as
+    // a day seen through to closing time, at 0 errors and 0 warnings.
+    const core = readFileSync(new URL('../src/engine/engine_core.js', import.meta.url), 'utf-8');
+    const causes = [...core.matchAll(/queueEnd\(\{[\s\S]*?cause: "(\w+)"/g)].map(m => m[1]);
+    assert.ok(causes.length >= 4, `only ${causes.length} endings found - has queueEnd() changed shape?`);
+    for (const cause of [...new Set(causes), 'gala']) {
+        assert.ok(lb.CAUSES.includes(cause), `the ending "${cause}" has no code in CAUSES and would be sent as a won day`);
+    }
+});
+
 await ok('The All tab merges the three boards: points first, then the harder level', () => {
     const merged = lb.mergeBoards({
         easy:   [{ steamId: 'a', score: 2700, rank: 1 }, { steamId: 'b', score: 1200, rank: 2 }],
@@ -6370,6 +6559,89 @@ await ok('A day of the day mode reaches its board, and a day inside a week does 
         engine.checkEndConditions();
         engine.finishGame();
         assert.deepEqual(sent.slice(3).map(e => e.board), ['week_normal'], 'a week day went to a day board');
+    } finally {
+        platform.isDesktop = real.isDesktop;
+        platform.leaderboardSubmit = real.submit;
+        state.scoreSubmit = null;
+    }
+});
+
+await ok('The gala scores the day it followed, and its clock earns no workday achievements', async () => {
+    // startParty() wipes laziness, aggro and radar and sets the clock to
+    // 17:00. The run is submitted when the evening ends, and up to 7.1.1 it
+    // was submitted with the evening's figures: the radar always 0, the aggro
+    // the party's. Measured with 6 tickets, aggro 70 and radar 85 at 16:30: a
+    // day sent 750 instead of 595, a week 2790 instead of 2635, and the
+    // Friday on the balance sheet read 0/0/0. On the first choice of the
+    // evening Ninja, Zen Master and Swot were all true as well - and went to
+    // Steam. The two gala tests above set the figures just before
+    // finishParty() and so never met the wipe; this one comes in at 16:30.
+    const { platform } = await import('../src/platform.js');
+    const { PARTY_BADGES } = await import('../src/engine/engine_core.js');
+    // The bench stubs updateUI(); the real one runs the checks after every
+    // choice, the evening's included.
+    const ui = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    assert.match(ui.slice(ui.indexOf('updateUI: function')), /^\s+this\.checkAchievements\(\);/m,
+        'updateUI() no longer runs the achievement checks - this test calls them for it');
+    const real = { isDesktop: platform.isDesktop, submit: platform.leaderboardSubmit };
+    const sent = [];
+    platform.isDesktop = true;
+    platform.leaderboardSubmit = async (board, score, details) => {
+        sent.push({ board, score, info: lb.decodeDetails(details) });
+        return { ok: true, scoreChanged: true, rank: 1 };
+    };
+    await ensure('party');
+    const FREE = ['ach_ninja', 'ach_zen', 'ach_workaholic'];
+    try {
+        for (const mode of ['day', 'week']) {
+            resetState();
+            if (mode === 'day') engine.setDifficulty('hard');
+            else { engine.startWeek('hard'); state.week.dayIndex = 5; state.meetingDone = true; }
+            state.archive.achievements = [...PARTY_BADGES];
+            state.dayActive = true;
+            state.time = 16 * 60 + 30; state.tickets = 6;
+            state.fl = 55; state.al = 70; state.cr = 85;
+            state.coffeeConsumed = 2;
+            state.rageWarningReceived = true; state.chefWarningReceived = true;
+
+            engine.checkEndConditions();
+            assert.equal(state.pendingEnd?.isParty, true, `${mode}: 16:30 did not invite to the gala`);
+            engine.finishGame();
+            await new Promise(r => setTimeout(r, 0));
+            assert.equal(state.isPartyMode, true, `${mode}: the gala did not begin`);
+            assert.equal(state.cr, 0, `${mode}: the evening no longer starts from a clean slate - this test needs rethinking`);
+
+            // A choice of the evening, by the clock it runs on.
+            calls.achs = [];
+            state.time = 18 * 60;
+            engine.checkAchievements();
+            assert.deepEqual(calls.achs.filter(id => FREE.includes(id)), [], `${mode}: the gala hands out workday achievements`);
+
+            // The evening ends: its own figures stand in the party report,
+            // the day's go to the board and the balance sheet.
+            state.time = 23 * 60; state.fl = 20; state.al = 30;
+            state.currentEventId = 'party_finale_gossip';
+            engine.finishParty('SYNERGY!', 'Testabend.');
+            localStorage.removeItem('layer8_party_played');
+            assert.deepEqual([calls.end.party.l, calls.end.party.a], [20, 30], `${mode}: the party report lost the evening's figures`);
+
+            const last = sent.at(-1);
+            const calm = lb.composure({ tickets: 6, a: 70, b: 85 });
+            assert.equal(last.board, `${mode}_hard`);
+            assert.equal(last.info.cause, 'gala');
+            assert.equal(last.score, (mode === 'day' ? lb.SHIFT_MINUTES : lb.WEEK_MINUTES) + calm,
+                `${mode}: the gala was scored on the evening, not on the day`);
+            assert.deepEqual([last.info.time, last.info.tickets, last.info.l, last.info.a, last.info.b], [990, 6, 55, 70, 85],
+                `${mode}: the details carry the evening's figures`);
+            if (mode === 'week') {
+                const friday = calls.end.balance.rows.at(-1);
+                assert.deepEqual([friday.tickets, friday.l, friday.a, friday.b], [6, 55, 70, 85],
+                    'the Friday on the balance sheet shows the evening');
+            }
+        }
+        // The next day starts without them.
+        resetState();
+        assert.equal(state.closingFigures, null, 'a new day still carries the last gala\'s figures');
     } finally {
         platform.isDesktop = real.isDesktop;
         platform.leaderboardSubmit = real.submit;

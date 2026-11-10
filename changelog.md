@@ -1,3 +1,17 @@
+[7.1.1] - 2026-11-10
+
+Fixes after 7.1.
+
+Bug fixes:
+* A mail that arrived while the menu, the archive, the chronicle, the excuse or another window was open landed behind it and ran out unseen. It now waits until you close the window, so a written warning or the end of the day it sets off no longer lands hidden beneath it either.
+* Space no longer answers a mail the moment it arrives, and no longer reaches through an open mail to the screen behind it.
+* A confirm key bound to something other than Space works on warnings, the end screen and an answered mail again.
+* The narrator no longer reads on in a tab you switched away from when a mail runs out there, and no longer loses the scene to a mail that arrived meanwhile. An excuse or a chapter of the chronicle interrupted by switching tabs continues when you come back.
+* On a narrow screen the notebook's four markers fit beside each other again, and the open one no longer has the top of its label cut off.
+* After the gala, the leaderboard and the week's balance sheet counted the evening instead of the working day, with the boss radar always at 0. They now count the day as it stood at half past four.
+* The gala no longer hands out Ninja, Zen Master and Swot by itself on its first choice.
+* "Code copied!" in the save dialog only appears once the code has been copied. It used to sit there invisibly, and on a phone a long press could copy it instead of the code.
+
 [7.1.0] - 2026-11-09
 
 Leaderboards for the working day, the knowledge book as a notebook in Miller's hand, mails that show what came of your reply, and emergencies that wait for the narrator.
