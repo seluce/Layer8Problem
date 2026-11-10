@@ -1,4 +1,6 @@
-[Unreleased]
+[7.1.1] - 2026-11-10
+
+Fixes after 7.1.
 
 Bug fixes:
 * A mail that arrived while the menu, the archive, the chronicle, the excuse or another window was open landed behind it and ran out unseen. It now waits until you close the window, so a written warning or the end of the day it sets off no longer lands hidden beneath it either.
