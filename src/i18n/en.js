@@ -51,7 +51,6 @@ export const en = {
     'import.hint':                 'Paste the code you copied on the other device.',
     'import.warning':              'Your current archive will be replaced: items, achievements, statistics and standing. A workday in progress or a running week are discarded.',
     'import.confirm':              'Replace save',
-    'import.error':                'Error!',
 
     'excuse.title':                'Invent an emergency excuse',
     'excuse.subtitle':             'The classic among the emergency exits',

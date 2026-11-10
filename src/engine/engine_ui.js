@@ -54,6 +54,39 @@ const HARD_RESET = {
 };
 const HARD_RESET_ICON = 'shrink-0 grayscale opacity-80 group-hover:opacity-100 group-hover:grayscale-0 transition-all';
 
+// The line under the button of the two code dialogs (export, import). It
+// stands EMPTY until there is something to say and is emptied again once it
+// has faded. Up to 7.1 it carried "Code copied!" from the start, hidden only
+// by its opacity, and on a phone a long press under the button selected the
+// invisible line - Copy then put "Code copied!" on the clipboard instead of
+// the code. role="status" in the markup has a screen reader announce it.
+const CODE_LINE = {
+    ok:  'text-xs text-center text-green-500 font-bold h-4 transition-opacity',
+    err: 'text-xs text-center text-red-500 font-bold h-4 transition-opacity',
+};
+const codeLineTimers = new WeakMap();
+
+// i18n-uses: export.copied, export.copyFailed, export.empty
+// i18n-uses: import.accepted, import.unreadable
+function sayCodeLine(el, key, tone, fadeAfter = 0) {
+    clearTimeout(codeLineTimers.get(el));
+    el.textContent = t(key);
+    el.className = CODE_LINE[tone];
+    el.style.opacity = '1';
+    if (!fadeAfter) return;
+    codeLineTimers.set(el, setTimeout(() => {
+        el.style.opacity = '0';
+        // after the 150 ms fade, so the words do not vanish mid-transition
+        codeLineTimers.set(el, setTimeout(() => { el.textContent = ''; }, 200));
+    }, fadeAfter));
+}
+
+function clearCodeLine(el) {
+    clearTimeout(codeLineTimers.get(el));
+    el.textContent = '';
+    el.style.opacity = '0';
+}
+
 /**
  * The two windows a scene finds and the side panel keeps (7.1).
  *
@@ -1661,7 +1694,7 @@ export const ui = {
             // reads whatever lands in the textarea - so this one is a label,
             // not a developer message.
             area.value = code || t('export.buildFailed');
-            msg.style.opacity = '0'; // Reset Message
+            clearCodeLine(msg);
 
             engine.showOverlay(modal);
         },
@@ -1673,9 +1706,8 @@ export const ui = {
             const area = document.getElementById('import-area');
             const msg = document.getElementById('import-msg');
 
-            area.value = ""; // Leeren
-            msg.style.opacity = '0'; 
-            msg.innerText = "";
+            area.value = "";
+            clearCodeLine(msg);
 
             engine.showOverlay(modal);
         },
@@ -1695,16 +1727,9 @@ export const ui = {
             area.select();
             area.setSelectionRange(0, 99999); 
 
-            navigator.clipboard.writeText(area.value).then(() => {
-                msg.innerText = t('export.copied');
-                msg.className = "text-xs text-green-500 font-bold transition-opacity";
-                msg.style.opacity = '1';
-                setTimeout(() => { msg.style.opacity = '0'; }, 2000);
-            }).catch(err => {
-                msg.innerText = t('export.copyFailed');
-                msg.className = "text-xs text-red-500 font-bold transition-opacity";
-                msg.style.opacity = '1';
-            });
+            navigator.clipboard.writeText(area.value)
+                .then(() => sayCodeLine(msg, 'export.copied', 'ok', 2000))
+                .catch(() => sayCodeLine(msg, 'export.copyFailed', 'err'));
         },
 
         // Import function (robust, and fixed)
@@ -1716,9 +1741,7 @@ export const ui = {
             let code = area.value.trim().replace(/[\u200B-\u200D\uFEFF]/g, '');
 
             if (!code) {
-                msg.innerText = t('export.empty');
-                msg.className = "text-xs text-red-500 font-bold transition-opacity";
-                msg.style.opacity = '1';
+                sayCodeLine(msg, 'export.empty', 'err');
                 return;
             }
 
@@ -1820,17 +1843,13 @@ export const ui = {
                 engine.state.archive = mergedArchive;
                 engine.syncRun(true);
 
-                msg.innerText = t('import.accepted');
-                msg.className = "text-xs text-green-500 font-bold transition-opacity";
-                msg.style.opacity = '1';
+                sayCodeLine(msg, 'import.accepted', 'ok');
 
                 setTimeout(() => location.reload(), 800);
 
             } catch (e) {
                 console.error(e);
-                msg.innerText = t('import.unreadable');
-                msg.className = "text-xs text-red-500 font-bold transition-opacity";
-                msg.style.opacity = '1';
+                sayCodeLine(msg, 'import.unreadable', 'err');
             }
         }
     },

@@ -8,6 +8,7 @@ Bug fixes:
 * On a narrow screen the notebook's four markers fit beside each other again, and the open one no longer has the top of its label cut off.
 * After the gala, the leaderboard and the week's balance sheet counted the evening instead of the working day, with the boss radar always at 0. They now count the day as it stood at half past four.
 * The gala no longer hands out Ninja, Zen Master and Swot by itself on its first choice.
+* "Code copied!" in the save dialog only appears once the code has been copied. It used to sit there invisibly, and on a phone a long press could copy it instead of the code.
 
 [7.1.0] - 2026-11-09
 

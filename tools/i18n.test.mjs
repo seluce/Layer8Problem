@@ -811,6 +811,39 @@ await ok('Every element a component mounts into is empty in the markup', async (
     assert.deepEqual(offenders, [], 'a mount target carries markup the component will never replace');
 });
 
+await ok('A status line stands empty in the markup, and no text waits behind opacity-0', async () => {
+    // Text hidden by opacity alone is still there: a long press selects it, a
+    // screen reader reads it, find-in-page lands on it. The export dialog
+    // carried "Code copied!" under its button that way from the start, and on
+    // a phone a long press below the button selected the invisible line -
+    // Copy then put that line on the clipboard instead of the code. A line
+    // that appears later is written when it appears (engine_ui.sayCodeLine).
+    const { readFileSync } = await import('node:fs');
+    const { fileURLToPath } = await import('node:url');
+    const root = fileURLToPath(new URL('..', import.meta.url));
+    const html = readFileSync(root + 'index.html', 'utf8').replace(/<!--[\s\S]*?-->/g, '');
+
+    const offenders = [];
+    const empty = (open, label) => {
+        const rest = html.slice(open.index + open[0].length);
+        if (!new RegExp(`^\\s*</${open[1]}>`).test(rest)) {
+            offenders.push(`${label}: ${rest.trim().slice(0, 50).replace(/\s+/g, ' ')}`);
+        }
+    };
+    let statusLines = 0;
+    for (const open of html.matchAll(/<([a-z0-9]+)\b[^>]*>/g)) {
+        const cls = (open[0].match(/\bclass="([^"]*)"/) || [, ''])[1].split(/\s+/);
+        const id = (open[0].match(/\bid="([^"]*)"/) || [, '?'])[1];
+        if (/\brole="status"/.test(open[0])) { statusLines++; empty(open, `#${id} (role=status)`); }
+        else if (cls.includes('opacity-0')) empty(open, `#${id} (opacity-0)`);
+    }
+    for (const id of ['export-msg', 'import-msg']) {
+        assert.match(html, new RegExp(`<div id="${id}" role="status"`), `#${id} is no longer a status line`);
+    }
+    assert.ok(statusLines >= 2, `only ${statusLines} status lines found`);
+    assert.deepEqual(offenders, [], 'text stands in the markup where the player cannot see it');
+});
+
 await ok('A flex item that wraps long words can shrink, and a clipped one in a capped column cannot', async () => {
     // A flex item keeps min-width:auto, so it refuses to shrink below its
     // longest UNBREAKABLE word - and overflow-wrap:break-word does not lower

@@ -932,7 +932,8 @@
             <button data-action="ui.copyToClipboard" class="w-full bg-blue-600 hover:bg-blue-500 border border-blue-400/40 text-white py-3 rounded-lg text-[0.6875rem] font-bold uppercase tracking-widest flex items-center justify-center gap-2 shadow-lg transition-all hover:scale-[1.02]">
                 <img src="assets/img/ui/ui_copy.webp" alt="" width="20" height="20" class="w-5 h-5 select-none" onerror="this.outerHTML='📋'"> <span data-i18n="export.copy">Copy to clipboard</span>
             </button>
-            <div id="export-msg" class="text-xs text-center text-green-500 font-bold opacity-0 transition-opacity h-4" data-i18n="export.copied">Code copied!</div>
+            <!-- empty on purpose: engine_ui writes it (sayCodeLine) -->
+            <div id="export-msg" role="status" class="text-xs text-center text-green-500 font-bold h-4 transition-opacity"></div>
         </div>
     </div>
 </div>
@@ -968,7 +969,8 @@
             <button data-action="ui.performImport" class="w-full bg-red-600 hover:bg-red-500 border border-red-400/40 text-white py-3 rounded-lg text-[0.6875rem] font-bold uppercase tracking-widest shadow-lg transition-all hover:scale-[1.02]" data-i18n="import.confirm">
                 Replace save
             </button>
-            <div id="import-msg" class="text-xs text-center text-red-500 font-bold opacity-0 transition-opacity h-4" data-i18n="import.error">Error!</div>
+            <!-- empty on purpose: engine_ui writes it (sayCodeLine) -->
+            <div id="import-msg" role="status" class="text-xs text-center text-red-500 font-bold h-4 transition-opacity"></div>
         </div>
     </div>
 </div>
