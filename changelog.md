@@ -1,7 +1,7 @@
 [Unreleased]
 
 Bug fixes:
-* A mail that arrived while the menu, the archive, the chronicle or another full-screen window was open landed behind it and ran out unseen. It now appears on top.
+* A mail that arrived while the menu, the archive, the chronicle, the excuse or another window was open landed behind it and ran out unseen. It now waits until you close the window, so a written warning or the end of the day it sets off no longer lands hidden beneath it either.
 * Space no longer answers a mail the moment it arrives, and no longer reaches through an open mail to the screen behind it.
 * A confirm key bound to something other than Space works on warnings, the end screen and an answered mail again.
 * The narrator no longer reads on in a tab you switched away from when a mail runs out there, and no longer loses the scene to a mail that arrived meanwhile. An excuse or a chapter of the chronicle interrupted by switching tabs continues when you come back.

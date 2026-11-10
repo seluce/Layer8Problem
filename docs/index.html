@@ -22,7 +22,7 @@
 
 
     <style>.platform-desktop{display:none!important}.lang-opt{color:#94a3b8}.lang-opt:hover{color:#e2e8f0}html[lang=de] .lang-opt[data-lang=de],html[lang=en] .lang-opt[data-lang=en]{color:#60a5fa;cursor:default}@keyframes newsScroll{0%{transform:translate(0)}to{transform:translate(-100%)}}</style>
-  <script type="module" crossorigin src="./build/index-PeWDPH34.js"></script>
+  <script type="module" crossorigin src="./build/index-CmitpzHc.js"></script>
   <link rel="stylesheet" crossorigin href="./build/index-BQgC-nTC.css">
 </head>
 <body class="text-xs md:text-sm">
@@ -451,11 +451,12 @@
 	
 <!-- E-MAIL MODAL START -->
 <!-- Contents rendered by src/components/EmailView.svelte -->
-<!-- z-10500: above EVERY window. A mail drops on its timer onto whatever is
-     open, and at z-2000 it landed behind the menu, the archive, the chronicle
-     and the other fullscreen views (9999/10000): invisible, its countdown
-     running, the keyboard on its first answer. week-flow.test.mjs holds it
-     above every other dialog.
+<!-- z-10500: above EVERY window. At z-2000 a mail landed behind the menu,
+     the archive, the chronicle and the other fullscreen views (9999/10000):
+     invisible, its countdown running, the keyboard on its first answer. It
+     waits for a window the player opened now (triggerEmail) and drops onto
+     notices; nothing may cover it. week-flow.test.mjs holds it above every
+     other dialog.
      data-focus-self: it opens uninvited onto a decision, so showOverlay()
      gives the keyboard to the window and not to an answer - Space meant for
      the screen behind it answered the letter. -->

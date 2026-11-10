@@ -870,8 +870,10 @@ export const ui = {
     /**
      * Closes the windows that belong to the working day, for finishGame().
      *
-     * A mail can drop over any of them on its two-second timer, and answering
-     * it near closing time ends the day from up there. Until 6.3 every one of
+     * A mail used to drop over any of them on its two-second timer, and
+     * answering it near closing time ended the day from up there; it waits
+     * for them since the audit after 7.1 (triggerEmail), but a day can end
+     * on another timer too, the phone's. Until 6.3 every one of
      * them outlived the day: the intranet stood over the next morning's
      * terminal, the noticeboard too - empty, because the new day had cleared
      * its notes - the vending machine with its take unspent, and the
@@ -884,6 +886,10 @@ export const ui = {
         if (this.state.loreOpen) this.closeLoreModal();
         if (this.state.vendingOpen) this.closeVending();
         if (this.isOverlayOpen('board-modal')) this.closeBoard();
+        // The excuse belongs to the scene, and the scene ends with the day.
+        // It stands ABOVE the end screen (10000 over 1500), and its button
+        // then spent an excuse and saved the finished day (audit after 7.1).
+        if (this.isOverlayOpen('excuse-modal')) this.closeExcuseModal();
     },
 
     /**

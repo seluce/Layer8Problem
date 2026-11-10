@@ -227,9 +227,12 @@ export const voice = {
         const el = this.narrator;
         // Written every time, null when nothing was paused: a line put aside
         // for an earlier mail must never come back with a later one.
+        // The chapter mark travels with it: _speak() clears it for the
+        // outcome, and the book's button reads it to know what is playing.
         this.stashedLine = (this.interrupted && el?.src)
             ? { src: el.src, time: el.currentTime, owner: this.lineOwner,
-                kind: this.lineKind, onDemand: this.lineOnDemand }
+                kind: this.lineKind, onDemand: this.lineOnDemand,
+                chapter: this.state.narratingChapter }
             : null;
         this.interrupted = false;
         this.overPause = true;
@@ -264,6 +267,7 @@ export const voice = {
         this.lineOwner = s.owner;
         this.lineKind = s.kind;
         this.lineOnDemand = s.onDemand;
+        this.state.narratingChapter = s.chapter ?? null;
         this.interrupted = true;
     },
 

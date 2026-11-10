@@ -130,11 +130,12 @@ const engine = {
     log(spec) { (calls.logs ??= []).push(spec); },
     unlockAchievement(id) { calls.achs.push(id); calls.achStufen.push(engine.difficultyTier()); },
     generateDiaryEntry: () => 'diary stub',
-    // finishGame() closes the day's windows through engine_ui. These five touch
+    // finishGame() closes the day's windows through engine_ui. These six touch
     // nothing but state, the stubbed overlay and the fake document, so the real
     // ones run here: a stub would make the day-end test pass whatever they do.
     closeDayWindows: ui.closeDayWindows, closeIntranet: ui.closeIntranet,
     closeLoreModal: ui.closeLoreModal, closeBoard: ui.closeBoard,
+    closeExcuseModal: ui.closeExcuseModal,
     // The boss clock asks this before every tick (6.4), so the bench carries
     // the real one rather than a stub that would answer whatever suits. It
     // only answers honestly because isOverlayOpen above does.
@@ -4692,6 +4693,9 @@ await ok('A day that ends with its windows open closes them', async () => {
     state.intranetOpen = true;
     state.loreOpen = true;
     engine.showOverlay('board-modal');   // the board is a plain overlay, so it is opened as one
+    // The excuse too (audit after 7.1): it stands above the end screen, and
+    // its button spent an excuse and saved the finished day.
+    engine.showOverlay('excuse-modal');
     let boardClosed = false;
     const closeBoard = engine.closeBoard;
     engine.closeBoard = function() { boardClosed = true; return closeBoard.call(this); };
@@ -4706,6 +4710,47 @@ await ok('A day that ends with its windows open closes them', async () => {
     assert.equal(state.intranetOpen, false, 'the intranet outlived the day');
     assert.equal(state.loreOpen, false, 'the chronicle outlived the day');
     assert.ok(boardClosed, 'the noticeboard is not closed at the end of the day');
+    assert.equal(engine.isOverlayOpen('excuse-modal'), false, 'the excuse stood over the end of the day');
+});
+
+await ok('A mail waits for a window the player opened, and drops onto a notice', async () => {
+    // Dropped on top of the excuse or the menu, a mail ran out on its timer
+    // while the player sat there, and what it led to landed UNDER that
+    // window: the written warning hidden and pressed away by Space, the end
+    // of the day beneath an excuse that then saved the finished day.
+    // Measured in the built game (audit after 7.1).
+    resetState();
+    await ensure('emails');
+    store.set(KEYS.seenFirstMail, 'true');
+    const wait = () => new Promise(r => setTimeout(r, events.MAIL_WAIT_MS + 100));
+    try {
+        for (const open of [() => engine.showOverlay('excuse-modal'), () => { state.loreOpen = true; }]) {
+            state.emailPending = true;
+            open();
+            await engine.triggerEmail('mail_cake_2');
+            assert.equal(state.isEmailOpen, false, 'a mail dropped onto a window the player opened');
+            assert.equal(state.emailPending, true, 'the waiting mail gave up its place');
+            await wait();
+            assert.equal(state.isEmailOpen, false, 'the mail stopped waiting while the window stood');
+            openOverlays.delete('excuse-modal');
+            state.loreOpen = false;
+            await wait();
+            assert.equal(state.isEmailOpen, true, 'the mail never came once the window closed');
+            clearTimeout(state.emailTimer);
+            openOverlays.delete('email-modal');
+            state.isEmailOpen = false;
+        }
+
+        // A notice does not hold it back: the mail stands above those.
+        engine.showOverlay('modal-overlay');
+        await engine.triggerEmail('mail_cake_2');
+        assert.equal(state.isEmailOpen, true, 'a mail waited for a notice');
+    } finally {
+        clearTimeout(state.emailTimer);
+        clearTimeout(state.emailDelayTimer);
+        state.isEmailOpen = false;
+        state.loreOpen = false;
+    }
 });
 
 await ok('The music ducks once for the fall and comes back once', async () => {
@@ -4908,6 +4953,22 @@ await ok('A chapter of the chronicle is read on its button and stopped on the se
     box.narrateWindow('My lasagne lid is not pressed down.', 'sample');
     assert.equal(playing(), file('My lasagne lid is not pressed down.'));
     assert.equal(state.narratingChapter, null, 'a chapter stayed marked under another line');
+
+    // A mail that drops into a chapter and is answered reads its outcome
+    // over the pause, and the chapter comes back - as the chapter. Given back
+    // without its mark (audit after 7.1), the glyph showed "read" while the
+    // chapter played, and a press started it over instead of stopping it.
+    box.readChapter(3);
+    (box._interruptions ??= new Set()).add('email-modal');
+    box.pauseNarration();
+    box.narrateOverPause('Deleted without comment.', 'mails');
+    box.giveBackLine();
+    box._interruptions.delete('email-modal');
+    box.resumeNarration();
+    assert.equal(playing(), chapter(3), 'the chapter did not come back after the mail');
+    assert.equal(state.narratingChapter, 3, 'the chapter came back without its mark');
+    box.readChapter(3);
+    assert.equal(playing(), null, 'a press on the chapter given back did not stop it');
 
     // Zero is silence, asked for or not.
     box.hushNarration();
