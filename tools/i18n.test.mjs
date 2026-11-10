@@ -971,4 +971,70 @@ await ok('A flex item that wraps long words can shrink, and a clipped one in a c
         'a clipped child of a capped column is squeezed along with the scroller');
 });
 
+await ok("The notebook's page markers fit a phone in both languages, and give no height to a scrollbar", async () => {
+    // The strip is 40px high, cannot scroll vertically and aligns its markers
+    // to the bottom. A classic scrollbar - a desktop browser or the Steam
+    // window made narrow - takes its 15px out of those 40, so the markers
+    // were pushed up and the open one lost the top of its label. It showed
+    // at 360px, where the four were 17px wider than the strip; at 375 by 2.
+    // Overlay scrollbars on a phone take no room, which is why nobody saw it.
+    const { readFileSync } = await import('node:fs');
+    const { fileURLToPath } = await import('node:url');
+    const root = fileURLToPath(new URL('..', import.meta.url));
+    const view = readFileSync(root + 'src/components/KnowledgeView.svelte', 'utf8');
+    const html = readFileSync(root + 'index.html', 'utf8');
+
+    // A strip that clips vertically and scrolls sideways has a scrollbar
+    // with nowhere to go but into its own content. Any of them, not just
+    // this one - it is the only one today.
+    const strips = [];
+    for (const file of ['index.html', 'src/components/KnowledgeView.svelte']) {
+        const src = file === 'index.html' ? html : view;
+        for (const m of src.matchAll(/class="([^"]*\boverflow-x-(?:auto|scroll)\b[^"]*)"/g)) {
+            if (/\boverflow-y-(?:hidden|clip)\b/.test(m[1]) && !/\[scrollbar-width:none\]/.test(m[1])) {
+                strips.push(`${file}: ${m[1].slice(0, 70)}`);
+            }
+        }
+    }
+    assert.deepEqual(strips, [], 'a strip that cannot scroll vertically shows a scrollbar that eats its height');
+
+    // Spacing on the Tailwind scale, 0.25rem = 4px. The unprefixed value is
+    // the phone's; an sm: one belongs to a screen with room to spare.
+    const step = (cls, name) => {
+        const m = cls.match(new RegExp(`(?:^|\\s)${name}-([\\d.]+)(?:\\s|$)`));
+        assert.ok(m, `no ${name}-* in "${cls.slice(0, 60)}..."`);
+        return Number(m[1]) * 4;
+    };
+    const row = view.match(/class="([^"]*\boverflow-x-auto\b[^"]*)"/)[1];
+    const tab = view.match(/onclick=\{\(\) => switchCat\(c\.id\)\}[\s\S]*?class="([^"]*)"/)[1];
+    const overlay = html.match(/id="knowledge-modal"[^>]*class="([^"]*)"/)[1];
+    const cover = html.match(/class="(notebook-cover[^"]*)"/)[1];
+    const close = html.match(/data-action="closeKnowledge"[^>]*class="([^"]*)"/)[1];
+
+    const size = Number(tab.match(/text-\[([\d.]+)rem\]/)[1]) * 16;
+    const track = /(?:^|\s)tracking-normal(?:\s|$)/.test(tab) ? 0
+        : Number((tab.match(/(?:^|\s)tracking-\[([\d.]+)em\]/) || assert.fail('no phone tracking on the markers'))[1]);
+    // JetBrains Mono: every glyph is 600 units of 1000 wide.
+    const ADVANCE = 0.6;
+    const PHONE = 320;   // the narrowest still in use, iPhone SE (1st)
+    const strip = PHONE - 2 * step(overlay, 'p') - 2 * step(cover, 'px');
+
+    // The close button sits over the strip's right end; the end padding has
+    // to keep the last marker out from under it.
+    const intrusion = step(close, 'right') + step(close, 'w') - step(cover, 'px');
+    assert.ok(step(row, 'pr') >= intrusion,
+        `the strip ends ${step(row, 'pr')}px short of its edge, the close button reaches ${intrusion}px in`);
+
+    for (const lang of ['de', 'en']) {
+        const dict = readFileSync(root + `src/i18n/${lang}.js`, 'utf8');
+        const labels = ['team', 'person', 'place', 'matter'].map(id =>
+            dict.match(new RegExp(`'knowledge\\.cat\\.${id}':\\s*'([^']+)'`))[1]);
+        const widths = labels.map(l => [...l].length * size * (ADVANCE + track) + 2 * step(tab, 'px'));
+        const need = step(row, 'pl') + widths.reduce((a, b) => a + b, 0)
+                   + (labels.length - 1) * step(row, 'gap') + step(row, 'pr');
+        assert.ok(need <= strip,
+            `${lang}: the markers ${labels.join(' ')} need ${need.toFixed(1)}px, a ${PHONE}px phone gives the strip ${strip}`);
+    }
+});
+
 console.log(`\n${passed} checks passed.`);

@@ -65,7 +65,7 @@ const HARD_RESET_ICON = 'shrink-0 grayscale opacity-80 group-hover:opacity-100 g
  * neither is about finding the window, and each has two more doors of its own.
  *
  * `option` and `count` are for backfillDoors() alone, which reads a find made
- * before 7.1 out of archive.seenOptions. They describe the scene as it stands;
+ * under 7.0 out of archive.seenOptions. They describe the scene as it stands;
  * week-flow.test holds them against both trees, so a rewrite of either scene
  * fails there instead of quietly losing the backfill.
  */
@@ -1194,9 +1194,12 @@ export const ui = {
     },
 
     /**
-     * A career that took a door before 7.1 has it in seenOptions already, and
+     * A career that took a door under 7.0 has it in seenOptions already, and
      * should not have to wait for the scene a second time. Runs on every load
      * and writes nothing that is there, so it needs no version of its own.
+     *
+     * Older finds are not in there: seenOptions has been written since 7.0.0,
+     * so a door taken in 6.x waits for its scene once more.
      */
     backfillDoors: function() {
         const taken = this.state.archive.seenOptions ?? {};

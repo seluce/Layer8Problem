@@ -157,13 +157,20 @@
     <!-- PAGE MARKERS, stuck in behind the pages. The open category stands out
          further; one with a note still unread underlines its count. On a
          phone the four with their counts are wider than the screen, so the
-         count waits for sm and the label carries the underline instead. -->
-    <div class="flex items-end gap-1 sm:gap-1.5 pl-3 sm:pl-6 pr-11 shrink-0 h-10 overflow-x-auto overflow-y-hidden">
+         count waits for sm and the label carries the underline instead.
+
+         Below sm the four labels are set tight enough to fit a 320px screen,
+         and the strip shows no scrollbar. It cannot scroll vertically, so a
+         classic scrollbar takes its 15px out of the 40 the markers stand in:
+         they were pushed up and the open one lost the top of its label - at
+         360px, where the strip was 17px too wide. i18n.test.mjs holds both,
+         in both languages. -->
+    <div class="flex items-end gap-0.5 sm:gap-1.5 pl-2 sm:pl-6 pr-8 sm:pr-11 shrink-0 h-10 overflow-x-auto overflow-y-hidden [scrollbar-width:none]">
         {#each tabs as c (c.id)}
             <button
                 onclick={() => switchCat(c.id)}
                 aria-current={cat === c.id ? 'page' : undefined}
-                class="shrink-0 px-2 sm:px-3 rounded-t-sm text-[0.625rem] font-bold tracking-[0.08em] sm:tracking-[0.12em] text-slate-800 shadow-sm transition-all whitespace-nowrap {c.flag}
+                class="shrink-0 px-1.5 sm:px-3 rounded-t-sm text-[0.625rem] font-bold tracking-normal sm:tracking-[0.12em] text-slate-800 shadow-sm transition-all whitespace-nowrap {c.flag}
                        {cat === c.id ? 'h-10 pb-2' : 'h-8 pb-1 opacity-80 hover:opacity-100'}">
                 <span class={unreadIn(c.id) ? 'underline decoration-2 underline-offset-2 sm:no-underline' : ''}>{t(c.label)}</span>
                 <span class="hidden sm:inline ml-1 tabular-nums {unreadIn(c.id) ? 'font-black underline decoration-2 underline-offset-2' : 'font-normal'}">

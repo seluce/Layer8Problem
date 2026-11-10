@@ -5,6 +5,7 @@ Bug fixes:
 * Space no longer answers a mail the moment it arrives, and no longer reaches through an open mail to the screen behind it.
 * A confirm key bound to something other than Space works on warnings, the end screen and an answered mail again.
 * The narrator no longer reads on in a tab you switched away from when a mail runs out there, and no longer loses the scene to a mail that arrived meanwhile. An excuse or a chapter of the chronicle interrupted by switching tabs continues when you come back.
+* On a narrow screen the notebook's four markers fit beside each other again, and the open one no longer has the top of its label cut off.
 
 [7.1.0] - 2026-11-09
 
