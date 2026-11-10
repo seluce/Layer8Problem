@@ -349,6 +349,9 @@ export const voice = {
         if (!el || !el.src || el.ended) return;
         if (!(this.lineOnDemand || this.state.narrationEnabled)) return;
         if (this.state.narrationVolume <= 0) return;
+        // _speak()'s rule for a hidden tab, here too: a mail runs out on its
+        // own timer and gives the scene back in a tab nobody is looking at.
+        if (globalThis.document?.hidden) { this.pausedByTab = true; return; }
         this._setSpeaking(true);
         this.duckMusic(true, 'narration');
         this._play(el);
@@ -556,10 +559,18 @@ export const voice = {
         }
         if (!this.pausedByTab) return;
         this.pausedByTab = false;
-        // Not over a window the player opened in the meantime, and not while
-        // a mail or a notice holds the terminal: those settle it on closing.
-        if (this.windowOverTerminal()) return;
-        if (this._interruptions?.size && this.lineOwner !== 'window') return;
+        // Not over a window the player opened in the meantime - unless the
+        // line is that window's own: the excuse, a chapter of the chronicle,
+        // the settings' sample, which the tab paused and nothing else ended.
+        if (this.windowOverTerminal() && this.lineOwner !== 'window') return;
+        // Not while a mail or a notice holds the terminal either: those settle
+        // it on closing. One that dropped while the tab was away found nothing
+        // speaking to pause, so the line is handed to it here, or its closing
+        // would find nothing owed.
+        if (this._interruptions?.size && this.lineOwner !== 'window') {
+            this.interrupted = true;
+            return;
+        }
         this._unpause();
     },
 

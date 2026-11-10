@@ -156,7 +156,10 @@ document.addEventListener('keydown', (event) => {
         if (stops.length) {
             const first = stops[0], last = stops[stops.length - 1];
             const here = document.activeElement;
-            if (!dialog.contains(here)) { event.preventDefault(); (event.shiftKey ? last : first).focus(); }
+            // The window itself counts as outside: a window that holds the
+            // keyboard on itself (data-focus-self) sits before its first
+            // control, and Shift+Tab from there walked out behind it.
+            if (here === dialog || !dialog.contains(here)) { event.preventDefault(); (event.shiftKey ? last : first).focus(); }
             else if (event.shiftKey && here === first) { event.preventDefault(); last.focus(); }
             else if (!event.shiftKey && here === last) { event.preventDefault(); first.focus(); }
         }
@@ -260,9 +263,15 @@ document.addEventListener('keydown', (event) => {
         // on "Share the day" while Space pressed RESTART underneath it: the
         // report, the curve and the picture gone, on the one screen a player
         // holds still and reads. Enter was unaffected, which is how it hid.
+        //
+        // Space and Enter the browser presses by itself. A rebound key it
+        // knows nothing about, so the game presses for it: bound to F, the
+        // confirm key did nothing at all on every window whose button holds
+        // the ring - a notice, the end screen, the answered mail.
         const here = document.activeElement;
         if (here?.tagName === 'BUTTON' && !here.disabled
             && engine.topmostDialog()?.contains(here)) {
+            if (key !== 'space' && key !== 'enter') press(here);
             return;
         }
 
@@ -294,6 +303,13 @@ document.addEventListener('keydown', (event) => {
         //     notice's button, still rendered, would be pressed through it.
         const mailCont = document.querySelector('#email-modal button[data-continue]');
         if (mailCont && mailCont.offsetParent !== null) { press(mailCont); return; }
+
+        // A2b: an open mail takes the key it has no button for. Everything
+        //      below stands BEHIND it - a notice's button, the phone, the
+        //      terminal's continue - and Space reached through an unanswered
+        //      letter to all three: the terminal went idle under it, and a
+        //      continue that read closing time ended the day from there.
+        if (engine.state.isEmailOpen) { event.preventDefault(); return; }
 
         // B: modals (warning letter, ending, item confirm)
         // The continue button carries data-modal-continue (EndModal.svelte).

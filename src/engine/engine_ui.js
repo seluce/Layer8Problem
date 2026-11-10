@@ -757,6 +757,16 @@ export const ui = {
         setTimeout(() => {
             if (el.classList.contains('hidden')) return;    // closed again already
             if (!playerHasActed) return;                    // see playerHasActed
+            // A window that drops UNINVITED onto a decision keeps the keyboard
+            // on itself (data-focus-self, the mail). Its first control is an
+            // answer: the ring sat on it 30 ms after the letter arrived, and
+            // Space pressed for the screen behind answered the letter. Tab
+            // still walks into the answers from here.
+            if (el.hasAttribute('data-focus-self')) {
+                el.setAttribute('tabindex', '-1');
+                el.focus();
+                return;
+            }
             const stops = this.focusablesIn(el);
             // The control the CONFIRM KEY would press, where the window names
             // one - otherwise the ring sits on one button while Space presses

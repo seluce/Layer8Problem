@@ -845,6 +845,76 @@ await ok('A window shown at page load does not take the keyboard', () => {
     assert.ok(show.indexOf('playerHasActed') < show.indexOf('.focus()'),
         'the guard stands after the focus it is supposed to guard');
 });
+await ok('A mail stands above every window, and no key answers it by accident', () => {
+    // Found together in the audit after 7.1, measured in the built game with
+    // real key presses. A mail drops on its timer onto whatever is open, and
+    // at z-2000 it landed BEHIND the menu, the archive, the chronicle and the
+    // other fullscreen views: invisible, the countdown running, the keyboard
+    // on its first answer. showOverlay() put the ring there 30 ms after any
+    // mail arrived, so Space meant for the screen behind answered the letter.
+    // With the ring anywhere else Space reached THROUGH the letter to the
+    // terminal's continue, which can read closing time. And a confirm key
+    // bound to anything but Space or Enter did nothing on a focused button.
+    //
+    // Asserted on the source: the bench has no layout, no focus and no
+    // listeners. The behaviour was measured in the preview.
+    const html = readFileSync(new URL('../index.html', import.meta.url), 'utf-8');
+    const compDir = new URL('../src/components/', import.meta.url);
+    const sources = [['index.html', html], ...readdirSync(compDir, { recursive: true })
+        .filter(f => f.endsWith('.svelte'))
+        .map(f => [f, readFileSync(new URL(f, compDir), 'utf-8')])];
+
+    // Every dialog, the state-flag ones in the components included, with the
+    // layer it opens on. A dialog without a z-index of its own is reported
+    // rather than skipped: it would stack by document order, which nobody
+    // decides on purpose.
+    const layers = [];
+    for (const [file, text] of sources) {
+        for (const m of text.matchAll(/<[a-z]+\b[^<]*?role="dialog"[^<]*?>/g)) {
+            const id = (m[0].match(/\bid="([^"]+)"/) ?? [, file])[1];
+            const z = m[0].match(/\bz-(\d+)\b/);
+            assert.ok(z, `the dialog ${id} has no z-index of its own`);
+            layers.push({ id, z: Number(z[1]) });
+        }
+    }
+    assert.ok(layers.length >= 23, `only ${layers.length} dialogs found - has the markup changed?`);
+    const mail = layers.find(l => l.id === 'email-modal');
+    assert.ok(mail, 'the mail window is gone from the markup');
+    const over = layers.filter(l => l !== mail && l.z >= mail.z).map(l => `${l.id} (${l.z})`);
+    assert.deepEqual(over, [], `a mail would drop behind ${over.join(', ')}`);
+
+    // The keyboard stays on the window, not on an answer.
+    assert.match(html.match(/<div id="email-modal"[^>]*>/)[0], /\sdata-focus-self[\s>]/,
+        'the mail does not ask to keep the keyboard on itself');
+    const ui = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    const show = ui.slice(ui.indexOf('showOverlay: function'), ui.indexOf('Counterpart to showOverlay'));
+    const self = show.search(/if \(el\.hasAttribute\('data-focus-self'\)\) \{\s*el\.setAttribute\('tabindex', '-1'\);\s*el\.focus\(\);\s*return;/);
+    assert.ok(self > 0, 'showOverlay hands the mail\'s keyboard to its first answer');
+    assert.ok(self < show.indexOf('this.focusablesIn(el)'), 'the window is focused only after a control was picked');
+
+    // Shift+Tab from the window itself stays inside it.
+    const kb = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
+    assert.match(kb, /if \(here === dialog \|\| !dialog\.contains\(here\)\) \{ event\.preventDefault\(\);/,
+        'the Tab trap lets Shift+Tab walk out of a window that holds the keyboard on itself');
+
+    // The confirm key: a rebound one presses the focused button, and an open
+    // mail swallows what its own continue did not take - after that continue,
+    // before the notice, the phone and the terminal behind it.
+    const confirm = kb.slice(kb.indexOf('// 3. CONFIRM'), kb.indexOf('// 3b. READ ALOUD'));
+    assert.ok(confirm.length > 500, 'the confirm branch could not be read');
+    assert.match(confirm, /engine\.topmostDialog\(\)\?\.contains\(here\)\) \{\s*if \(key !== 'space' && key !== 'enter'\) press\(here\);\s*return;/,
+        'a rebound confirm key does nothing on a focused button');
+    const swallow = confirm.search(/if \(engine\.state\.isEmailOpen\) \{ event\.preventDefault\(\); return; \}/);
+    assert.ok(swallow > 0, 'the confirm key reaches through an open mail');
+    assert.ok(swallow > confirm.indexOf("querySelector('#email-modal button[data-continue]')"),
+        'the open mail swallows the key before its own continue can take it');
+    for (const behind of ["querySelector('#modal-content button", "getElementById('phone-notification')",
+                          "querySelector('#terminal-content button[data-continue]')"]) {
+        const at = confirm.indexOf(behind);
+        assert.ok(at > 0, `${behind} is gone from the confirm branch`);
+        assert.ok(swallow < at, `the confirm key reaches ${behind} through an open mail`);
+    }
+});
 await ok('A restart clears the end screen out of the state, not only off the screen', () => {
     // Since 6.1 components/EndModal.svelte renders off `modal.open`, so hiding
     // the overlay leaves the old screen mounted behind it. softReset() and
@@ -5043,6 +5113,51 @@ await ok('The narrator stops for a tab nobody is looking at', () => {
     box.hushNarration();
     globalThis.document.hidden = false; box.syncNarrationToVisibility();
     assert.equal(playing(), null, 'a hushed line came back with the tab');
+});
+
+await ok('A line the tab paused is not lost to a mail, and not to its own window', () => {
+    // Three ways the tab and a window took a line between them (audit after
+    // 7.1). A mail runs out on its own timer, so it closes in a tab nobody is
+    // looking at, and the resume played the scene to an empty room. A mail
+    // that dropped while the tab was away found nothing to pause, and the tab
+    // coming back handed the line to nobody. And the excuse, a chapter of the
+    // chronicle or the settings' sample, paused by the tab, stood over the
+    // terminal on the way back and were refused as if they were the scene.
+    const { el, box, file, playing } = voiceBench();
+    const open = (id) => { (box._interruptions ??= new Set()).add(id); box.pauseNarration(); };
+    const close = (id) => { box._interruptions.delete(id); box.resumeNarration(); };
+    const away = () => { globalThis.document.hidden = true;  box.syncNarrationToVisibility(); };
+    const back = () => { globalThis.document.hidden = false; box.syncNarrationToVisibility(); };
+
+    box.narrate('A coffee scene.');
+    el.currentTime = 10.49;
+    open('email-modal');
+    away();
+    close('email-modal');                         // closeEmail(true), on its timer
+    assert.equal(playing(), null, 'a mail that ran out in a hidden tab started the scene for nobody');
+    back();
+    assert.equal(playing(), file('A coffee scene.'), 'the scene did not come back with the tab');
+    assert.equal(el.currentTime, 10.49, 'the scene came back at the wrong place');
+
+    box.hushNarration();
+    box.narrate('A coffee scene.');
+    el.currentTime = 3.5;
+    away();
+    open('email-modal');                          // dropped while the tab was away
+    back();
+    assert.equal(playing(), null, 'the scene read on under the mail');
+    close('email-modal');
+    assert.equal(playing(), file('A coffee scene.'), 'the scene the tab paused was lost to the mail');
+    assert.equal(el.currentTime, 3.5, 'the scene came back at the wrong place');
+
+    box.hushNarration();
+    box.windowOverTerminal = () => true;          // the excuse window stands
+    box.narrateWindow('My lasagne lid is not pressed down.', 'excuses');
+    away();
+    back();
+    assert.equal(playing(), file('My lasagne lid is not pressed down.'),
+                 'the excuse lost its voice to a tab switch');
+    box.hushNarration();
 });
 
 await ok('Turning the narrator to zero ends the line', () => {

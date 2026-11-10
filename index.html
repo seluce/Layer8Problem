@@ -318,7 +318,7 @@
          (inventory/team 1100, item-confirm/intranet 1200, board 1300) - at the
          old z-50 a chef warning raised from inside the open backpack rendered
          invisibly behind it, and the confirm key clicked its unseen button.
-         Deliberately BELOW the mail (2000), the tutorial layers (2100+) and
+         Deliberately BELOW the mail (10500), the tutorial layers (2100+) and
          the fullscreen views (9999+); the achievement toasts sit at 1600 to
          keep floating above endings, as they always have. -->
     <div id="modal-overlay" role="dialog" aria-modal="true" data-i18n-attr="aria-label=a11y.dialog.system" class="fixed inset-0 hidden bg-black/90 z-1500 flex items-center justify-center p-3 md:p-8">
@@ -478,7 +478,15 @@
 	
 <!-- E-MAIL MODAL START -->
 <!-- Contents rendered by src/components/EmailView.svelte -->
-<div id="email-modal" role="dialog" aria-modal="true" data-i18n-attr="aria-label=a11y.dialog.mail" class="fixed inset-0 z-2000 hidden items-center justify-center bg-black/90 p-4"></div>
+<!-- z-10500: above EVERY window. A mail drops on its timer onto whatever is
+     open, and at z-2000 it landed behind the menu, the archive, the chronicle
+     and the other fullscreen views (9999/10000): invisible, its countdown
+     running, the keyboard on its first answer. week-flow.test.mjs holds it
+     above every other dialog.
+     data-focus-self: it opens uninvited onto a decision, so showOverlay()
+     gives the keyboard to the window and not to an answer - Space meant for
+     the screen behind it answered the letter. -->
+<div id="email-modal" role="dialog" aria-modal="true" data-focus-self data-i18n-attr="aria-label=a11y.dialog.mail" class="fixed inset-0 z-10500 hidden items-center justify-center bg-black/90 p-4"></div>
 
 <!-- E-MAIL MODAL END -->
 
