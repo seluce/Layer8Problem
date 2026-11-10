@@ -6405,6 +6405,19 @@ await ok('The detail values survive the round trip, in the library\'s broken sha
     assert.deepEqual(Object.keys(lb.BOARD_NAMES).sort(), [...lb.MODES].sort(), 'a mode without boards, or boards without a mode');
 });
 
+await ok('Every way a day can end has a code on the wire', () => {
+    // encodeDetails() writes CAUSES.indexOf(cause), and an unknown cause
+    // comes out as 0 - which is 'time', a won run. A fifth ending added to
+    // checkEndConditions() without a code would stand on the leaderboard as
+    // a day seen through to closing time, at 0 errors and 0 warnings.
+    const core = readFileSync(new URL('../src/engine/engine_core.js', import.meta.url), 'utf-8');
+    const causes = [...core.matchAll(/queueEnd\(\{[\s\S]*?cause: "(\w+)"/g)].map(m => m[1]);
+    assert.ok(causes.length >= 4, `only ${causes.length} endings found - has queueEnd() changed shape?`);
+    for (const cause of [...new Set(causes), 'gala']) {
+        assert.ok(lb.CAUSES.includes(cause), `the ending "${cause}" has no code in CAUSES and would be sent as a won day`);
+    }
+});
+
 await ok('The All tab merges the three boards: points first, then the harder level', () => {
     const merged = lb.mergeBoards({
         easy:   [{ steamId: 'a', score: 2700, rank: 1 }, { steamId: 'b', score: 1200, rank: 2 }],
@@ -6546,6 +6559,89 @@ await ok('A day of the day mode reaches its board, and a day inside a week does 
         engine.checkEndConditions();
         engine.finishGame();
         assert.deepEqual(sent.slice(3).map(e => e.board), ['week_normal'], 'a week day went to a day board');
+    } finally {
+        platform.isDesktop = real.isDesktop;
+        platform.leaderboardSubmit = real.submit;
+        state.scoreSubmit = null;
+    }
+});
+
+await ok('The gala scores the day it followed, and its clock earns no workday achievements', async () => {
+    // startParty() wipes laziness, aggro and radar and sets the clock to
+    // 17:00. The run is submitted when the evening ends, and up to 7.1.1 it
+    // was submitted with the evening's figures: the radar always 0, the aggro
+    // the party's. Measured with 6 tickets, aggro 70 and radar 85 at 16:30: a
+    // day sent 750 instead of 595, a week 2790 instead of 2635, and the
+    // Friday on the balance sheet read 0/0/0. On the first choice of the
+    // evening Ninja, Zen Master and Swot were all true as well - and went to
+    // Steam. The two gala tests above set the figures just before
+    // finishParty() and so never met the wipe; this one comes in at 16:30.
+    const { platform } = await import('../src/platform.js');
+    const { PARTY_BADGES } = await import('../src/engine/engine_core.js');
+    // The bench stubs updateUI(); the real one runs the checks after every
+    // choice, the evening's included.
+    const ui = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+    assert.match(ui.slice(ui.indexOf('updateUI: function')), /^\s+this\.checkAchievements\(\);/m,
+        'updateUI() no longer runs the achievement checks - this test calls them for it');
+    const real = { isDesktop: platform.isDesktop, submit: platform.leaderboardSubmit };
+    const sent = [];
+    platform.isDesktop = true;
+    platform.leaderboardSubmit = async (board, score, details) => {
+        sent.push({ board, score, info: lb.decodeDetails(details) });
+        return { ok: true, scoreChanged: true, rank: 1 };
+    };
+    await ensure('party');
+    const FREE = ['ach_ninja', 'ach_zen', 'ach_workaholic'];
+    try {
+        for (const mode of ['day', 'week']) {
+            resetState();
+            if (mode === 'day') engine.setDifficulty('hard');
+            else { engine.startWeek('hard'); state.week.dayIndex = 5; state.meetingDone = true; }
+            state.archive.achievements = [...PARTY_BADGES];
+            state.dayActive = true;
+            state.time = 16 * 60 + 30; state.tickets = 6;
+            state.fl = 55; state.al = 70; state.cr = 85;
+            state.coffeeConsumed = 2;
+            state.rageWarningReceived = true; state.chefWarningReceived = true;
+
+            engine.checkEndConditions();
+            assert.equal(state.pendingEnd?.isParty, true, `${mode}: 16:30 did not invite to the gala`);
+            engine.finishGame();
+            await new Promise(r => setTimeout(r, 0));
+            assert.equal(state.isPartyMode, true, `${mode}: the gala did not begin`);
+            assert.equal(state.cr, 0, `${mode}: the evening no longer starts from a clean slate - this test needs rethinking`);
+
+            // A choice of the evening, by the clock it runs on.
+            calls.achs = [];
+            state.time = 18 * 60;
+            engine.checkAchievements();
+            assert.deepEqual(calls.achs.filter(id => FREE.includes(id)), [], `${mode}: the gala hands out workday achievements`);
+
+            // The evening ends: its own figures stand in the party report,
+            // the day's go to the board and the balance sheet.
+            state.time = 23 * 60; state.fl = 20; state.al = 30;
+            state.currentEventId = 'party_finale_gossip';
+            engine.finishParty('SYNERGY!', 'Testabend.');
+            localStorage.removeItem('layer8_party_played');
+            assert.deepEqual([calls.end.party.l, calls.end.party.a], [20, 30], `${mode}: the party report lost the evening's figures`);
+
+            const last = sent.at(-1);
+            const calm = lb.composure({ tickets: 6, a: 70, b: 85 });
+            assert.equal(last.board, `${mode}_hard`);
+            assert.equal(last.info.cause, 'gala');
+            assert.equal(last.score, (mode === 'day' ? lb.SHIFT_MINUTES : lb.WEEK_MINUTES) + calm,
+                `${mode}: the gala was scored on the evening, not on the day`);
+            assert.deepEqual([last.info.time, last.info.tickets, last.info.l, last.info.a, last.info.b], [990, 6, 55, 70, 85],
+                `${mode}: the details carry the evening's figures`);
+            if (mode === 'week') {
+                const friday = calls.end.balance.rows.at(-1);
+                assert.deepEqual([friday.tickets, friday.l, friday.a, friday.b], [6, 55, 70, 85],
+                    'the Friday on the balance sheet shows the evening');
+            }
+        }
+        // The next day starts without them.
+        resetState();
+        assert.equal(state.closingFigures, null, 'a new day still carries the last gala\'s figures');
     } finally {
         platform.isDesktop = real.isDesktop;
         platform.leaderboardSubmit = real.submit;

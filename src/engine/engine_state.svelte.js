@@ -207,6 +207,13 @@ export function freshDay(mult = 1.0) {
         isPartyMode: false,
         partyProgress: 0,
         currentPartyKey: null,
+        // What the working day closed on: { time, tickets, fl, al, cr } at
+        // 16:30, taken by startParty() before the evening wipes the three
+        // stats and moves the clock to 17:00. The gala ends the run, and the
+        // leaderboard and the week's balance sheet score the DAY, not the
+        // party - until 7.1.1 they read the party's figures, the radar always
+        // 0. Never saved with a value: neither save runs during the party.
+        closingFigures: null,
 
         // Timer handles. Nulled rather than left dangling — an expired handle
         // is still truthy, and triggerEmail() treats that as "timer running".

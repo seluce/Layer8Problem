@@ -1515,11 +1515,20 @@ export const core = {
     },
 
     checkAchievements: function() {
+        // Every check that reads the clock reads the WORKING DAY's. The gala
+        // runs its own from 17:00 and starts all three stats at 0, so on the
+        // first choice of the evening Ninja, Zen Master and Swot - radar
+        // under 10 after 14:00, no aggro at 15:00, hardly any laziness by
+        // 16:00 - were all true and went to Steam, whatever the day had been.
+        // The checks without a clock stay: 80 laziness or 95 aggro at the
+        // party is the evening's own doing.
+        const workday = !this.state.isPartyMode;
+
         // --- PLAYSTYLE: EXTREMES ---
-        
+
         // 1. 'Der Asket' (no coffee) - from 16:00
         // Rewards enduring the aggro without help
-        if(this.state.time > 16*60 && this.state.coffeeConsumed === 0 && !this.hasAch('ach_ascetic')) {
+        if(workday && this.state.time > 16*60 && this.state.coffeeConsumed === 0 && !this.hasAch('ach_ascetic')) {
             this.unlockAchievement('ach_ascetic');
         }
 
@@ -1586,17 +1595,17 @@ export const core = {
         // --- LATE GAME CHALLENGES (time dependent) ---
         
         // NINJA (secretly lazy) - from 14:00
-        if(this.state.time > 14*60 && this.state.cr < 10 && !this.hasAch('ach_ninja')) {
+        if(workday && this.state.time > 14*60 && this.state.cr < 10 && !this.hasAch('ach_ninja')) {
             this.unlockAchievement('ach_ninja');
         }
 
         // 'Zen Meister' (no anger) - from 15:00
-        if(this.state.time >= 15*60 && this.state.al === 0 && !this.hasAch('ach_zen')) {
+        if(workday && this.state.time >= 15*60 && this.state.al === 0 && !this.hasAch('ach_zen')) {
             this.unlockAchievement('ach_zen');
         }
 
         // EMPLOYEE OF THE MONTH (anti-lazy) - from 16:00
-        if (this.state.time > 16*60 && this.state.fl <= 5 && !this.hasAch('ach_workaholic')) {
+        if (workday && this.state.time > 16*60 && this.state.fl <= 5 && !this.hasAch('ach_workaholic')) {
             this.unlockAchievement('ach_workaholic');
         }
 
@@ -1606,17 +1615,17 @@ export const core = {
         // on ten and the nine is never observed - the pile went through it all
         // the same. checkAchievements runs before checkEndConditions, so the
         // badge is still awarded on the action that ends the day.
-        if (this.state.time >= 975 && this.state.tickets >= 9 && !this.hasAch('ach_risk')) {
+        if (workday && this.state.time >= 975 && this.state.tickets >= 9 && !this.hasAch('ach_risk')) {
             this.unlockAchievement('ach_risk');
         }
 
         // INBOX ZERO - Ab 16:20
-        if (this.state.time >= 980 && this.state.tickets === 0 && !this.hasAch('ach_clean')) {
+        if (workday && this.state.time >= 980 && this.state.tickets === 0 && !this.hasAch('ach_clean')) {
             this.unlockAchievement('ach_clean');
         }
 
         // 'Tanz auf dem Vulkan' (high-risk survival) - from 16:20
-        if (this.state.time >= 980 && this.state.al >= 90 && this.state.cr >= 90 && !this.hasAch('ach_survivor')) {
+        if (workday && this.state.time >= 980 && this.state.al >= 90 && this.state.cr >= 90 && !this.hasAch('ach_survivor')) {
             this.unlockAchievement('ach_survivor');
         }
         
@@ -2211,7 +2220,13 @@ export const core = {
             this.state.emailOutcome = null;
         }
         this.playAudio('ui');
-        
+
+        // The day's last figures, before the two lines below wipe them: the
+        // run is scored on these when the evening ends. See closingFigures in
+        // engine_state.
+        const s = this.state;
+        s.closingFigures = { time: s.time, tickets: s.tickets, fl: s.fl, al: s.al, cr: s.cr };
+
         // Switch into party mode
         this.state.isPartyMode = true;
         this.state.partyProgress = 0;

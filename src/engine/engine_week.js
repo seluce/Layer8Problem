@@ -759,8 +759,10 @@ export const week = {
             tickets: d.endTickets, l: d.endL ?? 0, a: d.endA ?? 0, b: d.endB ?? 0
         }));
 
+        // After a gala, the figures of 16:30 - see closingDay() in engine_scores.
+        const f = this.closingDay();
         rows.push(end.isWin
-            ? round({ day: w.dayIndex - 1, win: true, tickets: s.tickets, l: s.fl, a: s.al, b: s.cr })
+            ? round({ day: w.dayIndex - 1, win: true, tickets: f.tickets, l: f.fl, a: f.al, b: f.cr })
             // The failed day names its cause instead of its figures, and the
             // title is a recipe by now - so it is passed on, not rendered.
             : { day: w.dayIndex - 1, win: false, title: end.title });
