@@ -591,7 +591,8 @@ faded a band that was still playing; silence off both ends, 5 ms in and
 50 ms out against clicks; for an office piece the split into **bed** (channels
 1/2, bass included) and **rhythm** (3/4) — `bed + rhythm` is the original,
 sample by sample; one linear gain that brings the SUM to `TARGET_LUFS`
-(-21.9, the emergency and the gala 3 dB over it); the **floor** — the bed
+(-21.9, the emergency and the gala 3 dB over it, the gala's lounge at
+it); the **floor** — the bed
 with the rhythm at its floor, at most `MAX_FLOOR_LOSS` (2 LU) under the sum,
 or the piece is refused; Opus 96 kbit/s stereo for every piece and 192 kbit/s
 quad (mapping family 1) for a layered one, bit-exact so the same input gives

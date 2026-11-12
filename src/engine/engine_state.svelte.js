@@ -153,6 +153,9 @@ export function freshDay(mult = 1.0) {
         // activeEvent back to true.
         currentEventId: null,
         currentEventType: null,
+        // The gala station of the event on screen (its `loc`), null anywhere
+        // else. The music reads it: the band sounds as it would from there.
+        currentEventLoc: null,
         currentPhoneEvent: null,
 
         // Phone view model. components/PhoneView.svelte renders from it:

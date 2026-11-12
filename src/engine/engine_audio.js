@@ -1,6 +1,7 @@
 import { KEYS } from './keys.js';
 import { CUES, housePool, nextMood, drawCue, answeringPool, changeOver, SOFT_FADE_MS,
-         pressure, rhythmGain, RHYTHM_TAU, PROBE_TONES, toneMatches } from './music_cues.js';
+         pressure, rhythmGain, RHYTHM_TAU, PROBE_TONES, toneMatches,
+         cuesOf, roomSound, ROOM_TAU } from './music_cues.js';
 import { MUSIC_DIR, MUSIC_FILES, MUSIC_PROBE } from './music_files.js';
 
 // --- The vending machine's voice (6.3) ---------------------------------------
@@ -256,7 +257,7 @@ export const audio = {
         lunch_1: 1.00, afternoon_1: 1.00, afternoon_2: 1.00,
         tense_1: 1.00, tense_2: 1.00, tense_3: 1.00,
         emergency_a: 1.00, emergency_2: 1.00, emergency_3: 1.00,
-        gala_1: 1.00, gala_2: 1.00, gala_3: 1.00,
+        gala_1: 1.00, gala_2: 1.00, gala_3: 1.00, gala_lounge: 1.00,
     },
 
     /** How loud `key` is meant to be: the slider, levelled, and ducked. */
@@ -275,9 +276,16 @@ export const audio = {
     // every spread of it. Not in the save either - after a load the moment
     // is read afresh.
     musicRun: null,
-    // The two layers of a layered piece, by piece id: { level, rhythm }. Lazy
-    // for the same reason. A piece in here is audible ONLY through its graph.
-    layerGraphs: null,
+    // A piece's graph, by piece id: { level, rhythm } for a layered piece,
+    // { level } for a gala piece in the room. Lazy for the same reason. A
+    // piece in here is audible ONLY through its graph.
+    musicGraphs: null,
+    // The gala's room (Phase 3): one low-pass and one level every gala piece
+    // goes through, so the band sounds as it would from the station the
+    // player is at. Built with the first gala piece while the context runs.
+    roomBus: null,
+    // False once the room would not build; the gala then plays plain.
+    roomWorks: null,
     // null: not asked yet this session; then the probe's answer. Only true
     // lets a layered piece load its four-channel file.
     layersWork: null,
@@ -294,6 +302,7 @@ export const audio = {
             lastSoft: -Infinity,     // when the mood last cut into a piece
             leaving: new Set(),      // pieces fading out on their way to a pause
             warm: false,             // the emergency pieces are loading
+            hall: null,              // the gala piece the lounge paused
         };
     },
 
@@ -354,7 +363,7 @@ export const audio = {
     trackVolume: function(key) {
         const track = this.bgmTracks?.[key];
         if (!track) return 0;
-        const graph = this.layerGraphs?.[key];
+        const graph = this.musicGraphs?.[key];
         if (graph) return graph.levelValue;
         if (this.canSetVolume(track)) return track.volume;
         return this.gainNodes[key]?.gain.value ?? track.volume;
@@ -368,7 +377,7 @@ export const audio = {
         // A layered piece is heard through its graph alone; its element stays
         // at 1, because whether element volume reaches a graph differs from
         // one browser to the next.
-        const graph = this.layerGraphs?.[key];
+        const graph = this.musicGraphs?.[key];
         if (graph) { graph.levelValue = v; graph.level.gain.value = v; return; }
         if (this.canSetVolume(track)) { track.volume = v; return; }
         const gain = this.musicGain(key);
@@ -470,7 +479,27 @@ export const audio = {
             // so it goes, and the stereo files take over for the session.
             this.layersWork = false;
         }
+        if (this.wantsRoom(id)) {
+            this.bgmTracks[id] = this.newTrack(id, files.stereo);
+            if (this.roomGraph(id)) return this.bgmTracks[id];
+            this.roomWorks = false;              // plain from here on
+        }
         return this.bgmTracks[id] = this.newTrack(id, files.stereo);
+    },
+
+    /**
+     * Whether gala piece `id` should go through the room. Only with a running
+     * context: an element in a graph is silent while the context sleeps, and
+     * the room is a nicety the evening does not need. By the time the gala
+     * begins the context has run all day (the clicks, the probe).
+     */
+    wantsRoom: function(id) {
+        return CUES[id]?.pool === 'gala' && this.roomWorks !== false && this.audioCtx?.state === 'running';
+    },
+
+    /** Whether the element for `id` should hang in a graph of its own. */
+    wantsGraph: function(id) {
+        return this.wantsLayers(id) || this.wantsRoom(id);
     },
 
     /** One element for piece `id`, playing `file`. */
@@ -493,7 +522,7 @@ export const audio = {
      * once, and from then on the element is audible through this alone.
      */
     layerGraph: function(id) {
-        const graphs = this.layerGraphs ??= {};
+        const graphs = this.musicGraphs ??= {};
         if (graphs[id]) return graphs[id];
         const track = this.bgmTracks?.[id];
         const ctx = this.audioCtx;
@@ -523,6 +552,64 @@ export const audio = {
         }
     },
 
+    /**
+     * Gala piece `id` into the room: its own level, then the shared bus. The
+     * nodes come first and the element is taken last - once
+     * createMediaElementSource has it, it is heard through the graph or not
+     * at all, so nothing may fail after that.
+     */
+    roomGraph: function(id) {
+        const graphs = this.musicGraphs ??= {};
+        if (graphs[id]) return graphs[id];
+        const track = this.bgmTracks?.[id];
+        const ctx = this.audioCtx;
+        if (!track || !ctx) return null;
+        try {
+            const bus = this.roomBus ??= this.buildRoomBus(ctx);
+            const level = ctx.createGain();
+            level.gain.value = 0;
+            const source = ctx.createMediaElementSource(track);
+            source.connect(level);
+            level.connect(bus.filter);
+            return graphs[id] = { level, levelValue: 0 };
+        } catch (err) {
+            console.warn('Music room unavailable:', err);
+            return null;
+        }
+    },
+
+    /** The low-pass and the level the gala is heard through, set to the station of the moment. */
+    buildRoomBus: function(ctx) {
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        const room = ctx.createGain();
+        const sound = roomSound(this.musicLoc());
+        filter.frequency.value = sound.hz;
+        room.gain.value = sound.gain;
+        filter.connect(room);
+        room.connect(ctx.destination);
+        return { filter, room };
+    },
+
+    /** The gala station the player is at, or null - read only during the gala. */
+    musicLoc: function() {
+        return this.state.isPartyMode ? (this.state.currentEventLoc ?? null) : null;
+    },
+
+    /**
+     * The room follows the player through the evening: at every scene the
+     * low-pass and the level glide to the station's (PARTY_ROOMS) over
+     * ROOM_TAU - a step through a door, not a fade.
+     */
+    followRoom: function() {
+        const bus = this.roomBus;
+        if (!bus || !this.audioCtx) return;
+        const { hz, gain } = roomSound(this.musicLoc());
+        const now = this.audioCtx.currentTime;
+        bus.filter.frequency.setTargetAtTime(hz, now, ROOM_TAU);
+        bus.room.gain.setTargetAtTime(gain, now, ROOM_TAU);
+    },
+
     /** The rhythm gain piece `id` should have at the pressure of the moment. */
     rhythmFor: function(id) {
         const p = pressure({ tickets: this.state.tickets, al: this.state.al, cr: this.state.cr });
@@ -537,13 +624,14 @@ export const audio = {
      * scene. Cheap when nothing moved.
      */
     followPressure: function() {
-        const graphs = this.layerGraphs;
+        const graphs = this.musicGraphs;
         const p = pressure({ tickets: this.state.tickets, al: this.state.al, cr: this.state.cr });
         if (this.musicPressure !== null && Math.abs(p - this.musicPressure) < 0.005) return;
         this.musicPressure = p;
         if (!graphs || !this.audioCtx) return;
         const now = this.audioCtx.currentTime;
         for (const [id, graph] of Object.entries(graphs)) {
+            if (!graph.rhythm) continue;           // a gala piece in the room
             graph.rhythm.gain.setTargetAtTime(rhythmGain(p, CUES[id]?.floorDb), now, RHYTHM_TAU);
         }
     },
@@ -615,6 +703,12 @@ export const audio = {
         }
     },
 
+    /** Begun and not finished: a piece that can carry on where it stopped. */
+    partPlayed: function(id) {
+        const track = this.bgmTracks?.[id];
+        return !!track && !track.ended && track.currentTime > 0;
+    },
+
     /** Playing and not on its way out. */
     isAudible: function(id) {
         const track = id ? this.bgmTracks?.[id] : null;
@@ -641,6 +735,7 @@ export const audio = {
             lunch: live && s.currentEventType === 'lunch',
             tense: this.musicRuntime().mood === 'tense',
             minute: s.time,
+            loc: this.musicLoc(),
         };
     },
 
@@ -679,6 +774,7 @@ export const audio = {
         if (!this.bgmTracks) this.initMusic();
         this.probeLayers();
         this.followPressure();
+        this.followRoom();
         const run = this.musicRuntime();
         run.mood = nextMood(run.mood, this.state.al, this.state.cr);
 
@@ -711,7 +807,31 @@ export const audio = {
             this.leaveCue(cur, 350);
             const back = run.interrupted;
             run.interrupted = null;
-            if (back && this.bgmTracks[back]) { this.resumeCue(back, 600); return; }
+            // The office piece comes back to the office, never into the gala.
+            const office = pool !== 'gala' && pool !== 'lounge';
+            if (office && back && this.bgmTracks[back]) { this.resumeCue(back, 600); return; }
+            this.startCue(this.drawMusic(pool, cur), 600);
+            return;
+        }
+
+        // The lounge is a room of its own (Phase 3). Going in, the hall's
+        // piece waits, paused where it was, and the lounge's piece carries on
+        // from wherever the last visit left it: seven short visits walk
+        // through it instead of hearing its first minute seven times. Coming
+        // out, the hall's piece carries on too.
+        if (pool === 'lounge' && curCue?.pool !== 'lounge') {
+            if (curCue?.pool === 'gala') run.hall = cur;
+            if (audible) this.leaveCue(cur, 350);
+            const left = cuesOf('lounge').find(id => this.partPlayed(id));
+            if (left) this.resumeCue(left, 600);
+            else this.startCue(this.drawMusic(pool, cur), 600);
+            return;
+        }
+        if (curCue?.pool === 'lounge' && pool !== 'lounge') {
+            if (audible) this.leaveCue(cur, 350);
+            const back = run.hall;
+            run.hall = null;
+            if (pool === 'gala' && back && this.partPlayed(back)) { this.resumeCue(back, 600); return; }
             this.startCue(this.drawMusic(pool, cur), 600);
             return;
         }
@@ -760,11 +880,12 @@ export const audio = {
     /** Piece `id` from its first bar. */
     startCue: function(id, fadeIn) {
         if (!id) return;
-        // Built from its stereo file before the probe had answered: a piece
-        // starting over may as well start over in layers. Never one that is
-        // playing, and never in resumeCue(), which must keep its position.
+        // Built plain before its graph could be - the probe had not answered,
+        // the context was not running yet: a piece starting over may as well
+        // start over in layers, or in the room. Never one that is playing,
+        // and never in resumeCue(), which must keep its position.
         const old = this.bgmTracks?.[id];
-        if (old && old.paused && this.wantsLayers(id) && !this.layerGraphs?.[id]) delete this.bgmTracks[id];
+        if (old && old.paused && this.wantsGraph(id) && !this.musicGraphs?.[id]) delete this.bgmTracks[id];
         const track = this.trackFor(id);
         if (!track) return;
         clearInterval(this.fadeTimers[id]);

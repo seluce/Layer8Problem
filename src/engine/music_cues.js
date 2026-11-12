@@ -48,6 +48,7 @@ export const CUES = {
     gala_1:      { pool: 'gala' },
     gala_2:      { pool: 'gala' },
     gala_3:      { pool: 'gala' },
+    gala_lounge: { pool: 'lounge' },
 };
 
 /**
@@ -58,7 +59,9 @@ export const CUES = {
  * every measured file to it.
  */
 export const TARGET_LUFS = -21.9;
-export const INTENT_DB = { emergency: 3, gala: 3 };
+// The lounge is the quiet room of the evening: at the office's level, 3 dB
+// under the hall. A starting value for the operator's ear (12.11.2026).
+export const INTENT_DB = { emergency: 3, gala: 3, lounge: 0 };
 
 /**
  * What a layered piece may lose with its rhythm at the floor, in LU, measured
@@ -74,8 +77,13 @@ export const POOLS = ['morning', 'day', 'lunch', 'afternoon', 'tense', 'emergenc
  * or only the one that has just played. The office pools borrow from the
  * office; the office itself never borrows from the tense pool, because
  * crime-series underscore on a quiet morning is the one wrong answer.
+ *
+ * The lounge borrows from nobody. Its one piece, run out during a visit,
+ * starts again: the dance band's next number in the quiet room would be
+ * the wrong room, and with no lounge piece at all playMusic() finds no pool
+ * and leaves the hall's piece playing.
  */
-export const FALLBACK = { morning: 'day', lunch: 'day', afternoon: 'day', tense: 'day', lounge: 'gala' };
+export const FALLBACK = { morning: 'day', lunch: 'day', afternoon: 'day', tense: 'day' };
 
 /** The pools that cut in at once instead of waiting for a piece to end. */
 export const IMMEDIATE = new Set(['emergency', 'gala', 'lounge', 'lunch']);
@@ -237,6 +245,39 @@ export function changeOver(from, to, played, sinceSoft) {
     if ((to === 'tense' || from === 'lunch') && softAllowed) return 'soft';
     // ...but never back to calm, and never for the clock alone.
     return 'keep';
+}
+
+// --- the gala's rooms ----------------------------------------------------------------
+
+/**
+ * How the hall's band sounds from each station of the gala: a low-pass and a
+ * level. The dance floor is in front of the band; the bar and the buffet are
+ * at the edge of the hall; the toilet is through a wall and outside is
+ * through a door. The foyer between the stations, the CEO's speech and the
+ * finale are in the open (OPEN_ROOM). The lounge has a piece of its own
+ * instead (housePool). Starting values for the operator's ear (UEBERGABE,
+ * "Phase 3"), not measurements.
+ *
+ * `hz` null means no filter. A station missing here is heard in the open;
+ * the week suite holds this table against the six stations lint-data knows.
+ */
+export const PARTY_ROOMS = {
+    dance:   { hz: null, db: 0 },
+    bar:     { hz: 6000, db: -2 },
+    buffet:  { hz: 6000, db: -2 },
+    toilet:  { hz: 450,  db: -8 },
+    outside: { hz: 300,  db: -10 },
+};
+export const OPEN_ROOM = { hz: null, db: 0 };
+/** Where the low-pass stands when it filters nothing: above hearing. */
+export const OPEN_HZ = 20000;
+/** Seconds, setTargetAtTime: a step through a door, not a fade. */
+export const ROOM_TAU = 0.25;
+
+/** The sound of station `loc` as { hz, gain }: a cut-off and a linear gain. */
+export function roomSound(loc) {
+    const room = PARTY_ROOMS[loc] ?? OPEN_ROOM;
+    return { hz: room.hz ?? OPEN_HZ, gain: 10 ** (room.db / 20) };
 }
 
 // --- density -------------------------------------------------------------------------

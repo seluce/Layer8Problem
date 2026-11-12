@@ -1134,6 +1134,7 @@ export const events = {
 		// --- Record the event for the mail system ---
         this.state.currentEventId = ev.id;     // "did we already mail for this event?"
         this.state.currentEventType = type;    // "is this a boss fight?"
+        this.state.currentEventLoc = ev.loc ?? null;   // "where at the gala?" - the music asks
         this.updatePresence(type);
         // -----------------------------------------------------
 				

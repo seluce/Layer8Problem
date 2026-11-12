@@ -23,7 +23,7 @@
  *   3. a piece with layers is split into bed and rhythm (see separate()):
  *      bed on channels 1/2, rhythm on 3/4, the bass in the bed
  *   4. one linear gain brings the SUM to its target: the office to
- *      TARGET_LUFS, the emergency and the gala INTENT_DB above it
+ *      TARGET_LUFS, a pool in INTENT_DB that far above it
  *      (music_cues.js). Measured on the sum, because the sum is what plays
  *      at full pressure - and it is exactly the original, bed + rhythm
  *   5. the floor is measured: the bed with the rhythm at RHYTHM_FLOOR_DB
@@ -75,6 +75,10 @@ const SR = 48000;
  *   lunch_1    NOT cut: after the last attack at 171.4 s the level falls
  *              without a single further attack - a closing chord, not a fade
  *   gala_2     NOT cut: ends 0.2 s after a downbeat, which reads as a button
+ *   gala_lounge  v1, provisional: a chord every two bars, left to decay
+ *              before the next (37 % of its time 10 LU under its average).
+ *              Kept until the operator has heard it in the lounge; the
+ *              repair prompt is in music/prompts.md
  */
 const SET = {
     morning_1:   { src: '03_morning_1_v2.flac' },
@@ -96,6 +100,7 @@ const SET = {
     gala_1:      { src: '15_gala_1_v1.flac' },
     gala_2:      { src: '16_gala_2_v1.flac' },
     gala_3:      { src: '17_gala_3_v2.flac' },
+    gala_lounge: { src: '18_gala_lounge_v1.flac' },
 };
 
 const STEREO_KBPS = 96;

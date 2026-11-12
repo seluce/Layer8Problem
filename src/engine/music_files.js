@@ -39,4 +39,5 @@ export const MUSIC_FILES = {
     gala_1: { stereo: 'gala_1.26d71dac.opus', lufs: -18.9, peak: -5.9, seconds: 209.64 },
     gala_2: { stereo: 'gala_2.54c4a6b3.opus', lufs: -18.9, peak: -6.6, seconds: 210.00 },
     gala_3: { stereo: 'gala_3.21fb4168.opus', lufs: -18.9, peak: -5.3, seconds: 209.53 },
+    gala_lounge: { stereo: 'gala_lounge.94943226.opus', lufs: -21.9, peak: -6.6, seconds: 179.74 },
 };

@@ -1364,16 +1364,17 @@ console.log('Music:');
     // A Web Audio context for the bench: records what is built and what is
     // asked of it. `tone(channel, buffer)` fills an analyser's buffer.
     const fakeContext = (tone = () => {}) => {
-        const made = { sources: [], splitters: [], targets: [], analysers: 0 };
+        const made = { sources: [], splitters: [], targets: [], analysers: 0, filters: 0 };
         const node = (extra = {}) => ({ connect() {}, disconnect() {}, ...extra });
-        const param = (value) => ({ value, setTargetAtTime(t, at, tau) { made.targets.push({ t, tau }); } });
+        const param = (value, name = '') => ({ value, setTargetAtTime(t, at, tau) { made.targets.push({ t, tau, name }); } });
         return {
             made, state: 'running', sampleRate: 48000, currentTime: 0,
             destination: node(), resume: () => Promise.resolve(),
             createMediaElementSource(el) { made.sources.push(el); return node(); },
             createChannelSplitter(n) { made.splitters.push(n); return node(); },
             createChannelMerger() { return node(); },
-            createGain() { return node({ gain: param(1) }); },
+            createGain() { return node({ gain: param(1, 'gain') }); },
+            createBiquadFilter() { made.filters++; return node({ type: 'lowpass', frequency: param(350, 'hz'), Q: param(1) }); },
             createAnalyser() {
                 const channel = made.analysers++;
                 return node({ fftSize: 2048, getFloatTimeDomainData: (buf) => tone(channel, buf) });
@@ -1384,7 +1385,7 @@ console.log('Music:');
 
     await ok('Only a layered piece goes through the splitter, and only once the probe said yes', () => {
         const ctx = fakeContext();
-        const box = { ...audio, state, audioCtx: ctx, layersWork: true, layerGraphs: null,
+        const box = { ...audio, state, audioCtx: ctx, layersWork: true, musicGraphs: null,
                       bgmTracks: null, gainNodes: {}, volumeWorks: null, musicPressure: null };
         box.initMusic();
         const fight = box.trackFor('emergency_2');
@@ -1400,11 +1401,11 @@ console.log('Music:');
         box.setTrackVolume('day_1', 0.3);
         assert.equal(day.volume, 1, 'the element volume was turned as well');
         assert.equal(box.trackVolume('day_1'), 0.3);
-        assert.equal(box.layerGraphs.day_1.level.gain.value, 0.3, 'the level did not move');
+        assert.equal(box.musicGraphs.day_1.level.gain.value, 0.3, 'the level did not move');
 
         // Without the probe's yes the same piece plays its stereo file.
         const ctx2 = fakeContext();
-        const shy = { ...audio, state, audioCtx: ctx2, layersWork: false, layerGraphs: null,
+        const shy = { ...audio, state, audioCtx: ctx2, layersWork: false, musicGraphs: null,
                       bgmTracks: null, gainNodes: {}, volumeWorks: null, musicPressure: null };
         shy.initMusic();
         assert.ok(shy.trackFor('day_1').src.endsWith(MUSIC_FILES.day_1.stereo), 'the layers played without the probe');
@@ -1414,7 +1415,7 @@ console.log('Music:');
         // stereo file, and so does every layered piece after it.
         const ctx3 = fakeContext();
         ctx3.createMediaElementSource = () => { throw new Error('taken'); };
-        const odd = { ...audio, state, audioCtx: ctx3, layersWork: true, layerGraphs: null,
+        const odd = { ...audio, state, audioCtx: ctx3, layersWork: true, musicGraphs: null,
                       bgmTracks: null, gainNodes: {}, volumeWorks: null, musicPressure: null };
         odd.initMusic();
         const warn = console.warn; console.warn = () => {};
@@ -1428,7 +1429,7 @@ console.log('Music:');
     await ok('The band leans in as the day presses, through the stat bars', () => {
         const ctx = fakeContext();
         const box = { ...audio, state, audioCtx: ctx, musicPressure: null,
-                      layerGraphs: { day_1: { rhythm: ctx.createGain(), level: ctx.createGain(), levelValue: 0 },
+                      musicGraphs: { day_1: { rhythm: ctx.createGain(), level: ctx.createGain(), levelValue: 0 },
                                      morning_1: { rhythm: ctx.createGain(), level: ctx.createGain(), levelValue: 0 } } };
         resetState();
         state.al = 0; state.cr = 0; state.tickets = 0;
@@ -1499,6 +1500,135 @@ console.log('Music:');
         assert.ok(hook, 'the first input no longer asks the probe');
         const events = hook[1].split(',').map(s => s.trim().replace(/'/g, ''));
         assert.deepEqual(events.sort(), ['keydown', 'pointerdown', 'touchend'], 'the probe is asked by an event that is no gesture');
+    });
+
+    // --- the gala's rooms (Phase 3) ---------------------------------------------
+    await ok('Every gala station has a sound, and the far ones are muffled', async () => {
+        await ensure('party');
+        const stations = new Set(DB.party.map(ev => ev.loc).filter(Boolean));
+        assert.ok(stations.has('lounge') && stations.size === 6, `the gala has other stations now: ${[...stations].join(', ')}`);
+        for (const loc of stations) {
+            if (loc === 'lounge') continue;                  // a piece of its own instead
+            assert.ok(cues.PARTY_ROOMS[loc], `${loc} has no sound and is heard in the open`);
+        }
+        for (const loc of Object.keys(cues.PARTY_ROOMS)) {
+            assert.ok(stations.has(loc), `${loc} has a sound but is no station`);
+        }
+        const open = cues.roomSound(null);
+        assert.deepEqual(open, { hz: cues.OPEN_HZ, gain: 1 }, 'the foyer is not in the open');
+        assert.deepEqual(cues.roomSound('dance'), open, 'the dance floor is not in front of the band');
+        const [bar, toilet, outside] = ['bar', 'toilet', 'outside'].map(cues.roomSound);
+        assert.ok(bar.hz < open.hz && bar.gain < 1, 'the bar sounds like the dance floor');
+        assert.ok(toilet.hz < bar.hz && toilet.gain < bar.gain, 'the toilet is not behind a wall');
+        assert.ok(outside.hz < toilet.hz && outside.gain < toilet.gain, 'outside is not further away than the toilet');
+    });
+
+    await ok('The gala goes through one room, and the room follows the station', () => {
+        const ctx = fakeContext();
+        const box = { ...audio, state, audioCtx: ctx, layersWork: false, musicGraphs: null, roomBus: null,
+                      roomWorks: null, bgmTracks: null, gainNodes: {}, volumeWorks: null, musicPressure: null, musicRun: null };
+        resetState();
+        state.musicEnabled = true; state.musicVolume = 0.8;
+        state.isPartyMode = true; state.currentEventLoc = null;
+        box.initMusic();
+        const one = box.trackFor('gala_1');
+        const two = box.trackFor('gala_2');
+        assert.deepEqual(ctx.made.sources, [one, two], 'a gala piece is not in the room');
+        assert.equal(ctx.made.filters, 1, 'each piece has a room of its own, and they would drift apart');
+        box.trackFor('emergency_2');
+        assert.equal(ctx.made.sources.length, 2, 'a piece outside the gala went into the room');
+        box.setTrackVolume('gala_1', 0.4);
+        assert.equal(one.volume, 1, 'the element volume was turned as well');
+        assert.equal(box.musicGraphs.gala_1.level.gain.value, 0.4, 'the level did not move');
+        assert.doesNotThrow(() => box.followPressure(), 'the rhythm was asked of a gala piece, which has none');
+
+        // The scene decides: the station of the event on screen.
+        const last = () => ctx.made.targets.slice(-2).map(x => [x.name, +x.t.toFixed(4), x.tau]);
+        state.currentEventLoc = 'toilet';
+        box.playMusic();
+        const toilet = cues.roomSound('toilet');
+        assert.deepEqual(last(), [['hz', toilet.hz, cues.ROOM_TAU], ['gain', +toilet.gain.toFixed(4), cues.ROOM_TAU]],
+                         'the band does not sound as it would from the toilet');
+        state.currentEventLoc = null;                           // back in the foyer
+        box.playMusic();
+        assert.deepEqual(last(), [['hz', cues.OPEN_HZ, cues.ROOM_TAU], ['gain', 1, cues.ROOM_TAU]], 'the foyer kept the wall');
+
+        // A context that does not run: the gala plays plain, as before.
+        const sleepy = fakeContext();
+        sleepy.state = 'suspended';
+        const plain = { ...audio, state, audioCtx: sleepy, layersWork: false, musicGraphs: null, roomBus: null,
+                        roomWorks: null, bgmTracks: null, gainNodes: {}, volumeWorks: null, musicPressure: null, musicRun: null };
+        plain.initMusic();
+        plain.trackFor('gala_3');
+        assert.equal(sleepy.made.sources.length, 0, 'a gala piece went into a graph whose context sleeps');
+        resetState();
+
+        // The station is written where every scene begins.
+        const events = readFileSync(new URL('../src/engine/engine_events.js', import.meta.url), 'utf-8');
+        const at = events.indexOf('    renderTerminal: function(');
+        assert.match(events.slice(at, events.indexOf('\n    },', at)), /this\.state\.currentEventLoc = ev\.loc \?\? null/,
+                     'a scene no longer says where at the gala it is');
+    });
+
+    await ok('The lounge has its own piece, and both rooms carry on where they were', async () => {
+        resetState();
+        state.musicEnabled = true; state.musicVolume = 0.8;
+        state.isPartyMode = true; state.currentEventLoc = null; state.bossTimer = null;
+        mus.initMusic();
+        mus.musicRun = null;
+        mus.playMusic('gala');
+        const hall = state.currentMusicTrack;
+        assert.equal(cues.CUES[hall].pool, 'gala');
+        await wait(700);
+        mus.bgmTracks[hall].currentTime = 61;
+
+        state.currentEventLoc = 'lounge';
+        mus.playMusic();
+        assert.equal(state.currentMusicTrack, 'gala_lounge', 'the lounge plays the dance band');
+        await wait(500);
+        assert.ok(mus.bgmTracks[hall].paused, 'the hall played on in the lounge');
+        mus.bgmTracks.gala_lounge.currentTime = 42;
+
+        state.currentEventLoc = null;                       // back in the foyer
+        mus.playMusic();
+        assert.equal(state.currentMusicTrack, hall, 'the hall drew a new piece instead of carrying on');
+        assert.equal(mus.bgmTracks[hall].currentTime, 61, 'the hall started its piece over');
+        await wait(700);
+        assert.ok(mus.bgmTracks.gala_lounge.paused, 'the lounge played on in the foyer');
+
+        state.currentEventLoc = 'lounge';                   // the second visit
+        mus.playMusic();
+        assert.equal(mus.bgmTracks.gala_lounge.currentTime, 42, 'the lounge began its piece again on every visit');
+        await wait(700);
+
+        // Run out during a visit, it starts again - the next dance number
+        // would be the wrong room.
+        mus.onMusicEnded('gala_lounge');
+        assert.equal(state.currentMusicTrack, 'gala_lounge', 'the lounge ran out into the dance band');
+        assert.equal(mus.bgmTracks.gala_lounge.currentTime, 0);
+        await wait(700);
+        mus.stopMusic(0);
+        resetState();
+    });
+
+    await ok('A gala does not bring back the office piece an emergency paused', async () => {
+        resetState();
+        state.musicEnabled = true; state.musicVolume = 0.8;
+        state.isPartyMode = false; state.bossTimer = null; state.activeEvent = false; state.time = 11 * 60;
+        mus.initMusic();
+        mus.musicRun = null;
+        mus.playMusic('office');
+        const office = state.currentMusicTrack;
+        await wait(700);
+        mus.bgmTracks[office].currentTime = 30;
+        mus.playMusic('boss');
+        await wait(300);
+        state.isPartyMode = true; state.currentEventLoc = null;
+        mus.playMusic('gala');
+        assert.equal(cues.CUES[state.currentMusicTrack].pool, 'gala', `the gala opened with ${state.currentMusicTrack}`);
+        await wait(700);
+        mus.stopMusic(0);
+        resetState();
     });
 }
 

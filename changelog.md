@@ -2,6 +2,7 @@
 
 Music:
 * New music, made for this game. It follows the day: calm in the morning, busier as the tickets, the anger or the boss radar climb, with pieces of its own for lunch, emergencies and the gala. After an emergency the piece it interrupted carries on where it stopped.
+* At the gala the band sounds the way it would from where you are: in front of you on the dance floor, muffled through the wall from the toilet, far off outside. The lounge has a quiet piece of its own, and it carries on from where you left it.
 * The music style setting is gone. There is one band now, and the volume and the on/off switch stay.
 
 [7.1.1] - 2026-11-10

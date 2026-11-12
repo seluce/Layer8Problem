@@ -31,8 +31,9 @@ src/
                         engine_vending.js the machine on the third floor,
                         leaderboard.js what a day or a week is worth on
                         Steam, engine_scores.js the sending of it,
-                        music_cues.js which piece of music comes next
-                        (pure; engine_audio.js plays it), music_files.js
+                        music_cues.js which piece of music comes next and
+                        how the gala sounds from each station (pure;
+                        engine_audio.js plays it), music_files.js
                         the files and their measurements (written by
                         tools/master-music.mjs)
   data/de/              24 data files, the German source
