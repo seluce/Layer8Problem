@@ -290,6 +290,9 @@ export const ui = {
         this.state.cr = Math.max(0, Math.min(100, this.state.cr));
         this.state.tickets = Math.max(0, this.state.tickets);
 
+        // The band's density follows the same three values the bars show.
+        this.followPressure();
+
         // Clock, stat bars, ticket counter and the phone's standby clock are
         // all rendered by components and update themselves from $state.
 		
@@ -2223,7 +2226,6 @@ export const ui = {
         this.setVolume(DEFAULT_SFX_VOLUME);
         this.toggleMusic(true);
         this.setMusicVolume(DEFAULT_MUSIC_VOLUME);
-        this.changeMusicStyle('radio');
         this.state.narrationEnabled = true;
         try { localStorage.setItem(KEYS.narrationEnabled, true); } catch { /* the session keeps it */ }
         this.setNarrationVolume(DEFAULT_NARRATION_VOLUME);

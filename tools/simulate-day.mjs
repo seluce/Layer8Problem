@@ -18,11 +18,20 @@
  *
  * Usage: node tools/simulate-day.mjs [days per cell, default 1500] [--lang=de|en]
  *        node tools/simulate-day.mjs 3000 --lang=en
+ *        node tools/simulate-day.mjs --music [--tenseon=65 --tenseoff=50]
+ *
+ * --music adds what the house band would hear: at every scene the terminal
+ * shows, the mood the music engine reads (nextMood, with its hysteresis), the
+ * pool it would draw from (housePool) and the pressure that sets the rhythm
+ * layer (pressure). Both are the game's own functions out of
+ * src/engine/music_cues.js, not copies, so the share this prints is the
+ * share the game produces for the same values.
  *
  * Both trees must produce the same numbers: only prose differs between them, so
  * a deviation means a number was touched while translating.
  */
 import { DB, ensure, loadCore, currentLanguage } from '../src/data.js';
+import { nextMood, housePool, pressure, TENSE_ON, TENSE_OFF, PULL_FROM } from '../src/engine/music_cues.js';
 
 // The count is read from the arguments that are NOT flags. Straight
 // process.argv[2] would parse `--lang=en` as the day count and run NaN days.
@@ -72,6 +81,12 @@ const VALVES = (() => {
     return hit ? hit.split('=')[1].split(',').map(Number) : null;
 })();
 const DECAY = ARG('decay', 0);
+//   --music           tally the music's mood, pools and pressure per scene
+//   --tenseon=65      try another threshold for the tense mood
+//   --tenseoff=50     and for letting go of it again
+const MUSIC = process.argv.includes('--music');
+const TENSE_ON_AT = ARG('tenseon', TENSE_ON);
+const TENSE_OFF_AT = ARG('tenseoff', TENSE_OFF);
 //   --normmult=1.1    override the difficulty multiplier for Wednesday
 //   --excuses=3,1,1   override the number of excuses per difficulty
 const NORM_MULT = ARG('normmult', 1.1);   // engine state: Wednesday hardening x1.1
@@ -209,6 +224,30 @@ function playDay(diffCfg, stratName) {
         inv: new Set(), linkedMail: [], lastMail: -999,
         radarPaid: 0, radarBase: 0,
         mails: 0, callsDone: 0, events: 0, currentPool: '',
+        mood: 'calm', music: { scenes: 0, tense: 0, flips: 0, bands: [0, 0, 0], drivers: [0, 0, 0], pools: {} },
+    };
+
+    // What the music engine reads when the terminal shows a scene
+    // (renderTerminal -> playMusic): the mood moves first, then the pool.
+    const hearScene = (type) => {
+        if (!MUSIC) return;
+        const was = s.mood;
+        s.mood = nextMood(s.mood, s.al, s.cr, TENSE_ON_AT, TENSE_OFF_AT);
+        const m = s.music;
+        m.scenes++;
+        if (s.mood === 'tense') m.tense++;
+        if (s.mood !== was) m.flips++;
+        // The rhythm layer in three bands: at its floor, in the lower half
+        // of its way in, in the upper half. And which of the three values
+        // set the pressure (the largest one does).
+        const p = pressure({ tickets: s.tickets, al: s.al, cr: s.cr });
+        const pull = (p - PULL_FROM) / (1 - PULL_FROM);
+        m.bands[pull <= 0 ? 0 : (pull < 0.5 ? 1 : 2)]++;
+        const shares = [s.tickets / 10, s.al / 100, s.cr / 100];
+        m.drivers[shares.indexOf(Math.max(...shares))]++;
+        const pool = housePool({ boss: type === 'boss', lunch: type === 'lunch',
+                                 tense: s.mood === 'tense', minute: s.time });
+        m.pools[pool] = (m.pools[pool] ?? 0) + 1;
     };
 
     // Morning mood: 60% neutral, 10% each for anger/radar/laziness/snack
@@ -247,6 +286,7 @@ function playDay(diffCfg, stratName) {
         s.used.add(ev.id);
         s.events++;
         s.currentPool = poolType;
+        hearScene(poolType);
         if (poolType === 'calls') s.callsDone++;
 
         // Excuse: a thinking player escapes an event whose best answer is
@@ -272,6 +312,7 @@ function playDay(diffCfg, stratName) {
         if (!s.lunchDone && s.time >= 720) {
             s.lunchDone = true;
             const lunch = rnd(DB.lunch);
+            hearScene('lunch');
             if (lunch.opts?.length) apply(s, pick(unlocked(lunch.opts, s.inv), s) ?? lunch.opts[0], 'lunch');
             end = checkEnd(s);
             if (end) { s.end = end; break; }
@@ -313,10 +354,13 @@ if (VALVES) DIFFS.forEach((d, i) => d.valveReset = VALVES[i]);
 // Stat multiplier as in engine_events: formulas only, not identity (mail
 // chance, tickets and excuses still go through mult).
 const statMult = (s) => s.diff === 1.0 ? NORM_MULT : s.diff;
+const musicLines = [];
 for (const diff of DIFFS) {
     console.log(`=== ${diff.name} (x${diff.mult}) ===`);
+    if (MUSIC) musicLines.push(`=== ${diff.name} ===`);
     for (const strat of Object.keys(STRATEGIES)) {
         const R = { WIN: 0, RAGE: 0, TICKETS: 0, FIRED: 0 };
+        const mus = { scenes: 0, tense: 0, flips: 0, bands: [0, 0, 0], drivers: [0, 0, 0], pools: {} };
         let valveA = 0, valveC = 0, mails = 0, calls = 0, events = 0,
             endFl = 0, endAl = 0, endCr = 0, lossTime = [], lazyShare = 0;
         for (let i = 0; i < DAYS; i++) {
@@ -328,6 +372,20 @@ for (const diff of DIFFS) {
             if (s.end === 'WIN') { endFl += s.fl; endAl += s.al; endCr += s.cr; }
             else lossTime.push(s.time);
             lazyShare += s.radarBase > 0 ? (s.radarPaid / s.radarBase) : 1;
+            mus.scenes += s.music.scenes; mus.tense += s.music.tense; mus.flips += s.music.flips;
+            s.music.bands.forEach((n, i) => mus.bands[i] += n);
+            s.music.drivers.forEach((n, i) => mus.drivers[i] += n);
+            for (const [k, n] of Object.entries(s.music.pools)) mus.pools[k] = (mus.pools[k] ?? 0) + n;
+        }
+        if (MUSIC) {
+            const pc = (n) => `${(100 * n / (mus.scenes || 1)).toFixed(1).padStart(5)}%`;
+            const order = ['morning', 'day', 'afternoon', 'tense', 'lunch', 'emergency'];
+            musicLines.push(
+                `  ${strat.padEnd(8)} tense ${pc(mus.tense)} of ${(mus.scenes / DAYS).toFixed(1)} scenes a day, ` +
+                `${(mus.flips / DAYS).toFixed(2)} mood changes a day | rhythm floor ${pc(mus.bands[0])} ` +
+                `lower ${pc(mus.bands[1])} upper ${pc(mus.bands[2])} | set by tickets ${pc(mus.drivers[0])} ` +
+                `anger ${pc(mus.drivers[1])} radar ${pc(mus.drivers[2])} | ` +
+                order.map(k => `${k} ${pc(mus.pools[k] ?? 0)}`).join(' '));
         }
         const wins = R.WIN || 1;
         lossTime.sort((a, b) => a - b);
@@ -343,4 +401,8 @@ for (const diff of DIFFS) {
         );
     }
     console.log('');
+}
+if (MUSIC) {
+    console.log(`Music (tense from ${TENSE_ON_AT}, calm again below ${TENSE_OFF_AT}; share of the scenes shown):`);
+    for (const line of musicLines) console.log(line);
 }

@@ -1,4 +1,4 @@
-import { KEYS, PROGRESS_KEYS, LEGACY_PARTY_KEYS } from './keys.js';
+import { KEYS, PROGRESS_KEYS, LEGACY_PARTY_KEYS, RETIRED_KEYS } from './keys.js';
 import { SvelteSet } from 'svelte/reactivity';
 import { t, tf, tree } from '../i18n/i18n.svelte.js';
 
@@ -525,6 +525,7 @@ export const core = {
 
     loadSystem: function() {
         this.migratePartyFlag();
+        this.dropRetiredKeys();
         const data = localStorage.getItem(this.KEYS.archive);
         
         DB.chars.forEach(char => {
@@ -1967,6 +1968,13 @@ export const core = {
         if (!PARTY_BADGES.every(id => unlocked.includes(id))) return null;
         if (localStorage.getItem(this.KEYS.partyPlayed) === 'true') return null;
         return { isParty: true, partyKey: this.KEYS.partyPlayed };
+    },
+
+    /** Removes what an older version stored and nothing reads (RETIRED_KEYS). */
+    dropRetiredKeys: function() {
+        for (const key of RETIRED_KEYS) {
+            try { localStorage.removeItem(key); } catch { /* unreadable storage: nothing to drop */ }
+        }
     },
 
     /**

@@ -26,6 +26,12 @@ public/audio/
 voice/master/
 voice/trial/
 
+# /music/ holds the provider's output for the music: the auditions, the
+# lossless masters. Like voice/master/, it stays out of the repository.
+# Anchored: a bare `music/` matches at any depth and took docs/audio/music,
+# the files the site plays, out of the repository with it.
+/music/
+
 # The listening index is generated from the manifest and the rendered audio in
 # a second (`npm run voice:listen`). 3.2 MiB a language that would otherwise
 # change on every edited line.

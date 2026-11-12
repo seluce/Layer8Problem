@@ -32,7 +32,11 @@ import { fileURLToPath } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 
-/** The .opus filenames per language, or {} if the folder is not there. */
+/**
+ * The .opus filenames per folder - one per language, and `music` for the
+ * house band (7.2), whose names are checksums of the file - or {} if the
+ * folder is not there.
+ */
 function stock(base) {
     if (!existsSync(base)) return {};
     const out = {};

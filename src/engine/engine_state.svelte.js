@@ -632,7 +632,6 @@ export const state = $state({
     // voice - broadcast practice for a bed under narration. Reaches new
     // players only; a stored setting is the player's and is not rewritten.
     musicVolume: parseFloat(localStorage.getItem(KEYS.musicVolume) || String(DEFAULT_MUSIC_VOLUME)),
-    musicStyle: localStorage.getItem(KEYS.musicStyle) || 'radio',
     // The narrator. On by default - 15 hours of speech is not an easter egg -
     // and at the top of its range, because the recordings come in at -23.6
     // LUFS and the music is levelled 15 dB below that. See engine_audio.MUSIC_TRIM.

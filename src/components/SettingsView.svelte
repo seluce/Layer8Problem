@@ -81,14 +81,6 @@
     // screen that must survive the change. A plain const would read the
     // dictionary once at mount and keep the words of the language the player
     // just left - on the very row they used to leave it.
-    const MUSIC_STYLES = $derived([
-        ['radio',     t('set.music.radio')],
-        ['elevator',  t('set.music.elevator')],
-        ['lofi',      t('set.music.lofi')],
-        ['detective', t('set.music.detective')],
-        ['bossa',     t('set.music.bossa')]
-    ]);
-
     const TEXT_SIZES = $derived([
         ['normal', t('set.textSize.normal')],
         ['large',  t('set.textSize.large')],
@@ -192,11 +184,7 @@
                       desc: t('set.music.desc'),
                       get: () => game.musicEnabled, set: (v) => engine.toggleMusic(v),
                       level: () => game.musicVolume, setLevel: (v) => engine.setMusicVolume(v),
-                      step: 0.01, levelTitle: t('set.music.level') },
-                    { kind: 'select', icon: '📻', img: 'set_musicstyle', title: t('set.musicStyle.title'),
-                      desc: t('set.musicStyle.desc'),
-                      focus: 'focus:border-amber-500', options: MUSIC_STYLES,
-                      get: () => game.musicStyle, set: (v) => engine.changeMusicStyle(v) }
+                      step: 0.01, levelTitle: t('set.music.level') }
                 ] },
                 { title: t('set.section.narration'), accent: 'text-amber-400', rows: [
                     // No `img` yet: every other row has a drawn icon and this

@@ -25,12 +25,16 @@ src/
   platform_steam.js     Steam bridge over window.desktopBridge, only under Electron
 
   components/           46 Svelte components, 8 of them for the intranet
-  engine/               21 modules; engine_state.svelte.js holds the state,
+  engine/               25 modules; engine_state.svelte.js holds the state,
                         engine_week.js the week mode, engine_hooks.js the
                         observer list the tutorial listens on,
                         engine_vending.js the machine on the third floor,
                         leaderboard.js what a day or a week is worth on
-                        Steam, engine_scores.js the sending of it
+                        Steam, engine_scores.js the sending of it,
+                        music_cues.js which piece of music comes next
+                        (pure; engine_audio.js plays it), music_files.js
+                        the files and their measurements (written by
+                        tools/master-music.mjs)
   data/de/              24 data files, the German source
   data/en/              the same 24, in English
   i18n/                 language selection and interface strings
@@ -47,6 +51,8 @@ tools/
   lint-assets.mjs       every image reference against the stock, npm run lint:assets
   simulate-day.mjs      day simulation, npm run sim
   simulate-week.mjs     week simulation, npm run sim:week
+  master-music.mjs      the house band from music/ to public/audio/music/,
+                        npm run music:master
   report-prose.mjs      prose and style report, node tools/report-prose.mjs [pool]
   scan-fields.mjs       every text field of both trees, with no word floor
   make-steam-presence.mjs      friends-list strings for Steamworks

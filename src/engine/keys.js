@@ -65,12 +65,24 @@ export const KEYS = {
     audioVolume:   'layer8_volume',
     musicEnabled:  'layer8_music',
     musicVolume:   'layer8_music_volume',
-    musicStyle:    'layer8_music_style',
     narrationEnabled: 'layer8_narration',
     narrationVolume:  'layer8_narration_volume',
     narrationKinds:   'layer8_narration_kinds',
     narrationRate:    'layer8_narration_rate',
 };
+
+/**
+ * Keys an older version wrote and nothing reads any more, removed at boot by
+ * engine_core.dropRetiredKeys(). Removed rather than left lying: a later
+ * feature that took the name again would inherit a value it never wrote.
+ * A name on this list is therefore never a value in KEYS - the week suite
+ * holds the two apart.
+ */
+export const RETIRED_KEYS = [
+    // The music style of 7.1.1 and earlier ('radio', 'lofi', ...). The house
+    // band has none; a choice that comes back later gets a key of its own.
+    'layer8_music_style',
+];
 
 /**
  * The three per-difficulty gala flags 6.1 wrote.

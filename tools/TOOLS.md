@@ -20,6 +20,7 @@ the repository root.
 | Voice manifest | `npm run voice:manifest` / `npm run lint:voice` | after every change to TERMINAL prose, once audio exists |
 | Generation run | `npm run voice:audio -- [--trial=x] [--pool=p] [--limit=n]` | turns the manifest into audio; costs money, needs `ELEVENLABS_API_KEY` |
 | Audio guard | `node tools/check-audio.mjs` | runs as `prebuild`; restores `public/audio/` from `docs/` so a build cannot drop it |
+| Music master | `npm run music:master [-- --cue=<id>] [-- --list]` | after a new take or a new cut; offline, ffmpeg only |
 | Test suites | `npm test` | before every delivery |
 | Console tool | `tools/dev-week.js` into the browser console | play testing on the live game |
 | String checker | `npm run lint:i18n` | after **every** change to interface strings, gate at 0/0 |
@@ -252,6 +253,27 @@ Experiment switches (defaults = the current state):
 --decay=1         radar drops by N every 30 minutes
 --normmult=…      multiplier for Normal
 ```
+
+**`--music` — what the house band hears.** At every scene the terminal shows
+it asks the music engine's own functions (`nextMood`, `housePool`, `pressure`
+out of `src/engine/music_cues.js`, imported, not copied) and prints a block
+after the balance table: the share of scenes in the tense mood, how often the
+mood changes a day, where the rhythm layer stands (at its floor, in the lower
+or the upper half of its way in), which of tickets, anger and radar set the
+pressure, and the pool each scene would draw from. `--tenseon=` and
+`--tenseoff=` try other thresholds through the same function.
+
+```
+npm run sim 3000 -- --music
+npm run sim 3000 -- --music --tenseon=75 --tenseoff=60
+```
+
+The thresholds 80/65 were set with it: about one scene in five on Normal for
+the casual player. The pressure curve was checked with it against the rule
+that a normal day spends most of its time below the middle: 64 % of the
+casual player's Wednesday scenes and 74 % of the sensible player's. A change
+to the event numbers moves both, so a balance change is a reason to run it
+again.
 
 ## 4. `simulate-week.mjs` — week balance
 
@@ -544,6 +566,49 @@ pay-as-you-go rate**, which is the dearest way to buy the characters; usage
 inside a plan's included credits has come out cheaper. The line after a run
 reports what was actually spent, in credits, with the rate it worked out to
 and how far the plan's remainder still reaches.
+
+## 7b. `master-music.mjs` — the house band, from the provider's files to the game's
+
+```
+npm run music:master                   # every piece, then the table
+npm run music:master -- --cue=day_2    # one piece; the table keeps the rest
+npm run music:master -- --list         # sources and cuts, nothing written
+```
+
+Offline: ffmpeg with libopus and arithmetic, no key, no provider. The FLAC
+files the operator downloaded sit in `music/` (gitignored, like
+`voice/master/`); the tool writes `public/audio/music/` and
+`src/engine/music_files.js`, and `npm run build` carries the files into
+`docs/audio/music/`, which is what the repository holds.
+
+**Which take and which cut** is the table `SET` at the top of the tool, with
+the measurement behind each cut in its comment; the choice of take is
+recorded in `music/prompts.md`. **Which pool, whether layered** is `CUES` in
+`src/engine/music_cues.js` — the tool refuses to run when the two disagree.
+
+What it does to a piece, in order: the cut and a release where the provider
+faded a band that was still playing; silence off both ends, 5 ms in and
+50 ms out against clicks; for an office piece the split into **bed** (channels
+1/2, bass included) and **rhythm** (3/4) — `bed + rhythm` is the original,
+sample by sample; one linear gain that brings the SUM to `TARGET_LUFS`
+(-21.9, the emergency and the gala 3 dB over it); the **floor** — the bed
+with the rhythm at its floor, at most `MAX_FLOOR_LOSS` (2 LU) under the sum,
+or the piece is refused; Opus 96 kbit/s stereo for every piece and 192 kbit/s
+quad (mapping family 1) for a layered one, bit-exact so the same input gives
+the same bytes. Then the shipped stereo file is decoded and measured again,
+and that number goes into the table the week suite reads.
+
+**Names are checksums**, `<id>.<8 hex>.opus` and `<id>.quad.<8 hex>.opus`,
+the rule `check-audio.mjs` relies on. A re-mastered piece gets a new name and
+the old one is deleted from `public/` **and** `docs/`; otherwise
+`check-audio.mjs` would copy it back out of `docs/` before the next build,
+and the week suite fails on a file without an entry. So after a run: build,
+then test.
+
+**The probe** (`probe.quad.<hex>.opus`) is built on every run: four tones on
+four channels, encoded, decoded again, each channel checked for its own
+frequency. The game plays it silently once a session and only then takes the
+four-channel files (`engine_audio.probeLayers()`).
 
 ## 8. `npm test` — the five test suites, in both languages
 

@@ -121,6 +121,19 @@ function recoverFromError(err) {
 window.addEventListener('error', (e) => recoverFromError(e.error || e.message));
 window.addEventListener('unhandledrejection', (e) => recoverFromError(e.reason));
 
+// The music asks once whether this browser keeps a four-channel file apart
+// (engine_audio.probeLayers). The question needs a gesture to be heard, and
+// playMusic() asks it in the same click that starts the first piece - too
+// late for that piece, which then plays its stereo file. The first input of
+// any kind is usually a few clicks before the day begins, so the answer is
+// in when the first piece is drawn. touchend, not touchstart: only the end of
+// a touch counts as a gesture for play().
+for (const ev of ['pointerdown', 'keydown', 'touchend']) {
+    document.addEventListener(ev, () => {
+        if (engine.state.musicEnabled) engine.probeLayers();
+    }, { once: true, capture: true });
+}
+
 // The way everything inside the bundle reaches the engine - components,
 // actions.js and the tutorial. The global above is for the console tool only.
 export { engine };

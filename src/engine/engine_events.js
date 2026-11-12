@@ -1138,7 +1138,11 @@ export const events = {
         // -----------------------------------------------------
 				
         this.state.activeEvent = true;
-        if(ev.id) this.state.usedIDs.add(ev.id); 
+        // A new scene is one of the two moments the music may decide at
+        // (the other is the end of a piece): lunch cuts in, a mood may
+        // take over. engine_audio.playMusic() reads the type set above.
+        this.playMusic();
+        if(ev.id) this.state.usedIDs.add(ev.id);
         this.disableButtons(true);
         this.recordSeen('event', ev.id);
         this.applyPassiveItems(ev.char);

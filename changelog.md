@@ -1,3 +1,9 @@
+[Unreleased]
+
+Music:
+* New music, made for this game. It follows the day: calm in the morning, busier as the tickets, the anger or the boss radar climb, with pieces of its own for lunch, emergencies and the gala. After an emergency the piece it interrupted carries on where it stopped.
+* The music style setting is gone. There is one band now, and the volume and the on/off switch stay.
+
 [7.1.1] - 2026-11-10
 
 Fixes after 7.1.
