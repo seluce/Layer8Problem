@@ -720,4 +720,148 @@ await ok('a second language in the same process really arrives', async () => {
     assert.deepEqual(stuck, [], 'a pool came back in the first language');
 });
 
+// --- GlobalCorp FM (7.2) ------------------------------------------------------
+//
+// The radio's spots are a second set of recordings in a second voice. Every
+// link that keeps the two sets apart fails without a sound: a spot collected
+// with the narrator's pieces is bought in his voice, a spot filed in his
+// folder plays whatever scene happens to share its words, and a manifest the
+// gate does not read is a manifest nobody holds against the tree.
+await ok('GlobalCorp FM is a set of its own, in a folder of its own', async () => {
+    const { collectRadio, VOICE_SETS, voiceSet, FM_POOL } = await import('./voice-text.mjs');
+    const { entries: spots } = await collectRadio(LANG);
+    const { DB } = await import('../src/data.js');
+    assert.equal(spots.length, DB[FM_POOL].length, 'a spot was not collected');
+    assert.deepEqual(spots.filter(e => !/^radio\/fm_[a-z0-9_]+\/text$/.test(e.key)).map(e => e.key), [],
+        'a spot is filed under a key of another shape');
+    assert.deepEqual(entries.filter(e => e.key.startsWith(`${FM_POOL}/`)).map(e => e.key), [],
+        'the narrator collects the radio\'s spots - they would be bought in his voice');
+    for (const e of spots) {
+        assert.equal(e.spoken, spokenForm(e.src, LANG), `${e.key} is not sent through the spelling rules`);
+        assert.equal(fileFor(e), voiceHash(e.src), `${e.key} is filed under a name the browser cannot ask for`);
+    }
+
+    // Every path of the two sets differs, and the browser asks the folder the
+    // render writes - with public/ taken off, which is what the build does.
+    const n = VOICE_SETS.narrator, f = VOICE_SETS.fm;
+    for (const part of ['manifest', 'config', 'out', 'master']) {
+        assert.notEqual(n[part](LANG), f[part](LANG), `the two sets share their ${part}`);
+    }
+    assert.ok(!f.out(LANG).startsWith(`${n.out(LANG)}/`), 'the radio\'s files sit inside the narrator\'s folder');
+    const asked = src('engine/engine_radio.js').match(/el\.src = `audio\/fm\/\$\{language\(\)\}\//);
+    assert.ok(asked, 'engine_radio no longer asks audio/fm/<lang>/ - update this test with it');
+    assert.equal(f.out(LANG), `public/audio/fm/${LANG}`, 'the render writes somewhere the browser does not ask');
+    assert.equal(n.out(LANG), `public/audio/${LANG}`);
+    assert.throws(() => voiceSet('radio'), /Unknown set/, 'a misspelt set was taken for the narrator');
+});
+
+await ok('the FM manifest files a spot under the hash the browser computes, and the gate reads it', async () => {
+    const { collectRadio } = await import('./voice-text.mjs');
+    const { entries: spots } = await collectRadio(LANG);
+    const manifest = JSON.parse(readFileSync(`${ROOT}voice/manifest.fm.${LANG}.json`, 'utf8'));
+    const by = new Map(manifest.entries.map(e => [e.key, e]));
+    assert.equal(by.size, spots.length, 'the FM manifest and the pool hold different spots');
+    const wrong = spots.filter(e => by.get(e.key)?.sha !== voiceHash(e.src) || by.get(e.key)?.spk !== e.spk);
+    assert.deepEqual(wrong.map(e => e.key), [], 'a spot the manifest records differently');
+    // lint:voice is the gate. Both languages, both sets.
+    const lint = JSON.parse(readFileSync(`${ROOT}package.json`, 'utf8')).scripts['lint:voice'];
+    for (const need of ['--check &&', '--check --lang=en', '--check --set=fm', '--check --set=fm --lang=en']) {
+        assert.ok(lint.includes(need), `lint:voice no longer runs "${need}"`);
+    }
+});
+
+await ok('the copy-back before a build reaches the radio\'s nested folders', async () => {
+    const { stock } = await import('./check-audio.mjs');
+    const { mkdtempSync, mkdirSync, writeFileSync, rmSync } = await import('node:fs');
+    const { tmpdir } = await import('node:os');
+    const base = mkdtempSync(`${tmpdir()}/l8-stock-`);
+    try {
+        for (const [dir, file] of [['de', 'a.opus'], ['fm/de', 'b.opus'], ['fm/en', 'c.opus'], ['music', 'd.opus']]) {
+            mkdirSync(`${base}/${dir}`, { recursive: true });
+            writeFileSync(`${base}/${dir}/${file}`, 'x');
+        }
+        writeFileSync(`${base}/stray.opus`, 'x');      // not in a folder: not a set
+        assert.deepEqual(stock(base), { de: ['a.opus'], 'fm/de': ['b.opus'], 'fm/en': ['c.opus'], music: ['d.opus'] });
+    } finally {
+        rmSync(base, { recursive: true, force: true });
+    }
+});
+
+// Two presenters (7.2): the host, and a voice for ads and announcements. The
+// kind of a spot picks the voice, and every step of that is silent when it
+// breaks - a misspelt kind leaves a voice with nothing to read, two run files
+// that disagree give the station another presenter in English, and a call
+// that takes one voice for the whole run reads the ads in the host's voice.
+await ok('the station reads with two voices, chosen by the kind of spot', async () => {
+    const { collectRadio, speakerFor } = await import('./voice-text.mjs');
+    const ads = { kinds: ['ad'], voiceId: 'L' };
+    const cfg = { voiceId: 'D', byKind: [ads] };
+    assert.equal(speakerFor(cfg, 'ad'), ads, 'an ad was not read by the voice named for ads');
+    assert.equal(speakerFor(cfg, 'traffic'), cfg, 'a kind nobody named did not go to the voice at the top');
+    assert.equal(speakerFor(cfg, undefined), cfg, 'a piece without a kind left the voice at the top');
+    const single = { voiceId: 'D' };
+    assert.equal(speakerFor(single, 'ad'), single, 'a run file without byKind lost its one voice');
+
+    const run = (l) => JSON.parse(readFileSync(`${ROOT}voice/run.fm.${l}.json`, 'utf8'));
+    const cast = (c) => [c.voiceId, ...(c.byKind ?? []).map(b => `${b.voiceId}:${[...b.kinds].sort()}`)];
+    assert.deepEqual(cast(run('de')), cast(run('en')), 'the two languages hear different presenters');
+    const cfgL = run(LANG);
+    const given = (cfgL.byKind ?? []).flatMap(b => b.kinds);
+    assert.equal(new Set(given).size, given.length, 'a kind is given to two voices - the first wins in silence');
+    const { entries: spots } = await collectRadio(LANG);
+    const used = new Set(spots.map(e => e.kind));
+    for (const b of cfgL.byKind ?? []) {
+        for (const k of b.kinds) assert.ok(used.has(k), `"${k}" is given to ${b.voiceName}, but no spot is of that kind`);
+    }
+
+    // make-audio routes by it. A dry run sends nothing and needs no key; a
+    // trial name nothing has used keeps every spot on the list.
+    const { execFileSync } = await import('node:child_process');
+    const env = { ...process.env };
+    delete env.ELEVENLABS_API_KEY;
+    const out = execFileSync('node', ['--conditions', 'browser', '--import', './tools/register.mjs',
+        'tools/make-audio.mjs', '--set=fm', `--lang=${LANG}`, '--dry-run', '--trial=__voice_test__'],
+        { cwd: ROOT, env, encoding: 'utf8' });
+    const esc = (t) => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    for (const b of [cfgL, ...(cfgL.byKind ?? [])]) {
+        const n = spots.filter(e => speakerFor(cfgL, e.kind) === b).length;
+        assert.ok(n > 0, `${b.voiceName} has no spot to read`);
+        assert.match(out, new RegExp(`${esc(b.voiceName)}[^\\n]*: ${n} to do`),
+            `make-audio does not give ${b.voiceName} its ${n} spots`);
+    }
+    // A piece is finished only in the voice it is read in. Wrong one way, the
+    // run buys the ads again on every pass; wrong the other, it takes the
+    // host's reading of an ad for done. A ledger and stand-in files in a
+    // trial folder of its own, removed afterwards.
+    const { mkdirSync, writeFileSync, rmSync } = await import('node:fs');
+    const trial = `__voice_test_${process.pid}__`;
+    const dir = `${ROOT}voice/trial/${trial}`;
+    const dry = () => execFileSync('node', ['--conditions', 'browser', '--import', './tools/register.mjs',
+        'tools/make-audio.mjs', '--set=fm', `--lang=${LANG}`, '--dry-run', `--trial=${trial}`],
+        { cwd: ROOT, env, encoding: 'utf8' });
+    mkdirSync(`${dir}/master`, { recursive: true });
+    try {
+        const ledger = {};
+        for (const e of spots) {
+            writeFileSync(`${dir}/${fileFor(e)}.opus`, 'x');
+            ledger[e.key] = { sha: e.sha, spk: e.spk, model: cfgL.modelId, voice: speakerFor(cfgL, e.kind).voiceId, chars: e.chars };
+        }
+        writeFileSync(`${dir}/master/ledger.json`, JSON.stringify(ledger));
+        assert.match(dry(), /to do\s+0 of/, 'a spot finished in its own voice was put on the list again');
+        const others = spots.filter(e => speakerFor(cfgL, e.kind) !== cfgL);
+        for (const e of others) ledger[e.key].voice = cfgL.voiceId;
+        writeFileSync(`${dir}/master/ledger.json`, JSON.stringify(ledger));
+        assert.match(dry(), new RegExp(`to do\\s+${others.length} of`), 'a spot booked in the wrong voice counts as finished');
+    } finally {
+        rmSync(dir, { recursive: true, force: true });
+    }
+
+    // And each piece goes out, and is booked, in its own voice.
+    const ma = readFileSync(`${ROOT}tools/make-audio.mjs`, 'utf8');
+    const speak = ma.slice(ma.indexOf('async function speak(e)'), ma.indexOf('const started'));
+    assert.match(speak, /const voice = voiceOf\(e\);/, 'speak() no longer asks the piece for its voice');
+    assert.match(speak, /\/text-to-speech\/\$\{voice\}/, 'the call goes out in one voice for the whole run');
+    assert.match(speak, /voice, chars: e\.chars/, 'the ledger books a voice the piece was not read in');
+});
+
 console.log(`\n${passed} checks passed.`);

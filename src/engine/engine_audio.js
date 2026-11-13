@@ -455,6 +455,7 @@ export const audio = {
             document.addEventListener?.('visibilitychange', () => {
                 this.syncMusicToVisibility();
                 this.syncNarrationToVisibility();
+                this.syncRadioToVisibility?.();
             });
         }
         this.bgmTracks = {};
@@ -1023,7 +1024,9 @@ export const audio = {
         // Under speech. Six decibels, on top of the fifteen the levelling
         // already puts between music and voice - enough to clear the words
         // without the soundtrack audibly breathing in and out at every line.
-        narration: 0.50
+        narration: 0.50,
+        // Under a GlobalCorp FM spot (7.2): the same voice-over-bed rule.
+        radio: 0.50
     },
     // Built on first use rather than here. The module object is SPREAD into the
     // engine, and spread copies a reference: one Set written at module scope

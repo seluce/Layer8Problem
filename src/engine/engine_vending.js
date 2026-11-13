@@ -69,6 +69,7 @@ export const vendingMachine = {
         stats.vendingVisits = (stats.vendingVisits ?? 0) + 1;
         this.state.vendingVisited = true;   // for tonight's diary
         this.state.vending = { taken: null, delivered: false };
+        this.cutRadio?.();
         this.hushNarration();
         this.state.vendingOpen = true;
         this.lockScroll('vending');

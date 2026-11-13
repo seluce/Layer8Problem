@@ -95,6 +95,9 @@ export const en = {
     // Spoken, not shown - see tools/voice-text.mjs, SPOKEN_KEYS.
     'set.narration.sample':      'Test announcement. This is how loud the narrator reads when something happens in the terminal.',
     'set.narration.rateSample':  'Test announcement. This is how fast the narrator reads when something happens in the terminal.',
+    'set.fm.title':              'GlobalCorp FM',
+    'set.fm.desc':               'The company radio pipes up in quiet moments: traffic in the building, the weather in the server room, the canteen. It speaks as loud as the narrator and goes quiet as soon as the game has something to say.',
+    'set.fm.silent':             'The narrator is at zero, so the radio is silent too.',
     'set.textSize.title':        'Text size',
     'set.textSize.desc':         'This game is here to be read. Take the size that suits you.',
     'set.compact.title':         'Compact mode',
@@ -437,6 +440,9 @@ export const en = {
     // the places are too far apart to hold side by side.
     'common.locked':               'Locked',
     'ticker.broadcast':            '[GLOBAL CORP BROADCAST]',
+    'fm.station':                  'GlobalCorp FM',
+    'fm.onAir':                    'ON AIR',
+    'fm.stop':                     'End the spot',
 
     // The small read-aloud button beside the excuse. It carries an icon and
     // no text, so these two are its tooltip and its screen-reader name - what

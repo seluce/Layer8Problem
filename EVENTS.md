@@ -8,7 +8,7 @@ JavaScript objects in `data_*.js` (one file per area: `data_coffee.js`,
 event is simply one more object in the array of the appropriate file.
 
 **Every one of these files exists twice.** `src/data/de/` is the source,
-`src/data/en/` the English version — 24 files each. Both carry **the same ids,
+`src/data/en/` the English version — 25 files each. Both carry **the same ids,
 story flags, character names and numbers**; only the prose differs. That is what
 makes a save file language-independent and lets you switch in the middle of the
 week. A contribution therefore needs **both** versions — the same `id`, the same
@@ -17,8 +17,9 @@ values, translated text. `npm run lint:parity` enforces it.
 Writing happens in German first, from Miller's point of view ("du"), in the
 present tense; translation comes afterwards. Comments in the code and file names
 are English. To try things out: `npm install`, then `npm run preview`; before a
-pull request **`npm run lint:all`** — four checks (both data trees, interface
-strings, parity), and all of them have to pass with no errors and no warnings.
+pull request **`npm run lint:all`** — six checks (both data trees, interface
+strings, parity, images, narration), and all of them have to pass with no
+errors and no warnings.
 
 The examples deliberately show the **full build**: everything that is possible
 in one place, all at once. Almost everything may be left out — but whoever knows
@@ -891,6 +892,58 @@ counts as ignored.
     ]
 }
 ```
+
+---
+
+## 11. GlobalCorp FM (`data_radio.js`)
+
+The company radio is not an event: nobody answers it. A spot is ten to twenty
+seconds of a cheerful presenter, played when the working day goes quiet — the
+narrator has been silent for a while, nothing covers the terminal, no mail, no
+emergency, not the gala, not the tutorial. It stops the moment the game has
+something to say. So a spot is written to be **missed**: nothing in it may be
+needed to play, and nothing may be the only place a clue is found.
+
+```js
+{ id: "fm_canteen_wed", kind: "canteen", when: [690, 810], if: { day: "wed" },
+  text: "Mittwoch ist Hawaii-Tag in der Kantine: Hähnchenbrust mit Ananas, ..." },
+```
+
+| Field | |
+|---|---|
+| `id` | `fm_` and the motif, unique, the same in both trees |
+| `kind` | `morning`, `traffic`, `weather`, `canteen`, `notice`, `ad`, `board`, `staff`, `countdown`, `alert`, `weekday`. Two of one kind never follow each other, and the kind decides the voice: `ad` and `notice` are read by the station's ad voice, everything else by the host |
+| `when` | `[from, to]` in minutes of the day, from 480 (8:00) to 990 (16:30), `to` exclusive. Without it the spot fits all day |
+| `if` | what has to hold as well: `tickets` (at least, 1–10), `l` `a` `b` (at least, 1–100 — the four letters), `day` (`mon` … `fri`, an id, never the word). A spot whose condition holds is preferred |
+| `text` | what is said, 100 to 420 characters |
+
+**A spot is one recording, made long before it is played.** So no
+placeholder, no emoji, no markup, no `CMD:`, and no two spots with the same
+words — the data checker refuses all five. A recording is filed under its
+text, so two spots that said the same thing would share one file. Change a word and the spot falls silent until it is rendered again,
+like the narrator.
+
+**A weekday in the text needs `if.day`.** „Freitag" in a spot that plays on a
+Tuesday is wrong to every listener, and the checker warns on a weekday word
+without the condition. In the day mode, which has no weekday, the difficulty
+stands in: hard is a Monday, easy a Friday, normal the middle of the week.
+
+**Two people are on air:** the host, who carries the show, and the ad voice,
+who reads the advertising and the announcements from HR and the facilities.
+Write an `ad` or a `notice` as copy that voice would read, not as the host
+talking.
+
+**The presenters are people and speak German; a machine they quote speaks
+English** — „die Kaffeemaschine meldet 'ERROR 418'". The listeners are
+addressed as „Sie": it is the company's own station, and it is cheerful the
+way a company is. It knows the building — Egon, the canteen plan, the east
+wing — and it is allowed to hint at the quiet connections without giving them
+away. A spot that names a code or a password outright has given away what a
+player was meant to find.
+
+**Length:** at about fifteen characters a second, 100 is the shortest spot
+worth breaking the quiet for, and 420 is about 25 seconds, past which most of it is cut
+off by the next thing that happens.
 
 ---
 

@@ -7303,4 +7303,291 @@ await ok('The bug report goes to one form, written by the tool that reads it', a
     assert.equal(out.split('\n').length, src.split('\n').length, 'the rewrite added or lost lines');
 });
 
+// ------------------------------------------------------- GlobalCorp FM (7.2)
+console.log('GlobalCorp FM:');
+{
+    const { radio, spotFits, radioChoices, radioDayKey, radioContext,
+            RADIO_QUIET_MS, RADIO_GAP_MS, RADIO_FIRST_MS, RADIO_MODES } = await import('../src/engine/engine_radio.js');
+    const { drawAmong } = await import('../src/engine/draw_bag.js');
+    await ensure('radio');
+    const wait = (ms) => new Promise(r => setTimeout(r, ms));
+    const srcOf = (f) => readFileSync(new URL(`../src/${f}`, import.meta.url), 'utf-8');
+
+    // An element that remembers what it was told. `refuse` stands in for a
+    // file that is not there: play() rejects, as a 404 does.
+    class RadioAudio {
+        constructor() { this.src = ''; this.volume = 1; this.paused = true; this.currentTime = 0; this._h = {}; this.plays = 0; }
+        play() { this.plays++; if (RadioAudio.refuse) return Promise.reject(new Error('404')); this.paused = false; return Promise.resolve(); }
+        pause() { this.paused = true; }
+        addEventListener(e, f) { this._h[e] = f; }
+    }
+    const clock = { now: 10_000_000 };
+    const RealAudio = globalThis.Audio;
+
+    /** A working day at the idle terminal, quiet for a minute, the roll always won. */
+    const onAir = () => {
+        resetState();
+        Object.assign(state, { fmEnabled: true, fmOnAir: false, narrationVolume: 0.8, isPartyMode: false,
+                               isEmailOpen: false, intranetOpen: false, loreOpen: false, vendingOpen: false,
+                               narratable: null });
+        state.terminal = { mode: 'idle', variant: 'system', className: '' };
+        const fm = { ...engine, ...radio };
+        Object.assign(fm, { radioEl: null, radioNode: null, radioIndex: null, radioHeard: null, radioLastKind: null,
+                            radioPausedByTab: false, radioNextAt: 0, radioStillSince: clock.now - 60_000,
+                            radioFadeTimer: null, duckReasons: null, speaking: false, interrupted: false,
+                            heldLine: null, pausedByTab: false, _interruptions: null, lesson: undefined,
+                            volumeWorks: null, bgmTracks: {} });
+        fm.radioClock = () => clock.now;
+        fm.radioRandom = () => 0;
+        RadioAudio.refuse = false;
+        globalThis.Audio = RadioAudio;
+        return fm;
+    };
+    const done = () => { globalThis.Audio = RealAudio; globalThis.document.hidden = false; };
+
+    await ok('A spot fits its window, its conditions and its day - by id', () => {
+        const ctx = { minute: 600, tickets: 7, l: 69, a: 70, b: 0, day: 'wed' };
+        assert.equal(spotFits({ when: [480, 600] }, ctx), false, 'the window\'s end is not exclusive');
+        assert.equal(spotFits({ when: [600, 690] }, ctx), true, 'the window\'s start is not inclusive');
+        assert.equal(spotFits({ if: { tickets: 7 } }, ctx), true, 'tickets is not "at least"');
+        assert.equal(spotFits({ if: { l: 70 } }, ctx), false, 'laziness below the threshold passed');
+        assert.equal(spotFits({ if: { a: 70, tickets: 7 } }, ctx), true, 'two conditions that hold failed');
+        assert.equal(spotFits({ if: { a: 70, b: 1 } }, ctx), false, 'one condition that fails passed');
+        assert.equal(spotFits({ if: { day: 'wed' } }, ctx), true);
+        assert.equal(spotFits({ if: { day: 'fri' } }, ctx), false, 'a spot for another day fits');
+        // The day the level stands for, and in a week the real one - as ids.
+        assert.equal(radioDayKey({ week: { active: false }, difficultyMult: 1.25 }), 'mon');
+        assert.equal(radioDayKey({ week: { active: false }, difficultyMult: 0.8 }), 'fri');
+        assert.equal(radioDayKey({ week: { active: false }, difficultyMult: 1.0 }), 'wed');
+        assert.equal(radioDayKey({ week: { active: true, dayIndex: 4 } }), 'thu');
+        resetState();
+        state.time = 700; state.tickets = 3; state.al = 12;
+        assert.deepEqual(radioContext(state), { minute: 700, tickets: 3, l: 0, a: 12, b: 0, day: 'wed' });
+    });
+
+    await ok('The station notices the day first, and never repeats a kind or a spot', () => {
+        const spots = [
+            { kind: 'weather' }, { kind: 'traffic' },
+            { kind: 'alert', if: { tickets: 7 } }, { kind: 'alert', if: { b: 70 } },
+        ];
+        const calm = { minute: 500, tickets: 0, l: 0, a: 0, b: 0, day: 'wed' };
+        assert.deepEqual(radioChoices(spots, calm, new Set(), null), [0, 1], 'an unmet condition was offered');
+        const queue = { ...calm, tickets: 8 };
+        assert.deepEqual(radioChoices(spots, queue, new Set(), null), [2], 'the queue lost to the weather');
+        assert.deepEqual(radioChoices(spots, queue, new Set([2]), null), [0, 1], 'a spot heard today came back');
+        assert.deepEqual(radioChoices(spots, calm, new Set(), 'weather'), [1], 'the kind just played came again');
+        // Every spot of the real pool fits SOME moment of a working day.
+        const never = DB.radio.filter(sp => ![480, 600, 700, 900, 960].some(m =>
+            ['mon', 'tue', 'wed', 'thu', 'fri'].some(day =>
+                spotFits(sp, { minute: m, tickets: 10, l: 100, a: 100, b: 100, day }))));
+        assert.deepEqual(never.map(sp => sp.id), [], 'a spot no day can play');
+    });
+
+    await ok('The bag draws only what fits, and each of those once before any comes again', () => {
+        resetState();
+        assert.equal(drawAmong('fmtest', 10, [0]), 0, 'the bag drew a spot that does not fit');
+        const seen = [];
+        for (let i = 0; i < 3; i++) seen.push(drawAmong('fmtest', 10, [2, 5, 7]));
+        assert.deepEqual([...seen].sort(), [2, 5, 7], 'an eligible spot came twice in one cycle');
+        assert.ok([2, 5, 7].includes(drawAmong('fmtest', 10, [2, 5, 7])), 'the next cycle drew outside the eligible');
+        // The others were never touched: the six that never fitted are still
+        // in the bag, and the refill did not bring back the one heard before.
+        const bag = JSON.parse(store.get(KEYS.drawBags)).fmtest;
+        assert.deepEqual([1, 3, 4, 6, 8, 9].filter(i => !bag.includes(i)), [], 'a spot that never fitted was used up');
+        assert.ok(!bag.includes(0), 'the refill brought back a spot heard in this cycle');
+        assert.equal(drawAmong('fmtest', 10, []), null, 'nothing eligible drew something');
+        assert.equal(drawAmong('fmtest', 10, [12]), null, 'an index past the pool was drawn');
+    });
+
+    await ok('A spot waits for a quiet moment, and plays from its own folder', async () => {
+        const fm = onAir();
+        fm.radioStillSince = clock.now - (RADIO_QUIET_MS - 1);
+        fm.radioTick();
+        assert.equal(state.fmOnAir, false, 'it spoke before the quiet was long enough');
+        clock.now += 1;
+        fm.radioTick();
+        assert.equal(state.fmOnAir, true, 'it stayed silent in a quiet moment');
+        const spot = DB.radio[fm.radioIndex];
+        assert.equal(fm.radioEl.src, `audio/fm/${LANG}/${voiceHash(spot.text)}.opus`, 'not the spot\'s own file');
+        assert.ok(fm.duckReasons?.has('radio'), 'the music was not ducked under the spot');
+        assert.ok(fm.duckLevel() < 1, 'the radio\'s duck has no depth - DUCK.radio is missing');
+        assert.equal(state.narratable, null, 'the read-aloud button would offer to repeat a spot');
+        const first = fm.radioIndex;
+        assert.ok(fm.radioHeard.has(first), 'the spot on air does not count as heard today');
+        assert.equal(fm.radioLastKind, spot.kind, 'the kind on air is not remembered');
+        // The end of the spot: the gap starts, the duck lifts.
+        fm.radioEl._h.ended();
+        assert.equal(state.fmOnAir, false);
+        assert.equal(fm.radioNextAt, clock.now + RADIO_GAP_MS, 'no gap after the spot');
+        assert.ok(!fm.duckReasons.has('radio'), 'the music stayed ducked after the spot');
+        fm.radioStillSince = clock.now - 60_000;
+        fm.radioTick();
+        assert.equal(state.fmOnAir, false, 'a second spot inside the gap');
+        clock.now += RADIO_GAP_MS;
+        fm.radioTick();
+        assert.equal(state.fmOnAir, true, 'nothing after the gap');
+        assert.notEqual(fm.radioIndex, first, 'the same spot twice in one day');
+        assert.notEqual(DB.radio[fm.radioIndex].kind, spot.kind, 'the same kind twice in a row');
+        // A new day: what was heard may come again, and the first comes early.
+        fm.radioNewDay();
+        assert.equal(fm.radioHeard.size, 0);
+        assert.equal(fm.radioNextAt, clock.now + RADIO_FIRST_MS);
+        fm.cutRadio();
+        await wait(400);
+        done();
+    });
+
+    await ok('Never over a decision, a window, a mail, an emergency, the gala or the lesson', () => {
+        const blockers = {
+            'a decision on screen':     () => { state.terminal = { mode: 'event' }; },
+            'the boot screen':          () => { state.terminal = { mode: 'boot' }; },
+            'a window over it':         () => { openOverlays.add('settings-modal'); },
+            'the intranet':             () => { state.intranetOpen = true; },
+            'the chronicle':            () => { state.loreOpen = true; },
+            'the vending machine':      () => { state.vendingOpen = true; },
+            'a mail':                   () => { state.isEmailOpen = true; },
+            'a notice':                 (fm) => { fm._interruptions = new Set(['modal-overlay']); },
+            'the end screen':           () => { state.modal = { open: true, isEnd: true }; },
+            'an emergency clock':       () => { state.bossTimer = 1; },
+            'an emergency on screen':   () => { state.activeEvent = true; state.currentEventType = 'boss'; },
+            'the gala':                 () => { state.isPartyMode = true; },
+            'the lesson':               (fm) => { fm.lesson = { isActive: true }; },
+            'the phone chat':           () => { state.phone = { ...state.phone, open: true }; },
+            'the narrator speaking':    (fm) => { fm.speaking = true; },
+            'a paused scene':           (fm) => { fm.interrupted = true; },
+            'a line held for later':    (fm) => { fm.heldLine = 'x'; },
+            'a hidden tab':             () => { globalThis.document.hidden = true; },
+            'the switch off':           () => { state.fmEnabled = false; },
+            'the narrator at zero':     () => { state.narrationVolume = 0; },
+        };
+        assert.ok(onAir().radioMayStart(), 'the quiet idle terminal itself is refused');
+        done();
+        for (const [what, set] of Object.entries(blockers)) {
+            const fm = onAir();
+            set(fm);
+            assert.equal(fm.radioMayStart(), false, `a spot would start over ${what}`);
+            done();
+        }
+        // An emergency that is OVER leaves its type behind until the next
+        // scene; the station must not stay silent for that.
+        const after = onAir();
+        Object.assign(state, { activeEvent: false, currentEventType: 'boss', bossTimer: null });
+        assert.ok(after.radioMayStart(), 'a finished emergency kept the station silent until the next scene');
+        done();
+        // And the modes it may start on are exactly the three without a question.
+        assert.deepEqual([...RADIO_MODES].sort(), ['idle', 'morning', 'result']);
+    });
+
+    await ok('The narrator, a window and the tick each take the room back', async () => {
+        let fm = onAir();
+        fm.playSpot();
+        assert.equal(state.fmOnAir, true);
+        const el = fm.radioEl;
+        fm._setSpeaking(true);
+        assert.equal(state.fmOnAir, false, 'the spot went on under the narrator');
+        assert.ok(!fm.duckReasons.has('radio'), 'the radio\'s duck outlived the spot');
+        await wait(400);
+        assert.ok(el.paused, 'the fade never ended in a pause');
+        // The cut stamped the quiet already; a later stop has to stamp it again.
+        clock.now += 5000;
+        fm._setSpeaking(false);
+        assert.equal(fm.radioStillSince, clock.now, 'the quiet did not start again when the narrator stopped');
+
+        // The net under the hooks: the tick ends a spot the moment a hard
+        // condition holds, a window here.
+        fm = onAir();
+        fm.playSpot();
+        openOverlays.add('inventory-modal');
+        fm.radioTick();
+        assert.equal(state.fmOnAir, false, 'the tick let a spot run under a window');
+        await wait(400);
+        done();
+
+        // The hooks themselves, where a window opens without the bench seeing it.
+        const ui = srcOf('engine/engine_ui.js');
+        assert.match(ui, /if \(lockScroll\) this\.lockScroll\(el\.id \|\| 'overlay'\);[\s\S]{0,200}if \(!wasOpen\) this\.cutRadio\?\.\(\);/,
+            'showOverlay no longer ends a spot under every window it opens');
+        const flags = ui.match(/if \(s\.(\w+) \|\| s\.(\w+) \|\| s\.(\w+)\) return true;/);
+        assert.ok(flags, 'windowOverTerminal() no longer reads three state flags - update this test');
+        const all = ui + srcOf('engine/engine_vending.js');
+        for (const f of flags.slice(1)) {
+            assert.match(all, new RegExp(`this\\.cutRadio\\?\\.\\(\\);\\s*\\n\\s*this\\.hushNarration\\(\\);\\s*\\n\\s*this\\.state\\.${f} = true;`),
+                `${f} opens a window without ending the spot`);
+        }
+        const core = srcOf('engine/engine_core.js');
+        const finish = core.slice(core.indexOf('finishGame: function'), core.indexOf('startParty: async function'));
+        assert.match(finish, /this\.cutRadio\?\.\(\);/, 'the end of the day leaves a spot on air');
+        const party = core.slice(core.indexOf('startParty: async function'));
+        assert.match(party.slice(0, 4000), /this\.state\.isPartyMode = true;\s*\n\s*this\.cutRadio\?\.\(\);/, 'the gala starts under a spot');
+        assert.match(srcOf('engine.js'), /onLanguageChange\(\(\) => \{[\s\S]{0,600}engine\.cutRadio\(\);/,
+            'a language switch leaves the old language\'s spot on air');
+        assert.match(srcOf('engine/engine_events.js'), /this\.radioNewDay\?\.\(\);/, 'the morning screen does not start the station\'s day');
+    });
+
+    await ok('The tab pauses a spot, zero ends it, the switch ends it, a missing file is over', async () => {
+        let fm = onAir();
+        fm.playSpot();
+        globalThis.document.hidden = true;
+        fm.syncRadioToVisibility();
+        assert.ok(fm.radioEl.paused && fm.radioPausedByTab, 'a hidden tab did not pause the spot');
+        assert.ok(!fm.duckReasons.has('radio'), 'the music stayed ducked under a paused spot');
+        globalThis.document.hidden = false;
+        fm.syncRadioToVisibility();
+        assert.ok(!fm.radioEl.paused && state.fmOnAir, 'the spot did not come back with the tab');
+        // Came back to a window: the spot is over instead.
+        globalThis.document.hidden = true;
+        fm.syncRadioToVisibility();
+        openOverlays.add('team-modal');
+        globalThis.document.hidden = false;
+        fm.syncRadioToVisibility();
+        assert.equal(state.fmOnAir, false, 'the spot came back over a window');
+        done();
+
+        fm = onAir();
+        fm.playSpot();
+        fm.setNarrationVolume(0);
+        assert.equal(state.fmOnAir, false, 'zero left the spot running');
+        await wait(400);
+        done();
+
+        fm = onAir();
+        fm.playSpot();
+        fm.toggleRadio(false);
+        assert.equal(state.fmOnAir, false, 'the switch left the spot running');
+        assert.equal(store.get(KEYS.fm), 'false', 'the switch was not stored');
+        assert.equal(fm.radioMayStart(), false);
+        await wait(400);
+        done();
+
+        fm = onAir();
+        RadioAudio.refuse = true;
+        fm.playSpot();
+        await wait(10);
+        assert.equal(state.fmOnAir, false, 'a spot without a file stayed on air');
+        assert.equal(fm.radioNextAt, clock.now + RADIO_GAP_MS, 'a missing file was asked for again at once');
+        done();
+    });
+
+    await ok('No two modules spread into the engine share a name', async () => {
+        // src/engine.js spreads every module into ONE object, and the later
+        // one wins without a word. The radio added two dozen names to it.
+        const shell = srcOf('engine.js');
+        const spread = [...shell.matchAll(/^\s*\.\.\.(\w+),$/gm)].map(m => m[1]);
+        const files = Object.fromEntries([...shell.matchAll(/^import \{ ([^}]+) \} from '\.\/engine\/(\w+)\.js';$/gm)]
+            .flatMap(m => m[1].split(',').map(n => [n.trim(), m[2]])));
+        assert.ok(spread.includes('radio'), 'the radio is not spread into the engine');
+        const owner = new Map();
+        const clash = [];
+        for (const name of spread) {
+            assert.ok(files[name], `no import for the spread module ${name}`);
+            const mod = (await import(`../src/engine/${files[name]}.js`))[name];
+            for (const key of Object.keys(mod)) {
+                if (owner.has(key)) clash.push(`${key} (${owner.get(key)} and ${name})`);
+                else owner.set(key, name);
+            }
+        }
+        assert.deepEqual(clash, [], 'two modules define the same name');
+    });
+}
+
 console.log(`\n${passed} checks passed.`);

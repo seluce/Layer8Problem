@@ -1,0 +1,20 @@
+{
+    "lang": "de",
+    "voiceId": "utkd5fchbspYG3Ld0zt0",
+    "voiceName": "Dan - Radio Host & Moderator",
+    "voiceSettings": null,
+    "byKind": [
+        {
+            "kinds": [
+                "ad",
+                "notice"
+            ],
+            "voiceId": "gSZiss4v1BGsE1cTgoWF",
+            "voiceName": "Lola - Ads",
+            "voiceSettings": null
+        }
+    ],
+    "modelId": "eleven_v4_turbo",
+    "outputFormat": "mp3_44100_128",
+    "opusBitrate": "24k"
+}

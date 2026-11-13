@@ -195,7 +195,15 @@
                       get: () => game.narrationEnabled, set: (v) => engine.toggleNarration(v),
                       level: () => game.narrationVolume, setLevel: (v) => engine.setNarrationVolume(v),
                       settled: () => engine.previewNarration(),
-                      step: 0.05, levelTitle: t('set.narration.level') }
+                      step: 0.05, levelTitle: t('set.narration.level') },
+                    // GlobalCorp FM (7.2) speaks at the narrator's level, so
+                    // at zero it has no effect and says why. No `img` either,
+                    // for the same reason as the row above.
+                    { kind: 'toggle', icon: '📻', title: t('set.fm.title'),
+                      desc: t('set.fm.desc'),
+                      get: () => game.fmEnabled, set: (v) => engine.toggleRadio(v),
+                      inactive: () => !(game.narrationVolume > 0),
+                      inactiveNote: t('set.fm.silent') }
                 ] }
             ]
         },

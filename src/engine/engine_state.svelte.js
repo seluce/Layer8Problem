@@ -646,6 +646,11 @@ export const state = $state({
         catch { return mergeNarrationKinds(null); }
     })(),
     currentMusicTrack: null,
+    // GlobalCorp FM (7.2, engine_radio.js): the switch, and whether a spot is
+    // on air right now - the header's label reads it. Outside freshDay(): a
+    // spot belongs to the session, never to the save.
+    fmEnabled: localStorage.getItem(KEYS.fm) !== 'false',
+    fmOnAir: false,
     // The read-aloud button (components/ReadButton.svelte) reads these two,
     // which is why they are here and not on the voice object: the modules are spread
     // into `engine`, so a component watching a plain property there would never

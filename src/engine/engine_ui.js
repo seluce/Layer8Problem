@@ -757,6 +757,9 @@ export const ui = {
         el.classList.remove('hidden');
         el.classList.add('flex');
         if (lockScroll) this.lockScroll(el.id || 'overlay');
+        // GlobalCorp FM ends under ANY window that opens - the player's, a
+        // mail, a notice, the end of the day (engine_radio.js).
+        if (!wasOpen) this.cutRadio?.();
         // The narrator stops when something covers what it is reading. Only on
         // a window that was CLOSED, and only one from the list - a dialog shown
         // over itself has covered nothing new, and the startup windows stand
@@ -1161,6 +1164,7 @@ export const ui = {
         // makes it true by construction. A failed fetch still opens the book:
         // empty pages beat a dead button.
         try { await ensure('lore'); } catch { /* the book opens with what there is */ }
+        this.cutRadio?.();
         this.hushNarration();
         this.state.loreOpen = true;
         this.state.loreRead = true;          // for tonight's diary
@@ -1198,6 +1202,7 @@ export const ui = {
     openIntranet: async function() {
         await ensure('intranet');
         this.buildIntranet();
+        this.cutRadio?.();
         this.hushNarration();
         this.state.intranetOpen = true;
         this.lockScroll('intranet');
@@ -2231,6 +2236,7 @@ export const ui = {
         this.setNarrationVolume(DEFAULT_NARRATION_VOLUME);
         this.setNarrationRate(DEFAULT_NARRATION_RATE);
         for (const kind of Object.keys(DEFAULT_NARRATION_KINDS)) this.setNarrationKind(kind, DEFAULT_NARRATION_KINDS[kind]);
+        this.toggleRadio(true);
 
         // Keyboard: bindings and the key cap hints
         this.resetKeybinds();

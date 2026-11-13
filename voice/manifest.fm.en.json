@@ -1,0 +1,33 @@
+{
+ "lang": "en",
+ "generated": "2026-11-12",
+ "entries": [
+  {"key":"radio/fm_morning_coffee/text","sha":"b17b3391c6e3","spk":"b17b3391c6e3","chars":249},
+  {"key":"radio/fm_morning_stretch/text","sha":"551ab1ba2905","spk":"551ab1ba2905","chars":266},
+  {"key":"radio/fm_morning_mail/text","sha":"46394655b074","spk":"46394655b074","chars":265},
+  {"key":"radio/fm_monday_morning/text","sha":"04addbc10b61","spk":"04addbc10b61","chars":182},
+  {"key":"radio/fm_traffic_lift_b/text","sha":"afdc689481e4","spk":"afdc689481e4","chars":261},
+  {"key":"radio/fm_traffic_corridor/text","sha":"db9ee501dd9b","spk":"db9ee501dd9b","chars":263},
+  {"key":"radio/fm_weather_server/text","sha":"79d4189937fe","spk":"79d4189937fe","chars":272},
+  {"key":"radio/fm_weather_blue/text","sha":"64ab0db78750","spk":"64ab0db78750","chars":272},
+  {"key":"radio/fm_canteen_queue/text","sha":"80d49d486d86","spk":"80d49d486d86","chars":248},
+  {"key":"radio/fm_canteen_mon/text","sha":"3fc0635eb416","spk":"3fc0635eb416","chars":214},
+  {"key":"radio/fm_canteen_wed/text","sha":"0712becd29cd","spk":"0712becd29cd","chars":248},
+  {"key":"radio/fm_canteen_fri/text","sha":"a83ca8aec09e","spk":"a83ca8aec09e","chars":267},
+  {"key":"radio/fm_notice_basement/text","sha":"877a07d58bb9","spk":"877a07d58bb9","chars":228},
+  {"key":"radio/fm_notice_password/text","sha":"4e1da23658a8","spk":"4e1da23658a8","chars":247},
+  {"key":"radio/fm_notice_feelgood/text","sha":"2fb1911fb79c","spk":"2fb1911fb79c","chars":198},
+  {"key":"radio/fm_ad_tickets/text","sha":"4d2919e9b139","spk":"4d2919e9b139","chars":235},
+  {"key":"radio/fm_ad_printer/text","sha":"2ddca62287bd","spk":"2ddca62287bd","chars":234},
+  {"key":"radio/fm_ad_intranet/text","sha":"0fd04c5ad039","spk":"0fd04c5ad039","chars":188},
+  {"key":"radio/fm_board_tunnel/text","sha":"2120cc55446a","spk":"2120cc55446a","chars":258},
+  {"key":"radio/fm_staff_printer/text","sha":"6a1f0dc8a3bc","spk":"6a1f0dc8a3bc","chars":230},
+  {"key":"radio/fm_countdown_screens/text","sha":"eae9ebec9062","spk":"eae9ebec9062","chars":234},
+  {"key":"radio/fm_countdown_coats/text","sha":"97c7f1d1cb04","spk":"97c7f1d1cb04","chars":237},
+  {"key":"radio/fm_friday/text","sha":"c59758a9ea39","spk":"c59758a9ea39","chars":254},
+  {"key":"radio/fm_alert_queue/text","sha":"bb57c45b63f2","spk":"bb57c45b63f2","chars":233},
+  {"key":"radio/fm_alert_sighting/text","sha":"c86ed995fac7","spk":"c86ed995fac7","chars":237},
+  {"key":"radio/fm_alert_breathe/text","sha":"c45b8e183a30","spk":"c45b8e183a30","chars":218},
+  {"key":"radio/fm_alert_finish/text","sha":"46f0b2262b84","spk":"46f0b2262b84","chars":208}
+ ]
+}

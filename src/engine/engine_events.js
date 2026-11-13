@@ -1867,6 +1867,8 @@ export const events = {
         
         // --- Resume music after the boot sequence ---
         this.playMusic('office');
+        // GlobalCorp FM's day begins with the morning screen (7.2).
+        this.radioNewDay?.();
         
         // Release the buttons after the brief setup
         this.disableButtons(false);

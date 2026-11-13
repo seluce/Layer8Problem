@@ -9,11 +9,18 @@
  *   --trial=<name>      write into voice/trial/<name>/ instead of the real
  *                       output, with a ledger of its own. A trial can never
  *                       damage a finished run.
+ *   --set=fm            GlobalCorp FM's spots (7.2): its own manifest,
+ *                       voice/run.fm.<lang>.json for the voice, and
+ *                       public/audio/fm/<lang>/ for the files - see
+ *                       VOICE_SETS in voice-text.mjs. Without it, the
+ *                       narrator.
  *   --pool=<name>       only this pool
- *   --key=<part>        only pieces whose key contains this, e.g. one scene
+ *   --key=<part>[,..]   only pieces whose key contains one of these, e.g.
+ *                       one scene, or the five spots of an FM probe
  *   --limit=<n>         only the first n pieces still to do
  *   --model=<id>        override the configured model (for an A/B trial)
- *   --voice=<id>        override the configured voice (for an A/B trial)
+ *   --voice=<id>        read everything in this voice instead of the
+ *                       configured one(s) (for an A/B trial)
  *   --context           send the scene opening with each result as
  *                       previous_text. OFF by default - see below.
  *   --jobs=<n>          parallel requests (default 2; Starter allows 3)
@@ -45,7 +52,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync, renameSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { collectEntries, fileFor, oneCallPerText } from './voice-text.mjs';
+import { fileFor, oneCallPerText, speakerFor, voiceSet } from './voice-text.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const args = process.argv.slice(2);
@@ -53,6 +60,7 @@ const flag = (n, d) => { const h = args.find(a => a.startsWith(`--${n}=`)); retu
 const has  = (n) => args.includes(`--${n}`);
 
 const LANG    = flag('lang', 'de');
+const SET_NAME = flag('set', 'narrator');
 const TRIAL   = flag('trial', null);
 const POOL    = flag('pool', null);
 /**
@@ -63,6 +71,7 @@ const POOL    = flag('pool', null);
  * contain the word at all.
  */
 const KEY     = flag('key', null);
+const KEYS    = KEY ? KEY.split(',').map(k => k.trim()).filter(Boolean) : [];
 const LIMIT   = Number(flag('limit', '0')) || 0;
 const JOBS    = Math.max(1, Number(flag('jobs', '2')) || 2);
 const DRY     = has('dry-run');
@@ -206,15 +215,32 @@ if (has('voices')) {
 
 // ---------------------------------------------------------------- the config
 
-const CONFIG = `${ROOT}voice/run.${LANG}.json`;
+let SET;
+try { SET = voiceSet(SET_NAME); } catch (err) { die(err.message); }
+const CONFIG = `${ROOT}${SET.config(LANG)}`;
 if (!existsSync(CONFIG)) die(`no ${CONFIG.slice(ROOT.length)}. Copy voice/run.example.json and fill it in.`);
 const cfg = JSON.parse(readFileSync(CONFIG, 'utf8'));
 const MODEL = flag('model', cfg.modelId);
-const VOICE = flag('voice', cfg.voiceId);
-/** The configured voice is the only one whose settings are pinned in the file. */
-const OWN_VOICE = VOICE === cfg.voiceId;
 
-if (!VOICE) die(`voiceId is empty in ${CONFIG.slice(ROOT.length)}. Run --voices, or pass --voice=<id>.`);
+/**
+ * Who speaks. A run file names one voice at its top and may add more by kind
+ * of spot (`byKind`, the radio's two presenters - see speakerFor). --voice
+ * reads EVERYTHING in one voice for a trial, and its settings are never
+ * pinned: they belong to no block of the file. The configured voice passed
+ * by hand is no override, as long as it is the only voice there is.
+ */
+let OVERRIDE = flag('voice', null);
+if (OVERRIDE === cfg.voiceId && !cfg.byKind?.length) OVERRIDE = null;
+const SPEAKERS = OVERRIDE ? [{ voiceId: OVERRIDE, voiceName: '' }] : [cfg, ...(cfg.byKind ?? [])];
+const speakerOf = (e) => OVERRIDE ? SPEAKERS[0] : speakerFor(cfg, e.kind);
+const voiceOf = (e) => speakerOf(e).voiceId;
+const nameOf = (b) => b.voiceName || b.voiceId;
+
+for (const b of SPEAKERS) {
+    const where = b === cfg ? '' : ` (byKind ${JSON.stringify(b.kinds ?? null)})`;
+    if (b !== cfg && (!Array.isArray(b.kinds) || !b.kinds.length)) die(`a byKind voice in ${CONFIG.slice(ROOT.length)} names no kinds.`);
+    if (!b.voiceId) die(`voiceId is empty in ${CONFIG.slice(ROOT.length)}${where}. Run --voices, or pass --voice=<id>.`);
+}
 if (!MODEL) die(`modelId is empty in ${CONFIG.slice(ROOT.length)}. Run with --models to see the choices.`);
 if (!RATE[MODEL]) console.log(`  ! unknown model "${MODEL}" - the cost report below is a guess.`);
 
@@ -222,13 +248,13 @@ if (!RATE[MODEL]) console.log(`  ! unknown model "${MODEL}" - the cost report be
 
 let entries;
 try {
-    ({ entries } = await collectEntries(LANG));
+    ({ entries } = await SET.collect(LANG));
 } catch (err) { die(err.message); }
 
 // The manifest is the contract: generate only what it records, so audio can
 // never appear for a text the gate has not seen.
-const MANIFEST = `${ROOT}voice/manifest.${LANG}.json`;
-if (!existsSync(MANIFEST)) die(`no manifest for "${LANG}". Run npm run voice:manifest.`);
+const MANIFEST = `${ROOT}${SET.manifest(LANG)}`;
+if (!existsSync(MANIFEST)) die(`no ${SET.manifest(LANG)}. Run npm run voice:manifest.`);
 const manifest = JSON.parse(readFileSync(MANIFEST, 'utf8'));
 const recorded = new Map(manifest.entries.map(e => [e.key, e]));
 
@@ -257,8 +283,8 @@ const openingFor = (key) => {
 
 // ------------------------------------------------------------------ the paths
 
-const OUT    = TRIAL ? `${ROOT}voice/trial/${TRIAL}` : `${ROOT}public/audio/${LANG}`;
-const MASTER = TRIAL ? `${ROOT}voice/trial/${TRIAL}/master` : `${ROOT}voice/master/${LANG}`;
+const OUT    = TRIAL ? `${ROOT}voice/trial/${TRIAL}` : `${ROOT}${SET.out(LANG)}`;
+const MASTER = TRIAL ? `${ROOT}voice/trial/${TRIAL}/master` : `${ROOT}${SET.master(LANG)}`;
 const LEDGER = `${MASTER}/ledger.json`;
 
 // A trial keeps its ledger inside its own folder, so it is isolated from the
@@ -295,13 +321,13 @@ const done = (e) => {
     if (r.spk === undefined || r.voice === undefined) trusted++;
     return r.sha === e.sha && r.model === MODEL
         && (r.spk === undefined || r.spk === e.spk)
-        && (r.voice === undefined || r.voice === VOICE)
+        && (r.voice === undefined || r.voice === voiceOf(e))
         && existsSync(`${OUT}/${fileFor(e)}.opus`);
 };
 
 let todo = entries.filter(e => !done(e));
 if (POOL) todo = todo.filter(e => e.key.startsWith(`${POOL}/`));
-if (KEY) todo = todo.filter(e => e.key.includes(KEY));
+if (KEYS.length) todo = todo.filter(e => KEYS.some(k => e.key.includes(k)));
 
 // ONE TEXT, ONE CALL - see oneCallPerText. A twin of a text this run renders
 // is booked once its first is done; a text already rendered under another
@@ -309,12 +335,16 @@ if (KEY) todo = todo.filter(e => e.key.includes(KEY));
 // the limit counts calls rather than keys.
 const onDisk = new Map();
 for (const r of Object.values(ledger)) {
-    if (r.model === MODEL && r.voice === VOICE && r.spk) onDisk.set(`${r.sha}|${r.spk}`, r);
+    if (r.model === MODEL && r.voice && r.spk) onDisk.set(`${r.sha}|${r.spk}|${r.voice}`, r);
 }
 const { calls, twins } = oneCallPerText(todo);
+// One file per text: twins in two voices cannot both be right. lint-data
+// refuses a repeated spot text, so this is the net under it.
+const split = twins.find(([e, lead]) => voiceOf(e) !== voiceOf(lead));
+if (split) die(`${split[0].key} and ${split[1].key} say the same text in two voices - one file cannot hold both.`);
 const early = [];
 todo = calls.filter(e => {
-    const r = onDisk.get(`${e.sha}|${e.spk}`);
+    const r = onDisk.get(`${e.sha}|${e.spk}|${voiceOf(e)}`);
     if (r && existsSync(`${OUT}/${fileFor(e)}.opus`)) { early.push([e, r]); return false; }
     return true;
 });
@@ -327,7 +357,7 @@ const bookTwins = () => {
     for (const [e, r] of early.splice(0)) { ledger[e.key] = { ...r, chars: e.chars }; n++; }
     pendingTwins = pendingTwins.filter(([e, lead]) => {
         const r = ledger[lead.key];
-        if (!r || r.sha !== lead.sha || r.spk !== lead.spk || r.model !== MODEL || r.voice !== VOICE) return true;
+        if (!r || r.sha !== lead.sha || r.spk !== lead.spk || r.model !== MODEL || r.voice !== voiceOf(lead)) return true;
         ledger[e.key] = { ...r, chars: e.chars };
         n++;
         return false;
@@ -339,11 +369,14 @@ const chars = todo.reduce((n, e) => n + e.chars, 0);
 const ctxChars = CONTEXT ? todo.reduce((n, e) => n + (openingFor(e.key)?.length ?? 0), 0) : 0;
 const rate = RATE[MODEL] ?? 0.08;
 
-console.log(`\nGeneration run (${LANG})${TRIAL ? `  TRIAL "${TRIAL}"` : ''}`);
-console.log(`  voice   ${OWN_VOICE ? (cfg.voiceName ?? cfg.voiceId) : `${VOICE}   (--voice, settings not pinned)`}`);
+console.log(`\nGeneration run (${LANG}${SET_NAME === 'narrator' ? '' : `, ${SET_NAME}`})${TRIAL ? `  TRIAL "${TRIAL}"` : ''}`);
+if (OVERRIDE) console.log(`  voice   ${OVERRIDE}   (--voice, settings not pinned)`);
+else if (SPEAKERS.length === 1) console.log(`  voice   ${nameOf(cfg)}`);
+else SPEAKERS.forEach((b, i) => console.log(`  ${i ? '       ' : 'voice  '} ${nameOf(b)}`
+    + `${b === cfg ? '' : ` (${b.kinds.join(', ')})`}: ${todo.filter(e => speakerOf(e) === b).length} to do`));
 console.log(`  model   ${MODEL}`);
 console.log(`  out     ${OUT.slice(ROOT.length)}`);
-if (KEY) console.log(`  only    keys containing "${KEY}"`);
+if (KEYS.length) console.log(`  only    keys containing ${KEYS.map(k => `"${k}"`).join(' or ')}`);
 console.log(`  to do   ${todo.length} of ${entries.length} pieces, ${chars.toLocaleString('de-DE')} characters`);
 if (twins.length + early.length) {
     console.log(`  twins   ${twins.length + early.length} more say a text already on this list or on disk - booked, not bought`);
@@ -382,10 +415,11 @@ if (DRY) { console.log('\n  (dry run - nothing sent)\n'); process.exit(0); }
     const res = await call('/voices');
     if (!res.ok) die(await explain(res, 'the voice list'));
     const { voices } = await res.json();
-    if (!voices.some(v => v.voice_id === VOICE)) {
-        const first = (cfg.voiceName ?? '').split(/[\s-]+/)[0];
+    const missing = SPEAKERS.find(b => todo.some(e => speakerOf(e) === b) && !voices.some(v => v.voice_id === b.voiceId));
+    if (missing) {
+        const first = (missing.voiceName ?? '').split(/[\s-]+/)[0];
         const near = first ? voices.filter(v => v.name.startsWith(first)) : [];
-        die(`this account has no voice ${VOICE}.\n`
+        die(`this account has no voice ${missing.voiceId}.\n`
           + (near.length ? `  Did you mean:\n${near.map(v => `    ${v.voice_id}  ${v.name}`).join('\n')}\n` : '')
           + '  A voice added from the library gets its OWN id in the account; the id on\n'
           + '  the library page is a different one. Run --voices for the full list.');
@@ -406,23 +440,29 @@ if (DRY) { console.log('\n  (dry run - nothing sent)\n'); process.exit(0); }
  * the first place. It is simply not pinned, and the run says so rather than
  * pretending otherwise.
  */
-let settings = OWN_VOICE ? cfg.voiceSettings : null;
-if (!OWN_VOICE) {
-    // A voice being tried out. Take its own settings for the run so it is heard
-    // the way its maker tuned it, but never write them into the config - those
-    // belong to the voice the config names.
-    const res = await call(`/voices/${VOICE}/settings`);
-    settings = res.ok ? await res.json() : null;
-    console.log(`  settings ${settings ? JSON.stringify(settings) : "the voice's own defaults"}`);
-} else if (settings === null || settings === undefined) {
-    const res = await call(`/voices/${VOICE}/settings`);
+// Per voice, and pinned in that voice's own block of the run file.
+const settingsOf = new Map();
+for (const b of SPEAKERS) {
+    if (!todo.some(e => speakerOf(e) === b)) continue;
+    if (OVERRIDE) {
+        // A voice being tried out. Take its own settings for the run so it is
+        // heard the way its maker tuned it, but never write them into the
+        // config - those belong to the voices the config names.
+        const res = await call(`/voices/${b.voiceId}/settings`);
+        settingsOf.set(b.voiceId, res.ok ? await res.json() : null);
+        console.log(`  settings ${settingsOf.get(b.voiceId) ? JSON.stringify(settingsOf.get(b.voiceId)) : "the voice's own defaults"}`);
+        continue;
+    }
+    if (b.voiceSettings !== null && b.voiceSettings !== undefined) { settingsOf.set(b.voiceId, b.voiceSettings); continue; }
+    const res = await call(`/voices/${b.voiceId}/settings`);
     if (res.ok) {
-        settings = cfg.voiceSettings = await res.json();
+        b.voiceSettings = await res.json();
+        settingsOf.set(b.voiceId, b.voiceSettings);
         writeFileSync(CONFIG, `${JSON.stringify(cfg, null, 4)}\n`);
-        console.log(`  settings pinned in ${CONFIG.slice(ROOT.length)}`);
-        console.log(`    ${JSON.stringify(cfg.voiceSettings)}`);
+        console.log(`  settings for ${nameOf(b)} pinned in ${CONFIG.slice(ROOT.length)}`);
+        console.log(`    ${JSON.stringify(b.voiceSettings)}`);
     } else {
-        console.log(`  ! ${await explain(res, 'reading the voice settings')}`);
+        console.log(`  ! ${await explain(res, `reading the settings of ${nameOf(b)}`)}`);
         console.log('  ! Going on with the provider\'s own defaults for this voice. They are');
         console.log('  ! NOT written down, so a run months from now could sound different.');
     }
@@ -443,15 +483,16 @@ let sent = 0, failed = 0;
 
 /** One piece. Throws only on something that should stop the whole run. */
 async function speak(e) {
+    const voice = voiceOf(e);
     const body = { text: e.spoken, model_id: MODEL };
-    if (settings) body.voice_settings = settings;
+    if (settingsOf.get(voice)) body.voice_settings = settingsOf.get(voice);
     if (CONTEXT) {
         const prev = openingFor(e.key);
         if (prev) body.previous_text = prev;
     }
 
     for (let attempt = 1; ; attempt++) {
-        const res = await call(`/text-to-speech/${VOICE}?output_format=${fmt}`, {
+        const res = await call(`/text-to-speech/${voice}?output_format=${fmt}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(body)
@@ -466,7 +507,7 @@ async function speak(e) {
             execFileSync('ffmpeg', ['-hide_banner', '-loglevel', 'error', '-y',
                 '-i', mp3, '-c:a', 'libopus', '-b:a', bitrate, '-ac', '1',
                 `${OUT}/${fileFor(e)}.opus`]);
-            ledger[e.key] = { sha: e.sha, spk: e.spk, model: MODEL, voice: VOICE, chars: e.chars };
+            ledger[e.key] = { sha: e.sha, spk: e.spk, model: MODEL, voice, chars: e.chars };
             return true;
         }
 

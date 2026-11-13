@@ -69,6 +69,9 @@ export const KEYS = {
     narrationVolume:  'layer8_narration_volume',
     narrationKinds:   'layer8_narration_kinds',
     narrationRate:    'layer8_narration_rate',
+    // GlobalCorp FM (7.2), on or off. A key of its own, not the retired music
+    // style: a name on RETIRED_KEYS is never taken again.
+    fm:               'layer8_fm',
 };
 
 /**

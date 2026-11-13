@@ -1,6 +1,6 @@
 <!--
-  The line above the terminal: version number, or a news ticker when one is
-  running.
+  The line above the terminal: version number, a news ticker when one is
+  running, or the GlobalCorp FM sign while a spot is on air.
 
   The crossfade is a CSS transition on opacity and blur. The {#key} block
   recreates the element whenever the text changes, which restarts the scrolling
@@ -36,6 +36,17 @@
             </div>
         </div>
     {/key}
+{:else if state.fmOnAir}
+    <!-- GlobalCorp FM is on air (7.2, engine_radio.js). A real button: it ends
+         the spot, for a player who wants the room back before the game asks
+         for it. The news wins over it - a headline is short and read once. -->
+    <button type="button" class="news-fade inline-flex items-center gap-1.5 rounded px-1 -mx-1 text-amber-400 hover:text-amber-300 focus-visible:outline focus-visible:outline-1 focus-visible:outline-amber-400"
+            title={t('fm.stop')} onclick={() => engine.cutRadio()}>
+        <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" aria-hidden="true"></span>
+        <span class="font-bold">{t('fm.station')}</span>
+        <span class="text-slate-300">{t('fm.onAir')}</span>
+        <span class="sr-only">{t('fm.stop')}</span>
+    </button>
 {:else}
     <span class="news-fade">TicketSystem {engine.VERSION}</span>
 {/if}

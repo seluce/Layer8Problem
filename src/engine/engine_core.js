@@ -231,6 +231,9 @@ export const core = {
         // more than enough to warm the remaining pools before the first click.
         prefetchAll();
         this.warmImages();
+        // GlobalCorp FM's tick (7.2). It asks the state every two seconds and
+        // stays silent until a working day is on screen.
+        this.startRadio?.();
 
         this.renderHeader();
         this.updateUI();
@@ -2143,6 +2146,8 @@ export const core = {
         // over the night screen: the end screens are overlays of their own and
         // none of them is on the over-terminal list.
         this.hushNarration();
+        // The radio as well - the end screen is no quiet moment.
+        this.cutRadio?.();
 
         if (this.state.pendingEnd) {
             const end = this.state.pendingEnd;
@@ -2235,8 +2240,10 @@ export const core = {
         const s = this.state;
         s.closingFigures = { time: s.time, tickets: s.tickets, fl: s.fl, al: s.al, cr: s.cr };
 
-        // Switch into party mode
+        // Switch into party mode. The radio is the office's, not the
+        // evening's (engine_radio.js): a spot still on air ends here.
         this.state.isPartyMode = true;
+        this.cutRadio?.();
         this.state.partyProgress = 0;
 
         // The evening starts at 17:00 and reaches 23:00 at the finale. The

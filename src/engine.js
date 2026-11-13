@@ -7,6 +7,7 @@ import { inventory } from './engine/engine_inventory.js';
 import { ui } from './engine/engine_ui.js';
 import { vendingMachine } from './engine/engine_vending.js';
 import { voice } from './engine/engine_voice.js';
+import { radio } from './engine/engine_radio.js';
 import { week } from './engine/engine_week.js';
 import { scores } from './engine/engine_scores.js';
 import { switchLanguage, language, onLanguageChange, t } from './i18n/i18n.svelte.js';
@@ -28,6 +29,7 @@ const engine = {
     ...ui,
     ...vendingMachine,
     ...voice,
+    ...radio,
     ...week,
     ...scores,
 
@@ -67,6 +69,8 @@ onLanguageChange(() => {
     // relocaliseScene() starts the new recording - for a scene, which
     // repaints, and for a result, which does not.
     engine.hushNarration();
+    // And the radio: its spot is a recording in the old language too.
+    engine.cutRadio();
     engine.relocaliseScene();
     engine.dressResetButtons();
     // Painted straight into the DOM with no repaint path of its own, and its

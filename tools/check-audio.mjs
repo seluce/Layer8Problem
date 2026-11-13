@@ -28,45 +28,52 @@
  * left alone: it is a NEW recording waiting for its first build, not a stray.
  */
 import { existsSync, readdirSync, mkdirSync, copyFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 
 /**
- * The .opus filenames per folder - one per language, and `music` for the
- * house band (7.2), whose names are checksums of the file - or {} if the
- * folder is not there.
+ * The .opus filenames per folder, keyed by the folder's path under audio/ -
+ * one per language, `music` for the house band (7.2), whose names are
+ * checksums of the file, and `fm/<lang>` for GlobalCorp FM (7.2), a level
+ * deeper - or {} if the folder is not there. Walked to any depth, so a
+ * further set nests without this script having to learn its name.
  */
-function stock(base) {
-    if (!existsSync(base)) return {};
+export function stock(base, rel = '') {
+    const dir = rel ? `${base}/${rel}` : base;
+    if (!existsSync(dir)) return {};
     const out = {};
-    for (const lang of readdirSync(base, { withFileTypes: true })) {
-        if (!lang.isDirectory()) continue;
-        const files = readdirSync(`${base}/${lang.name}`).filter(f => f.endsWith('.opus'));
-        if (files.length) out[lang.name] = files;
+    const here = [];
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+        if (entry.isDirectory()) Object.assign(out, stock(base, rel ? `${rel}/${entry.name}` : entry.name));
+        else if (rel && entry.name.endsWith('.opus')) here.push(entry.name);
     }
+    if (here.length) out[rel] = here;
     return out;
 }
 
-const built = stock(`${ROOT}docs/audio`);
-const staged = stock(`${ROOT}public/audio`);
+// Run as the build's first step; imported by the tests for stock() alone.
+if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
+    const built = stock(`${ROOT}docs/audio`);
+    const staged = stock(`${ROOT}public/audio`);
 
-let copied = 0;
-for (const [lang, files] of Object.entries(built)) {
-    const have = new Set(staged[lang] ?? []);
-    const missing = files.filter(f => !have.has(f));
-    if (!missing.length) continue;
+    let copied = 0;
+    for (const [lang, files] of Object.entries(built)) {
+        const have = new Set(staged[lang] ?? []);
+        const missing = files.filter(f => !have.has(f));
+        if (!missing.length) continue;
 
-    const dir = `${ROOT}public/audio/${lang}`;
-    mkdirSync(dir, { recursive: true });
-    for (const f of missing) copyFileSync(`${ROOT}docs/audio/${lang}/${f}`, `${dir}/${f}`);
+        const dir = `${ROOT}public/audio/${lang}`;
+        mkdirSync(dir, { recursive: true });
+        for (const f of missing) copyFileSync(`${ROOT}docs/audio/${lang}/${f}`, `${dir}/${f}`);
 
-    const whole = have.size === 0;
-    console.log(`  ${whole ? '→' : '+'} public/audio/${lang}/: ${missing.length} ${whole ? 'files restored from docs/' : 'missing files topped up from docs/'}`);
-    copied += missing.length;
-}
+        const whole = have.size === 0;
+        console.log(`  ${whole ? '→' : '+'} public/audio/${lang}/: ${missing.length} ${whole ? 'files restored from docs/' : 'missing files topped up from docs/'}`);
+        copied += missing.length;
+    }
 
-if (copied) {
-    console.log(`    ${copied} in total. vite clears docs/ and refills it from public/, so`);
-    console.log('    without this the build would have dropped them without a word.\n');
+    if (copied) {
+        console.log(`    ${copied} in total. vite clears docs/ and refills it from public/, so`);
+        console.log('    without this the build would have dropped them without a word.\n');
+    }
 }

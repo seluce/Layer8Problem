@@ -25,10 +25,12 @@ src/
   platform_steam.js     Steam bridge over window.desktopBridge, only under Electron
 
   components/           46 Svelte components, 8 of them for the intranet
-  engine/               25 modules; engine_state.svelte.js holds the state,
+  engine/               26 modules; engine_state.svelte.js holds the state,
                         engine_week.js the week mode, engine_hooks.js the
                         observer list the tutorial listens on,
                         engine_vending.js the machine on the third floor,
+                        engine_radio.js GlobalCorp FM, the station that
+                        speaks in the quiet moments,
                         leaderboard.js what a day or a week is worth on
                         Steam, engine_scores.js the sending of it,
                         music_cues.js which piece of music comes next and
@@ -36,8 +38,8 @@ src/
                         engine_audio.js plays it), music_files.js
                         the files and their measurements (written by
                         tools/master-music.mjs)
-  data/de/              24 data files, the German source
-  data/en/              the same 24, in English
+  data/de/              25 data files, the German source
+  data/en/              the same 25, in English
   i18n/                 language selection and interface strings
   assets/               processed by Vite, see below
 

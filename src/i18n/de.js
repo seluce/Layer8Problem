@@ -103,6 +103,9 @@ export const de = {
     // have a preview like the other two - see tools/voice-text.mjs, SPOKEN_KEYS.
     'set.narration.sample':      'Testdurchsage. So laut liest der Erzähler, wenn im Terminal etwas passiert.',
     'set.narration.rateSample':  'Testdurchsage. So schnell liest der Erzähler, wenn im Terminal etwas passiert.',
+    'set.fm.title':              'GlobalCorp FM',
+    'set.fm.desc':               'Der Betriebsfunk meldet sich in ruhigen Momenten: Verkehr im Haus, Wetter im Serverraum, die Kantine. Er spricht so laut wie der Sprecher und schweigt, sobald das Spiel etwas zu sagen hat.',
+    'set.fm.silent':             'Der Sprecher steht auf null, und damit schweigt auch der Funk.',
     'set.textSize.title':        'Textgröße',
     'set.textSize.desc':         'Dieses Spiel ist zum Lesen da. Nimm die Größe, die dir liegt.',
     'set.compact.title':         'Kompaktmodus',
@@ -445,6 +448,11 @@ export const de = {
     // the places are too far apart to hold side by side.
     'common.locked':               'Gesperrt',
     'ticker.broadcast':            '[GLOBAL CORP BROADCAST]',
+    // The header while a GlobalCorp FM spot is on air (7.2). The station's
+    // name and the studio sign read the same in both languages, on purpose.
+    'fm.station':                  'GlobalCorp FM',
+    'fm.onAir':                    'ON AIR',
+    'fm.stop':                     'Spot beenden',
 
     // The small read-aloud button beside the excuse. It carries an icon and
     // no text, so these two are its tooltip and its screen-reader name - what

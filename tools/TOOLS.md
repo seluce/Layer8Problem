@@ -19,6 +19,7 @@ the repository root.
 | Coverage simulator | `npm run sim:coverage [days] [--runs=N] [--compare] [--lang=en]` | before every change to the DRAW, no gate |
 | Voice manifest | `npm run voice:manifest` / `npm run lint:voice` | after every change to TERMINAL prose, once audio exists |
 | Generation run | `npm run voice:audio -- [--trial=x] [--pool=p] [--limit=n]` | turns the manifest into audio; costs money, needs `ELEVENLABS_API_KEY` |
+| Radio run | `npm run voice:fm -- [--trial=x] [--voice=id] [--key=a,b]` | the same for GlobalCorp FM's spots, in a set of its own (7.2) |
 | Audio guard | `node tools/check-audio.mjs` | runs as `prebuild`; restores `public/audio/` from `docs/` so a build cannot drop it |
 | Music master | `npm run music:master [-- --cue=<id>] [-- --list]` | after a new take or a new cut; offline, ffmpeg only |
 | Test suites | `npm test` | before every delivery |
@@ -357,8 +358,8 @@ the run says nothing.
 ## 6. `make-voice.mjs` — which text becomes which audio file
 
 ```
-npm run voice:manifest          # write voice/manifest.de.json and .en.json
-npm run lint:voice              # hold both manifests against both trees
+npm run voice:manifest          # write voice/manifest.de.json and .en.json, and the radio's
+npm run lint:voice              # hold all four manifests against both trees
 node tools/make-voice.mjs       # report only, write nothing
 ```
 
@@ -567,6 +568,68 @@ inside a plan's included credits has come out cheaper. The line after a run
 reports what was actually spent, in credits, with the rate it worked out to
 and how far the plan's remainder still reaches.
 
+### GlobalCorp FM: a second set (`--set=fm`)
+
+```
+npm run voice:fm -- --dry-run                         # the radio's 27 spots, what they cost
+npm run voice:fm -- --trial=fm-<name> --voice=<id> --key=fm_traffic_lift_b,fm_weather_server
+npm run voice:fm                                      # the real run, once a voice is chosen
+```
+
+The station is a second speaker with a pool of its own (`data_radio.js`), and
+everything that belongs to a speaker is kept apart: `VOICE_SETS` in
+`voice-text.mjs` names, for each set, the manifest, the run file with the
+voice, the opus folder and the masters.
+
+| | narrator | fm |
+|---|---|---|
+| manifest | `voice/manifest.<lang>.json` | `voice/manifest.fm.<lang>.json` |
+| voice | `voice/run.<lang>.json` | `voice/run.fm.<lang>.json` |
+| opus | `public/audio/<lang>/` | `public/audio/fm/<lang>/` |
+| masters | `voice/master/<lang>/` | `voice/master/fm/<lang>/` |
+
+**One pool may not be in both.** A spot in the narrator's set would be spoken
+by the wrong voice into the wrong folder, and the browser, which asks
+`audio/fm/<lang>/`, would never find it. `voice.test.mjs` holds the two sets
+apart, folders included.
+
+**`--set=fm` works with every other flag**, `make-voice.mjs` as well:
+`--check --set=fm` is part of `lint:voice`, and `voice:manifest` writes both
+sets. The voice in `run.fm.<lang>.json` starts empty: a run without
+`--voice` stops with a message rather than reading the spots in the
+narrator's voice.
+
+**Two presenters, chosen by the kind of spot.** The run file names the host
+at its top and adds more voices under `byKind`, each with the kinds it reads
+- Dan for the show, Lola for `ad` and `notice`:
+
+```json
+"voiceId": "utkd5fchbspYG3Ld0zt0", "voiceName": "Dan - Radio Host & Moderator",
+"byKind": [ { "kinds": ["ad", "notice"], "voiceId": "gSZiss4v1BGsE1cTgoWF",
+              "voiceName": "Lola - Ads", "voiceSettings": null } ]
+```
+
+`speakerFor()` in `voice-text.mjs` makes the choice; the narrator's run file
+has no `byKind`, so every one of his pieces keeps the voice at the top. Each
+voice's settings are pinned in its own block on its first run, the ledger
+books the voice a piece was read in, and a piece counts as finished only in
+that voice. The dry run says how many pieces each voice has to read. Both
+languages must name the same voices for the same kinds, and a kind given to
+a voice must be a kind some spot has - a misspelt one leaves that voice with
+nothing to read, silently. `voice.test.mjs` holds all of it, the
+finished-only-in-its-own-voice rule on a stand-in ledger in a trial folder.
+`--voice` still reads EVERYTHING in one voice, for a trial.
+
+**`--key` takes a list.** A probe of a candidate voice is a handful of spots
+picked across the kinds, and a pool's first five would all be the morning
+show. Each part matches as a substring, so `fm_canteen` takes all four
+canteen spots.
+
+**The copy-back walks folders.** `check-audio.mjs` used to read one level of
+`docs/audio/`; the radio sits two levels down (`fm/de/`), and a fresh clone
+would have built without it. It now walks every folder and keys the stock by
+its relative path.
+
 ## 7b. `master-music.mjs` — the house band, from the provider's files to the game's
 
 ```
@@ -614,7 +677,7 @@ four-channel files (`engine_audio.probeLayers()`).
 ## 8. `npm test` — the five test suites, in both languages
 
 ```
-npm test        # 17 / 277 / 20 / 48 / 19, then the same five again with --lang=en
+npm test        # 17 / 320 / 20 / 50 / 29, then the same five again with --lang=en
 npm run test:de # one language only, while working
 npm run test:en
 ```
@@ -747,6 +810,20 @@ The behaviour behind the audit is held in `week-flow.test.mjs` on a fake
 element — a notice holding the result and handing it over, a mail dropping onto
 a notice, a hidden tab, a volume of zero — because what has to hold there is
 bookkeeping, and the order of a click is easier to get wrong than to read.
+
+GlobalCorp FM (7.2) brought four checks here and eight to `week-flow`. Here:
+the radio is a set of its own whose folders the narrator's never reach, its
+manifest files a spot under the checksum the browser computes, and the
+copy-back before a build reaches `fm/de/`, two levels down; and the two
+presenters (above, under `--set=fm`). In `week-flow`,
+the behaviour on the same fake element: a spot fits its window, its condition
+and its day by id; it waits for a quiet moment and never comes on over a
+decision, a window, a mail, an emergency, the gala or the lesson (twenty
+blockers, each on its own); the narrator, any window and the tick each take
+the room back; the tab, a volume of zero and the switch end it. The last of
+them reads every module spread into the engine and fails on a name two of
+them share - a later spread overwrites an earlier one in silence, and a
+`radio` field named like a voice method would have muted the narrator.
 
 ## 9. `dev-week.js` — the console tool
 

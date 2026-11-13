@@ -433,6 +433,16 @@ export async function collectEntries(lang) {
         entries.push({ key: `i18n/${key}`, src: v });
     }
 
+    seal(entries, lang);
+    return { entries, unknownTags };
+}
+
+/**
+ * Gives every piece its spoken form, both checksums and its length, and
+ * refuses a duplicate key or a checksum shared by two different texts. One
+ * function for both sets, so a spot and a scene are filed by the same rule.
+ */
+function seal(entries, lang) {
     const seen = new Set();
     const byHash = new Map();
     for (const e of entries) {
@@ -454,6 +464,104 @@ export async function collectEntries(lang) {
         }
         byHash.set(e.sha, e.src);
     }
+}
 
+/**
+ * GlobalCorp FM (7.2): the radio's spots, as pieces of their own set.
+ *
+ * Not part of collectEntries(), and the separation is the point. The spots
+ * have a voice of their own, so they go to the provider under another voice
+ * id, into another folder (audio/fm/<lang>/), with a manifest and a ledger
+ * of their own - see VOICE_SETS. Collected with the narrator's pieces they
+ * would be bought in the narrator's voice; filed in his folder, a spot that
+ * shared a sentence with a scene would play the scene's recording.
+ *
+ * The same spelling rules apply (SPOKEN_AS): the presenter says Räck and
+ * Halgerd the way the narrator does.
+ */
+export const FM_POOL = 'radio';
+
+export async function collectRadio(lang) {
+    if (lang !== 'de' && lang !== 'en') throw new Error(`Unknown language "${lang}".`);
+    await setLanguage(lang);
+    await loadCore(lang);
+    await ensure(FM_POOL);
+    if (currentLanguage() !== lang) {
+        throw new Error(`Language "${lang}" could not be loaded - reading "${currentLanguage()}".`);
+    }
+    const spots = DB[FM_POOL];
+    if (!Array.isArray(spots) || !spots.length) throw new Error(`Pool "${FM_POOL}" is not loaded.`);
+
+    const entries = [];
+    const unknownTags = new Map();
+    for (const spot of spots) {
+        const v = spot?.text;
+        if (typeof spot?.id !== 'string' || typeof v !== 'string' || !v.trim()) {
+            throw new Error(`Spot ${spot?.id ?? '?'} has no id or nothing to say.`);
+        }
+        if (v.includes('{')) throw new Error(`Spot ${spot.id} carries a placeholder: ${v}`);
+        for (const m of v.match(/<[^>]+>/g) ?? []) unknownTags.set(m, (unknownTags.get(m) ?? 0) + 1);
+        // The kind travels along: it decides which of the station's voices
+        // reads the spot (speakerFor). The manifest does not record it.
+        entries.push({ key: `${FM_POOL}/${spot.id}/text`, src: v, kind: spot.kind });
+    }
+    seal(entries, lang);
     return { entries, unknownTags };
+}
+
+/**
+ * Who reads a piece: a run file names one voice at its top, and the radio's
+ * may add more under `byKind`, each with the kinds of spot it reads -
+ *
+ *   "voiceId": "<host>", "voiceName": "...", "voiceSettings": {...},
+ *   "byKind": [ { "kinds": ["ad", "notice"], "voiceId": "<ads>",
+ *                 "voiceName": "...", "voiceSettings": null } ]
+ *
+ * Returns the block itself, not a copy, so make-audio can pin a voice's
+ * settings where they belong. A piece without a kind (every narrator piece)
+ * gets the voice at the top.
+ *
+ * One recording per TEXT (fileFor): two spots that said the same words in
+ * two voices would share one file, so lint-data refuses a repeated spot text.
+ */
+export function speakerFor(cfg, kind) {
+    if (kind === undefined) return cfg;
+    return (cfg.byKind ?? []).find(b => Array.isArray(b.kinds) && b.kinds.includes(kind)) ?? cfg;
+}
+
+/**
+ * The two sets of recordings, and where each one lives. make-voice and
+ * make-audio take `--set=<name>` and read everything from here, so the
+ * folder the browser asks (engine_voice, engine_radio) and the folder the
+ * render writes cannot drift apart without this table changing.
+ *
+ *   manifest  the contract lint:voice holds against the tree
+ *   config    voice, model and pinned settings for the render
+ *   out       the opus files - staged in public/, built into docs/
+ *   master    the provider's MP3s and the ledger
+ */
+export const VOICE_SETS = {
+    narrator: {
+        label: 'Voice manifest',
+        collect: collectEntries,
+        manifest: (lang) => `voice/manifest.${lang}.json`,
+        config:   (lang) => `voice/run.${lang}.json`,
+        out:      (lang) => `public/audio/${lang}`,
+        master:   (lang) => `voice/master/${lang}`,
+    },
+    fm: {
+        label: 'GlobalCorp FM manifest',
+        collect: collectRadio,
+        manifest: (lang) => `voice/manifest.fm.${lang}.json`,
+        config:   (lang) => `voice/run.fm.${lang}.json`,
+        out:      (lang) => `public/audio/fm/${lang}`,
+        master:   (lang) => `voice/master/fm/${lang}`,
+    },
+};
+
+/** The set a tool was asked for with --set=, or a stop that names the choices. */
+export function voiceSet(name = 'narrator') {
+    const set = VOICE_SETS[name];
+    if (!set) throw new Error(`Unknown set "${name}". Known: ${Object.keys(VOICE_SETS).join(', ')}.`);
+    return set;
 }
