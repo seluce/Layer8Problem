@@ -41,7 +41,7 @@
          the spot, for a player who wants the room back before the game asks
          for it. The news wins over it - a headline is short and read once. -->
     <button type="button" class="news-fade inline-flex items-center gap-1.5 rounded px-1 -mx-1 text-amber-400 hover:text-amber-300 focus-visible:outline focus-visible:outline-1 focus-visible:outline-amber-400"
-            title={t('fm.stop')} onclick={() => engine.cutRadio()}>
+            title={t('fm.stop')} onclick={() => engine.endSpot()}>
         <span class="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" aria-hidden="true"></span>
         <span class="font-bold">{t('fm.station')}</span>
         <span class="text-slate-300">{t('fm.onAir')}</span>

@@ -1,6 +1,6 @@
 import { KEYS } from './keys.js';
 import { voiceHash } from './sha1.js';
-import { drawAmong } from './draw_bag.js';
+import { drawAmong, returnToBag } from './draw_bag.js';
 import { WEEK_DAY_KEYS } from './engine_week.js';
 import { DB, ensure } from '../data.js';
 import { language } from '../i18n/i18n.svelte.js';
@@ -45,6 +45,12 @@ import { MUSIC_DIR, MUSIC_STINGS } from './music_files.js';
  * the station's name in their first sentence, which is how a real station
  * follows its jingle; before every spot it would wear out within a morning.
  *
+ * HARDLY HEARD IS NOT HEARD. A spot the game cuts during its jingle or in
+ * its first RADIO_EARLY_MS goes back into the day: not heard, back in the
+ * bag, its kind and its jingle as they were, and the next try after
+ * RADIO_RETRY_MS instead of the full gap. The player's own stop (endSpot)
+ * is an answer, not an interruption - that spot counts, whenever it ended.
+ *
  * NOTHING IN THE SAVE. Which spots a day has heard lives in memory and is
  * forgotten by a reload; the bag in draw_bag.js keeps the next one from being
  * one heard a minute ago.
@@ -62,6 +68,15 @@ export const RADIO_FIRST_MS = 15 * 1000;
 export const RADIO_CHANCE = 0.15;
 /** Out, when the game wants the room back. */
 export const RADIO_FADE_MS = 300;
+/**
+ * Hardly heard: cut during the jingle or before the spot itself has run this
+ * long. Measured in the play test of 13.11.2026: a spot that started into the
+ * player's next click lasted 1.8 s and cost the station the spot and four
+ * minutes. The retry waits a minute and a half, so a player clicking briskly
+ * does not hear a fragment every minute instead.
+ */
+export const RADIO_EARLY_MS = 5000;
+export const RADIO_RETRY_MS = 90 * 1000;
 /** The station ID before the first spot of a day, then before every this many. */
 export const RADIO_JINGLE_EVERY = 3;
 /** What the terminal may show for a spot to begin - never an open question. */
@@ -138,6 +153,11 @@ export const radio = {
     radioJingle: false,
     radioSpotSrc: null,
     radioSinceJingle: Infinity,
+    // radioClock() when the spot's own file began (null while the jingle
+    // plays), and what a take-back restores: the kind and the jingle count
+    // from before the draw.
+    radioSpotAt: null,
+    radioUndo: null,
     // Overridden by the test bench, which cannot wait four minutes.
     radioClock: () => Date.now(),
     radioRandom: () => Math.random(),
@@ -216,6 +236,7 @@ export const radio = {
         const choices = radioChoices(spots, radioContext(this.state), heard, this.radioLastKind);
         const index = drawAmong('radio', spots.length, choices);
         if (index === null) return null;
+        this.radioUndo = { lastKind: this.radioLastKind, sinceJingle: this.radioSinceJingle };
         heard.add(index);
         this.radioLastKind = spots[index].kind;
 
@@ -229,6 +250,7 @@ export const radio = {
         this.radioSpotSrc = `audio/fm/${language()}/${voiceHash(spots[index].text)}.opus`;
         el.src = jingle ? MUSIC_DIR + jingle.stereo : this.radioSpotSrc;
         el.currentTime = 0;
+        this.radioSpotAt = jingle ? null : this.radioClock();
         this.radioIndex = index;
         this.state.fmOnAir = true;
         this.setRadioLevel(this.state.narrationVolume);
@@ -260,6 +282,9 @@ export const radio = {
         if (this.radioIndex === null) return;
         if (!this.radioJingle) { this.radioDone(); return; }
         this.radioJingle = false;
+        // The station ID has been heard; only the spot can still be taken back.
+        if (this.radioUndo) this.radioUndo.sinceJingle = this.radioSinceJingle;
+        this.radioSpotAt = this.radioClock();
         const el = this.radioEl;
         el.src = this.radioSpotSrc;
         el.currentTime = 0;
@@ -285,11 +310,16 @@ export const radio = {
     /**
      * The game wants the room back. The spot is over at once - the flag, the
      * duck and the gap go now - and the sound follows in RADIO_FADE_MS, so
-     * the cut is not a click. Safe to call with nothing on air.
+     * the cut is not a click. Safe to call with nothing on air. A spot
+     * hardly heard is taken back (radioTakeBack) unless `heard` says the
+     * player ended it.
      */
-    cutRadio: function() {
+    cutRadio: function(heard = false) {
         if (this.radioIndex === null) return;
+        const early = !heard && (this.radioSpotAt === null || this.radioClock() - this.radioSpotAt < RADIO_EARLY_MS);
+        const index = this.radioIndex;
         this.radioDone();
+        if (early) this.radioTakeBack(index);
         const el = this.radioEl;
         if (!el || el.paused) return;
         // Real time, not radioClock(): the fade is for the ear, and a bench
@@ -306,6 +336,25 @@ export const radio = {
             el.pause();
             el.currentTime = 0;
         }, 30);
+    },
+
+    /** The ON AIR button: the player wants the room. The spot counts as heard. */
+    endSpot: function() {
+        this.cutRadio(true);
+    },
+
+    /**
+     * A spot hardly heard goes back into the day, as if it had never been
+     * drawn - except that the station ID, once it rang out, stays heard.
+     */
+    radioTakeBack: function(index) {
+        this.radioHeard?.delete(index);
+        returnToBag('radio', index);
+        if (this.radioUndo) {
+            this.radioLastKind = this.radioUndo.lastKind;
+            this.radioSinceJingle = this.radioUndo.sinceJingle;
+        }
+        this.radioNextAt = this.radioClock() + RADIO_RETRY_MS;
     },
 
     /** The narrator's level, on the one knob this platform obeys (see _setNarratorVolume). */

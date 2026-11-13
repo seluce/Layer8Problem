@@ -7316,10 +7316,11 @@ await ok('The bug report goes to one form, written by the tool that reads it', a
 console.log('GlobalCorp FM:');
 {
     const { radio, spotFits, radioChoices, radioDayKey, radioContext,
-            RADIO_QUIET_MS, RADIO_GAP_MS, RADIO_FIRST_MS, RADIO_MODES, RADIO_JINGLE_EVERY } = await import('../src/engine/engine_radio.js');
+            RADIO_QUIET_MS, RADIO_GAP_MS, RADIO_FIRST_MS, RADIO_MODES, RADIO_JINGLE_EVERY,
+            RADIO_EARLY_MS, RADIO_RETRY_MS } = await import('../src/engine/engine_radio.js');
     const { MUSIC_DIR, MUSIC_STINGS } = await import('../src/engine/music_files.js');
     const JINGLE = MUSIC_DIR + MUSIC_STINGS.fm_jingle.stereo;
-    const { drawAmong } = await import('../src/engine/draw_bag.js');
+    const { drawAmong, returnToBag } = await import('../src/engine/draw_bag.js');
     await ensure('radio');
     const wait = (ms) => new Promise(r => setTimeout(r, ms));
     const srcOf = (f) => readFileSync(new URL(`../src/${f}`, import.meta.url), 'utf-8');
@@ -7411,6 +7412,13 @@ console.log('GlobalCorp FM:');
         assert.ok(!bag.includes(0), 'the refill brought back a spot heard in this cycle');
         assert.equal(drawAmong('fmtest', 10, []), null, 'nothing eligible drew something');
         assert.equal(drawAmong('fmtest', 10, [12]), null, 'an index past the pool was drawn');
+        // A spot hardly heard goes back in at the far end, and only once.
+        const before = JSON.parse(store.get(KEYS.drawBags)).fmtest;
+        const out = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].find(i => !before.includes(i));
+        returnToBag('fmtest', out);
+        returnToBag('fmtest', out);
+        const after = JSON.parse(store.get(KEYS.drawBags)).fmtest;
+        assert.deepEqual(after, [out, ...before], 'the returned spot is not back at the far end, once');
     });
 
     await ok('A spot waits for a quiet moment, and plays from its own folder', async () => {
@@ -7506,6 +7514,79 @@ console.log('GlobalCorp FM:');
         assert.equal(fm.radioEl.src, own, 'the spot did not follow a jingle that failed');
         fm.radioEl._h.error();
         assert.equal(state.fmOnAir, false, 'a spot that failed to load stayed on air');
+        done();
+    });
+
+    await ok('A spot the game cuts in its first seconds goes back to the day; the player\'s stop does not', async () => {
+        const fm = onAir();
+        fm.radioNewDay();
+        const bag = () => JSON.parse(store.get(KEYS.drawBags)).radio;
+        const again = () => { fm.radioStillSince = clock.now - 60_000; fm.radioTick(); };
+
+        // Cut during the day's first jingle: nothing of the spot was heard,
+        // however long the jingle took (a slow load, a paused tab).
+        clock.now += RADIO_FIRST_MS;
+        fm.radioTick();
+        assert.equal(fm.radioEl.src, JINGLE);
+        const first = fm.radioIndex;
+        clock.now += RADIO_EARLY_MS;
+        fm.cutRadio();
+        assert.ok(!fm.radioHeard.has(first), 'a spot cut during its jingle counts as heard');
+        assert.equal(bag()[0], first, 'a spot cut during its jingle did not go back into the bag');
+        assert.equal(fm.radioLastKind, null, 'the kind of a spot nobody heard blocks the next one');
+        assert.equal(fm.radioSinceJingle, Infinity, 'a jingle cut short is no longer owed');
+        assert.equal(fm.radioNextAt, clock.now + RADIO_RETRY_MS, 'an early cut cost the full gap');
+        await wait(400);
+
+        // The retry owes the jingle again; it rings out, the spot is cut
+        // just inside its first seconds: the spot goes back, the jingle stays heard.
+        clock.now += RADIO_RETRY_MS;
+        again();
+        assert.equal(fm.radioEl.src, JINGLE, 'the retry did not owe the jingle');
+        fm.radioEl._h.ended();
+        const second = fm.radioIndex;
+        clock.now += RADIO_EARLY_MS - 1;
+        fm.cutRadio();
+        assert.ok(!fm.radioHeard.has(second), 'a spot cut in its first seconds counts as heard');
+        assert.equal(fm.radioSinceJingle, 0, 'a jingle that rang out is owed again');
+        assert.equal(fm.radioNextAt, clock.now + RADIO_RETRY_MS);
+        await wait(400);
+
+        // Heard for RADIO_EARLY_MS: it counts, and the full gap follows.
+        clock.now += RADIO_RETRY_MS;
+        again();
+        assert.notEqual(fm.radioEl.src, JINGLE);
+        const third = fm.radioIndex;
+        clock.now += RADIO_EARLY_MS;
+        fm.cutRadio();
+        assert.ok(fm.radioHeard.has(third), 'a spot heard for its first seconds went back');
+        assert.equal(fm.radioNextAt, clock.now + RADIO_GAP_MS, 'a spot heard cost only the short gap');
+        await wait(400);
+
+        // The player's own stop, at once: an answer, not an interruption.
+        clock.now += RADIO_GAP_MS;
+        again();
+        const fourth = fm.radioIndex;
+        fm.endSpot();
+        assert.equal(state.fmOnAir, false, 'the stop button left the spot on air');
+        assert.ok(fm.radioHeard.has(fourth), 'the player\'s stop was taken for the game\'s');
+        assert.equal(fm.radioNextAt, clock.now + RADIO_GAP_MS);
+        assert.match(readFileSync(new URL('../src/components/TerminalHeader.svelte', import.meta.url), 'utf-8'),
+            /onclick=\{\(\) => engine\.endSpot\(\)\}/, 'the ON AIR button no longer ends the spot as the player\'s stop');
+        await wait(400);
+
+        // After a jingle, the seconds count from the spot's own start.
+        clock.now += RADIO_GAP_MS;
+        again();
+        assert.equal(fm.radioEl.src, JINGLE, 'the third spot since the last jingle came without one');
+        clock.now += RADIO_EARLY_MS;
+        fm.radioEl._h.ended();
+        const fifth = fm.radioIndex;
+        clock.now += RADIO_EARLY_MS;
+        fm.cutRadio();
+        assert.ok(fm.radioHeard.has(fifth), 'a spot heard for its first seconds after a jingle went back');
+        assert.equal(fm.radioNextAt, clock.now + RADIO_GAP_MS);
+        await wait(400);
         done();
     });
 

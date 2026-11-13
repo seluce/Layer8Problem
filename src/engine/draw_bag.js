@@ -102,6 +102,21 @@ export function drawAmong(name, size, eligible) {
     return pick;
 }
 
+/**
+ * An index drawn and then hardly used goes back in, at the far end: it
+ * stays in this cycle and comes round again after the rest (7.2, a radio
+ * spot cut in its first seconds). An index already in the bag is left
+ * where it is.
+ */
+export function returnToBag(name, index) {
+    if (!Number.isInteger(index) || index < 0) return;
+    const bags = read();
+    const bag = Array.isArray(bags[name]) ? bags[name] : [];
+    if (bag.includes(index)) return;
+    bags[name] = [index, ...bag];
+    write(bags);
+}
+
 function shuffled(list) {
     for (let i = list.length - 1; i > 0; i--) {                 // Fisher-Yates
         const j = Math.floor(Math.random() * (i + 1));
