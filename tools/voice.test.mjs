@@ -748,7 +748,8 @@ await ok('GlobalCorp FM is a set of its own, in a folder of its own', async () =
         assert.notEqual(n[part](LANG), f[part](LANG), `the two sets share their ${part}`);
     }
     assert.ok(!f.out(LANG).startsWith(`${n.out(LANG)}/`), 'the radio\'s files sit inside the narrator\'s folder');
-    const asked = src('engine/engine_radio.js').match(/el\.src = `audio\/fm\/\$\{language\(\)\}\//);
+    // The spot's path; a station ID may play ahead of it (radioNext).
+    const asked = src('engine/engine_radio.js').match(/this\.radioSpotSrc = `audio\/fm\/\$\{language\(\)\}\//);
     assert.ok(asked, 'engine_radio no longer asks audio/fm/<lang>/ - update this test with it');
     assert.equal(f.out(LANG), `public/audio/fm/${LANG}`, 'the render writes somewhere the browser does not ask');
     assert.equal(n.out(LANG), `public/audio/${LANG}`);
@@ -862,6 +863,59 @@ await ok('the station reads with two voices, chosen by the kind of spot', async 
     assert.match(speak, /const voice = voiceOf\(e\);/, 'speak() no longer asks the piece for its voice');
     assert.match(speak, /\/text-to-speech\/\$\{voice\}/, 'the call goes out in one voice for the whole run');
     assert.match(speak, /voice, chars: e\.chars/, 'the ledger books a voice the piece was not read in');
+});
+
+// An untranslated block. Both trees carry the same ids and, until a block is
+// translated, the same German prose - the radio's spots stood in the English
+// tree like that while 7.2 waited for its translation, and an English run
+// then would have bought German audio for audio/fm/en at 0 errors and 0
+// warnings.
+await ok('a run of another language refuses what still reads as the German tree', async () => {
+    const { untranslatedPieces } = await import('./voice-text.mjs');
+    const de = [{ key: 'a/text', sha: '111' }, { key: 'b/text', sha: '222' }, { key: 'c/text', sha: '333' }];
+    const en = [{ key: 'a/text', sha: '111' }, { key: 'b/text', sha: 'xxx' }, { key: 'd/text', sha: '333' }];
+    assert.deepEqual(untranslatedPieces(en, de).map(e => e.key), ['a/text'],
+        'a piece counts as untranslated only where its own key says the German text');
+    assert.deepEqual(untranslatedPieces(en, de, ['a/']), [], 'a line named as meant to read the same was refused');
+
+    // make-audio asks in every language but German. Counted against the
+    // manifests as they stand, so the check holds before a translation and
+    // after it; a trial name nothing has used keeps every spot on the list.
+    const { execFileSync, spawnSync } = await import('node:child_process');
+    const { rmSync } = await import('node:fs');
+    const env = { ...process.env };
+    delete env.ELEVENLABS_API_KEY;
+    const trial = `__voice_test_german_${process.pid}__`;
+    const argv = ['--conditions', 'browser', '--import', './tools/register.mjs',
+        'tools/make-audio.mjs', '--set=fm', `--lang=${LANG}`, `--trial=${trial}`];
+    const man = (l) => JSON.parse(readFileSync(`${ROOT}voice/manifest.fm.${l}.json`, 'utf8')).entries;
+    const expected = LANG === 'de' ? 0 : untranslatedPieces(man(LANG), man('de')).length;
+    try {
+        const out = execFileSync('node', [...argv, '--dry-run'], { cwd: ROOT, env, encoding: 'utf8' });
+        if (expected) {
+            assert.match(out, new RegExp(`german\\s+${expected} of these say word for word`),
+                `the dry run does not name the ${expected} spots still in German`);
+            // And a real run stops before it asks the provider anything: no
+            // key is set, so getting past the check would die on the key.
+            const real = spawnSync('node', argv, { cwd: ROOT, env, encoding: 'utf8' });
+            assert.notEqual(real.status, 0, 'a real run with German text in the English tree went ahead');
+            assert.match(real.stderr, /say word for word what the German tree says/,
+                'a real run with German text in the English tree did not stop at the check');
+        } else {
+            assert.doesNotMatch(out, /german\s+\d+ of these/, `a ${LANG} run reported German it should not hold against`);
+        }
+    } finally {
+        rmSync(`${ROOT}voice/trial/${trial}`, { recursive: true, force: true });
+    }
+    // Once a block is translated there is nothing left for the real run to
+    // refuse, so the stop is read in the source as well.
+    const ma = readFileSync(`${ROOT}tools/make-audio.mjs`, 'utf8');
+    const block = ma.slice(ma.indexOf('if (untranslated.length)'), ma.indexOf('if (!todo.length)'));
+    assert.match(block, /if \(DRY\)[^\n]*\n\s*else die\(/, 'a real run only warns about German text instead of stopping');
+    // While both trees still read alike, holding the run against its OWN
+    // manifest gives the same count - and refuses every piece once they differ.
+    assert.match(ma, /const DE_MANIFEST = `\$\{ROOT\}\$\{SET\.manifest\('de'\)\}`;/,
+        'the check holds a run against something other than the German manifest');
 });
 
 console.log(`\n${passed} checks passed.`);

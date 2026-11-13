@@ -278,6 +278,22 @@ export const sha = (s) => createHash('sha1').update(s, 'utf8').digest('hex').sli
 export const fileFor = (entry) => entry.sha;
 
 /**
+ * The pieces still to do that say word for word what the German tree says.
+ * Both trees carry the same ids and, until a block is translated, the same
+ * German prose (rebuilding and translating are separate, CLAUDE.md) - so a
+ * run of the other language in between buys German audio for its folder, at
+ * 0 errors and 0 warnings. The radio's hundred spots stood like that in the
+ * English tree while 7.2 waited for its translation - 5,000 credits of German.
+ * `german` is the German MANIFEST's entries; a piece of a key on `allowed`
+ * (as --key takes it) names a line meant to read the same in both trees, like
+ * the recruiter who speaks English in the German tree as well.
+ */
+export function untranslatedPieces(todo, german, allowed = []) {
+    const sha = new Map(german.map(e => [e.key, e.sha]));
+    return todo.filter(e => sha.get(e.key) === e.sha && !allowed.some(k => e.key.includes(k)));
+}
+
+/**
  * ONE TEXT, ONE FILE, ONE CALL.
  *
  * The file is named after the text, so identical prose under several keys is

@@ -64,6 +64,21 @@ export const TARGET_LUFS = -21.9;
 export const INTENT_DB = { emergency: 3, gala: 3, lounge: 0 };
 
 /**
+ * One-shots outside the house band. tools/master-music.mjs masters them like
+ * a piece and files them under MUSIC_DIR, but they belong to no pool and
+ * never play on the band's elements (MUSIC_STINGS in music_files.js, not
+ * MUSIC_FILES).
+ *
+ * GlobalCorp FM's station ID plays on the radio's element (engine_radio.js),
+ * at the narrator's knob, so it is levelled to the spots it comes before and
+ * not to the band: their median as rendered, -20.7 LUFS over the hundred
+ * German spots (-21.5 to -19.6, 13.11.2026).
+ */
+export const STINGS = {
+    fm_jingle: { lufs: -20.7 },
+};
+
+/**
  * What a layered piece may lose with its rhythm at the floor, in LU, measured
  * at the sum. More, and a quiet morning sounds as if the band had left.
  */

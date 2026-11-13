@@ -4,6 +4,7 @@ import { drawAmong } from './draw_bag.js';
 import { WEEK_DAY_KEYS } from './engine_week.js';
 import { DB, ensure } from '../data.js';
 import { language } from '../i18n/i18n.svelte.js';
+import { MUSIC_DIR, MUSIC_STINGS } from './music_files.js';
 
 /**
  * GlobalCorp FM, the company radio (7.2).
@@ -36,6 +37,14 @@ import { language } from '../i18n/i18n.svelte.js';
  * state.narratable is never written here, so the read-aloud button never
  * offers to repeat a spot.
  *
+ * THE STATION ID. The sung jingle (MUSIC_STINGS.fm_jingle, mastered by
+ * tools/master-music.mjs to the spots' loudness) comes before the first spot
+ * of a day and then before every RADIO_JINGLE_EVERY-th, on the same element:
+ * `ended` on the jingle starts the spot, `ended` on the spot ends it. A
+ * jingle that fails to load costs the spot nothing. A third of the spots say
+ * the station's name in their first sentence, which is how a real station
+ * follows its jingle; before every spot it would wear out within a morning.
+ *
  * NOTHING IN THE SAVE. Which spots a day has heard lives in memory and is
  * forgotten by a reload; the bag in draw_bag.js keeps the next one from being
  * one heard a minute ago.
@@ -53,6 +62,8 @@ export const RADIO_FIRST_MS = 15 * 1000;
 export const RADIO_CHANCE = 0.15;
 /** Out, when the game wants the room back. */
 export const RADIO_FADE_MS = 300;
+/** The station ID before the first spot of a day, then before every this many. */
+export const RADIO_JINGLE_EVERY = 3;
 /** What the terminal may show for a spot to begin - never an open question. */
 export const RADIO_MODES = ['idle', 'result', 'morning'];
 
@@ -121,6 +132,12 @@ export const radio = {
     // a Set written at module scope would be shared by every spread of it.
     radioHeard: null,
     radioLastKind: null,
+    // True while the station ID plays ahead of the spot in radioIndex, whose
+    // file waits in radioSpotSrc. Counted per day (radioNewDay), so the
+    // morning's first spot always has it.
+    radioJingle: false,
+    radioSpotSrc: null,
+    radioSinceJingle: Infinity,
     // Overridden by the test bench, which cannot wait four minutes.
     radioClock: () => Date.now(),
     radioRandom: () => Math.random(),
@@ -136,6 +153,7 @@ export const radio = {
     radioNewDay: function() {
         this.radioHeard = new Set();
         this.radioLastKind = null;
+        this.radioSinceJingle = Infinity;
         this.radioNextAt = this.radioClock() + RADIO_FIRST_MS;
     },
 
@@ -204,7 +222,12 @@ export const radio = {
         const el = this.radioElement();
         clearInterval(this.radioFadeTimer);
         this.radioFadeTimer = null;
-        el.src = `audio/fm/${language()}/${voiceHash(spots[index].text)}.opus`;
+        // One language-free jingle for both trees; the spot is filed by its text.
+        const jingle = this.radioSinceJingle >= RADIO_JINGLE_EVERY - 1 ? MUSIC_STINGS.fm_jingle : null;
+        this.radioSinceJingle = jingle ? 0 : this.radioSinceJingle + 1;
+        this.radioJingle = !!jingle;
+        this.radioSpotSrc = `audio/fm/${language()}/${voiceHash(spots[index].text)}.opus`;
+        el.src = jingle ? MUSIC_DIR + jingle.stereo : this.radioSpotSrc;
         el.currentTime = 0;
         this.radioIndex = index;
         this.state.fmOnAir = true;
@@ -222,10 +245,26 @@ export const radio = {
         if (this.radioEl) return this.radioEl;
         const el = new Audio();
         el.preload = 'none';
-        el.addEventListener('ended', () => this.radioDone());
-        el.addEventListener('error', () => this.radioDone());
+        el.addEventListener('ended', () => this.radioNext());
+        el.addEventListener('error', () => this.radioNext());
         this.radioEl = el;
         return el;
+    },
+
+    /**
+     * The element has nothing more to play - ended, or failed to load. After
+     * the station ID that is the spot's cue; after the spot, the end. Nothing
+     * on air (cut while the jingle rang out) means nothing follows.
+     */
+    radioNext: function() {
+        if (this.radioIndex === null) return;
+        if (!this.radioJingle) { this.radioDone(); return; }
+        this.radioJingle = false;
+        const el = this.radioEl;
+        el.src = this.radioSpotSrc;
+        el.currentTime = 0;
+        const src = el.src;
+        el.play().catch(() => { if (el.src === src) this.radioDone(); });
     },
 
     /**

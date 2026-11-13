@@ -3,7 +3,8 @@
  * `npm run music:master` (or `-- --cue=<id>` for one piece).
  *
  * The file names of the house band under MUSIC_DIR and what the tool
- * measured on them:
+ * measured on them - and in MUSIC_STINGS the same for the one-shots that
+ * belong to no pool (STINGS in music_cues.js):
  *
  *   stereo   every piece, Opus 96 kbit/s
  *   quad     a layered piece only: bed on channels 1/2, rhythm on 3/4
@@ -13,7 +14,8 @@
  *   seconds  the length after cutting
  *
  * The week suite holds this table against docs/audio/music/ and the
- * loudness against TARGET_LUFS - nobody types these numbers.
+ * loudness against TARGET_LUFS (a sting against its own) - nobody types
+ * these numbers.
  */
 export const MUSIC_DIR = 'audio/music/';
 
@@ -40,4 +42,8 @@ export const MUSIC_FILES = {
     gala_2: { stereo: 'gala_2.54c4a6b3.opus', lufs: -18.9, peak: -6.6, seconds: 210.00 },
     gala_3: { stereo: 'gala_3.21fb4168.opus', lufs: -18.9, peak: -5.3, seconds: 209.53 },
     gala_lounge: { stereo: 'gala_lounge.94943226.opus', lufs: -21.9, peak: -6.6, seconds: 179.74 },
+};
+
+export const MUSIC_STINGS = {
+    fm_jingle: { stereo: 'fm_jingle.390f7508.opus', lufs: -20.7, peak: -8.6, seconds: 3.96 },
 };

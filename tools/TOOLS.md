@@ -528,6 +528,20 @@ everything — which is the point.
 A run refuses to start if the tree and the manifest disagree, so audio can
 never be bought for a text the gate has not seen.
 
+**A run of another language refuses German.** Both trees carry the same ids
+and, until a block is translated, the same German prose — so an English run
+in between buys German audio for the English folder, and every gate is green
+while it does. Every pool waits there between its rebuild and its
+translation, and the radio's hundred spots sat there for 7.2: about 5,000
+credits. So a run with `--lang` other than `de` holds each piece it is about
+to buy against the German manifest (`untranslatedPieces()` in
+`voice-text.mjs`), and a piece whose key says the German text stops the run
+before the provider is asked anything; the dry run names the count and goes
+on. A line meant to read the same in both trees is named with
+`--same-text=<key>[,...]` — there is one in the narrator's set today, the
+recruiter's English line in `call_recruit_1`, already rendered and therefore
+never asked about.
+
 ### `--trial`
 
 Writes into `voice/trial/<name>/`, with a ledger of its own, so a trial can
@@ -571,7 +585,7 @@ and how far the plan's remainder still reaches.
 ### GlobalCorp FM: a second set (`--set=fm`)
 
 ```
-npm run voice:fm -- --dry-run                         # the radio's 27 spots, what they cost
+npm run voice:fm -- --dry-run                         # the radio's 100 spots, what they cost
 npm run voice:fm -- --trial=fm-<name> --voice=<id> --key=fm_traffic_lift_b,fm_weather_server
 npm run voice:fm                                      # the real run, once a voice is chosen
 ```
@@ -674,10 +688,17 @@ four channels, encoded, decoded again, each channel checked for its own
 frequency. The game plays it silently once a session and only then takes the
 four-channel files (`engine_audio.probeLayers()`).
 
+**A sting** is a one-shot outside the band: `STINGS` in `music_cues.js`,
+with a loudness of its own, a line in `SET` like any piece, and its row in
+`MUSIC_STINGS` instead of `MUSIC_FILES`. The one there is GlobalCorp FM's
+station ID (`fm_jingle`): it plays on the radio's element at the narrator's
+knob, so it is levelled to the spots it opens (-20.7 LUFS, their median)
+rather than to the band. `--cue=fm_jingle` masters it alone.
+
 ## 8. `npm test` — the five test suites, in both languages
 
 ```
-npm test        # 17 / 320 / 20 / 50 / 29, then the same five again with --lang=en
+npm test        # 17 / 322 / 20 / 50 / 30, then the same five again with --lang=en
 npm run test:de # one language only, while working
 npm run test:en
 ```
@@ -811,11 +832,13 @@ element — a notice holding the result and handing it over, a mail dropping ont
 a notice, a hidden tab, a volume of zero — because what has to hold there is
 bookkeeping, and the order of a click is easier to get wrong than to read.
 
-GlobalCorp FM (7.2) brought four checks here and eight to `week-flow`. Here:
+GlobalCorp FM (7.2) brought checks of its own here and to `week-flow`. Here:
 the radio is a set of its own whose folders the narrator's never reach, its
 manifest files a spot under the checksum the browser computes, and the
-copy-back before a build reaches `fm/de/`, two levels down; and the two
-presenters (above, under `--set=fm`). In `week-flow`,
+copy-back before a build reaches `fm/de/`, two levels down; the two
+presenters (above, under `--set=fm`); and the refusal of German text in a
+run of another language (under Resuming), counted against the manifests as
+they stand, so it holds before a translation and after it. In `week-flow`,
 the behaviour on the same fake element: a spot fits its window, its condition
 and its day by id; it waits for a quiet moment and never comes on over a
 decision, a window, a mail, an emergency, the gala or the lesson (twenty

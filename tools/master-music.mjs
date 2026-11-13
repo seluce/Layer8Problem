@@ -54,7 +54,7 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, writeFileSync, readdirSync, rmSync, renameSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { CUES, TARGET_LUFS, INTENT_DB, RHYTHM_FLOOR_DB, MAX_FLOOR_LOSS, PROBE_TONES } from '../src/engine/music_cues.js';
+import { CUES, STINGS, TARGET_LUFS, INTENT_DB, RHYTHM_FLOOR_DB, MAX_FLOOR_LOSS, PROBE_TONES } from '../src/engine/music_cues.js';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const SRC_DIR = `${ROOT}music/`;
@@ -79,6 +79,12 @@ const SR = 48000;
  *              before the next (37 % of its time 10 LU under its average).
  *              Kept until the operator has heard it in the lounge; the
  *              repair prompt is in music/prompts.md
+ *   fm_jingle  the sung take the operator chose (13.11.2026): voices from
+ *              0.44 s, the held chord stops at 4.1 s (-37 to -49 dB RMS in
+ *              100 ms), then only the room; cut at 4.4 s with 0.3 s release
+ *
+ * A STING (music_cues.js) goes through the same steps, minus the layers,
+ * and lands in MUSIC_STINGS instead of MUSIC_FILES.
  */
 const SET = {
     morning_1:   { src: '03_morning_1_v2.flac' },
@@ -101,6 +107,7 @@ const SET = {
     gala_2:      { src: '16_gala_2_v1.flac' },
     gala_3:      { src: '17_gala_3_v2.flac' },
     gala_lounge: { src: '18_gala_lounge_v1.flac' },
+    fm_jingle:   { src: 'GlobalCorp_F_M_2026-11-13T123226.flac', to: 4.4, fadeOut: 0.3 },
 };
 
 const STEREO_KBPS = 96;
@@ -112,26 +119,28 @@ const args = process.argv.slice(2);
 const only = args.find(a => a.startsWith('--cue='))?.slice('--cue='.length);
 const listOnly = args.includes('--list');
 
-const missingFromSet = Object.keys(CUES).filter(id => !SET[id]);
-const strays = Object.keys(SET).filter(id => !CUES[id]);
+// Every piece and every sting, in the order the table lists them.
+const PIECES = [...Object.keys(CUES), ...Object.keys(STINGS)];
+const missingFromSet = PIECES.filter(id => !SET[id]);
+const strays = Object.keys(SET).filter(id => !PIECES.includes(id));
 if (missingFromSet.length || strays.length) {
     console.error(`The set and music_cues.js disagree.` +
         (missingFromSet.length ? ` No source for: ${missingFromSet.join(', ')}.` : '') +
         (strays.length ? ` Not a piece in the game: ${strays.join(', ')}.` : ''));
     process.exit(1);
 }
-if (only && !CUES[only]) {
-    console.error(`Unknown piece "${only}". Pieces: ${Object.keys(CUES).join(', ')}`);
+if (only && !PIECES.includes(only)) {
+    console.error(`Unknown piece "${only}". Pieces: ${PIECES.join(', ')}`);
     process.exit(1);
 }
 
-const targetOf = (id) => TARGET_LUFS + (INTENT_DB[CUES[id].pool] ?? 0);
+const targetOf = (id) => STINGS[id] ? STINGS[id].lufs : TARGET_LUFS + (INTENT_DB[CUES[id].pool] ?? 0);
 
 if (listOnly) {
     for (const [id, s] of Object.entries(SET)) {
         const cut = [s.from != null && `from ${s.from} s`, s.to != null && `to ${s.to} s`, s.fadeOut && `${s.fadeOut} s release`]
             .filter(Boolean).join(', ') || 'whole';
-        console.log(`${id.padEnd(12)} ${CUES[id].pool.padEnd(10)} ${CUES[id].layers ? 'layers' : 'stereo'}  ` +
+        console.log(`${id.padEnd(12)} ${(CUES[id]?.pool ?? 'sting').padEnd(10)} ${CUES[id]?.layers ? 'layers' : 'stereo'}  ` +
                     `${targetOf(id).toFixed(1)} LUFS  ${cut.padEnd(30)} ${s.src}`);
     }
     process.exit(0);
@@ -386,7 +395,7 @@ function sweep(stem, keep) {
 
 function master(id) {
     const s = SET[id];
-    const cue = CUES[id];
+    const cue = CUES[id] ?? {};
     const target = targetOf(id);
     const t0 = Date.now();
 
@@ -484,11 +493,11 @@ function probe() {
 async function previousTable() {
     if (!existsSync(TABLE)) return { files: {}, probe: null };
     const mod = await import(`${new URL(`file://${TABLE}`).href}?t=${Date.now()}`);
-    return { files: { ...mod.MUSIC_FILES }, probe: mod.MUSIC_PROBE };
+    return { files: { ...mod.MUSIC_FILES, ...mod.MUSIC_STINGS }, probe: mod.MUSIC_PROBE };
 }
 
 function writeTable(files, probeName) {
-    const rows = Object.keys(CUES).filter(id => files[id]).map(id => {
+    const rowsOf = (ids) => ids.filter(id => files[id]).map(id => {
         const f = files[id];
         const parts = [`stereo: '${f.stereo}'`];
         if (f.quad) parts.push(`quad: '${f.quad}'`);
@@ -497,12 +506,15 @@ function writeTable(files, probeName) {
         parts.push(`peak: ${f.peak.toFixed(1)}`, `seconds: ${f.seconds.toFixed(2)}`);
         return `    ${id}: { ${parts.join(', ')} },`;
     });
+    const rows = rowsOf(Object.keys(CUES));
+    const stingRows = rowsOf(Object.keys(STINGS));
     writeFileSync(TABLE, `/**
  * WRITTEN BY tools/master-music.mjs - do not edit by hand; run
  * \`npm run music:master\` (or \`-- --cue=<id>\` for one piece).
  *
  * The file names of the house band under MUSIC_DIR and what the tool
- * measured on them:
+ * measured on them - and in MUSIC_STINGS the same for the one-shots that
+ * belong to no pool (STINGS in music_cues.js):
  *
  *   stereo   every piece, Opus 96 kbit/s
  *   quad     a layered piece only: bed on channels 1/2, rhythm on 3/4
@@ -512,7 +524,8 @@ function writeTable(files, probeName) {
  *   seconds  the length after cutting
  *
  * The week suite holds this table against docs/audio/music/ and the
- * loudness against TARGET_LUFS - nobody types these numbers.
+ * loudness against TARGET_LUFS (a sting against its own) - nobody types
+ * these numbers.
  */
 export const MUSIC_DIR = 'audio/music/';
 
@@ -520,6 +533,10 @@ export const MUSIC_PROBE = '${probeName}';
 
 export const MUSIC_FILES = {
 ${rows.join('\n')}
+};
+
+export const MUSIC_STINGS = {
+${stingRows.join('\n')}
 };
 `);
 }
@@ -531,7 +548,7 @@ mkdirSync(OUT_DIRS[0], { recursive: true });
 const prev = await previousTable();
 const files = only ? prev.files : {};
 const probeName = probe();
-for (const id of Object.keys(CUES)) {
+for (const id of PIECES) {
     if (only && id !== only) continue;
     files[id] = master(id);
 }

@@ -2,7 +2,13 @@
     "lang": "de",
     "voiceId": "utkd5fchbspYG3Ld0zt0",
     "voiceName": "Dan - Radio Host & Moderator",
-    "voiceSettings": null,
+    "voiceSettings": {
+        "stability": 0.45,
+        "use_speaker_boost": true,
+        "similarity_boost": 0.6,
+        "style": 0.42,
+        "speed": 1.04
+    },
     "byKind": [
         {
             "kinds": [
@@ -11,7 +17,13 @@
             ],
             "voiceId": "gSZiss4v1BGsE1cTgoWF",
             "voiceName": "Lola - Ads",
-            "voiceSettings": null
+            "voiceSettings": {
+                "stability": 0.5,
+                "use_speaker_boost": true,
+                "similarity_boost": 0.75,
+                "style": 0,
+                "speed": 1
+            }
         }
     ],
     "modelId": "eleven_v4_turbo",

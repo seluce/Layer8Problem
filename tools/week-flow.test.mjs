@@ -5949,8 +5949,8 @@ await ok('Every piece is levelled to one loudness, and the table says so', async
     // LUFS, the quietest of the six, and the narrator was balanced against it
     // - so both sets, old and new, have ONE level.
     const { audio } = await import('../src/engine/engine_audio.js');
-    const { CUES, TARGET_LUFS, INTENT_DB } = await import('../src/engine/music_cues.js');
-    const { MUSIC_FILES } = await import('../src/engine/music_files.js');
+    const { CUES, STINGS, TARGET_LUFS, INTENT_DB } = await import('../src/engine/music_cues.js');
+    const { MUSIC_FILES, MUSIC_STINGS } = await import('../src/engine/music_files.js');
     assert.equal(TARGET_LUFS, -21.9, 'the reference moved away from the old set');
     const off = [];
     for (const [id, cue] of Object.entries(CUES)) {
@@ -5963,6 +5963,15 @@ await ok('Every piece is levelled to one loudness, and the table says so', async
         const want = TARGET_LUFS + (INTENT_DB[cue.pool] ?? 0);
         if (Math.abs(played - want) > 0.5) off.push(`${id}: plays at ${played.toFixed(1)}, wants ${want.toFixed(1)}`);
     }
+    // A sting plays on another element at another knob, against its own
+    // target - the radio's jingle against the spots it opens.
+    for (const [id, sting] of Object.entries(STINGS)) {
+        const lufs = MUSIC_STINGS[id]?.lufs;
+        assert.ok(typeof lufs === 'number', `${id} has no measurement`);
+        if (Math.abs(lufs - sting.lufs) > 0.5) off.push(`${id}: plays at ${lufs.toFixed(1)}, wants ${sting.lufs.toFixed(1)}`);
+    }
+    assert.deepEqual(Object.keys(MUSIC_STINGS).sort(), Object.keys(STINGS).sort(),
+        'a sting has a measurement without a place, or a place without a measurement');
     assert.deepEqual(off, [], 'a piece is not levelled to the reference');
     assert.deepEqual(Object.keys(audio.MUSIC_TRIM).sort(), Object.keys(CUES).sort(),
         'a piece has a trim without a place in the set, or a place without a trim');
@@ -5976,9 +5985,9 @@ await ok('Every piece is in docs/audio/music, layered ones twice, and nothing el
     // re-mastered piece's old name that check-audio.mjs would copy back
     // into public/ before every build.
     const { CUES, MAX_FLOOR_LOSS } = await import('../src/engine/music_cues.js');
-    const { MUSIC_FILES, MUSIC_PROBE, MUSIC_DIR } = await import('../src/engine/music_files.js');
+    const { MUSIC_FILES, MUSIC_STINGS, MUSIC_PROBE, MUSIC_DIR } = await import('../src/engine/music_files.js');
     const dir = new URL(`../docs/${MUSIC_DIR}`, import.meta.url);
-    const want = new Set([MUSIC_PROBE]);
+    const want = new Set([MUSIC_PROBE, ...Object.values(MUSIC_STINGS).map(f => f.stereo)]);
     for (const [id, cue] of Object.entries(CUES)) {
         const f = MUSIC_FILES[id];
         want.add(f.stereo);
@@ -6001,7 +6010,7 @@ await ok('Every piece is in docs/audio/music, layered ones twice, and nothing el
         const at = bytes.indexOf('OpusHead');
         return at < 0 ? 0 : bytes[at + 9];
     };
-    for (const [id, f] of Object.entries(MUSIC_FILES)) {
+    for (const [id, f] of Object.entries({ ...MUSIC_FILES, ...MUSIC_STINGS })) {
         assert.equal(channels(f.stereo), 2, `${id}'s stereo file is not stereo`);
         if (f.quad) assert.equal(channels(f.quad), 4, `${id}'s layered file does not carry four channels`);
     }
@@ -7307,7 +7316,9 @@ await ok('The bug report goes to one form, written by the tool that reads it', a
 console.log('GlobalCorp FM:');
 {
     const { radio, spotFits, radioChoices, radioDayKey, radioContext,
-            RADIO_QUIET_MS, RADIO_GAP_MS, RADIO_FIRST_MS, RADIO_MODES } = await import('../src/engine/engine_radio.js');
+            RADIO_QUIET_MS, RADIO_GAP_MS, RADIO_FIRST_MS, RADIO_MODES, RADIO_JINGLE_EVERY } = await import('../src/engine/engine_radio.js');
+    const { MUSIC_DIR, MUSIC_STINGS } = await import('../src/engine/music_files.js');
+    const JINGLE = MUSIC_DIR + MUSIC_STINGS.fm_jingle.stereo;
     const { drawAmong } = await import('../src/engine/draw_bag.js');
     await ensure('radio');
     const wait = (ms) => new Promise(r => setTimeout(r, ms));
@@ -7336,7 +7347,10 @@ console.log('GlobalCorp FM:');
                             radioPausedByTab: false, radioNextAt: 0, radioStillSince: clock.now - 60_000,
                             radioFadeTimer: null, duckReasons: null, speaking: false, interrupted: false,
                             heldLine: null, pausedByTab: false, _interruptions: null, lesson: undefined,
-                            volumeWorks: null, bgmTracks: {} });
+                            volumeWorks: null, bgmTracks: {},
+                            // No station ID owed for two spots: the tests below
+                            // hear the spot itself; the jingle has tests of its own.
+                            radioJingle: false, radioSpotSrc: null, radioSinceJingle: 0 });
         fm.radioClock = () => clock.now;
         fm.radioRandom = () => 0;
         RadioAudio.refuse = false;
@@ -7434,6 +7448,64 @@ console.log('GlobalCorp FM:');
         assert.equal(fm.radioNextAt, clock.now + RADIO_FIRST_MS);
         fm.cutRadio();
         await wait(400);
+        done();
+    });
+
+    await ok('The station ID opens the day and every third spot, then hands over to the spot', () => {
+        const fm = onAir();
+        fm.radioNewDay();
+        const opened = [];
+        for (let n = 0; n < 7; n++) {
+            clock.now += RADIO_GAP_MS;
+            fm.radioStillSince = clock.now - 60_000;
+            fm.radioTick();
+            assert.equal(state.fmOnAir, true, `spot ${n + 1} did not start`);
+            const own = `audio/fm/${LANG}/${voiceHash(DB.radio[fm.radioIndex].text)}.opus`;
+            opened.push(fm.radioEl.src === JINGLE);
+            if (fm.radioEl.src === JINGLE) {
+                fm.radioEl.currentTime = MUSIC_STINGS.fm_jingle.seconds;
+                fm.radioEl._h.ended();
+                assert.equal(state.fmOnAir, true, 'the jingle ended the spot it opened');
+                assert.equal(fm.radioEl.src, own, 'the jingle did not hand over to its spot');
+                assert.equal(fm.radioEl.currentTime, 0, 'the spot starts where the jingle stopped');
+                assert.ok(fm.duckReasons.has('radio'), 'the music came back up between jingle and spot');
+            } else {
+                assert.equal(fm.radioEl.src, own, 'neither the jingle nor the spot');
+            }
+            fm.radioEl._h.ended();
+            assert.equal(state.fmOnAir, false, 'the spot did not end');
+        }
+        assert.equal(RADIO_JINGLE_EVERY, 3);
+        assert.deepEqual(opened, [true, false, false, true, false, false, true], 'not the first spot and every third');
+        done();
+    });
+
+    await ok('A cut during the jingle takes its spot along; a jingle that fails does not', async () => {
+        const fm = onAir();
+        fm.radioNewDay();
+        clock.now += RADIO_FIRST_MS;
+        fm.radioTick();
+        assert.equal(fm.radioEl.src, JINGLE, 'the day did not open with the jingle');
+        fm.cutRadio();
+        assert.equal(state.fmOnAir, false, 'the cut left the station on air');
+        // The fade lets the jingle ring out, and its end may still arrive.
+        fm.radioEl._h.ended();
+        assert.equal(fm.radioEl.src, JINGLE, 'a cut jingle still handed over to its spot');
+        assert.equal(fm.radioIndex, null);
+        assert.ok(!fm.duckReasons.has('radio'), 'the music stayed ducked after the cut');
+        await wait(400);
+
+        fm.radioNewDay();
+        clock.now += RADIO_FIRST_MS;
+        fm.radioStillSince = clock.now - 60_000;
+        fm.radioTick();
+        assert.equal(fm.radioEl.src, JINGLE);
+        const own = `audio/fm/${LANG}/${voiceHash(DB.radio[fm.radioIndex].text)}.opus`;
+        fm.radioEl._h.error();
+        assert.equal(state.fmOnAir, true, 'a jingle that failed to load took the spot with it');
+        assert.equal(fm.radioEl.src, own, 'the spot did not follow a jingle that failed');
+        fm.radioEl._h.error();
+        assert.equal(state.fmOnAir, false, 'a spot that failed to load stayed on air');
         done();
     });
 

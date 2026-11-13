@@ -21,6 +21,10 @@
  *   --model=<id>        override the configured model (for an A/B trial)
  *   --voice=<id>        read everything in this voice instead of the
  *                       configured one(s) (for an A/B trial)
+ *   --same-text=<part>[,..]  a run of another language refuses pieces that
+ *                       say word for word what the German tree says (an
+ *                       untranslated block); this names the keys of lines
+ *                       meant to read the same in both
  *   --context           send the scene opening with each result as
  *                       previous_text. OFF by default - see below.
  *   --jobs=<n>          parallel requests (default 2; Starter allows 3)
@@ -52,7 +56,7 @@
 import { readFileSync, writeFileSync, existsSync, mkdirSync, statSync, renameSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
-import { fileFor, oneCallPerText, speakerFor, voiceSet } from './voice-text.mjs';
+import { fileFor, oneCallPerText, speakerFor, untranslatedPieces, voiceSet } from './voice-text.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const args = process.argv.slice(2);
@@ -350,6 +354,15 @@ todo = calls.filter(e => {
 });
 if (LIMIT) todo = todo.slice(0, LIMIT);
 
+// Not German audio in another language's folder - see untranslatedPieces.
+// Held against the German MANIFEST, never the German tree: collecting the
+// other language here would swap the pool cache under the entries this run
+// is about to send (data.js, ensure()).
+const SAME_OK = flag('same-text', '').split(',').map(k => k.trim()).filter(Boolean);
+const DE_MANIFEST = `${ROOT}${SET.manifest('de')}`;
+const untranslated = LANG === 'de' || !existsSync(DE_MANIFEST) ? []
+    : untranslatedPieces(todo, JSON.parse(readFileSync(DE_MANIFEST, 'utf8')).entries, SAME_OK);
+
 /** Books every twin whose first is finished. Returns how many it booked. */
 let pendingTwins = twins;
 const bookTwins = () => {
@@ -387,6 +400,13 @@ if (CONTEXT) console.log(`  context ${ctxChars.toLocaleString('de-DE')} characte
 // usage inside a plan's included credits has come out cheaper than this.
 console.log(`  at most $${(chars / 1000 * rate).toFixed(2)} at the published rate`
           + (CONTEXT ? `, $${((chars + ctxChars) / 1000 * rate).toFixed(2)} if context is billed` : ''));
+
+if (untranslated.length) {
+    const shown = untranslated.slice(0, 3).map(e => e.key).join(', ') + (untranslated.length > 3 ? ', ...' : '');
+    if (DRY) console.log(`  german  ${untranslated.length} of these say word for word what the German tree says - a real run refuses to start`);
+    else die(`${untranslated.length} pieces to do say word for word what the German tree says (${shown}).\n`
+           + '  Translate them first, or pass --same-text=<key> for a line meant to read the same in both.');
+}
 
 if (!todo.length) {
     if (!DRY && (early.length || pendingTwins.length)) {

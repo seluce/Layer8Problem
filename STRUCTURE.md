@@ -35,8 +35,9 @@ src/
                         Steam, engine_scores.js the sending of it,
                         music_cues.js which piece of music comes next and
                         how the gala sounds from each station (pure;
-                        engine_audio.js plays it), music_files.js
-                        the files and their measurements (written by
+                        engine_audio.js plays it; the radio's jingle is
+                        a sting there), music_files.js the files and
+                        their measurements (written by
                         tools/master-music.mjs)
   data/de/              25 data files, the German source
   data/en/              the same 25, in English
