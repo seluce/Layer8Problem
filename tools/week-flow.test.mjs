@@ -3574,6 +3574,75 @@ await ok('A heavy hit reports on every channel left switched on', () => {
     assert.ok(/a < 30 && c < 30/.test(body), 'negative values could now fire the impact');
 });
 
+await ok('A heavy hit is a heartbeat a laptop can hear, under the narrator and never twice the same', async () => {
+    // Chosen by ear (13.11.2026) to replace a sawtooth drop. What it rests on
+    // is not taste: the beats sit under the voice, an overtone carries them
+    // on small speakers, and a drift keeps the fifth hit of a day from
+    // sounding like the first.
+    const { heartbeat } = await import('../src/engine/engine_audio.js');
+    const audioSrc = readFileSync(new URL('../src/engine/engine_audio.js', import.meta.url), 'utf-8');
+    assert.ok(/type === 'impact'\) \{ heartbeat\(/.test(audioSrc), 'playAudio no longer plays the heartbeat on a hit');
+
+    const record = (v, rnd) => {
+        const sources = [];
+        const param = () => {
+            const p = { events: [] };
+            for (const m of ['setValueAtTime', 'linearRampToValueAtTime', 'exponentialRampToValueAtTime'])
+                p[m] = (value, time) => { p.events.push([value, time]); return p; };
+            return p;
+        };
+        const node = (extra) => ({ connect(to) { this.to = to; return to; }, ...extra });
+        const source = (extra) => {
+            const n = node({ start(t) { this.at = t; }, stop(t) { this.end = t; }, ...extra });
+            sources.push(n);
+            return n;
+        };
+        const ctx = {
+            sampleRate: 48000, destination: {},
+            createOscillator: () => source({ type: 'sine', frequency: param() }),
+            createBufferSource: () => source({}),
+            createGain: () => node({ gain: param() }),
+            createBiquadFilter: () => node({ Q: param(), frequency: param() }),
+            createBuffer: (ch, len, sr) => ({ sampleRate: sr, getChannelData: () => new Float32Array(len) }),
+        };
+        heartbeat(ctx, 0, v, rnd);
+        const gainOf = (n) => (n.to.gain ? n.to : n.to.to);
+        return sources.map(n => ({
+            at: n.at, end: n.end,
+            hz: n.frequency ? n.frequency.events[0][0] : null,
+            peak: Math.max(...gainOf(n).gain.events.map(e => e[0])),
+        }));
+    };
+
+    // A beat is everything under the ringing; by pitch, not by time, or a
+    // beat that drifted too far would pass for the ears.
+    const isBeat = (p) => p.hz === null || p.hz < 2000;
+    const parts = record(1, () => 0.5);
+    const beats = [...new Set(parts.filter(isBeat).map(p => +p.at.toFixed(3)))].sort((a, b) => a - b);
+    assert.deepEqual(beats, [0, 0.2], `not two beats 0.2 s apart: ${beats}`);
+    for (const at of beats) {
+        const beat = parts.filter(p => +p.at.toFixed(3) === at);
+        const tones = beat.filter(p => p.hz !== null);
+        const loudest = tones.reduce((a, b) => (b.peak > a.peak ? b : a));
+        assert.ok(loudest.hz < 100, `the beat at ${at} s sits at ${loudest.hz} Hz - in the narrator's voice`);
+        assert.ok(tones.some(p => p.hz >= 120), `the beat at ${at} s has nothing a laptop speaker can play`);
+        const sum = beat.reduce((a, p) => a + p.peak, 0);
+        assert.ok(sum < 1, `the beat at ${at} s adds up to ${sum.toFixed(2)} at full volume and can clip`);
+    }
+    const first = Math.max(...parts.filter(p => p.at === 0).map(p => p.peak));
+    const ears = parts.filter(p => p.hz >= 2000);
+    assert.equal(ears.length, 1, 'the ears no longer ring after the beats');
+    assert.ok(ears[0].at > 0.2 && ears[0].peak < first / 10,
+              'the ringing starts with the beats or is no longer quiet beside them');
+    assert.ok(Math.max(...parts.map(p => p.end)) <= 1.4, 'the hit outlasts 1.4 s');
+
+    // The drift: at both ends of the dice the gap and the pitch move, by 4% at most.
+    const gapAt = (r) => Math.max(...record(1, () => r).filter(isBeat).map(p => p.at));
+    const low = gapAt(0), high = gapAt(0.999);
+    assert.ok(high - low > 0.01, `the heartbeat no longer drifts (${low} to ${high} s)`);
+    assert.ok(low >= 0.2 * 0.96 && high <= 0.2 * 1.04, `the drift left 4%: ${low} to ${high} s`);
+});
+
 await ok('The gala badge shows once, not a grade', async () => {
     // It can never be re-earned, so a difficulty grade on it would promise an
     // upgrade that cannot happen. The archive reads `once` off the tree.

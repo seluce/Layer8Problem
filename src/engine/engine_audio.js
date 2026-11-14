@@ -110,6 +110,47 @@ const VENDING_VOICES = {
 /** The names a `sound` in data_vending.js may carry. lint-data checks them. */
 export const VENDING_SOUNDS = Object.keys(VENDING_VOICES);
 
+// --- The heavy hit (7.2) -----------------------------------------------------
+// A decision landed hard (reportImpact: +30 aggro or radar, the screen
+// shakes): Mueller's heart thumps twice and his ears ring. Chosen by ear on a
+// listening page, against a falling trombone, the stomach dropping, a tuba and
+// the sawtooth it replaces, which sounded like the game breaking rather than
+// a man taking a blow. A groan from a recording was considered first and
+// dropped: it gives itself away by the third hit of a day, and it would have
+// talked over the narrator.
+//
+// Three things it rests on. The beats sit under 100 Hz, below the narrator's
+// voice, so the result is read over them at once. A laptop or a phone plays
+// almost nothing down there, so each beat carries an overtone at 2.3 times and
+// a muffled knock, or half the players would only see the shaking. And every
+// hit drifts by up to 4% in tempo and pitch (`rnd`), because a heartbeat that
+// repeats exactly is a sample, not a heart.
+const beat = (ctx, t, v, freq, peak, dur) => {
+    ring(ctx, t, { freq, to: freq * 0.6, dur: dur + 0.02, peak: peak * v, attack: 0.006 });
+    ring(ctx, t, { wave: 'triangle', freq: freq * 2.3, to: freq * 1.4, dur: dur * 0.8 + 0.02,
+                   peak: peak * 0.28 * v, attack: 0.006 });
+    burst(ctx, t, { dur: 0.07, filter: 'lowpass', freq: 300, peak: peak * 0.9 * v, attack: 0.004 });
+};
+
+export const heartbeat = (ctx, t, v, rnd = Math.random) => {
+    const j = 1 + (rnd() - 0.5) * 0.08;
+    beat(ctx, t, v, 62 * j, 0.42, 0.13);             // lub
+    beat(ctx, t + 0.2 * j, v, 80 * j, 0.30, 0.09);   // dub
+    // The ears ring as the scene tips over: it swells rather than starts, so
+    // its own envelope - the shared one rises in a straight line.
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    const at = t + 0.22;
+    o.frequency.setValueAtTime(3200, at);
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.exponentialRampToValueAtTime(0.014 * v, at + 0.18);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + 1.0);
+    o.connect(g);
+    g.connect(ctx.destination);
+    o.start(at);
+    o.stop(at + 1.05);
+};
+
 export const audio = {
 
    // --- SYNTHESIZED SOUND ---
@@ -135,6 +176,7 @@ export const audio = {
             // The vending machine's sounds build their own graphs.
             const voice = VENDING_VOICES[type];
             if (voice) { voice(this.audioCtx, t, vol); return; }
+            if (type === 'impact') { heartbeat(this.audioCtx, t, vol); return; }
 
             const osc = this.audioCtx.createOscillator();
             const gain = this.audioCtx.createGain();
@@ -190,27 +232,6 @@ export const audio = {
                 gain.gain.exponentialRampToValueAtTime(0.001 * vol, t + 0.4); 
                 osc.start(t);
                 osc.stop(t + 0.45);
-            } else if (type === 'impact') {
-                // The one harsh voice in the set. Everything else here is a
-                // sine or a square blip; a heavy hit gets a sawtooth dropping
-                // through the floor, because it has to read as damage next to
-                // four friendly beeps.
-                //
-                // NOT a human scream, deliberately: this game has no audio
-                // FILES at all - every sound is synthesised - and by GLOSSAR
-                // 2a the machine is what speaks. The screen shakes, so the
-                // terminal takes the hit; Mueller stays quiet.
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(160, t);
-                osc.frequency.exponentialRampToValueAtTime(48, t + 0.16);
-
-                gain.gain.setValueAtTime(0.001 * vol, t);
-                gain.gain.linearRampToValueAtTime(0.22 * vol, t + 0.012);
-                gain.gain.exponentialRampToValueAtTime(0.001 * vol, t + 0.18);
-
-                osc.start(t);
-                osc.stop(t + 0.2);
-
             } else if (type === 'boot') {
                 osc.type = 'square';
                 osc.frequency.setValueAtTime(1000, t);

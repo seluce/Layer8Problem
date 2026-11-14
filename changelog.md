@@ -9,6 +9,9 @@ GlobalCorp FM:
 * The company has its own radio station. In the quiet moments of a working day it comes on with traffic news from the lifts, the weather in the server room, the canteen's menu, announcements, adverts for the company's own services and a word from the top floor. A hundred spots and two presenters; some only come on certain days, some only when the day is going badly. The station sings its name now and again.
 * It never talks over the narrator, a scene or a window, and stops the moment the game has something to say. It plays at the narrator's volume and has a switch of its own in the audio settings.
 
+Sound:
+* A decision that lands hard now sounds like a heartbeat: two beats and a short ringing in the ears, while the screen shakes.
+
 [7.1.1] - 2026-11-10
 
 Fixes after 7.1.
