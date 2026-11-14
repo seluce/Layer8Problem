@@ -13,7 +13,9 @@
         {
             "kinds": [
                 "ad",
-                "notice"
+                "notice",
+                "mandy",
+                "gossip"
             ],
             "voiceId": "gSZiss4v1BGsE1cTgoWF",
             "voiceName": "Lola - Ads",

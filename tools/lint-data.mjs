@@ -1588,10 +1588,18 @@ for (const ev of DB.emails) {
 // is a condition that never holds, a `when` the wrong way round is a spot
 // that never plays, a `day` written as the word is a spot for no day at all
 // (CLAUDE.md: nothing language-dependent as a comparison value). A spot
-// without `if.day` that names a weekday is wrong four days in five.
+// without `if.day` that names a weekday is wrong four days in five. A
+// colleague in `if.rep` who is not in DB.chars, or an emergency in `if.seen`
+// that is not in DB.bossfights, is a spot waiting for something that never
+// comes - and a greeting without its standing plays to every player alike.
 {
-  const RADIO_KINDS = new Set(['morning', 'traffic', 'weather', 'canteen', 'notice', 'ad',
-                               'board', 'staff', 'countdown', 'alert', 'weekday']);
+  // One list for the engine and the linter (src/engine/radio_kinds.js).
+  const kinds = await import('../src/engine/radio_kinds.js');
+  const RADIO_KINDS = new Set(kinds.RADIO_KINDS);
+  const RADIO_LENGTHS = kinds.RADIO_LENGTHS;
+  const RADIO_KIND_NEEDS = kinds.RADIO_KIND_NEEDS;
+  const REP_NAMES = new Set(DB.chars.filter(c => !c.player).map(c => c.name));
+  const EMERGENCY_IDS = new Set((DB.bossfights ?? []).map(b => b.id));
   const RADIO_FIELDS = new Set(['id', 'kind', 'when', 'if', 'text']);
   const RADIO_IF = { tickets: [1, 10], l: [1, 100], a: [1, 100], b: [1, 100] };
   const DAY_IDS = ['mon', 'tue', 'wed', 'thu', 'fri'];
@@ -1630,11 +1638,29 @@ for (const ev of DB.emails) {
         } else if (RADIO_IF[k]) {
           const [lo, hi] = RADIO_IF[k];
           if (!Number.isInteger(v) || v < lo || v > hi) err(`${ctx} if.${k} must be a whole number from ${lo} to ${hi} - got ${JSON.stringify(v)}`);
+        } else if (k === 'rep') {
+          // By name, which is the same in both trees; the player is not a
+          // colleague. A positive threshold is "at least", a negative one
+          // "at most" - so zero would mean either, and means nothing.
+          if (!v || typeof v !== 'object' || Array.isArray(v) || !Object.keys(v).length) err(`${ctx} if.rep must name at least one colleague`);
+          else for (const [name, n] of Object.entries(v)) {
+            if (!REP_NAMES.has(name)) err(`${ctx} if.rep "${name}" is not a colleague in DB.chars - allowed: ${[...REP_NAMES].join(', ')}`);
+            if (!Number.isInteger(n) || n === 0 || n < -100 || n > 100) err(`${ctx} if.rep.${name} must be a whole number from -100 to 100 and not 0 - got ${JSON.stringify(n)}`);
+          }
+        } else if (k === 'seen') {
+          // An event the run can have had: an emergency, by id. A typo is a
+          // spot that waits for something that never happens.
+          if (!Array.isArray(v) || !v.length) err(`${ctx} if.seen must list at least one emergency`);
+          else for (const id of v) if (!EMERGENCY_IDS.has(id)) err(`${ctx} if.seen "${id}" is not an emergency in DB.bossfights`);
         } else {
-          err(`${ctx} unknown condition if.${k} - allowed: ${[...Object.keys(RADIO_IF), 'day'].join(', ')}`);
+          err(`${ctx} unknown condition if.${k} - allowed: ${[...Object.keys(RADIO_IF), 'day', 'rep', 'seen'].join(', ')}`);
         }
       }
     }
+    // A greeting needs somebody's standing, the house news something that
+    // happened: without its condition the spot plays to every player alike.
+    const needs = RADIO_KIND_NEEDS[sp.kind];
+    if (needs && !sp.if?.[needs]) err(`${ctx} a ${sp.kind} answers if.${needs} and has none`);
 
     const text = sp.text;
     checkText(ctx, 'text', text);
@@ -1651,11 +1677,14 @@ for (const ev of DB.emails) {
     if (pic) err(`${ctx} emoji ${pic[0]} in a spot - it is spoken; describe it instead`);
     const named = text.match(WEEKDAY_WORDS);
     if (named && !sp.if?.day) warn(`${ctx} names "${named[0]}" but plays on any day - give it if.day, or say it without the weekday`);
-    // Ten to twenty-five seconds is a spot. Under it the ident is half the
-    // spot; over it the narrator's next scene cuts most of it off.
+    // Ten to twenty-five seconds is a spot. Under it the jingle is half the
+    // spot; over it the narrator's next scene cuts most of it off. An ident
+    // is a line, a story is half a minute and more - each kind its own range,
+    // fifteen characters a second.
     const len = text.trim().length;
-    if (len < 100) warn(`${ctx} text is ${len} characters - a spot runs ten seconds at least (100 and up)`);
-    if (len > 420) warn(`${ctx} text is ${len} characters - a spot over 25 seconds is mostly cut off (420 at most)`);
+    const [lo, hi] = RADIO_LENGTHS[sp.kind] ?? RADIO_LENGTHS.spot;
+    if (len < lo) warn(`${ctx} text is ${len} characters - a ${sp.kind} runs ${lo} at least`);
+    if (len > hi) warn(`${ctx} text is ${len} characters - a ${sp.kind} runs ${hi} at most`);
   });
   info(`radio: ${(spots ?? []).length} spots, ${(spots ?? []).filter(s => s?.if).length} with a condition, ${(spots ?? []).filter(s => s?.when).length} with a time window`);
 }

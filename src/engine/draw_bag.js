@@ -117,6 +117,18 @@ export function returnToBag(name, index) {
     write(bags);
 }
 
+/**
+ * What is left of the current cycle, without drawing (7.2): the indices still
+ * in the bag, or all of them for a bag never drawn from. GlobalCorp FM asks
+ * it before it lets a spot jump the queue - a spot heard in this cycle may
+ * still be drawn, but not ahead of the rest.
+ */
+export function stillInBag(name, size) {
+    const stored = read()[name];
+    if (!Array.isArray(stored)) return [...Array(size).keys()];
+    return stored.filter(i => Number.isInteger(i) && i >= 0 && i < size);
+}
+
 function shuffled(list) {
     for (let i = list.length - 1; i > 0; i--) {                 // Fisher-Yates
         const j = Math.floor(Math.random() * (i + 1));

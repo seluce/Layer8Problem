@@ -12,13 +12,23 @@
  *
  * Fields:
  *   id    fm_ + motif, unique in this pool, the same in both trees
- *   kind  what sort of spot (RADIO_KINDS in lint-data): two of one kind are
- *         never played back to back
+ *   kind  what sort of spot (src/engine/radio_kinds.js, with the length
+ *         each kind runs to): two of one kind are never played back to
+ *         back. `talk` is Ralf, the host, telling a story; `mandy` is Mandy
+ *         from Marketing doing the same - read by the voice of the adverts;
+ *         `ident` is the station's name and a line. `shout` (Ralf) and
+ *         `gossip` (Mandy) answer the player's standing and must carry
+ *         if.rep; `news` (Ralf) answers an emergency and must carry if.seen.
  *   when  [from, to] minutes of the day, from inclusive, to exclusive;
  *         without it the spot fits any time of the working day
  *   if    what has to hold on top: tickets (at least), l, a, b (at least,
  *         the four letters of the effects), day (a WEEK_DAY_KEYS id - never
- *         the word). A spot whose `if` holds is preferred over the rest.
+ *         the word), rep ({ "<name in DB.chars>": n } - at least n when n
+ *         is positive, at most n when it is negative; the standing is the
+ *         career's), seen ([emergency ids] - any one of them used in this
+ *         run, today or, in a week, this week). A spot whose `if` holds may
+ *         go ahead of the rest, once a cycle (engine_radio.js, "NOT A
+ *         TIMETABLE").
  *   text  what is said. No placeholder, no emoji, no markup - it is a
  *         recording, made months before it is played.
  *
@@ -276,4 +286,98 @@ export const radio = [
       text: "Ein Hinweis der Haustechnik: Tastaturen sind keine Sportgeräte. Wer heute schon zweimal auf die eigene geschlagen hat, bekommt beim dritten Mal Ersatz aus dem Bestand. Bei der Ersatztastatur klemmt ein Buchstabe. Welcher, ist eine Überraschung." },
     { id: "fm_alert_screensaver", kind: "alert", if: { l: 90 },
       text: "GlobalCorp FM grüßt alle, die gerade sehr beschäftigt aussehen. Die Personalabteilung hat einen Hinweis für Sie: Ein Bildschirmschoner, der aussieht wie eine Tabelle, ist keine Tabelle. Sie hat es selbst ausprobiert und spricht aus Erfahrung." },
+
+    // --- Ralf, the host (7.2): a story that loses its thread on the way. He
+    //     once did a week of night shifts at a local station, broadcasts from
+    //     the basement next to the server room, keeps an allotment (plot
+    //     fourteen) and is at war with Egon over the studio radiator. The
+    //     basement is locked, with a code (fm_notice_basement). Long: they wait
+    //     for a longer quiet (radio_kinds.js). ---
+    { id: "fm_talk_radiator", kind: "talk",
+      text: "Ralf hier, GlobalCorp FM, live aus dem Studio im Keller. Live heißt bei uns: Der Heizkörper hinter mir klopft dreimal, dann ist er still, dann klopft er wieder. Egon sagt, das ist Luft im System. Ich sage, das ist Morse. Ich habe ja damals beim Lokalradio eine Woche lang die Nachtschicht gemacht, und da hatten wir auch so einen Heizkörper. Der Kollege vor mir hat behauptet, der hätte ihm einmal um drei Uhr früh die Wettervorhersage durchgegeben. Und sie stimmte. Wobei, im Sommer stimmt die Wettervorhersage eigentlich immer, das muss man fairerweise sagen. Im Garten ist das anders. Da sagen alle Regen, und meine Kohlrabi stehen trotzdem im Trockenen. Wo war ich? Bei der Heizung. Egon kommt nach seiner Pause, und bis dahin klopft hier unten eben jemand mit." },
+    { id: "fm_talk_first_words", kind: "talk",
+      text: "Kurz zum Verkehr, bevor ich es vergesse: Aufzug B hält heute im dritten Stock, ob man will oder nicht. Er öffnet die Tür, wartet, schließt sie wieder und fährt weiter. Das hat etwas Würdevolles. Mein allererster Satz beim Lokalradio war übrigens auch eine Verkehrsmeldung. Stau auf der Umgehungsstraße, habe ich gesagt, und vor Aufregung die falsche Umgehungsstraße genannt, eine, die es in der Stadt gar nicht gab. Angerufen hat niemand. Das war das Erste, was ich über das Radio gelernt habe. Das Zweite habe ich im Kleingarten gelernt, auf Parzelle vierzehn: Einen Gartenzwerg stellt man nicht an die Grenze, auch nicht, wenn er zu einem selbst schaut. Mein Nachbar von der Fünfzehn hat seitdem eine Hecke. Was wollte ich sagen? Aufzug B. Wenn er im dritten Stock hält, bleiben Sie einfach drin. Er fährt dann weiter, irgendwann." },
+
+    // --- Mandy from Marketing (7.2), who reads the adverts: up at half past
+    //     four, cold shower, a vision board, a coach. Not Chantal, who sits in
+    //     the same department and looks after the feelings - Mandy optimises.
+    //     She and Ralf fight a quiet war over the good studio chair. Read by
+    //     the voice of the adverts (byKind in voice/run.fm.<lang>.json). ---
+    { id: "fm_mandy_chair", kind: "mandy",
+      text: "Hallo, hier ist Mandy aus dem Marketing, ich übernehme kurz, Ralf holt Kaffee. Er hat den guten Stuhl mitgenommen. Den mit den Rollen, die nicht quietschen. Ich sitze jetzt auf dem Hocker aus dem Lager, und wissen Sie was? Das ist okay. Das ist sogar gut. Mein Coach sagt, Unbequemlichkeit ist nur Wachstum, das noch keinen Namen hat. Ich stehe ja jeden Morgen um halb fünf auf, kalt duschen, dann zwanzig Minuten vor mein Vision Board. Da hängt seit drei Wochen ein Foto von genau diesem Stuhl. Chantal sagt, das sei kein gutes Zeichen für meine Energie, aber Chantal hat auch ein Einhorn auf ihrem Board. Ein echtes Einhorn, kein Start-up. Jedenfalls, die Durchsage. Ich hatte eine Durchsage. Sie steht auf einem Zettel, und der Zettel liegt auf dem Stuhl." },
+
+    // --- Idents (7.2): the station's name and a line, five to eight seconds.
+    //     What a station says between two things; Ralf's voice. ---
+    { id: "fm_ident_work", kind: "ident",
+      text: "GlobalCorp FM. Wir senden, Sie arbeiten. Einer von uns muss es ja tun." },
+    { id: "fm_ident_lunch", kind: "ident",
+      text: "Sie hören GlobalCorp FM, den Sender, der genauso lange Mittag macht wie Sie." },
+    { id: "fm_ident_cellar", kind: "ident",
+      text: "GlobalCorp FM, aus dem Keller für das ganze Haus. Auch für den vierten Stock, der uns nicht hören will." },
+    { id: "fm_ident_accounts", kind: "ident",
+      text: "GlobalCorp FM. Zertifiziert, budgetiert und von der Buchhaltung noch nicht entdeckt." },
+    { id: "fm_ident_corridor", kind: "ident",
+      text: "Hier ist GlobalCorp FM, der Betriebsfunk mit der Reichweite eines Flurs." },
+
+    // --- The house's standing with the player (7.2), by if.rep: from +40 a
+    //     colleague's greeting, from -40 one with an edge. Ralf reads the
+    //     greetings (shout), Mandy what the corridor says (gossip); each
+    //     colleague has one of each, never both from the same presenter.
+    //     The player is "die IT" - the department, never a name or a gender. ---
+    { id: "fm_shout_kevin", kind: "shout", if: { rep: { "Kevin": 40 } },
+      text: "An der Studiotür klebt ein Post-it, adressiert an GlobalCorp FM. Kevin, unser Azubi, grüßt die IT, und zwar wörtlich: 'Shoutout an die IT, absolute Legende, kein Witz.' Ich habe ihn gefragt, ob er das selbst vorlesen will. Live sei ihm zu krass, hat er gesagt. Gewartet hat er dann aber vor der Tür, bis ich es vorgelesen hatte." },
+    { id: "fm_gossip_kevin", kind: "gossip", if: { rep: { "Kevin": -40 } },
+      text: "Mandy aus dem Marketing, kurz der Flurfunk. Kevin sitzt seit Tagen mit Kopfhörern in der Teeküche und sagt zu jedem, der vorbeikommt, 'alles gut'. Gefragt hatte keiner. Ich habe dann gefragt. Die IT habe ihn voll gedisst, sagt er, und er verarbeite das jetzt mit Lo-Fi. Mein Coach würde sagen, er ist in seinem Prozess. Ich sage, er isst sehr viele Kekse." },
+    { id: "fm_gossip_chantal", kind: "gossip", if: { rep: { "Chantal": 40 } },
+      text: "Hier ist Mandy, mit einer Beobachtung aus unserer Abteilung. Chantal hat die IT auf ihr Vision Board geklebt, zwischen das Einhorn und eine Wellnesswoche, mit einem Herz daneben, in Holo-Pink. Ich hänge da nicht, ich habe nachgesehen. Das ist völlig okay. Ich gönne es. Gönnen ist eine Haltung, das steht bei mir im Journal auf Seite zwei." },
+    { id: "fm_shout_chantal", kind: "shout", if: { rep: { "Chantal": -40 } },
+      text: "Grüße auf GlobalCorp FM, diesmal aus dem Marketing. Chantal grüßt die IT, ich lese vor, 'mit ganz viel positiver Energie, trotz allem'. Trotz allem ist unterstrichen, zweimal. Ich bin lange genug beim Radio, um zu merken, wann ein Gruß eigentlich eine Durchsage ist. Sie hat ein lachendes Gesicht danebengemalt. Es lacht nicht ganz." },
+    { id: "fm_shout_egon", kind: "shout", if: { rep: { "Egon": 40 } },
+      text: "Ich habe hier etwas, das es auf diesem Sender noch nicht gab: einen Gruß von Egon. Egon spricht nicht in Mikrofone, das wissen Sie. Er hat mir im Treppenhaus einen Zettel in die Hand gedrückt und ist weitergegangen, ohne sich umzudrehen. Auf dem Zettel steht 'IT. Passt.' Das ist der ganze Gruß. Von Egon ist das ungefähr eine Rede." },
+    { id: "fm_gossip_egon", kind: "gossip", if: { rep: { "Egon": -40 } },
+      text: "Mandy, kurz aus dem Flur. Egon hat im zweiten Stock alle wackelnden Stühle repariert, wirklich alle, mit seinem kleinen Schraubenschlüssel. Bis auf einen. Den Stuhl in der IT hat er angesehen, einmal daran gerüttelt und ist weitergegangen. Ich habe gefragt, ob er den vergessen hat. Er hat nicht geantwortet. Bei Egon ist das ein Nein." },
+    { id: "fm_shout_wichtig", kind: "shout", if: { rep: { "Dr. Wichtig": 40 } },
+      text: "Ein Gruß aus der Chefetage, durchgestellt vom Vorzimmer. Dr. Wichtig lobt die IT. Er wisse nicht genau, was die IT eigentlich macht, lässt er sagen, aber seit einiger Zeit merke er davon nichts mehr, und ein größeres Kompliment habe er nicht. Die IT bekommt dafür einen Eintrag im Intranet, als Team des Monats. Mit Foto. Eine Prämie ist nicht vorgesehen." },
+    { id: "fm_gossip_wichtig", kind: "gossip", if: { rep: { "Dr. Wichtig": -40 } },
+      text: "Mandy mit dem Flurfunk, und heute flüstere ich. In der Führungsrunde hat Dr. Wichtig das Wort Kostenstelle gesagt und dabei in Richtung der IT geschaut. Durch zwei Wände. Ich saß direkt daneben, ich habe es gesehen. Mein Coach sagt, wer beobachtet wird, sollte strahlen. Also, liebe IT: strahlen Sie. Nur nicht zu hell, Strom ist gerade ein Thema." },
+    { id: "fm_shout_gabi", kind: "shout", if: { rep: { "Gabi": 40 } },
+      text: "Grüße aus der Telefonzentrale. Gabi lässt ausrichten, dass sie die IT heute schon dreimal verteidigt hat, zweimal am Telefon und einmal am Kopierer. Was man der IT vorgeworfen hat, will sie nicht sagen. Aufgeschrieben hat sie es aber, mit Uhrzeit, falls es mal jemand wissen muss. Wem Gabi etwas erzählt, ist bei ihr eine Frage der Sympathie, und die IT steht ganz oben." },
+    { id: "fm_gossip_gabi", kind: "gossip", if: { rep: { "Gabi": -40 } },
+      text: "Kleiner Hinweis aus dem Empfang, hier ist Mandy. Gabi stellt Anrufe für die IT gerade sehr langsam durch. Ich stand daneben. Sie hat ihr eigenes Gespräch zu Ende geführt, dann ihre Pflanze gegossen und dann gesagt, die Leitung sei leider belegt gewesen. Gelächelt hat sie dabei sehr freundlich. Bei Gabi ist das kein gutes Zeichen, das weiß im Haus jeder." },
+    { id: "fm_shout_elster", kind: "shout", if: { rep: { "Frau Elster": 40 } },
+      text: "Ein Gruß aus der Buchhaltung, genau so, wie er hier steht: 'Frau Elster grüßt die IT. Beleg anbei.' Es liegt wirklich ein Beleg bei, über einen Gruß, einmal, an die IT, unterschrieben und mit einem Pfotenabdruck gegengezeichnet. Rüdiger hat also mitgegrüßt. So etwas habe ich zuletzt beim Lokalradio bekommen, für eine Verkehrsmeldung, die gestimmt hat." },
+    { id: "fm_gossip_elster", kind: "gossip", if: { rep: { "Frau Elster": -40 } },
+      text: "Flurfunk mit Mandy. In der Kaffeeküche hängt eine neue Liste von Frau Elster. Oben steht 'Offene Posten', darunter eine einzige Zeile, und in der steht die IT. Was die IT ihr schuldet, steht nicht dabei, nur ein Datum, rot unterstrichen. Auf ihrem Bildschirm klebt ein Foto von Rüdiger. Ich habe es mir genau angesehen. Versöhnt sah er nicht aus." },
+    { id: "fm_gossip_markus", kind: "gossip", if: { rep: { "Markus": 40 } },
+      text: "Mandy mit etwas aus dem Vertrieb. Markus erzählt seit Tagen jedem Kunden, die IT bei GlobalCorp sei die beste im ganzen Land. Abgesprochen hat er das mit niemandem, und inzwischen steht es in drei Angeboten, als Leistung, mit Preis. Ehrlich, das ist starkes Storytelling. Die IT sollte trotzdem mal in die Angebote schauen, bevor jemand unterschreibt." },
+    { id: "fm_shout_markus", kind: "shout", if: { rep: { "Markus": -40 } },
+      text: "Grüße auf GlobalCorp FM aus dem Vertrieb, telefonisch, über die Freisprechanlage im Auto. Markus grüßt die IT und möchte daran erinnern, dass Zeit Geld ist. Danach hat er noch etwas über seinen Drucker gesagt, das ich hier nicht vorlese, und aufgelegt, um einen Kunden anzurufen. Ich glaube, das war kein Gruß. Ins Protokoll kommt es trotzdem als Gruß." },
+
+    // --- The house news (7.2), by if.seen: Ralf on an emergency the run
+    //     has had, any one of the ids listed. Said after the fact and
+    //     without a clock - in a week it may have been Monday - and true
+    //     whether the emergency was won or lost. Every emergency named was
+    //     read before its line was written. ---
+    { id: "fm_news_water", kind: "news", if: { seen: ["boss_water_leak", "boss_flood", "boss_water_leak_1"] },
+      text: "Die Hausnachrichten auf GlobalCorp FM. Nach dem Wasserschaden ist die Lage ruhig. Egon hat sich die Stelle angesehen, Frau Elster die Rechnung, und beide haben dabei dasselbe Gesicht gemacht. Wer im Flur ein nasses Paar Socken findet, darf es behalten. Und wir hier im Keller melden: noch trocken. Wir sehen jede Stunde nach." },
+    { id: "fm_news_heat", kind: "news", if: { seen: ["boss_heat", "boss_ac_failure_1"] },
+      text: "Eine Nachmeldung zum Wetter, aus dem Serverraum. Die große Hitze ist abgezogen, zurück bleibt ein Geruch nach warmem Staub, der sich bis zum Abend halten soll. Wer dort zu tun hat, lässt die Schokolade bitte am Platz. Im übrigen Haus bleibt es wechselhaft. Im Vertrieb, wie immer, heiße Luft aus südlicher Richtung." },
+    { id: "fm_news_fire", kind: "news", if: { seen: ["boss_fire"] },
+      text: "Eine Nachricht aus dem Haus. Im Serverraum hat es gebrannt, das darf man inzwischen sagen. Wenn Sie in den Fluren noch einen leichten Geruch nach geschmolzenem Kunststoff bemerken, er kommt von dort und ist harmlos. Egon prüft gerade alles im Haus, was löschen kann. An seiner Tür hängt ein Zettel, und auf dem steht 'Nicht brennen'." },
+    { id: "fm_news_attack", kind: "news", if: { seen: ["boss_ransomware", "boss_ransomware_2", "boss_ddos", "boss_ddos_1", "boss_phishing_ceo_1"] },
+      text: "Die Hausnachrichten. Nach dem Angriff auf unser Netz bittet die IT um Ihre Mithilfe: Klicken Sie nichts an, was Sie nicht selbst bestellt haben. Kein Paket, keinen Gewinn, auch nichts, was aus der Chefetage weitergeleitet wurde. Gerade das nicht. Woher der Angriff kam, wird noch ermittelt. Die Spur führt ins Ausland, oder in einen Kühlschrank." },
+    { id: "fm_news_coffee", kind: "news", if: { seen: ["boss_coffee_crisis", "boss_coffee_shortage_1"] },
+      text: "GlobalCorp FM mit einer Meldung aus der Kaffeeküche, und ich bitte Sie, jetzt tapfer zu sein. Nach den Ereignissen rund um den Kaffee sind Gespräche auf den Fluren nur eingeschränkt möglich. Wer Sie anstarrt, meint es nicht persönlich. Wir senden ab jetzt ein wenig leiser, für alle, die noch nicht wieder ganz da sind." },
+    { id: "fm_news_inspectors", kind: "news", if: { seen: ["boss_audit", "boss_audit_surprise_1", "boss_cable_mess", "boss_crypto_police_1"] },
+      text: "Die Hausnachrichten. Die Herren mit den Klemmbrettern haben das Haus wieder verlassen. Ob es Prüfer waren, Beamte oder der TÜV, spielt für Sie keine Rolle, für die Chefetage eine sehr große. Werfen Sie bitte trotzdem nichts weg, was nach einem Protokoll aussieht. Davon haben wir im Haus nicht viele." },
+    { id: "fm_news_broadcast", kind: "news", if: { seen: ["boss_stream", "boss_ceo_stream_1", "boss_vga_fail", "boss_demo_fail"] },
+      text: "Eine Meldung in eigener Sache. GlobalCorp FM hat mit der Übertragung von Dr. Wichtig, über die das Haus gerade spricht, nichts zu tun. Wir senden nur Ton. Wir haben noch nie ein Bild gesendet und haben das auch nicht vor. Dr. Wichtig bittet, das Thema in der Kantine nicht zu vertiefen. Wer einen Mitschnitt hat, löscht ihn bitte zweimal." },
+    { id: "fm_news_machines", kind: "news", if: { seen: ["boss_skynet_lock", "boss_lockdown_1", "boss_rogue_ai_1", "boss_selbstlernend"] },
+      text: "Die Hausnachrichten. Nach dem Zwischenfall mit unserer Software, die einmal selbst entscheiden wollte, eine Erinnerung: Die Software im Haus ist dazu da, Ihnen zu helfen. Hilft sie nicht, ist sie beschäftigt. Schließt sie Türen, schreibt sie Kündigungen oder installiert sie sich selbst, ist sie sehr beschäftigt. Dann rufen Sie bitte die IT. Deren Tür geht noch von Hand auf." },
+    { id: "fm_news_power", kind: "news", if: { seen: ["boss_ups_battery", "boss_generator_test"] },
+      text: "Eine Nachricht zum Strom. Der Notstrom hat sich im Haus bemerkbar gemacht, auf seine Art. Egon hat dazu einen Vermerk an den Schaltschrank gehängt, zwei Türen neben unserem Studio. Ich habe ihn gelesen. Da steht: 'Deshalb testet man das.' Weiter steht da nichts. Wenn es also während der Sendung plötzlich still wird, liegt es nicht an Ihrem Gerät." },
+    { id: "fm_news_printer", kind: "news", if: { seen: ["boss_printer_rage"] },
+      text: "Eine Meldung von der Druckerfront. Der Großraumdrucker ist wieder ruhig. Er hat zuletzt mehrere hundert schwarze Seiten ausgegeben, und wir weisen darauf hin, dass diese Seiten keine Botschaft enthalten. Frau Elster lässt ausrichten, Rüdiger bleibt zu Hause. Und Markus bittet, ihn nicht auf den Drucker anzusprechen. Er redet selbst nicht mehr mit ihm." },
+    { id: "fm_news_excavator", kind: "news", if: { seen: ["boss_excavator_1"] },
+      text: "Die Hausnachrichten. Die Hauptleitung im Hof ist durch. Gemeint ist das Kabel, das uns mit dem Internet verbindet, nicht Egon, auch wenn er so aussah. Den Bagger hat er inzwischen zurückgegeben. Schuld sei er nicht, sagt er, das Kabel habe eben dort gelegen. Für GlobalCorp FM ändert sich nichts. Wir senden über Draht, und den hat Egon nicht gefunden." },
 ];

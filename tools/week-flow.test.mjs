@@ -7385,11 +7385,13 @@ await ok('The bug report goes to one form, written by the tool that reads it', a
 console.log('GlobalCorp FM:');
 {
     const { radio, spotFits, radioChoices, radioDayKey, radioContext,
-            RADIO_QUIET_MS, RADIO_GAP_MS, RADIO_FIRST_MS, RADIO_MODES, RADIO_JINGLE_EVERY,
-            RADIO_EARLY_MS, RADIO_RETRY_MS } = await import('../src/engine/engine_radio.js');
+            RADIO_QUIET_MS, RADIO_GAP_MS, RADIO_GAP_SPREAD_MS, RADIO_FIRST_MS, RADIO_FIRST_SPREAD_MS,
+            RADIO_MODES, RADIO_JINGLE_CHANCE, RADIO_POINTED_CHANCE, RADIO_LONG_QUIET_MS,
+            RADIO_EARLY_MS, RADIO_EARLY_SHARE, RADIO_RETRY_MS } = await import('../src/engine/engine_radio.js');
+    const { RADIO_LONG_KINDS } = await import('../src/engine/radio_kinds.js');
     const { MUSIC_DIR, MUSIC_STINGS } = await import('../src/engine/music_files.js');
     const JINGLE = MUSIC_DIR + MUSIC_STINGS.fm_jingle.stereo;
-    const { drawAmong, returnToBag } = await import('../src/engine/draw_bag.js');
+    const { drawAmong, returnToBag, stillInBag } = await import('../src/engine/draw_bag.js');
     await ensure('radio');
     const wait = (ms) => new Promise(r => setTimeout(r, ms));
     const srcOf = (f) => readFileSync(new URL(`../src/${f}`, import.meta.url), 'utf-8');
@@ -7418,16 +7420,23 @@ console.log('GlobalCorp FM:');
                             radioFadeTimer: null, duckReasons: null, speaking: false, interrupted: false,
                             heldLine: null, pausedByTab: false, _interruptions: null, lesson: undefined,
                             volumeWorks: null, bgmTracks: {},
-                            // No station ID owed for two spots: the tests below
-                            // hear the spot itself; the jingle has tests of its own.
-                            radioJingle: false, radioSpotSrc: null, radioSinceJingle: 0 });
+                            // No station ID owed, ever, until a test starts a
+                            // day: the tests below hear the spot itself; the
+                            // jingle has tests of its own.
+                            radioJingle: false, radioSpotSrc: null, radioSinceJingle: -Infinity });
         fm.radioClock = () => clock.now;
+        // Every roll won, and every spread at its least - unless a test says
+        // otherwise with rolls().
         fm.radioRandom = () => 0;
         RadioAudio.refuse = false;
         globalThis.Audio = RadioAudio;
         return fm;
     };
     const done = () => { globalThis.Audio = RealAudio; globalThis.document.hidden = false; };
+    // The station's dice, in the order it throws them: the tick's chance, the
+    // queue jump, the jingle (only when one may come), the gap after a spot.
+    // Past the list, every throw is 0.
+    const rolls = (fm, ...seq) => { fm.radioRandom = () => (seq.length ? seq.shift() : 0); };
 
     await ok('A spot fits its window, its conditions and its day - by id', () => {
         const ctx = { minute: 600, tickets: 7, l: 69, a: 70, b: 0, day: 'wed' };
@@ -7446,7 +7455,36 @@ console.log('GlobalCorp FM:');
         assert.equal(radioDayKey({ week: { active: true, dayIndex: 4 } }), 'thu');
         resetState();
         state.time = 700; state.tickets = 3; state.al = 12;
-        assert.deepEqual(radioContext(state), { minute: 700, tickets: 3, l: 0, a: 12, b: 0, day: 'wed' });
+        const read = radioContext(state);
+        assert.deepEqual({ ...read, rep: undefined, seen: undefined },
+                         { minute: 700, tickets: 3, l: 0, a: 12, b: 0, day: 'wed', rep: undefined, seen: undefined });
+        // The standing and the house's events are read live, never copied
+        // at the start of the day: a greeting follows the choice just made.
+        assert.equal(read.rep, state.reputation, 'the reputation is not the state\'s own');
+        assert.equal(read.seen, state.usedIDs, 'the events are not the state\'s own');
+    });
+
+    await ok('A greeting answers the standing - at least above zero, at most below - and the news an event', () => {
+        const ctx = (rep, seen = []) => ({ minute: 600, tickets: 0, l: 0, a: 0, b: 0, day: 'wed', rep, seen: new Set(seen) });
+        assert.equal(spotFits({ if: { rep: { Kevin: 40 } } }, ctx({ Kevin: 40 })), true, 'a positive threshold is not "at least"');
+        assert.equal(spotFits({ if: { rep: { Kevin: 40 } } }, ctx({ Kevin: 39 })), false, 'a standing below it passed');
+        assert.equal(spotFits({ if: { rep: { Egon: -40 } } }, ctx({ Egon: -40 })), true, 'a negative threshold is not "at most"');
+        assert.equal(spotFits({ if: { rep: { Egon: -40 } } }, ctx({ Egon: -39 })), false, 'a standing above it passed');
+        assert.equal(spotFits({ if: { rep: { Egon: -40 } } }, ctx({ Egon: 80 })), false, 'a good standing passed for a bad one');
+        // A colleague nobody has met yet stands at zero, and zero is neither.
+        assert.equal(spotFits({ if: { rep: { Gabi: 20 } } }, ctx({})), false, 'a missing standing counted as good');
+        assert.equal(spotFits({ if: { rep: { Gabi: -20 } } }, ctx({})), false, 'a missing standing counted as bad');
+        assert.equal(spotFits({ if: { seen: ['boss_fire', 'boss_heat'] } }, ctx({}, ['boss_heat'])), true, 'seen is not "any of"');
+        assert.equal(spotFits({ if: { seen: ['boss_fire'] } }, ctx({}, ['boss_heat'])), false, 'an event that did not happen passed');
+        assert.equal(spotFits({ if: { seen: ['boss_fire'] } }, { minute: 600, day: 'wed' }), false, 'no record of the run passed');
+        // Through the state as the game keeps it.
+        resetState();
+        state.reputation = { ...state.reputation, Kevin: 55 };
+        state.usedIDs.add('boss_flood');
+        const live = radioContext(state);
+        assert.equal(spotFits({ if: { rep: { Kevin: 50 }, seen: ['boss_flood'] } }, live), true, 'the live state did not fit');
+        state.reputation.Kevin = 45;
+        assert.equal(spotFits({ if: { rep: { Kevin: 50 } } }, radioContext(state)), false, 'a standing that fell still fits');
     });
 
     await ok('The station notices the day first, and never repeats a kind or a spot', () => {
@@ -7461,9 +7499,12 @@ console.log('GlobalCorp FM:');
         assert.deepEqual(radioChoices(spots, queue, new Set([2]), null), [0, 1], 'a spot heard today came back');
         assert.deepEqual(radioChoices(spots, calm, new Set(), 'weather'), [1], 'the kind just played came again');
         // Every spot of the real pool fits SOME moment of a working day.
+        // A standing and an event are the spot's own (lint-data holds the
+        // names and the ids against the trees).
         const never = DB.radio.filter(sp => ![480, 600, 700, 900, 960].some(m =>
             ['mon', 'tue', 'wed', 'thu', 'fri'].some(day =>
-                spotFits(sp, { minute: m, tickets: 10, l: 100, a: 100, b: 100, day }))));
+                spotFits(sp, { minute: m, tickets: 10, l: 100, a: 100, b: 100, day,
+                               rep: { ...sp.if?.rep }, seen: new Set(sp.if?.seen) }))));
         assert.deepEqual(never.map(sp => sp.id), [], 'a spot no day can play');
     });
 
@@ -7528,15 +7569,17 @@ console.log('GlobalCorp FM:');
         done();
     });
 
-    await ok('The station ID opens the day and every third spot, then hands over to the spot', () => {
+    await ok('The station ID opens the day, then comes on a roll and never twice in a row', () => {
         const fm = onAir();
         fm.radioNewDay();
         const opened = [];
-        for (let n = 0; n < 7; n++) {
+        // Thrown before each spot: the queue jump, then the jingle's own roll
+        // where one may come at all. 0 wins the jingle, 0.9 loses it.
+        for (const roll of [0.9, 0, 0, 0.9, 0.9, 0]) {
+            rolls(fm, roll, roll);
             clock.now += RADIO_GAP_MS;
             fm.radioStillSince = clock.now - 60_000;
-            fm.radioTick();
-            assert.equal(state.fmOnAir, true, `spot ${n + 1} did not start`);
+            assert.notEqual(fm.playSpot(), null, `spot ${opened.length + 1} did not start`);
             const own = `audio/fm/${LANG}/${voiceHash(DB.radio[fm.radioIndex].text)}.opus`;
             opened.push(fm.radioEl.src === JINGLE);
             if (fm.radioEl.src === JINGLE) {
@@ -7552,8 +7595,121 @@ console.log('GlobalCorp FM:');
             fm.radioEl._h.ended();
             assert.equal(state.fmOnAir, false, 'the spot did not end');
         }
-        assert.equal(RADIO_JINGLE_EVERY, 3);
-        assert.deepEqual(opened, [true, false, false, true, false, false, true], 'not the first spot and every third');
+        // The first of the day whatever the dice; right after one, never;
+        // after that, when the roll is won.
+        assert.deepEqual(opened, [true, false, true, false, false, true], 'the jingle does not follow its rules');
+        assert.ok(RADIO_JINGLE_CHANCE > 0 && RADIO_JINGLE_CHANCE < 1, 'the jingle is no longer a roll');
+        done();
+    });
+
+    await ok('The first spot of a day and every gap fall at a moment nobody can count on', async () => {
+        const fm = onAir();
+        rolls(fm, 0);
+        fm.radioNewDay();
+        assert.equal(fm.radioNextAt, clock.now + RADIO_FIRST_MS, 'the earliest first spot moved');
+        rolls(fm, 0.999);
+        fm.radioNewDay();
+        const late = fm.radioNextAt - clock.now;
+        assert.ok(late > RADIO_FIRST_MS + 4 * 60 * 1000, `the first spot always comes early (at most ${late} ms)`);
+        assert.ok(RADIO_FIRST_MS + RADIO_FIRST_SPREAD_MS <= 5 * 60 * 1000, 'a day can wait more than five minutes for its first spot');
+        // The gap: five minutes at least, nine at most, and it rolls.
+        fm.radioSinceJingle = -Infinity;
+        const gapAfter = (roll) => {
+            // The tick's chance won; the queue jump and the gap both get the
+            // roll, so the test does not hang on how many dice come between.
+            rolls(fm, 0, roll, roll);
+            fm.radioNextAt = 0;
+            fm.radioStillSince = clock.now - 60_000;
+            fm.radioTick();
+            assert.equal(state.fmOnAir, true, 'no spot to end');
+            fm.radioEl._h.ended();
+            return fm.radioNextAt - clock.now;
+        };
+        assert.equal(gapAfter(0), RADIO_GAP_MS, 'the least gap moved');
+        const wide = gapAfter(0.999);
+        assert.ok(wide > RADIO_GAP_MS + 3 * 60 * 1000, `the gap no longer rolls (${wide} ms)`);
+        assert.ok(RADIO_GAP_MS >= 5 * 60 * 1000, 'the station speaks more often than every five minutes');
+        assert.ok(RADIO_GAP_MS + RADIO_GAP_SPREAD_MS <= 10 * 60 * 1000, 'the station can fall silent for more than ten minutes');
+        done();
+    });
+
+    await ok('A restarted day does not open with the spot it opened with before', () => {
+        // Day mode on Normal stands for a Monday, and at 8:20 the Monday spot
+        // is the one whose condition holds. Up to 7.2 it was drawn first on
+        // every restart, because a restart forgets the day's heard spots.
+        const fm = onAir();
+        state.difficultyMult = 1.25;
+        state.time = 500;
+        const monday = DB.radio.findIndex(sp => sp.id === 'fm_monday_morning');
+        assert.ok(monday >= 0, 'fm_monday_morning is gone - pick another spot with if.day');
+        // The bag holds the Monday spot at the far end: drawn last, unless it
+        // goes ahead. So what the dice decide is the only thing that differs.
+        const rest = [...DB.radio.keys()].filter(i => i !== monday);
+        store.set(KEYS.drawBags, JSON.stringify({ radio: [monday, ...rest] }));
+        fm.radioNewDay();
+        rolls(fm, 0.9);
+        assert.notEqual(fm.playSpot(), monday, 'the Monday spot went ahead on a lost roll');
+        fm.cutRadio(true);
+        fm.radioNewDay();
+        rolls(fm, 0);
+        assert.equal(fm.playSpot(), monday, 'the Monday spot did not go ahead on a won roll');
+        fm.cutRadio(true);
+        for (let restart = 0; restart < 5; restart++) {
+            fm.radioNewDay();
+            rolls(fm, 0);
+            assert.notEqual(fm.playSpot(), monday, `restart ${restart + 1} opened with the Monday spot again`);
+            fm.cutRadio(true);
+        }
+        assert.ok(!stillInBag('radio', DB.radio.length).includes(monday), 'the Monday spot is back in this cycle');
+        // On a lost roll, nothing goes ahead at all.
+        const spots = [{ kind: 'weather' }, { kind: 'alert', if: { tickets: 7 } }];
+        const queue = { minute: 500, tickets: 8, l: 0, a: 0, b: 0, day: 'wed' };
+        assert.deepEqual(radioChoices(spots, queue, new Set(), null, { prefer: false }), [0, 1], 'a lost roll still let the queue jump');
+        assert.deepEqual(radioChoices(spots, queue, new Set(), null, { fresh: new Set([0]) }), [0, 1],
+                         'a spot heard in this cycle jumped the queue again');
+        assert.ok(RADIO_POINTED_CHANCE > 0 && RADIO_POINTED_CHANCE < 1, 'the queue jump is no longer a roll');
+        done();
+    });
+
+    await ok('A long story waits for a longer quiet, and counts as heard by its share', async () => {
+        const spots = [{ kind: 'talk' }, { kind: 'mandy' }, { kind: 'weather' }];
+        const calm = { minute: 500, tickets: 0, l: 0, a: 0, b: 0, day: 'wed' };
+        assert.deepEqual(radioChoices(spots, calm, new Set(), null, { long: false }), [2], 'a story started into a brisk game');
+        assert.deepEqual(radioChoices(spots, calm, new Set(), null, { long: true }), [0, 1, 2]);
+        assert.deepEqual([...RADIO_LONG_KINDS].sort(), ['mandy', 'talk'], 'the long kinds changed - check the quiet they wait for');
+
+        // The engine asks how still the player has been.
+        const fm = onAir();
+        const real = DB.radio;
+        DB.radio = [{ id: 'fm_t', kind: 'talk', text: 'a story' }, { id: 'fm_w', kind: 'weather', text: 'the weather' }];
+        // The story last in the bag, so it is the one drawn whenever it may be.
+        store.set(KEYS.drawBags, JSON.stringify({ radio: [1, 0] }));
+        try {
+            fm.radioStillSince = clock.now - (RADIO_LONG_QUIET_MS - 1);
+            assert.equal(fm.playSpot(), 1, 'a story was drawn while the player was busy');
+            fm.cutRadio(true);
+            await wait(400);
+            fm.radioHeard = new Set();
+            fm.radioLastKind = null;
+            fm.radioStillSince = clock.now - RADIO_LONG_QUIET_MS;
+            assert.equal(fm.playSpot(), 0, 'a story was not drawn in a long quiet');
+            // A minute-long story cut after ten seconds has lost its point.
+            fm.radioEl.duration = 60;
+            clock.now += 10_000;
+            fm.cutRadio();
+            assert.ok(!fm.radioHeard.has(0), 'a story cut a sixth of the way in counts as heard');
+            await wait(400);
+            fm.radioStillSince = clock.now - RADIO_LONG_QUIET_MS;
+            assert.equal(fm.playSpot(), 0);
+            fm.radioEl.duration = 60;
+            clock.now += 60_000 * RADIO_EARLY_SHARE;
+            fm.cutRadio();
+            assert.ok(fm.radioHeard.has(0), 'a story heard for its share went back');
+            await wait(400);
+        } finally {
+            DB.radio = real;
+            store.delete(KEYS.drawBags);
+        }
         done();
     });
 
@@ -7634,7 +7790,9 @@ console.log('GlobalCorp FM:');
 
         // The player's own stop, at once: an answer, not an interruption.
         clock.now += RADIO_GAP_MS;
+        rolls(fm, 0, 0, 0.9);
         again();
+        assert.notEqual(fm.radioEl.src, JINGLE, 'the jingle won a roll it lost');
         const fourth = fm.radioIndex;
         fm.endSpot();
         assert.equal(state.fmOnAir, false, 'the stop button left the spot on air');
@@ -7647,7 +7805,7 @@ console.log('GlobalCorp FM:');
         // After a jingle, the seconds count from the spot's own start.
         clock.now += RADIO_GAP_MS;
         again();
-        assert.equal(fm.radioEl.src, JINGLE, 'the third spot since the last jingle came without one');
+        assert.equal(fm.radioEl.src, JINGLE, 'a spot that won the jingle roll came without one');
         clock.now += RADIO_EARLY_MS;
         fm.radioEl._h.ended();
         const fifth = fm.radioIndex;

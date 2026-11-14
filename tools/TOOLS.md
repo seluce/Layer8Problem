@@ -698,7 +698,7 @@ rather than to the band. `--cue=fm_jingle` masters it alone.
 ## 8. `npm test` — the five test suites, in both languages
 
 ```
-npm test        # 17 / 324 / 20 / 50 / 30, then the same five again with --lang=en
+npm test        # 17 / 328 / 20 / 50 / 30, then the same five again with --lang=en
 npm run test:de # one language only, while working
 npm run test:en
 ```

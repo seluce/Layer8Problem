@@ -30,7 +30,8 @@ src/
                         observer list the tutorial listens on,
                         engine_vending.js the machine on the third floor,
                         engine_radio.js GlobalCorp FM, the station that
-                        speaks in the quiet moments,
+                        speaks in the quiet moments (its kinds of spot in
+                        radio_kinds.js, which the data checker reads too),
                         leaderboard.js what a day or a week is worth on
                         Steam, engine_scores.js the sending of it,
                         music_cues.js which piece of music comes next and

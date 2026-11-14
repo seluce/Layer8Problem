@@ -1,6 +1,7 @@
 import { KEYS } from './keys.js';
 import { voiceHash } from './sha1.js';
-import { drawAmong, returnToBag } from './draw_bag.js';
+import { drawAmong, returnToBag, stillInBag } from './draw_bag.js';
+import { RADIO_LONG_KINDS } from './radio_kinds.js';
 import { WEEK_DAY_KEYS } from './engine_week.js';
 import { DB, ensure } from '../data.js';
 import { language } from '../i18n/i18n.svelte.js';
@@ -23,8 +24,9 @@ import { MUSIC_DIR, MUSIC_STINGS } from './music_files.js';
  *     over an open question would be cut off by the answer, nearly always.
  *   - nothing stands over the terminal, no mail and no notice, no emergency,
  *     not the gala, not the lesson, not a page nobody is looking at;
- *   - RADIO_GAP_MS since the last spot, and a roll of RADIO_CHANCE on top,
- *     so the station is not a metronome.
+ *   - RADIO_GAP_MS since the last spot plus a roll of up to
+ *     RADIO_GAP_SPREAD_MS, and a roll of RADIO_CHANCE on top, so the
+ *     station is not a metronome.
  *
  * It fades out in RADIO_FADE_MS when the narrator starts (engine_voice.
  * _setSpeaking), when any window opens (engine_ui.showOverlay and the three
@@ -39,14 +41,32 @@ import { MUSIC_DIR, MUSIC_STINGS } from './music_files.js';
  *
  * THE STATION ID. The sung jingle (MUSIC_STINGS.fm_jingle, mastered by
  * tools/master-music.mjs to the spots' loudness) comes before the first spot
- * of a day and then before every RADIO_JINGLE_EVERY-th, on the same element:
- * `ended` on the jingle starts the spot, `ended` on the spot ends it. A
- * jingle that fails to load costs the spot nothing. A third of the spots say
- * the station's name in their first sentence, which is how a real station
- * follows its jingle; before every spot it would wear out within a morning.
+ * of a day and then on a roll of RADIO_JINGLE_CHANCE, never twice in a row,
+ * on the same element: `ended` on the jingle starts the spot, `ended` on the
+ * spot ends it. A jingle that fails to load costs the spot nothing. A third
+ * of the spots say the station's name in their first sentence, which is how
+ * a real station follows its jingle; before every spot it would wear out
+ * within a morning.
+ *
+ * NOT A TIMETABLE (7.2, the operator: "less predictable"). Up to the first
+ * play test every day opened with a spot fifteen seconds in, the jingle came
+ * before every third, and a spot whose condition held was always drawn first.
+ * With a day's heard spots forgotten on a restart, that last rule made every
+ * restarted Monday open with the same Monday spot and every lunch play the
+ * day's canteen spot. Now the first spot comes RADIO_FIRST_MS plus a roll of
+ * up to RADIO_FIRST_SPREAD_MS into the day, the gap rolls too, and a spot
+ * with a condition jumps the queue only on a roll of RADIO_POINTED_CHANCE and
+ * only while it is still in the current cycle of the bag (stillInBag): heard
+ * once, it waits for the rest like any other.
+ *
+ * LONG SPOTS. Ralf's and Mandy's stories (RADIO_LONG_KINDS) run half a
+ * minute and more, and the next click cuts them off. They are drawn only
+ * when the player has been still for RADIO_LONG_QUIET_MS, and a cut counts
+ * as hardly heard for RADIO_EARLY_SHARE of the recording, not five seconds.
  *
  * HARDLY HEARD IS NOT HEARD. A spot the game cuts during its jingle or in
- * its first RADIO_EARLY_MS goes back into the day: not heard, back in the
+ * its first RADIO_EARLY_MS (or RADIO_EARLY_SHARE of it, the longer of the
+ * two) goes back into the day: not heard, back in the
  * bag, its kind and its jingle as they were, and the next try after
  * RADIO_RETRY_MS instead of the full gap. The player's own stop (endSpot)
  * is an answer, not an interruption - that spot counts, whenever it ended.
@@ -60,10 +80,21 @@ import { MUSIC_DIR, MUSIC_STINGS } from './music_files.js';
 export const RADIO_TICK_MS = 2000;
 /** How long the narrator and the terminal must have been quiet. */
 export const RADIO_QUIET_MS = 8000;
-/** The least time between the end of one spot and the start of the next. */
-export const RADIO_GAP_MS = 4 * 60 * 1000;
-/** The morning screen's head start: the first spot of a day may come early. */
-export const RADIO_FIRST_MS = 15 * 1000;
+/**
+ * The least time between the end of one spot and the start of the next, and
+ * how much a roll adds on top. Five to nine minutes: a working day runs
+ * twenty to thirty, and a station heard every four wore thin (the operator,
+ * 13.11.2026: "not too often").
+ */
+export const RADIO_GAP_MS = 5 * 60 * 1000;
+export const RADIO_GAP_SPREAD_MS = 4 * 60 * 1000;
+/** The first spot of a day: half a minute in at the earliest, five at the latest. */
+export const RADIO_FIRST_MS = 30 * 1000;
+export const RADIO_FIRST_SPREAD_MS = 4.5 * 60 * 1000;
+/** How long the player must have been still before a long spot may begin. */
+export const RADIO_LONG_QUIET_MS = 20 * 1000;
+/** The chance that a spot whose condition holds goes ahead of the rest. */
+export const RADIO_POINTED_CHANCE = 0.5;
 /** The chance per quiet tick, once everything else allows it. */
 export const RADIO_CHANCE = 0.15;
 /** Out, when the game wants the room back. */
@@ -77,8 +108,13 @@ export const RADIO_FADE_MS = 300;
  */
 export const RADIO_EARLY_MS = 5000;
 export const RADIO_RETRY_MS = 90 * 1000;
-/** The station ID before the first spot of a day, then before every this many. */
-export const RADIO_JINGLE_EVERY = 3;
+/**
+ * A long story cut after five seconds has lost its point as surely as a spot
+ * cut after one: for them the share of the recording counts, if it is longer.
+ */
+export const RADIO_EARLY_SHARE = 0.3;
+/** The station ID: before the first spot of a day, then on this roll, never twice in a row. */
+export const RADIO_JINGLE_CHANCE = 1 / 3;
 /** What the terminal may show for a spot to begin - never an open question. */
 export const RADIO_MODES = ['idle', 'result', 'morning'];
 
@@ -93,17 +129,29 @@ export function radioDayKey(state) {
     return mult > 1.0 ? 'mon' : mult < 1.0 ? 'fri' : 'wed';
 }
 
-/** What a spot's conditions are held against, read off the state once. */
+/**
+ * What a spot's conditions are held against, read off the state once. The
+ * standing with the colleagues is the career's (reputation, kept in the
+ * archive), and what happened in the house is the run's: the events used
+ * today, or this week in a week, by id.
+ */
 export function radioContext(state) {
     return {
         minute: state.time ?? 0,
         tickets: state.tickets ?? 0,
         l: state.fl ?? 0, a: state.al ?? 0, b: state.cr ?? 0,
         day: radioDayKey(state),
+        rep: state.reputation ?? {},
+        seen: state.usedIDs ?? new Set(),
     };
 }
 
-/** Does this spot fit the moment? `when` is [from, to), `if` all at least. */
+/**
+ * Does this spot fit the moment? `when` is [from, to), and every `if` must
+ * hold: the numbers at least, `day` the day's id, `rep` a standing per
+ * colleague - at least a positive threshold, at most a negative one - and
+ * `seen` any one of the events it names.
+ */
 export function spotFits(spot, ctx) {
     if (spot.when) {
         const [from, to] = spot.when;
@@ -114,21 +162,31 @@ export function spotFits(spot, ctx) {
         if (c.tickets !== undefined && ctx.tickets < c.tickets) return false;
         for (const k of ['l', 'a', 'b']) if (c[k] !== undefined && ctx[k] < c[k]) return false;
         if (c.day !== undefined && ctx.day !== c.day) return false;
+        if (c.rep) for (const [name, v] of Object.entries(c.rep)) {
+            const r = ctx.rep?.[name] ?? 0;
+            if (v > 0 ? r < v : r > v) return false;
+        }
+        if (c.seen && !c.seen.some(id => ctx.seen?.has(id))) return false;
     }
     return true;
 }
 
 /**
  * The spots worth drawing from now, as indices. Not one heard today, not the
- * kind just played; and where a spot whose `if` holds is among them, only
- * those - the station noticing the queue beats the weather.
+ * kind just played, not a long story unless `long` says the player is still.
+ * With `prefer` (a roll the caller made), a spot whose `if` holds and that is
+ * still `fresh` in the bag's cycle goes ahead - the station noticing the
+ * queue beats the weather, once.
  */
-export function radioChoices(spots, ctx, heard, lastKind) {
+export function radioChoices(spots, ctx, heard, lastKind, { fresh = null, prefer = true, long = true } = {}) {
     const open = [];
     spots.forEach((s, i) => {
-        if (!heard.has(i) && s.kind !== lastKind && spotFits(s, ctx)) open.push(i);
+        if (heard.has(i) || s.kind === lastKind || !spotFits(s, ctx)) return;
+        if (!long && RADIO_LONG_KINDS.includes(s.kind)) return;
+        open.push(i);
     });
-    const pointed = open.filter(i => spots[i].if);
+    if (!prefer) return open;
+    const pointed = open.filter(i => spots[i].if && (!fresh || fresh.has(i)));
     return pointed.length ? pointed : open;
 }
 
@@ -169,12 +227,12 @@ export const radio = {
         this.radioTimer = setInterval(() => this.radioTick(), RADIO_TICK_MS);
     },
 
-    /** A new working day: the morning show may come early, and anything may come again. */
+    /** A new working day: anything may come again, at a moment nobody can count on. */
     radioNewDay: function() {
         this.radioHeard = new Set();
         this.radioLastKind = null;
         this.radioSinceJingle = Infinity;
-        this.radioNextAt = this.radioClock() + RADIO_FIRST_MS;
+        this.radioNextAt = this.radioClock() + RADIO_FIRST_MS + this.radioRandom() * RADIO_FIRST_SPREAD_MS;
     },
 
     /**
@@ -233,7 +291,11 @@ export const radio = {
     playSpot: function() {
         const spots = DB.radio;
         const heard = (this.radioHeard ??= new Set());
-        const choices = radioChoices(spots, radioContext(this.state), heard, this.radioLastKind);
+        const choices = radioChoices(spots, radioContext(this.state), heard, this.radioLastKind, {
+            fresh: new Set(stillInBag('radio', spots.length)),
+            prefer: this.radioRandom() < RADIO_POINTED_CHANCE,
+            long: this.radioClock() - this.radioStillSince >= RADIO_LONG_QUIET_MS,
+        });
         const index = drawAmong('radio', spots.length, choices);
         if (index === null) return null;
         this.radioUndo = { lastKind: this.radioLastKind, sinceJingle: this.radioSinceJingle };
@@ -244,7 +306,9 @@ export const radio = {
         clearInterval(this.radioFadeTimer);
         this.radioFadeTimer = null;
         // One language-free jingle for both trees; the spot is filed by its text.
-        const jingle = this.radioSinceJingle >= RADIO_JINGLE_EVERY - 1 ? MUSIC_STINGS.fm_jingle : null;
+        const owed = this.radioSinceJingle === Infinity
+                  || (this.radioSinceJingle >= 1 && this.radioRandom() < RADIO_JINGLE_CHANCE);
+        const jingle = owed ? MUSIC_STINGS.fm_jingle : null;
         this.radioSinceJingle = jingle ? 0 : this.radioSinceJingle + 1;
         this.radioJingle = !!jingle;
         this.radioSpotSrc = `audio/fm/${language()}/${voiceHash(spots[index].text)}.opus`;
@@ -302,7 +366,7 @@ export const radio = {
         this.radioPausedByTab = false;
         this.state.fmOnAir = false;
         const now = this.radioClock();
-        this.radioNextAt = now + RADIO_GAP_MS;
+        this.radioNextAt = now + RADIO_GAP_MS + this.radioRandom() * RADIO_GAP_SPREAD_MS;
         this.radioStillSince = now;
         this.duckMusic(false, 'radio');
     },
@@ -316,7 +380,7 @@ export const radio = {
      */
     cutRadio: function(heard = false) {
         if (this.radioIndex === null) return;
-        const early = !heard && (this.radioSpotAt === null || this.radioClock() - this.radioSpotAt < RADIO_EARLY_MS);
+        const early = !heard && (this.radioSpotAt === null || this.radioClock() - this.radioSpotAt < this.radioEarlyMs());
         const index = this.radioIndex;
         this.radioDone();
         if (early) this.radioTakeBack(index);
@@ -336,6 +400,17 @@ export const radio = {
             el.pause();
             el.currentTime = 0;
         }, 30);
+    },
+
+    /**
+     * How long a spot must have run to count as heard: RADIO_EARLY_MS, or
+     * RADIO_EARLY_SHARE of the recording on air if that is longer. The
+     * element knows the length once it has loaded; until then, the floor.
+     */
+    radioEarlyMs: function() {
+        const seconds = this.radioEl?.duration;
+        const share = Number.isFinite(seconds) && seconds > 0 ? RADIO_EARLY_SHARE * seconds * 1000 : 0;
+        return Math.max(RADIO_EARLY_MS, share);
     },
 
     /** The ON AIR button: the player wants the room. The spot counts as heard. */
