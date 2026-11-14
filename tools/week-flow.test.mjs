@@ -1133,21 +1133,25 @@ console.log('Music:');
         state.musicEnabled = true; state.musicVolume = 0.8;
         mus.initMusic();
         mus.playMusic('office');
-        // 750 for a 600 ms fade-in, like the test above it: while
-        // fadeTimers[key] is still set syncMusicToVisibility returns without
-        // pausing, so an overrun here would fail the tab assertion further
-        // down rather than a volume - and look like a broken feature.
-        await wait(750);
         const key = state.currentMusicTrack;
-        assert.equal(mus.bgmTracks[key].paused, false, 'nothing was playing to begin with');
-
+        const all = () => Object.values(mus.bgmTracks);
+        // Inside the fade-in (7.2): up to then a running fade kept the tab
+        // from pausing anything, and a tab left within 600 ms of a scene
+        // change played on in the background.
+        await wait(100);
+        assert.ok(mus.fadeTimers[key], 'the bench lost its fade-in');
+        mus.bgmTracks[key].currentTime = 30;      // the fake does not advance
         globalThis.document.hidden = true;
         mus.syncMusicToVisibility();
         assert.ok(mus.bgmTracks[key].paused, 'the music played on in a tab nobody was looking at');
+        assert.ok(Math.abs(mus.bgmTracks[key].volume - mus.musicTarget(key)) < 0.02,
+                  'the fade-in was left half-way, and the piece would come back at that');
 
         globalThis.document.hidden = false;
         mus.syncMusicToVisibility();
+        assert.equal(state.currentMusicTrack, key, 'coming back brought another piece');
         assert.equal(mus.bgmTracks[key].paused, false, 'the music never came back');
+        await wait(750);
 
         // A track the GAME stopped is none of its business - otherwise coming
         // back to the tab would resurrect music that was switched off.
@@ -1155,6 +1159,43 @@ console.log('Music:');
         globalThis.document.hidden = true;  mus.syncMusicToVisibility();
         globalThis.document.hidden = false; mus.syncMusicToVisibility();
         assert.ok(mus.bgmTracks[key].paused, 'a stopped track came back with the tab');
+
+        // A decision that falls into the hidden tab - the morning after a
+        // boot sequence the player walked away from - waits for the way back,
+        // and the way back makes it for the moment it finds: here the clock
+        // moved on to the afternoon meanwhile.
+        const { CUES } = await import('../src/engine/music_cues.js');
+        const kept = state.time;
+        state.al = 0; state.cr = 0; state.time = 15 * 60;
+        globalThis.document.hidden = true;
+        mus.playMusic('office');
+        assert.ok(all().every(t => t.paused), 'a piece started in a tab nobody was looking at');
+        globalThis.document.hidden = false;
+        mus.syncMusicToVisibility();
+        assert.ok(mus.isAudible(state.currentMusicTrack), 'the decision the tab held back was never made');
+        assert.equal(CUES[state.currentMusicTrack].pool, 'afternoon', 'the way back played the piece from before');
+        state.time = kept;
+        await wait(750);
+
+        // So does a piece that runs out there...
+        const now = state.currentMusicTrack;
+        globalThis.document.hidden = true;
+        mus.bgmTracks[now]._h.ended();
+        assert.ok(mus.musicPausedByTab, 'a piece ending in the hidden tab left nothing for the way back');
+        globalThis.document.hidden = false;
+        mus.syncMusicToVisibility();
+        assert.ok(mus.isAudible(state.currentMusicTrack), 'the piece that ran out was never followed');
+        await wait(750);
+
+        // ...and a stop meanwhile cancels the way back, or the end of a day
+        // reached in the background would get its music back.
+        mus.stopMusic(0);
+        globalThis.document.hidden = true;
+        mus.playMusic('office');
+        mus.stopMusic(0);
+        globalThis.document.hidden = false;
+        mus.syncMusicToVisibility();
+        assert.ok(all().every(t => t.paused), 'the music came back after a stop');
     });
 
     await ok('A platform that refuses track.volume is noticed', () => {
@@ -1217,6 +1258,55 @@ console.log('Music:');
         await wait(750);
         assert.ok(Math.abs(mus.bgmTracks[key].volume - mus.musicTarget(key)) < 0.02,
                   `the fade overwrites the slider: ${mus.bgmTracks[key].volume}`);
+    });
+
+    await ok('A duck inside a stop does not undo the stop', async () => {
+        // stopMusic() fades out and pauses in the fade's callback. A duck
+        // fade replaced that fade and its pause with it: a line ending inside
+        // the 400 ms of a restart (the settings' sample, hushed as the menu
+        // closes) left the old piece playing under the new day's.
+        state.musicEnabled = true; state.musicVolume = 0.8;
+        mus.initMusic();
+        mus.duckReasons = null;
+        mus.playMusic('office');
+        await wait(750);
+        const key = state.currentMusicTrack;
+        mus.duckMusic(true, 'narration');
+        mus.stopMusic();
+        await wait(100);
+        mus.duckMusic(false, 'narration');
+        await wait(500);
+        assert.ok(mus.bgmTracks[key].paused, "the duck took the stop's pause away");
+        assert.equal(mus.musicRuntime().leaving.has(key), false, 'the piece stayed on its way out');
+        assert.ok(Math.abs(mus.bgmTracks[key].volume - mus.musicTarget(key)) < 0.02,
+                  'the stopped piece was not left at its level for the next play()');
+    });
+
+    await ok('A piece that ends inside a stop brings on no other', async () => {
+        state.musicEnabled = true; state.musicVolume = 0.8;
+        mus.initMusic();
+        mus.playMusic('office');
+        await wait(750);
+        const key = state.currentMusicTrack;
+        mus.stopMusic();
+        mus.bgmTracks[key]._h.ended();
+        assert.equal(state.currentMusicTrack, key, 'the stop was answered with the next piece');
+        await wait(500);
+        assert.ok(Object.values(mus.bgmTracks).every(t => t.paused), 'a piece plays on after the stop');
+    });
+
+    await ok('A piece built again leaves the gain node of its old element behind', () => {
+        // Where track.volume is refused (iOS) a plain element is heard through
+        // a gain node of its own. startCue() replaces a plain element with
+        // one in layers or in the room; if that graph then fails, the plain
+        // element built after it must not find the old node - it would set
+        // the volume on an element nobody hears and play at full blast.
+        const box = { ...audio, state: { ...state }, musicRun: null, fadeTimers: {},
+                      bgmTracks: { day_1: { paused: true } }, gainNodes: { day_1: 'old' },
+                      musicGraphs: {}, wantsGraph: () => true, trackFor: () => null };
+        box.startCue('day_1', 0);
+        assert.equal('day_1' in box.bgmTracks, false, 'the plain element was kept');
+        assert.equal('day_1' in box.gainNodes, false, "the old element's gain node was kept");
     });
 
     // ---------------------------------------- choosing the next piece (7.2)
@@ -7414,6 +7504,9 @@ console.log('GlobalCorp FM:');
                                isEmailOpen: false, intranetOpen: false, loreOpen: false, vendingOpen: false,
                                narratable: null });
         state.terminal = { mode: 'idle', variant: 'system', className: '' };
+        // A new player: nobody's standing moves a greeting ahead. The
+        // reputation is the career's, so resetState() leaves it alone.
+        state.reputation = Object.fromEntries(Object.keys(state.reputation).map(name => [name, 0]));
         const fm = { ...engine, ...radio };
         Object.assign(fm, { radioEl: null, radioNode: null, radioIndex: null, radioHeard: null, radioLastKind: null,
                             radioPausedByTab: false, radioNextAt: 0, radioStillSince: clock.now - 60_000,
@@ -7477,14 +7570,20 @@ console.log('GlobalCorp FM:');
         assert.equal(spotFits({ if: { seen: ['boss_fire', 'boss_heat'] } }, ctx({}, ['boss_heat'])), true, 'seen is not "any of"');
         assert.equal(spotFits({ if: { seen: ['boss_fire'] } }, ctx({}, ['boss_heat'])), false, 'an event that did not happen passed');
         assert.equal(spotFits({ if: { seen: ['boss_fire'] } }, { minute: 600, day: 'wed' }), false, 'no record of the run passed');
-        // Through the state as the game keeps it.
+        // Through the state as the game keeps it. The reputation is the
+        // career's and survives resetState(), so it is put back.
         resetState();
-        state.reputation = { ...state.reputation, Kevin: 55 };
-        state.usedIDs.add('boss_flood');
-        const live = radioContext(state);
-        assert.equal(spotFits({ if: { rep: { Kevin: 50 }, seen: ['boss_flood'] } }, live), true, 'the live state did not fit');
-        state.reputation.Kevin = 45;
-        assert.equal(spotFits({ if: { rep: { Kevin: 50 } } }, radioContext(state)), false, 'a standing that fell still fits');
+        const kept = { ...state.reputation };
+        try {
+            state.reputation = { ...state.reputation, Kevin: 55 };
+            state.usedIDs.add('boss_flood');
+            const live = radioContext(state);
+            assert.equal(spotFits({ if: { rep: { Kevin: 50 }, seen: ['boss_flood'] } }, live), true, 'the live state did not fit');
+            state.reputation.Kevin = 45;
+            assert.equal(spotFits({ if: { rep: { Kevin: 50 } } }, radioContext(state)), false, 'a standing that fell still fits');
+        } finally {
+            state.reputation = kept;
+        }
     });
 
     await ok('The station notices the day first, and never repeats a kind or a spot', () => {
@@ -7814,6 +7913,62 @@ console.log('GlobalCorp FM:');
         assert.ok(fm.radioHeard.has(fifth), 'a spot heard for its first seconds after a jingle went back');
         assert.equal(fm.radioNextAt, clock.now + RADIO_GAP_MS);
         await wait(400);
+        done();
+    });
+
+    await ok('The time a hidden tab held a spot does not count as heard', async () => {
+        // A mail runs out on its own timer in a tab nobody is looking at and
+        // cuts the spot from there. Up to the audit of 7.2 the minutes away
+        // counted, and a spot heard for two seconds was gone for the day.
+        let fm = onAir();
+        const first = fm.playSpot();
+        clock.now += 2000;
+        globalThis.document.hidden = true;
+        fm.syncRadioToVisibility();
+        clock.now += 10 * 60_000;
+        fm.cutRadio();
+        assert.ok(!fm.radioHeard.has(first), 'the time away counted as heard');
+        done();
+
+        // Back to a window that opened meanwhile: the same take-back.
+        fm = onAir();
+        const second = fm.playSpot();
+        clock.now += 2000;
+        globalThis.document.hidden = true;
+        fm.syncRadioToVisibility();
+        clock.now += 10 * 60_000;
+        state.isEmailOpen = true;
+        globalThis.document.hidden = false;
+        fm.syncRadioToVisibility();
+        state.isEmailOpen = false;
+        assert.equal(state.fmOnAir, false, 'the spot came back over a mail');
+        assert.ok(!fm.radioHeard.has(second), 'coming back to a window ended the spot as heard');
+
+        // And what was heard on both sides of the time away adds up.
+        fm = onAir();
+        const third = fm.playSpot();
+        clock.now += RADIO_EARLY_MS - 1000;
+        globalThis.document.hidden = true;
+        fm.syncRadioToVisibility();
+        clock.now += 10 * 60_000;
+        globalThis.document.hidden = false;
+        fm.syncRadioToVisibility();
+        assert.equal(state.fmOnAir, true, 'the spot did not come back with the tab');
+        clock.now += 1000;
+        fm.cutRadio();
+        assert.ok(fm.radioHeard.has(third), 'the seconds before and after the time away did not add up');
+        await wait(400);
+        done();
+    });
+
+    await ok('A restored day is a new day for the station', () => {
+        // Nothing of the radio is in the save, and the morning screen that
+        // starts the station's day is not shown on a resume: the first spot
+        // came eight seconds in.
+        const fm = onAir();
+        fm.applyRestoredDay({});
+        assert.ok(fm.radioNextAt >= clock.now + RADIO_FIRST_MS, 'the station spoke straight after the resume');
+        assert.equal(fm.radioMayStart(), false);
         done();
     });
 

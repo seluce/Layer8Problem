@@ -216,6 +216,10 @@ export const radio = {
     // from before the draw.
     radioSpotAt: null,
     radioUndo: null,
+    // radioClock() when the tab paused the spot on air. The time away was
+    // not listened to: cutRadio() measures up to it, and the way back moves
+    // radioSpotAt on by it.
+    radioHiddenAt: null,
     // Overridden by the test bench, which cannot wait four minutes.
     radioClock: () => Date.now(),
     radioRandom: () => Math.random(),
@@ -380,7 +384,10 @@ export const radio = {
      */
     cutRadio: function(heard = false) {
         if (this.radioIndex === null) return;
-        const early = !heard && (this.radioSpotAt === null || this.radioClock() - this.radioSpotAt < this.radioEarlyMs());
+        // In a hidden tab (a mail runs out there and cuts the spot) the spot
+        // was heard up to the moment the tab went, not up to now.
+        const until = this.radioPausedByTab ? this.radioHiddenAt : this.radioClock();
+        const early = !heard && (this.radioSpotAt === null || until - this.radioSpotAt < this.radioEarlyMs());
         const index = this.radioIndex;
         this.radioDone();
         if (early) this.radioTakeBack(index);
@@ -460,7 +467,10 @@ export const radio = {
 
     /**
      * The tab: paused on the way out, picked up on the way back - unless the
-     * game took the room meanwhile, in which case the spot is over.
+     * game took the room meanwhile, in which case the spot is cut. The time
+     * away counts for nothing (radioHiddenAt): up to the audit of 7.2 a
+     * spot heard for two seconds, then cut by a mail that ran out in the
+     * hidden tab ten minutes later, counted as heard and was gone for the day.
      */
     syncRadioToVisibility: function() {
         const el = this.radioEl;
@@ -469,12 +479,16 @@ export const radio = {
             if (el.paused) return;
             el.pause();
             this.radioPausedByTab = true;
+            this.radioHiddenAt = this.radioClock();
             this.duckMusic(false, 'radio');
             return;
         }
         if (!this.radioPausedByTab) return;
+        if (this.radioSpotAt !== null) this.radioSpotAt += this.radioClock() - this.radioHiddenAt;
         this.radioPausedByTab = false;
-        if (this.radioBlocked() || this.speaking) { this.radioDone(); return; }
+        // The game took the room meanwhile: a cut like any other, so a spot
+        // hardly heard before the tab went goes back to the day.
+        if (this.radioBlocked() || this.speaking) { this.cutRadio(); return; }
         this.duckMusic(true, 'radio');
         const src = el.src;
         el.play().catch(() => { if (el.src === src) this.radioDone(); });

@@ -6,11 +6,15 @@ Music:
 * The music style setting is gone. There is one band now, and the volume and the on/off switch stay.
 
 GlobalCorp FM:
-* The company has its own radio station. In the quiet moments of a working day it comes on with traffic news from the lifts, the weather in the server room, the canteen's menu, announcements, adverts for the company's own services and a word from the top floor. A hundred spots and two presenters; some only come on certain days, some only when the day is going badly. The station sings its name now and again.
+* The company has its own radio station. In the quiet moments of a working day it comes on with traffic news from the lifts, the weather in the server room, the canteen's menu, announcements, adverts for the company's own services and a word from the top floor. Two presenters: Ralf, who loses the thread in his own stories, and Mandy from Marketing, who reads the adverts and has stories of her own. Close to 180 spots at no fixed times; some only come on certain days, some only when the day is going badly. The station sings its name now and again.
+* The station knows how you stand with your colleagues and passes it on, good or bad. After an emergency it reports what happened in the house.
 * It never talks over the narrator, a scene or a window, and stops the moment the game has something to say. It plays at the narrator's volume and has a switch of its own in the audio settings.
 
 Sound:
 * A decision that lands hard now sounds like a heartbeat: two beats and a short ringing in the ears, while the screen shakes.
+
+Bug fixes:
+* The music no longer plays on in the background if you switch to another tab or minimise the game just as it changes.
 
 [7.1.1] - 2026-11-10
 

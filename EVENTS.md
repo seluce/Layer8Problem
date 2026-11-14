@@ -981,8 +981,9 @@ Finally, run the checkers:
 npm run lint:all
 ```
 
-That is four runs: the data checker over the German tree, the same over the
-English one, the interface strings, and the parity checker.
+That is six runs: the data checker over the German tree, the same over the
+English one, the interface strings, the parity checker, the image references
+and the narration manifests.
 
 The **data checker** finds the typical mistakes automatically: duplicate ids,
 typos in item and character names (`req`/`rem`/`loot`/`rep`/`char`), unknown

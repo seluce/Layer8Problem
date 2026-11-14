@@ -721,6 +721,10 @@ export const core = {
         // checkRandomEmail asks isEmailOpen first, and no mail would come again.
         this.state.isEmailOpen = false;
         this.state.emailOutcome = null;
+        // GlobalCorp FM keeps nothing in the save, so a restored day is a new
+        // day for the station: its first spot at a moment nobody can count
+        // on, not eight seconds after the resume.
+        this.radioNewDay?.();
     },
 
     /**

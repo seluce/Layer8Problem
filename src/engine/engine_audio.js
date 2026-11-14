@@ -409,25 +409,35 @@ export const audio = {
     /**
      * Music in a tab nobody is looking at is noise from somewhere.
      *
-     * Paused on the way out and picked up again on the way back - a pause, not
-     * a stop, so it carries on where it was. Only a track this did pause comes
-     * back: one that a fade is putting to bed, or that the game replaced while
-     * the tab was away, is none of its business.
+     * Paused on the way out, and on the way back the music decides afresh
+     * (playMusic), which carries the same piece on where it was or brings
+     * the one the moment now wants. Only a piece on its way out is left to
+     * its fade. Up to 7.2 a fade-IN counted as that too: a tab left within
+     * the 600 ms after a scene change, or while the narrator ducked the
+     * music, played on in the background.
+     *
+     * A decision that falls into the hidden tab - the morning after a boot
+     * sequence the player walked away from - waits for the way back
+     * (playMusic and onMusicEnded mark it), and a stop meanwhile cancels the
+     * way back (stopMusic), or the end of the day would get its music back.
      */
     musicPausedByTab: false,
     syncMusicToVisibility: function() {
         const key = this.state.currentMusicTrack;
         const track = this.bgmTracks?.[key];
         if (document.hidden) {
-            if (!track || track.paused || this.fadeTimers[key]) return;
+            if (!this.isAudible(key)) return;
+            // A fade-in stopped half-way would come back at half volume.
+            clearInterval(this.fadeTimers[key]);
+            delete this.fadeTimers[key];
+            this.setTrackVolume(key, this.musicTarget(key));
             track.pause();
             this.musicPausedByTab = true;
             return;
         }
         if (!this.musicPausedByTab) return;
         this.musicPausedByTab = false;
-        if (!this.state.musicEnabled || !track || !track.paused) return;
-        track.play().catch(() => { /* back without a gesture: the next action starts it */ });
+        this.playMusic();
     },
 
     /**
@@ -793,6 +803,7 @@ export const audio = {
      */
     playMusic: function(hint) {
         if (!this.state.musicEnabled) return;
+        if (globalThis.document?.hidden) { this.musicPausedByTab = true; return; }
         if (!this.bgmTracks) this.initMusic();
         this.probeLayers();
         this.followPressure();
@@ -889,8 +900,11 @@ export const audio = {
 
     /** A piece ended by itself: the next one, out of the pool of the moment. */
     onMusicEnded: function(id) {
-        if (id !== this.state.currentMusicTrack) return;   // it was on its way out anyway
-        if (!this.state.musicEnabled || document.hidden) return;
+        // Replaced, or ending inside the fade of a stop: either way the music
+        // was already on its way out.
+        if (id !== this.state.currentMusicTrack || this.musicRuntime().leaving.has(id)) return;
+        if (!this.state.musicEnabled) return;
+        if (document.hidden) { this.musicPausedByTab = true; return; }
         const run = this.musicRuntime();
         run.mood = nextMood(run.mood, this.state.al, this.state.cr);
         const pool = answeringPool(housePool(this.musicSnapshot()));
@@ -906,8 +920,14 @@ export const audio = {
         // the context was not running yet: a piece starting over may as well
         // start over in layers, or in the room. Never one that is playing,
         // and never in resumeCue(), which must keep its position.
+        // Its gain node goes with it: that node hangs on the old element, and
+        // where track.volume is refused (iOS) a plain element built again
+        // after a failed graph would pick it up and play at full volume.
         const old = this.bgmTracks?.[id];
-        if (old && old.paused && this.wantsGraph(id) && !this.musicGraphs?.[id]) delete this.bgmTracks[id];
+        if (old && old.paused && this.wantsGraph(id) && !this.musicGraphs?.[id]) {
+            delete this.bgmTracks[id];
+            delete this.gainNodes[id];
+        }
         const track = this.trackFor(id);
         if (!track) return;
         clearInterval(this.fadeTimers[id]);
@@ -1012,6 +1032,7 @@ export const audio = {
      * is forgotten, because what follows a stop is a new moment.
      */
     stopMusic: function(ms = 400) {
+        this.musicPausedByTab = false;
         if (!this.bgmTracks) return;
         const run = this.musicRuntime();
         run.interrupted = null;
@@ -1068,9 +1089,14 @@ export const audio = {
         if (on) reasons.add(reason); else reasons.delete(reason);
         const after = this.duckLevel();
         if (after === before) return;
+        // Only a piece meant to be heard. One on its way out (a stop's
+        // fade) carries its pause in the fade's callback, and a duck fade
+        // would replace it: a line ending inside the 400 ms of a restart -
+        // the settings' sample, hushed as the menu closes - left the old
+        // piece playing on, under the new day's. The callback sets the
+        // ducked level anyway.
         const key = this.state.currentMusicTrack;
-        const track = this.bgmTracks?.[key];
-        if (!this.state.musicEnabled || !track || track.paused) return;
+        if (!this.state.musicEnabled || !this.isAudible(key)) return;
         // Down quickly enough to be under the first syllable, back up slowly
         // enough not to be a swell of its own. The machine's fall keeps the
         // slower pair it was tuned with.
