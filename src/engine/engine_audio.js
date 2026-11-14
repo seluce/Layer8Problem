@@ -1,4 +1,8 @@
 import { KEYS } from './keys.js';
+import { CUES, housePool, nextMood, drawCue, answeringPool, changeOver, SOFT_FADE_MS,
+         pressure, rhythmGain, RHYTHM_TAU, PROBE_TONES, toneMatches,
+         cuesOf, roomSound, ROOM_TAU } from './music_cues.js';
+import { MUSIC_DIR, MUSIC_FILES, MUSIC_PROBE } from './music_files.js';
 
 // --- The vending machine's voice (6.3) ---------------------------------------
 // The first sounds in the set that are more than one oscillator: a coil, a
@@ -106,6 +110,47 @@ const VENDING_VOICES = {
 /** The names a `sound` in data_vending.js may carry. lint-data checks them. */
 export const VENDING_SOUNDS = Object.keys(VENDING_VOICES);
 
+// --- The heavy hit (7.2) -----------------------------------------------------
+// A decision landed hard (reportImpact: +30 aggro or radar, the screen
+// shakes): Mueller's heart thumps twice and his ears ring. Chosen by ear on a
+// listening page, against a falling trombone, the stomach dropping, a tuba and
+// the sawtooth it replaces, which sounded like the game breaking rather than
+// a man taking a blow. A groan from a recording was considered first and
+// dropped: it gives itself away by the third hit of a day, and it would have
+// talked over the narrator.
+//
+// Three things it rests on. The beats sit under 100 Hz, below the narrator's
+// voice, so the result is read over them at once. A laptop or a phone plays
+// almost nothing down there, so each beat carries an overtone at 2.3 times and
+// a muffled knock, or half the players would only see the shaking. And every
+// hit drifts by up to 4% in tempo and pitch (`rnd`), because a heartbeat that
+// repeats exactly is a sample, not a heart.
+const beat = (ctx, t, v, freq, peak, dur) => {
+    ring(ctx, t, { freq, to: freq * 0.6, dur: dur + 0.02, peak: peak * v, attack: 0.006 });
+    ring(ctx, t, { wave: 'triangle', freq: freq * 2.3, to: freq * 1.4, dur: dur * 0.8 + 0.02,
+                   peak: peak * 0.28 * v, attack: 0.006 });
+    burst(ctx, t, { dur: 0.07, filter: 'lowpass', freq: 300, peak: peak * 0.9 * v, attack: 0.004 });
+};
+
+export const heartbeat = (ctx, t, v, rnd = Math.random) => {
+    const j = 1 + (rnd() - 0.5) * 0.08;
+    beat(ctx, t, v, 62 * j, 0.42, 0.13);             // lub
+    beat(ctx, t + 0.2 * j, v, 80 * j, 0.30, 0.09);   // dub
+    // The ears ring as the scene tips over: it swells rather than starts, so
+    // its own envelope - the shared one rises in a straight line.
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    const at = t + 0.22;
+    o.frequency.setValueAtTime(3200, at);
+    g.gain.setValueAtTime(0.0001, at);
+    g.gain.exponentialRampToValueAtTime(0.014 * v, at + 0.18);
+    g.gain.exponentialRampToValueAtTime(0.0001, at + 1.0);
+    o.connect(g);
+    g.connect(ctx.destination);
+    o.start(at);
+    o.stop(at + 1.05);
+};
+
 export const audio = {
 
    // --- SYNTHESIZED SOUND ---
@@ -131,6 +176,7 @@ export const audio = {
             // The vending machine's sounds build their own graphs.
             const voice = VENDING_VOICES[type];
             if (voice) { voice(this.audioCtx, t, vol); return; }
+            if (type === 'impact') { heartbeat(this.audioCtx, t, vol); return; }
 
             const osc = this.audioCtx.createOscillator();
             const gain = this.audioCtx.createGain();
@@ -186,27 +232,6 @@ export const audio = {
                 gain.gain.exponentialRampToValueAtTime(0.001 * vol, t + 0.4); 
                 osc.start(t);
                 osc.stop(t + 0.45);
-            } else if (type === 'impact') {
-                // The one harsh voice in the set. Everything else here is a
-                // sine or a square blip; a heavy hit gets a sawtooth dropping
-                // through the floor, because it has to read as damage next to
-                // four friendly beeps.
-                //
-                // NOT a human scream, deliberately: this game has no audio
-                // FILES at all - every sound is synthesised - and by GLOSSAR
-                // 2a the machine is what speaks. The screen shakes, so the
-                // terminal takes the hit; Mueller stays quiet.
-                osc.type = 'sawtooth';
-                osc.frequency.setValueAtTime(160, t);
-                osc.frequency.exponentialRampToValueAtTime(48, t + 0.16);
-
-                gain.gain.setValueAtTime(0.001 * vol, t);
-                gain.gain.linearRampToValueAtTime(0.22 * vol, t + 0.012);
-                gain.gain.exponentialRampToValueAtTime(0.001 * vol, t + 0.18);
-
-                osc.start(t);
-                osc.stop(t + 0.2);
-
             } else if (type === 'boot') {
                 osc.type = 'square';
                 osc.frequency.setValueAtTime(1000, t);
@@ -225,36 +250,35 @@ export const audio = {
     },
 	
     // --- MUSIC SYSTEM ---
+    //
+    // What plays is decided in music_cues.js (pure rules, loadable from
+    // Node); this half owns the elements and the fades. One element per
+    // piece, built the first time the piece is wanted, and its src is never
+    // changed - swapping src on one element is the trap _speak() documents
+    // (a position set on a file that never loaded is kept for the next one).
 
     /**
-     * Per-track gain, so that one slider means one loudness.
+     * Per-piece gain, so that one slider means one loudness.
      *
-     * The six pieces are not mastered at the same level, and nothing here ever
-     * accounted for it. Measured with ffmpeg's EBU R128 meter over each whole
-     * file:
+     * The six bought pieces before 7.2 spanned 10.6 dB as they were mastered -
+     * bossa into lofi was a jump of 9.7 dB with the slider untouched, and
+     * under the narrator (-23.6 LUFS) no single setting left room for a voice
+     * over both. They were trimmed here, each to the quietest of them.
      *
-     *     movementproposition  -11.3 LUFS     elevator      -19.3 LUFS
-     *     chillwave            -12.2          hardboiled    -21.1
-     *     discocontutti        -12.4          bossaantiqua  -21.9
-     *
-     * Ten and a half decibels from end to end. In radio mode bossa into lofi
-     * was a jump of 9.7 dB with the slider untouched - audible, and it had
-     * been there since the music went in. It only became a correctness problem
-     * with the narrator: speech sits at -23.6 LUFS, and at the old default of
-     * 0.2 chillwave played 2.6 dB under the voice while elevator played 14.8 dB
-     * under it. No single number can leave room for a voice over both.
-     *
-     * So each track is trimmed to the quietest of them and the slider is
-     * honest. Down to it, never up - the element's volume stops at 1.
-     *
-     * The boss fight and the gala keep 3 dB over the office tracks, and that
-     * part is a DECISION rather than the measurement: those two scenes are
-     * meant to lean on you. The 10.6 dB they had was not a decision, it was
-     * whatever their mastering happened to be.
+     * The house band is mastered to that level by tools/master-music.mjs
+     * (TARGET_LUFS, the emergency and the gala 3 dB over it on purpose), so
+     * every trim is 1.00. The table stays: a piece that cannot be mastered
+     * again can still be levelled here, down, never up - an element's volume
+     * stops at 1. The week suite holds each trim against the measurement the
+     * tool wrote into music_files.js.
      */
     MUSIC_TRIM: {
-        bossa: 1.00, detective: 0.91, elevator: 0.74,
-        gala: 0.47, boss: 0.42, lofi: 0.33
+        morning_1: 1.00, morning_2: 1.00,
+        day_a: 1.00, day_1: 1.00, day_2: 1.00, day_3: 1.00, day_4: 1.00,
+        lunch_1: 1.00, afternoon_1: 1.00, afternoon_2: 1.00,
+        tense_1: 1.00, tense_2: 1.00, tense_3: 1.00,
+        emergency_a: 1.00, emergency_2: 1.00, emergency_3: 1.00,
+        gala_1: 1.00, gala_2: 1.00, gala_3: 1.00, gala_lounge: 1.00,
     },
 
     /** How loud `key` is meant to be: the slider, levelled, and ducked. */
@@ -262,10 +286,49 @@ export const audio = {
         return this.state.musicVolume * (this.MUSIC_TRIM[key] ?? 1) * this.duckLevel();
     },
 
-    bgmTracks: null,
-    fadeTimers: {},        // one running fade per track, keyed by track name
+    bgmTracks: null,       // piece id -> its element, each built on first use
+    fadeTimers: {},        // one running fade per track, keyed by piece id
     gainNodes: {},         // only on platforms that refuse track.volume, see below
     volumeWorks: null,     // memoised answer of canSetVolume()
+    // What the music remembers between two decisions: the bags, the mood,
+    // the piece an emergency interrupted. Built on first use and not here,
+    // for the reason duckReasons gives below: this object is spread into the
+    // engine, and a Set or a map written at module scope would be shared by
+    // every spread of it. Not in the save either - after a load the moment
+    // is read afresh.
+    musicRun: null,
+    // A piece's graph, by piece id: { level, rhythm } for a layered piece,
+    // { level } for a gala piece in the room. Lazy for the same reason. A
+    // piece in here is audible ONLY through its graph.
+    musicGraphs: null,
+    // The gala's room (Phase 3): one low-pass and one level every gala piece
+    // goes through, so the band sounds as it would from the station the
+    // player is at. Built with the first gala piece while the context runs.
+    roomBus: null,
+    // False once the room would not build; the gala then plays plain.
+    roomWorks: null,
+    // null: not asked yet this session; then the probe's answer. Only true
+    // lets a layered piece load its four-channel file.
+    layersWork: null,
+    // The rhythm layer's current target as a linear gain, before any piece's
+    // own floor - kept because AudioParam.value cannot be trusted while
+    // setTargetAtTime is moving it.
+    musicPressure: null,
+
+    musicRuntime: function() {
+        return this.musicRun ??= {
+            bags: {},                // pool -> the pieces still to come
+            mood: 'calm',            // nextMood() between scenes
+            interrupted: null,       // the piece an emergency paused
+            lastSoft: -Infinity,     // when the mood last cut into a piece
+            leaving: new Set(),      // pieces fading out on their way to a pause
+            warm: false,             // the emergency pieces are loading
+            hall: null,              // the gala piece the lounge paused
+        };
+    },
+
+    /** The clock for the 90-second rule. A function so the tests can drive it. */
+    musicNow: () => Date.now(),
 
     /**
      * Does this browser let a script set a media element's volume?
@@ -321,6 +384,8 @@ export const audio = {
     trackVolume: function(key) {
         const track = this.bgmTracks?.[key];
         if (!track) return 0;
+        const graph = this.musicGraphs?.[key];
+        if (graph) return graph.levelValue;
         if (this.canSetVolume(track)) return track.volume;
         return this.gainNodes[key]?.gain.value ?? track.volume;
     },
@@ -330,6 +395,11 @@ export const audio = {
         const track = this.bgmTracks?.[key];
         if (!track) return;
         const v = Math.max(0, Math.min(1, value));
+        // A layered piece is heard through its graph alone; its element stays
+        // at 1, because whether element volume reaches a graph differs from
+        // one browser to the next.
+        const graph = this.musicGraphs?.[key];
+        if (graph) { graph.levelValue = v; graph.level.gain.value = v; return; }
         if (this.canSetVolume(track)) { track.volume = v; return; }
         const gain = this.musicGain(key);
         if (gain) gain.gain.value = v;
@@ -339,25 +409,35 @@ export const audio = {
     /**
      * Music in a tab nobody is looking at is noise from somewhere.
      *
-     * Paused on the way out and picked up again on the way back - a pause, not
-     * a stop, so it carries on where it was. Only a track this did pause comes
-     * back: one that a fade is putting to bed, or that the game replaced while
-     * the tab was away, is none of its business.
+     * Paused on the way out, and on the way back the music decides afresh
+     * (playMusic), which carries the same piece on where it was or brings
+     * the one the moment now wants. Only a piece on its way out is left to
+     * its fade. Up to 7.2 a fade-IN counted as that too: a tab left within
+     * the 600 ms after a scene change, or while the narrator ducked the
+     * music, played on in the background.
+     *
+     * A decision that falls into the hidden tab - the morning after a boot
+     * sequence the player walked away from - waits for the way back
+     * (playMusic and onMusicEnded mark it), and a stop meanwhile cancels the
+     * way back (stopMusic), or the end of the day would get its music back.
      */
     musicPausedByTab: false,
     syncMusicToVisibility: function() {
         const key = this.state.currentMusicTrack;
         const track = this.bgmTracks?.[key];
         if (document.hidden) {
-            if (!track || track.paused || this.fadeTimers[key]) return;
+            if (!this.isAudible(key)) return;
+            // A fade-in stopped half-way would come back at half volume.
+            clearInterval(this.fadeTimers[key]);
+            delete this.fadeTimers[key];
+            this.setTrackVolume(key, this.musicTarget(key));
             track.pause();
             this.musicPausedByTab = true;
             return;
         }
         if (!this.musicPausedByTab) return;
         this.musicPausedByTab = false;
-        if (!this.state.musicEnabled || !track || !track.paused) return;
-        track.play().catch(() => { /* back without a gesture: the next action starts it */ });
+        this.playMusic();
     },
 
     /**
@@ -398,67 +478,301 @@ export const audio = {
     },
 
     initMusic: function() {
-        // Registered here rather than at module scope: the tracks have to exist
-        // before anything can be paused, and this runs exactly once.
-        // Optional-call because the test bench's document has no listeners.
-        // The narrator follows the same rule from the same event - see
-        // engine_voice.syncNarrationToVisibility().
-        document.addEventListener?.('visibilitychange', () => {
-            this.syncMusicToVisibility();
-            this.syncNarrationToVisibility();
-        });
+        // Registered here rather than at module scope: it runs once, before
+        // anything can be paused. Optional-call because the test bench's
+        // document has no listeners. The narrator follows the same rule from
+        // the same event - see engine_voice.syncNarrationToVisibility().
+        if (!this.bgmTracks) {
+            document.addEventListener?.('visibilitychange', () => {
+                this.syncMusicToVisibility();
+                this.syncNarrationToVisibility();
+                this.syncRadioToVisibility?.();
+            });
+        }
+        this.bgmTracks = {};
+    },
 
-        this.bgmTracks = {
-            'elevator': new Audio('assets/music/elevator.opus'),
-            'lofi': new Audio('assets/music/chillwave.opus'),
-            'detective': new Audio('assets/music/hardboiled.opus'),
-            'bossa': new Audio('assets/music/bossaantiqua.opus'),
-            'boss': new Audio('assets/music/movementproposition.opus'),
-            'gala': new Audio('assets/music/discocontutti.opus')
-        };
+    /** Whether piece `id` should play from its four-channel file. */
+    wantsLayers: function(id) {
+        return !!(CUES[id]?.layers && MUSIC_FILES[id]?.quad && this.layersWork === true);
+    },
 
-        const officeTracks = ['elevator', 'lofi', 'detective', 'bossa'];
+    /** The element for piece `id`, built the first time it is asked for. */
+    trackFor: function(id) {
+        if (!this.bgmTracks) this.initMusic();
+        if (this.bgmTracks[id]) return this.bgmTracks[id];
+        const files = MUSIC_FILES[id];
+        if (!CUES[id] || !files) return null;
+        if (this.wantsLayers(id)) {
+            this.bgmTracks[id] = this.newTrack(id, files.quad);
+            if (this.layerGraph(id)) return this.bgmTracks[id];
+            // The graph would not build after all. The four-channel element
+            // must not play on its own - a browser mixes it down as it likes -
+            // so it goes, and the stereo files take over for the session.
+            this.layersWork = false;
+        }
+        if (this.wantsRoom(id)) {
+            this.bgmTracks[id] = this.newTrack(id, files.stereo);
+            if (this.roomGraph(id)) return this.bgmTracks[id];
+            this.roomWorks = false;              // plain from here on
+        }
+        return this.bgmTracks[id] = this.newTrack(id, files.stereo);
+    },
 
-        for (let key in this.bgmTracks) {
-            // Without this the browser starts downloading all six tracks the
-            // moment they are constructed - including the boss and gala themes
-            // most players never hear. They now load on first play().
-            this.bgmTracks[key].preload = 'none';
+    /**
+     * Whether gala piece `id` should go through the room. Only with a running
+     * context: an element in a graph is silent while the context sleeps, and
+     * the room is a nicety the evening does not need. By the time the gala
+     * begins the context has run all day (the clicks, the probe).
+     */
+    wantsRoom: function(id) {
+        return CUES[id]?.pool === 'gala' && this.roomWorks !== false && this.audioCtx?.state === 'running';
+    },
 
-            if (key === 'boss' || key === 'gala') {
-                this.bgmTracks[key].loop = true; // boss and gala loop forever
-            } else {
-                // Radio mode has to hear the end of a track to pick the next
-                // one, so it cannot loop. A fixed style repeats the same track
-                // anyway - and doing that natively removes the audible gap the
-                // manual restart left between two runs.
-                this.bgmTracks[key].loop = this.state.musicStyle !== 'radio';
-                
-                // What happens once the track finishes?
-                this.bgmTracks[key].addEventListener('ended', () => {
-                    if (this.state.musicStyle === 'radio') {
-                        // Radio mode: pick another track at random
-                        // Pick from the other tracks directly instead of
-                        // re-rolling until it differs - a while loop here would
-                        // spin forever if officeTracks ever shrank to one entry.
-                        const others = officeTracks.filter(t => t !== key);
-                        const nextTrack = others.length
-                            ? others[Math.floor(Math.random() * others.length)]
-                            : key;
-                        this.playMusic(nextTrack); 
-                    } else if (!this.bgmTracks[key].loop) {
-                        // Fixed style without native looping (e.g. the style was
-                        // switched while this track was already running): restart
-                        // it by hand, as before.
-                        this.bgmTracks[key].play().catch(e => console.warn("Music could not start:", e));
-                    }
-                });
-            }
+    /** Whether the element for `id` should hang in a graph of its own. */
+    wantsGraph: function(id) {
+        return this.wantsLayers(id) || this.wantsRoom(id);
+    },
+
+    /** One element for piece `id`, playing `file`. */
+    newTrack: function(id, file) {
+        const track = new Audio(MUSIC_DIR + file);
+        // Nothing downloads until a piece is wanted - most players never
+        // hear most of the pieces on a given day.
+        track.preload = 'none';
+        // The end of a piece is the one moment that may bring on the next
+        // without a scene asking for it: it fits, because nothing is cut.
+        track.addEventListener('ended', () => this.onMusicEnded(id));
+        return track;
+    },
+
+    /**
+     * The two layers of piece `id`, as a graph: the element's four channels
+     * split, the bed (1/2) straight on, the rhythm (3/4) through its own
+     * gain, both into the piece's level - the knob setTrackVolume() turns.
+     * Built once per element: createMediaElementSource may be called only
+     * once, and from then on the element is audible through this alone.
+     */
+    layerGraph: function(id) {
+        const graphs = this.musicGraphs ??= {};
+        if (graphs[id]) return graphs[id];
+        const track = this.bgmTracks?.[id];
+        const ctx = this.audioCtx;
+        if (!track || !ctx) return null;
+        try {
+            const source = ctx.createMediaElementSource(track);
+            const split = ctx.createChannelSplitter(4);
+            const bed = ctx.createChannelMerger(2);
+            const beat = ctx.createChannelMerger(2);
+            const rhythm = ctx.createGain();
+            const level = ctx.createGain();
+            source.connect(split);
+            split.connect(bed, 0, 0); split.connect(bed, 1, 1);
+            split.connect(beat, 2, 0); split.connect(beat, 3, 1);
+            beat.connect(rhythm);
+            bed.connect(level);
+            rhythm.connect(level);
+            level.connect(ctx.destination);
+            // A new piece comes in at the density of the moment, not from
+            // wherever the last one was.
+            rhythm.gain.value = this.rhythmFor(id);
+            level.gain.value = 0;
+            return graphs[id] = { level, rhythm, levelValue: 0 };
+        } catch (err) {
+            console.warn('Music layers unavailable:', err);
+            return null;
         }
     },
 
     /**
-     * Which track belongs to what is happening RIGHT NOW.
+     * Gala piece `id` into the room: its own level, then the shared bus. The
+     * nodes come first and the element is taken last - once
+     * createMediaElementSource has it, it is heard through the graph or not
+     * at all, so nothing may fail after that.
+     */
+    roomGraph: function(id) {
+        const graphs = this.musicGraphs ??= {};
+        if (graphs[id]) return graphs[id];
+        const track = this.bgmTracks?.[id];
+        const ctx = this.audioCtx;
+        if (!track || !ctx) return null;
+        try {
+            const bus = this.roomBus ??= this.buildRoomBus(ctx);
+            const level = ctx.createGain();
+            level.gain.value = 0;
+            const source = ctx.createMediaElementSource(track);
+            source.connect(level);
+            level.connect(bus.filter);
+            return graphs[id] = { level, levelValue: 0 };
+        } catch (err) {
+            console.warn('Music room unavailable:', err);
+            return null;
+        }
+    },
+
+    /** The low-pass and the level the gala is heard through, set to the station of the moment. */
+    buildRoomBus: function(ctx) {
+        const filter = ctx.createBiquadFilter();
+        filter.type = 'lowpass';
+        const room = ctx.createGain();
+        const sound = roomSound(this.musicLoc());
+        filter.frequency.value = sound.hz;
+        room.gain.value = sound.gain;
+        filter.connect(room);
+        room.connect(ctx.destination);
+        return { filter, room };
+    },
+
+    /** The gala station the player is at, or null - read only during the gala. */
+    musicLoc: function() {
+        return this.state.isPartyMode ? (this.state.currentEventLoc ?? null) : null;
+    },
+
+    /**
+     * The room follows the player through the evening: at every scene the
+     * low-pass and the level glide to the station's (PARTY_ROOMS) over
+     * ROOM_TAU - a step through a door, not a fade.
+     */
+    followRoom: function() {
+        const bus = this.roomBus;
+        if (!bus || !this.audioCtx) return;
+        const { hz, gain } = roomSound(this.musicLoc());
+        const now = this.audioCtx.currentTime;
+        bus.filter.frequency.setTargetAtTime(hz, now, ROOM_TAU);
+        bus.room.gain.setTargetAtTime(gain, now, ROOM_TAU);
+    },
+
+    /** The rhythm gain piece `id` should have at the pressure of the moment. */
+    rhythmFor: function(id) {
+        const p = pressure({ tickets: this.state.tickets, al: this.state.al, cr: this.state.cr });
+        return rhythmGain(p, CUES[id]?.floorDb);
+    },
+
+    /**
+     * The density follows the day: tickets, anger and radar set how much of
+     * the rhythm section plays, gliding over RHYTHM_TAU seconds - the band
+     * leans in as the day presses and eases off as it lets go, within the
+     * piece. Called whenever the stats are drawn (updateUI) and at every
+     * scene. Cheap when nothing moved.
+     */
+    followPressure: function() {
+        const graphs = this.musicGraphs;
+        const p = pressure({ tickets: this.state.tickets, al: this.state.al, cr: this.state.cr });
+        if (this.musicPressure !== null && Math.abs(p - this.musicPressure) < 0.005) return;
+        this.musicPressure = p;
+        if (!graphs || !this.audioCtx) return;
+        const now = this.audioCtx.currentTime;
+        for (const [id, graph] of Object.entries(graphs)) {
+            if (!graph.rhythm) continue;           // a gala piece in the room
+            graph.rhythm.gain.setTargetAtTime(rhythmGain(p, CUES[id]?.floorDb), now, RHYTHM_TAU);
+        }
+    },
+
+    /**
+     * Does this browser hand a four-channel file to the graph as four
+     * channels? Asked once a session: the probe file plays silently through
+     * the same splitter the layered pieces use, and each channel has to carry
+     * its own tone. The failure this exists for makes no error - a browser
+     * that mixes down first leaves channels 3 and 4 empty, and the band plays
+     * its bed alone, forever. Until the answer is in, and whenever it is no,
+     * the layered pieces play their stereo files.
+     */
+    probeLayers: function() {
+        if (this.layersWork !== null) return;
+        this.layersWork = false;                 // until the tones say otherwise
+        let ctx, el, source;
+        try {
+            ctx = this.audioCtx ??= new (window.AudioContext || window.webkitAudioContext)();
+            el = new Audio(MUSIC_DIR + MUSIC_PROBE);
+            source = ctx.createMediaElementSource(el);
+        } catch {
+            return;
+        }
+        if (ctx.state === 'suspended') ctx.resume().catch(() => {});
+        const split = ctx.createChannelSplitter(4);
+        const mute = ctx.createGain();
+        mute.gain.value = 0;
+        mute.connect(ctx.destination);
+        source.connect(split);
+        const taps = PROBE_TONES.map((_, c) => {
+            const a = ctx.createAnalyser();
+            a.fftSize = 2048;
+            split.connect(a, c);
+            a.connect(mute);
+            return a;
+        });
+        let settled = false;
+        const finish = (ok) => {
+            if (settled) return;
+            settled = true;
+            clearTimeout(timer);
+            try { el.pause(); source.disconnect(); mute.disconnect(); } catch { /* gone already */ }
+            this.layersWork = ok;
+        };
+        const timer = setTimeout(() => finish(false), 4000);
+        el.addEventListener('playing', () => setTimeout(() => {
+            const heard = taps.map((a, c) => {
+                const buf = new Float32Array(a.fftSize);
+                a.getFloatTimeDomainData(buf);
+                return toneMatches(buf, PROBE_TONES[c], ctx.sampleRate);
+            });
+            finish(heard.every(Boolean));
+        }, 250), { once: true });
+        el.play().catch(() => finish(false));
+    },
+
+    /**
+     * The emergency cuts in at once, and on the web a piece that has never
+     * loaded starts late. So the first time the office plays, the emergency
+     * pieces begin to load - three files, once a session.
+     */
+    prewarmEmergency: function() {
+        const run = this.musicRuntime();
+        if (run.warm) return;
+        run.warm = true;
+        for (const id of Object.keys(CUES)) {
+            if (CUES[id].pool === 'emergency') { const t = this.trackFor(id); if (t) t.preload = 'auto'; }
+        }
+    },
+
+    /** Begun and not finished: a piece that can carry on where it stopped. */
+    partPlayed: function(id) {
+        const track = this.bgmTracks?.[id];
+        return !!track && !track.ended && track.currentTime > 0;
+    },
+
+    /** Playing and not on its way out. */
+    isAudible: function(id) {
+        const track = id ? this.bgmTracks?.[id] : null;
+        return !!track && !track.paused && !this.musicRuntime().leaving.has(id);
+    },
+
+    /**
+     * What the moment asks of the music, as housePool() reads it.
+     *
+     * `hint` is what the caller knows: 'boss' and 'gala' as the fight and the
+     * evening begin, 'office' when an event has just ENDED - currentEventType
+     * still names the event that is over, and a finished fight must not claim
+     * its music back. Without a hint (a new scene, the music switched on)
+     * the state alone decides, and an event type counts only while its event
+     * is on screen.
+     */
+    musicSnapshot: function(hint) {
+        const s = this.state;
+        const over = hint === 'office';
+        const live = !over && !!s.activeEvent;
+        return {
+            party: !!s.isPartyMode || hint === 'gala',
+            boss: hint === 'boss' || !!s.bossTimer || (live && s.currentEventType === 'boss'),
+            lunch: live && s.currentEventType === 'lunch',
+            tense: this.musicRuntime().mood === 'tense',
+            minute: s.time,
+            loc: this.musicLoc(),
+        };
+    },
+
+    /**
+     * Which pool belongs to what is happening RIGHT NOW.
      *
      * Asked of the GAME, not of currentMusicTrack - because that field is
      * exactly what is missing in the case this exists for. playMusic() leaves
@@ -470,17 +784,217 @@ export const audio = {
      * Reading the situation also ends the opposite case: a fight that is over
      * can no longer bring its own music back on the next toggle.
      */
-    situationTrack: function() {
-        if (this.state.isPartyMode) return 'gala';
-        if (this.state.bossTimer || this.state.currentEventType === 'boss') return 'boss';
-        return 'office';
+    situationTrack: function(hint) {
+        return housePool(this.musicSnapshot(hint));
+    },
+
+    /**
+     * THE decision, made at a change of scene and at the end of a piece and
+     * nowhere else - never on a timer of its own, so a change of music always
+     * falls together with a change of picture. Every caller that used to name
+     * a track now names the moment, and this reads what to do about it:
+     *
+     *   - the emergency interrupts at once and keeps the piece it interrupted
+     *   - after it, that piece carries on where it was
+     *   - the gala and lunch cut in at once
+     *   - a mood may cut into a running piece only by the rules of
+     *     changeOver(); the clock never does - its arc comes from what is
+     *     drawn NEXT
+     */
+    playMusic: function(hint) {
+        if (!this.state.musicEnabled) return;
+        if (globalThis.document?.hidden) { this.musicPausedByTab = true; return; }
+        if (!this.bgmTracks) this.initMusic();
+        this.probeLayers();
+        this.followPressure();
+        this.followRoom();
+        const run = this.musicRuntime();
+        run.mood = nextMood(run.mood, this.state.al, this.state.cr);
+
+        const want = housePool(this.musicSnapshot(hint));
+        const pool = answeringPool(want);
+        if (!pool) return;
+        if (pool !== 'emergency' && pool !== 'gala') this.prewarmEmergency();
+
+        const cur = this.state.currentMusicTrack;
+        const curCue = CUES[cur];
+        const track = cur ? this.bgmTracks[cur] : null;
+        const audible = this.isAudible(cur);
+
+        if (pool === 'emergency') {
+            if (curCue?.pool === 'emergency') {
+                if (!audible) this.resumeCue(cur, 250);
+                return;
+            }
+            // The interrupted piece waits, paused where it was. A gala is not
+            // interrupted, it is over when an emergency can happen again.
+            run.interrupted = (curCue && curCue.pool !== 'gala' && curCue.pool !== 'lounge') ? cur : null;
+            // Out faster than in, so the two never sit on top of each other
+            // for long. The emergency cuts hardest, that is the point of it.
+            if (audible) this.leaveCue(cur, 150);
+            this.startCue(this.drawMusic(pool, cur), 250);
+            return;
+        }
+
+        if (curCue?.pool === 'emergency') {
+            this.leaveCue(cur, 350);
+            const back = run.interrupted;
+            run.interrupted = null;
+            // The office piece comes back to the office, never into the gala.
+            const office = pool !== 'gala' && pool !== 'lounge';
+            if (office && back && this.bgmTracks[back]) { this.resumeCue(back, 600); return; }
+            this.startCue(this.drawMusic(pool, cur), 600);
+            return;
+        }
+
+        // The lounge is a room of its own (Phase 3). Going in, the hall's
+        // piece waits, paused where it was, and the lounge's piece carries on
+        // from wherever the last visit left it: seven short visits walk
+        // through it instead of hearing its first minute seven times. Coming
+        // out, the hall's piece carries on too.
+        if (pool === 'lounge' && curCue?.pool !== 'lounge') {
+            if (curCue?.pool === 'gala') run.hall = cur;
+            if (audible) this.leaveCue(cur, 350);
+            const left = cuesOf('lounge').find(id => this.partPlayed(id));
+            if (left) this.resumeCue(left, 600);
+            else this.startCue(this.drawMusic(pool, cur), 600);
+            return;
+        }
+        if (curCue?.pool === 'lounge' && pool !== 'lounge') {
+            if (audible) this.leaveCue(cur, 350);
+            const back = run.hall;
+            run.hall = null;
+            if (pool === 'gala' && back && this.partPlayed(back)) { this.resumeCue(back, 600); return; }
+            this.startCue(this.drawMusic(pool, cur), 600);
+            return;
+        }
+
+        if (!audible) {
+            // Nothing to hear. A piece of the right pool that was stopped
+            // part-way - the music switched off and on, a menu, a reload of
+            // the same moment - simply goes on.
+            if (curCue?.pool === pool && track && !track.ended && track.currentTime > 0) {
+                this.resumeCue(cur, 600);
+                return;
+            }
+            this.startCue(this.drawMusic(pool, cur), 600);
+            return;
+        }
+
+        const how = changeOver(curCue.pool, pool, track.currentTime, this.musicNow() - run.lastSoft);
+        if (how === 'keep') return;
+        if (how === 'cut') {
+            this.leaveCue(cur, 350);
+            this.startCue(this.drawMusic(pool, cur), 600);
+            return;
+        }
+        run.lastSoft = this.musicNow();
+        this.leaveCue(cur, SOFT_FADE_MS);
+        this.startCue(this.drawMusic(pool, cur), SOFT_FADE_MS);
+    },
+
+    /** The next piece of `pool`, never the one that has just played. */
+    drawMusic: function(pool, last) {
+        return drawCue(pool, this.musicRuntime().bags, last);
+    },
+
+    /** A piece ended by itself: the next one, out of the pool of the moment. */
+    onMusicEnded: function(id) {
+        // Replaced, or ending inside the fade of a stop: either way the music
+        // was already on its way out.
+        if (id !== this.state.currentMusicTrack || this.musicRuntime().leaving.has(id)) return;
+        if (!this.state.musicEnabled) return;
+        if (document.hidden) { this.musicPausedByTab = true; return; }
+        const run = this.musicRuntime();
+        run.mood = nextMood(run.mood, this.state.al, this.state.cr);
+        const pool = answeringPool(housePool(this.musicSnapshot()));
+        if (!pool) return;
+        // The piece had an ending of its own; the next one simply begins.
+        this.startCue(this.drawMusic(pool, id), 250);
+    },
+
+    /** Piece `id` from its first bar. */
+    startCue: function(id, fadeIn) {
+        if (!id) return;
+        // Built plain before its graph could be - the probe had not answered,
+        // the context was not running yet: a piece starting over may as well
+        // start over in layers, or in the room. Never one that is playing,
+        // and never in resumeCue(), which must keep its position.
+        // Its gain node goes with it: that node hangs on the old element, and
+        // where track.volume is refused (iOS) a plain element built again
+        // after a failed graph would pick it up and play at full volume.
+        const old = this.bgmTracks?.[id];
+        if (old && old.paused && this.wantsGraph(id) && !this.musicGraphs?.[id]) {
+            delete this.bgmTracks[id];
+            delete this.gainNodes[id];
+        }
+        const track = this.trackFor(id);
+        if (!track) return;
+        clearInterval(this.fadeTimers[id]);
+        delete this.fadeTimers[id];
+        this.musicRuntime().leaving.delete(id);
+        try { track.currentTime = 0; } catch { /* never loaded: it starts at 0 anyway */ }
+        this.playCue(id, fadeIn);
+    },
+
+    /** Piece `id` from wherever it was paused - currentTime stays untouched. */
+    resumeCue: function(id, fadeIn) {
+        const track = this.trackFor(id);
+        if (!track) return;
+        clearInterval(this.fadeTimers[id]);
+        delete this.fadeTimers[id];
+        this.musicRuntime().leaving.delete(id);
+        this.playCue(id, fadeIn);
+    },
+
+    playCue: function(id, fadeIn) {
+        const track = this.bgmTracks[id];
+        this.state.currentMusicTrack = id;
+        this.setTrackVolume(id, 0);
+        // Where the gain node carries the volume, the track is audible only
+        // through the graph - and a suspended context plays to nobody.
+        if (this.audioCtx?.state === 'suspended') this.audioCtx.resume();
+        track.play()
+            .then(() => {
+                // Replaced while it was starting: a play() that resolves late
+                // must not leave an element running silently underneath.
+                if (this.state.currentMusicTrack !== id || this.musicRuntime().leaving.has(id)) {
+                    if (this.state.currentMusicTrack !== id) track.pause();
+                    return;
+                }
+                this.fadeTrack(id, this.musicTarget(id), fadeIn);
+            })
+            .catch(e => {
+                // Autoplay blocked: leave the volume usable for the retry.
+                this.setTrackVolume(id, this.musicTarget(id));
+                console.warn("Music autoplay blocked:", e);
+            });
+    },
+
+    /**
+     * Fades piece `id` out and pauses it where it is. The position is kept:
+     * the interrupted piece resumes from it, and a piece drawn again later
+     * starts over in startCue() anyway.
+     */
+    leaveCue: function(id, ms) {
+        const track = this.bgmTracks?.[id];
+        if (!track || track.paused) return;
+        const run = this.musicRuntime();
+        run.leaving.add(id);
+        this.fadeTrack(id, 0, ms, () => {
+            track.pause();
+            run.leaving.delete(id);
+            // Restore the target volume, otherwise the track would start
+            // silent the next time it is played without a fade.
+            this.setTrackVolume(id, this.musicTarget(id));
+        });
     },
 
     toggleMusic: function(isOn) {
         this.state.musicEnabled = isOn;
         localStorage.setItem(KEYS.musicEnabled, isOn);
         if (isOn) {
-            this.playMusic(this.situationTrack());
+            this.playMusic();
         } else {
             // Instant, exactly as stopMusic's own docstring prescribes for
             // this switch. With the default 400ms fade, off-and-on within
@@ -490,137 +1004,54 @@ export const audio = {
             this.stopMusic(0);
         }
     },
-    
-    changeMusicStyle: function(style) {
-        this.state.musicStyle = style;
-        localStorage.setItem(KEYS.musicStyle, style);
-
-        // Looping depends on the mode, so it has to follow the setting: radio
-        // needs the 'ended' event to move on, a fixed style loops seamlessly.
-        if (this.bgmTracks) {
-            for (const key of ['elevator', 'lofi', 'detective', 'bossa']) {
-                this.bgmTracks[key].loop = style !== 'radio';
-            }
-        }
-        
-        // Outside boss fight and gala the track has to follow the setting
-        if (this.state.currentMusicTrack !== 'boss' && this.state.currentMusicTrack !== 'gala') {
-            if (this.state.musicEnabled) {
-                // Music on: switch immediately
-                this.playMusic('office'); 
-            } else {
-                // Music off: reset the current track so the next
-                // switch-on is guaranteed to pick up the new style.
-                this.state.currentMusicTrack = null;
-            }
-        }
-    },
 
     setMusicVolume: function(val) {
         this.state.musicVolume = parseFloat(val);
         localStorage.setItem(KEYS.musicVolume, val);
-        if (this.bgmTracks) {
-            // Only the track that is currently MEANT to be audible follows
-            // the slider immediately (cancelling its fade-in, which would
-            // otherwise carry on towards the old target and undo the
-            // slider). Every other running fade is a fade-OUT whose done()
-            // is the only thing that ever pauses that track - the old loop
-            // cancelled those too, and dragging the slider during a stop
-            // left the outgoing track playing forever, even with the music
-            // switched off. Paused tracks pick the new volume up on their
-            // next play().
-            for (let key in this.bgmTracks) {
-                if (key === this.state.currentMusicTrack && this.state.musicEnabled) {
-                    clearInterval(this.fadeTimers[key]);
-                    delete this.fadeTimers[key];
-                    this.setTrackVolume(key, this.musicTarget(key));
-                }
-            }
-        }
-    },
-
-    playMusic: function(trackName) {
-        if (!this.state.musicEnabled) return;
-        
-        // --- Handle the generic 'office' request ---
-        let actualTrack = trackName;
-        const officeTracks = ['elevator', 'lofi', 'detective', 'bossa'];
-
-        if (trackName === 'office') {
-            if (this.state.musicStyle === 'radio') {
-                // Radio mode: if an office track is already playing, leave it alone
-                if (officeTracks.includes(this.state.currentMusicTrack) && 
-                    this.bgmTracks && 
-                    this.bgmTracks[this.state.currentMusicTrack] && 
-                    !this.bgmTracks[this.state.currentMusicTrack].paused) {
-                    return; 
-                }
-                // Otherwise pick a random starting track
-                actualTrack = officeTracks[Math.floor(Math.random() * officeTracks.length)];
-            } else {
-                // A fixed style (e.g. 'lofi') was chosen in the settings
-                actualTrack = this.state.musicStyle;
-            }
-        }
-
-        if (this.state.currentMusicTrack === actualTrack) {
-            if (this.bgmTracks && this.bgmTracks[actualTrack] && !this.bgmTracks[actualTrack].paused) {
-                return; // already audible, nothing to do
-            }
-        }
-
-        this.state.currentMusicTrack = actualTrack;
-        // Out faster than in, so the two never sit on top of each other for
-        // long. The boss fight cuts hardest, that is the point of it.
-        this.stopMusic(actualTrack === 'boss' ? 150 : 350);
-
-        if (!this.bgmTracks) this.initMusic();
-
-        let track = this.bgmTracks[actualTrack];
-        if (track) {
-            // A boss fight should hit; everything else eases in.
-            const fadeIn = actualTrack === 'boss' ? 250 : 600;
-            clearInterval(this.fadeTimers[actualTrack]);
-            this.setTrackVolume(actualTrack, 0);
-            // Where the gain node carries the volume, the track is audible only
-            // through the graph - and a suspended context plays to nobody.
-            if (this.audioCtx?.state === 'suspended') this.audioCtx.resume();
-            track.play()
-                .then(() => this.fadeTrack(actualTrack, this.musicTarget(actualTrack), fadeIn))
-                .catch(e => {
-                    // Autoplay blocked: leave the volume usable for the retry.
-                    this.setTrackVolume(actualTrack, this.musicTarget(actualTrack));
-                    console.warn("Music autoplay blocked:", e);
-                });
+        // Only the track that is currently MEANT to be audible follows the
+        // slider immediately (cancelling its fade-in, which would otherwise
+        // carry on towards the old target and undo the slider). Every other
+        // running fade is a fade-OUT whose done() is the only thing that ever
+        // pauses that track - the old loop cancelled those too, and dragging
+        // the slider during a stop left the outgoing track playing forever,
+        // even with the music switched off. Paused tracks pick the new volume
+        // up on their next play().
+        const key = this.state.currentMusicTrack;
+        if (this.state.musicEnabled && this.isAudible(key)) {
+            clearInterval(this.fadeTimers[key]);
+            delete this.fadeTimers[key];
+            this.setTrackVolume(key, this.musicTarget(key));
         }
     },
 
     /**
      * @param {number} ms  fade-out time; 0 stops instantly (used when the
      *                     player switches music off - that should be immediate)
+     *
+     * Every piece is paused where it is; whatever an emergency had put aside
+     * is forgotten, because what follows a stop is a new moment.
      */
     stopMusic: function(ms = 400) {
+        this.musicPausedByTab = false;
         if (!this.bgmTracks) return;
-        for (let key in this.bgmTracks) {
+        const run = this.musicRuntime();
+        run.interrupted = null;
+        for (const key in this.bgmTracks) {
             const track = this.bgmTracks[key];
             clearInterval(this.fadeTimers[key]);
             delete this.fadeTimers[key];
 
-            if (track.paused) continue;
+            if (track.paused) { run.leaving.delete(key); continue; }
             if (ms <= 0) {
                 track.pause();
+                run.leaving.delete(key);
                 this.setTrackVolume(key, this.musicTarget(key));   // ready for the next play()
                 continue;
             }
-            this.fadeTrack(key, 0, ms, () => {
-                track.pause();
-                // Restore the target volume, otherwise the track would start
-                // silent the next time it is played without a fade.
-                this.setTrackVolume(key, this.musicTarget(key));
-            });
+            this.leaveCue(key, ms);
         }
     },
-    
+
     /**
      * Holds the office music down while something on screen wants silence:
      * the vending machine's fall (6.3), from the moment the stairwell light
@@ -635,7 +1066,9 @@ export const audio = {
         // Under speech. Six decibels, on top of the fifteen the levelling
         // already puts between music and voice - enough to clear the words
         // without the soundtrack audibly breathing in and out at every line.
-        narration: 0.50
+        narration: 0.50,
+        // Under a GlobalCorp FM spot (7.2): the same voice-over-bed rule.
+        radio: 0.50
     },
     // Built on first use rather than here. The module object is SPREAD into the
     // engine, and spread copies a reference: one Set written at module scope
@@ -656,9 +1089,14 @@ export const audio = {
         if (on) reasons.add(reason); else reasons.delete(reason);
         const after = this.duckLevel();
         if (after === before) return;
+        // Only a piece meant to be heard. One on its way out (a stop's
+        // fade) carries its pause in the fade's callback, and a duck fade
+        // would replace it: a line ending inside the 400 ms of a restart -
+        // the settings' sample, hushed as the menu closes - left the old
+        // piece playing on, under the new day's. The callback sets the
+        // ducked level anyway.
         const key = this.state.currentMusicTrack;
-        const track = this.bgmTracks?.[key];
-        if (!this.state.musicEnabled || !track || track.paused) return;
+        if (!this.state.musicEnabled || !this.isAudible(key)) return;
         // Down quickly enough to be under the first syllable, back up slowly
         // enough not to be a swell of its own. The machine's fall keeps the
         // slower pair it was tuned with.

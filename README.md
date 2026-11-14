@@ -191,6 +191,10 @@ The web version and the source code are under the **MIT licence**. You may study
 the code, use it and modify it for your own non-commercial spin-offs — please
 with attribution (**seluce**).
 
+**The audio is not covered by it.** The narration and the music were
+generated for this game with ElevenLabs and may only be heard in it — not
+extracted, reused or passed on as separate files.
+
 ---
 
 <p align="center">

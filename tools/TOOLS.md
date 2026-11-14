@@ -19,7 +19,9 @@ the repository root.
 | Coverage simulator | `npm run sim:coverage [days] [--runs=N] [--compare] [--lang=en]` | before every change to the DRAW, no gate |
 | Voice manifest | `npm run voice:manifest` / `npm run lint:voice` | after every change to TERMINAL prose, once audio exists |
 | Generation run | `npm run voice:audio -- [--trial=x] [--pool=p] [--limit=n]` | turns the manifest into audio; costs money, needs `ELEVENLABS_API_KEY` |
+| Radio run | `npm run voice:fm -- [--trial=x] [--voice=id] [--key=a,b]` | the same for GlobalCorp FM's spots, in a set of its own (7.2) |
 | Audio guard | `node tools/check-audio.mjs` | runs as `prebuild`; restores `public/audio/` from `docs/` so a build cannot drop it |
+| Music master | `npm run music:master [-- --cue=<id>] [-- --list]` | after a new take or a new cut; offline, ffmpeg only |
 | Test suites | `npm test` | before every delivery |
 | Console tool | `tools/dev-week.js` into the browser console | play testing on the live game |
 | String checker | `npm run lint:i18n` | after **every** change to interface strings, gate at 0/0 |
@@ -253,6 +255,27 @@ Experiment switches (defaults = the current state):
 --normmult=…      multiplier for Normal
 ```
 
+**`--music` — what the house band hears.** At every scene the terminal shows
+it asks the music engine's own functions (`nextMood`, `housePool`, `pressure`
+out of `src/engine/music_cues.js`, imported, not copied) and prints a block
+after the balance table: the share of scenes in the tense mood, how often the
+mood changes a day, where the rhythm layer stands (at its floor, in the lower
+or the upper half of its way in), which of tickets, anger and radar set the
+pressure, and the pool each scene would draw from. `--tenseon=` and
+`--tenseoff=` try other thresholds through the same function.
+
+```
+npm run sim 3000 -- --music
+npm run sim 3000 -- --music --tenseon=75 --tenseoff=60
+```
+
+The thresholds 80/65 were set with it: about one scene in five on Normal for
+the casual player. The pressure curve was checked with it against the rule
+that a normal day spends most of its time below the middle: 64 % of the
+casual player's Wednesday scenes and 74 % of the sensible player's. A change
+to the event numbers moves both, so a balance change is a reason to run it
+again.
+
 ## 4. `simulate-week.mjs` — week balance
 
 ```
@@ -335,8 +358,8 @@ the run says nothing.
 ## 6. `make-voice.mjs` — which text becomes which audio file
 
 ```
-npm run voice:manifest          # write voice/manifest.de.json and .en.json
-npm run lint:voice              # hold both manifests against both trees
+npm run voice:manifest          # write voice/manifest.de.json and .en.json, and the radio's
+npm run lint:voice              # hold all four manifests against both trees
 node tools/make-voice.mjs       # report only, write nothing
 ```
 
@@ -505,6 +528,20 @@ everything — which is the point.
 A run refuses to start if the tree and the manifest disagree, so audio can
 never be bought for a text the gate has not seen.
 
+**A run of another language refuses German.** Both trees carry the same ids
+and, until a block is translated, the same German prose — so an English run
+in between buys German audio for the English folder, and every gate is green
+while it does. Every pool waits there between its rebuild and its
+translation, and the radio's hundred spots sat there for 7.2: about 5,000
+credits. So a run with `--lang` other than `de` holds each piece it is about
+to buy against the German manifest (`untranslatedPieces()` in
+`voice-text.mjs`), and a piece whose key says the German text stops the run
+before the provider is asked anything; the dry run names the count and goes
+on. A line meant to read the same in both trees is named with
+`--same-text=<key>[,...]` — there is one in the narrator's set today, the
+recruiter's English line in `call_recruit_1`, already rendered and therefore
+never asked about.
+
 ### `--trial`
 
 Writes into `voice/trial/<name>/`, with a ledger of its own, so a trial can
@@ -545,10 +582,123 @@ inside a plan's included credits has come out cheaper. The line after a run
 reports what was actually spent, in credits, with the rate it worked out to
 and how far the plan's remainder still reaches.
 
+### GlobalCorp FM: a second set (`--set=fm`)
+
+```
+npm run voice:fm -- --dry-run                         # the radio's 100 spots, what they cost
+npm run voice:fm -- --trial=fm-<name> --voice=<id> --key=fm_traffic_lift_b,fm_weather_server
+npm run voice:fm                                      # the real run, once a voice is chosen
+```
+
+The station is a second speaker with a pool of its own (`data_radio.js`), and
+everything that belongs to a speaker is kept apart: `VOICE_SETS` in
+`voice-text.mjs` names, for each set, the manifest, the run file with the
+voice, the opus folder and the masters.
+
+| | narrator | fm |
+|---|---|---|
+| manifest | `voice/manifest.<lang>.json` | `voice/manifest.fm.<lang>.json` |
+| voice | `voice/run.<lang>.json` | `voice/run.fm.<lang>.json` |
+| opus | `public/audio/<lang>/` | `public/audio/fm/<lang>/` |
+| masters | `voice/master/<lang>/` | `voice/master/fm/<lang>/` |
+
+**One pool may not be in both.** A spot in the narrator's set would be spoken
+by the wrong voice into the wrong folder, and the browser, which asks
+`audio/fm/<lang>/`, would never find it. `voice.test.mjs` holds the two sets
+apart, folders included.
+
+**`--set=fm` works with every other flag**, `make-voice.mjs` as well:
+`--check --set=fm` is part of `lint:voice`, and `voice:manifest` writes both
+sets. The voice in `run.fm.<lang>.json` starts empty: a run without
+`--voice` stops with a message rather than reading the spots in the
+narrator's voice.
+
+**Two presenters, chosen by the kind of spot.** The run file names the host
+at its top and adds more voices under `byKind`, each with the kinds it reads
+- Dan for the show, Lola for `ad` and `notice`:
+
+```json
+"voiceId": "utkd5fchbspYG3Ld0zt0", "voiceName": "Dan - Radio Host & Moderator",
+"byKind": [ { "kinds": ["ad", "notice"], "voiceId": "gSZiss4v1BGsE1cTgoWF",
+              "voiceName": "Lola - Ads", "voiceSettings": null } ]
+```
+
+`speakerFor()` in `voice-text.mjs` makes the choice; the narrator's run file
+has no `byKind`, so every one of his pieces keeps the voice at the top. Each
+voice's settings are pinned in its own block on its first run, the ledger
+books the voice a piece was read in, and a piece counts as finished only in
+that voice. The dry run says how many pieces each voice has to read. Both
+languages must name the same voices for the same kinds, and a kind given to
+a voice must be a kind some spot has - a misspelt one leaves that voice with
+nothing to read, silently. `voice.test.mjs` holds all of it, the
+finished-only-in-its-own-voice rule on a stand-in ledger in a trial folder.
+`--voice` still reads EVERYTHING in one voice, for a trial.
+
+**`--key` takes a list.** A probe of a candidate voice is a handful of spots
+picked across the kinds, and a pool's first five would all be the morning
+show. Each part matches as a substring, so `fm_canteen` takes all four
+canteen spots.
+
+**The copy-back walks folders.** `check-audio.mjs` used to read one level of
+`docs/audio/`; the radio sits two levels down (`fm/de/`), and a fresh clone
+would have built without it. It now walks every folder and keys the stock by
+its relative path.
+
+## 7b. `master-music.mjs` — the house band, from the provider's files to the game's
+
+```
+npm run music:master                   # every piece, then the table
+npm run music:master -- --cue=day_2    # one piece; the table keeps the rest
+npm run music:master -- --list         # sources and cuts, nothing written
+```
+
+Offline: ffmpeg with libopus and arithmetic, no key, no provider. The FLAC
+files the operator downloaded sit in `music/` (gitignored, like
+`voice/master/`); the tool writes `public/audio/music/` and
+`src/engine/music_files.js`, and `npm run build` carries the files into
+`docs/audio/music/`, which is what the repository holds.
+
+**Which take and which cut** is the table `SET` at the top of the tool, with
+the measurement behind each cut in its comment; the choice of take is
+recorded in `music/prompts.md`. **Which pool, whether layered** is `CUES` in
+`src/engine/music_cues.js` — the tool refuses to run when the two disagree.
+
+What it does to a piece, in order: the cut and a release where the provider
+faded a band that was still playing; silence off both ends, 5 ms in and
+50 ms out against clicks; for an office piece the split into **bed** (channels
+1/2, bass included) and **rhythm** (3/4) — `bed + rhythm` is the original,
+sample by sample; one linear gain that brings the SUM to `TARGET_LUFS`
+(-21.9, the emergency and the gala 3 dB over it, the gala's lounge at
+it); the **floor** — the bed
+with the rhythm at its floor, at most `MAX_FLOOR_LOSS` (2 LU) under the sum,
+or the piece is refused; Opus 96 kbit/s stereo for every piece and 192 kbit/s
+quad (mapping family 1) for a layered one, bit-exact so the same input gives
+the same bytes. Then the shipped stereo file is decoded and measured again,
+and that number goes into the table the week suite reads.
+
+**Names are checksums**, `<id>.<8 hex>.opus` and `<id>.quad.<8 hex>.opus`,
+the rule `check-audio.mjs` relies on. A re-mastered piece gets a new name and
+the old one is deleted from `public/` **and** `docs/`; otherwise
+`check-audio.mjs` would copy it back out of `docs/` before the next build,
+and the week suite fails on a file without an entry. So after a run: build,
+then test.
+
+**The probe** (`probe.quad.<hex>.opus`) is built on every run: four tones on
+four channels, encoded, decoded again, each channel checked for its own
+frequency. The game plays it silently once a session and only then takes the
+four-channel files (`engine_audio.probeLayers()`).
+
+**A sting** is a one-shot outside the band: `STINGS` in `music_cues.js`,
+with a loudness of its own, a line in `SET` like any piece, and its row in
+`MUSIC_STINGS` instead of `MUSIC_FILES`. The one there is GlobalCorp FM's
+station ID (`fm_jingle`): it plays on the radio's element at the narrator's
+knob, so it is levelled to the spots it opens (-20.7 LUFS, their median)
+rather than to the band. `--cue=fm_jingle` masters it alone.
+
 ## 8. `npm test` — the five test suites, in both languages
 
 ```
-npm test        # 17 / 277 / 20 / 48 / 19, then the same five again with --lang=en
+npm test        # 17 / 333 / 20 / 50 / 30, then the same five again with --lang=en
 npm run test:de # one language only, while working
 npm run test:en
 ```
@@ -681,6 +831,22 @@ The behaviour behind the audit is held in `week-flow.test.mjs` on a fake
 element — a notice holding the result and handing it over, a mail dropping onto
 a notice, a hidden tab, a volume of zero — because what has to hold there is
 bookkeeping, and the order of a click is easier to get wrong than to read.
+
+GlobalCorp FM (7.2) brought checks of its own here and to `week-flow`. Here:
+the radio is a set of its own whose folders the narrator's never reach, its
+manifest files a spot under the checksum the browser computes, and the
+copy-back before a build reaches `fm/de/`, two levels down; the two
+presenters (above, under `--set=fm`); and the refusal of German text in a
+run of another language (under Resuming), counted against the manifests as
+they stand, so it holds before a translation and after it. In `week-flow`,
+the behaviour on the same fake element: a spot fits its window, its condition
+and its day by id; it waits for a quiet moment and never comes on over a
+decision, a window, a mail, an emergency, the gala or the lesson (twenty
+blockers, each on its own); the narrator, any window and the tick each take
+the room back; the tab, a volume of zero and the switch end it. The last of
+them reads every module spread into the engine and fails on a name two of
+them share - a later spread overwrites an earlier one in silence, and a
+`radio` field named like a voice method would have muted the narrator.
 
 ## 9. `dev-week.js` — the console tool
 

@@ -41,7 +41,8 @@ export const de = {
 
     'credits.title':               'Credits & Lizenzen',
     'credits.dev':                 'Entwicklung & Design:',
-    'credits.music':               'Musik Lizenzen (Creative Commons BY 4.0):',
+    'credits.music':               'Musik:',
+    'credits.music.body':          'Die Stücke sind eigens für das Spiel entstanden, erzeugt mit ElevenLabs Music. Kein Mensch hat sie eingespielt.',
     'credits.fonts':               'Schriften (SIL Open Font License 1.1):',
     'credits.voice':               'Sprachausgabe:',
     'credits.voice.body':          'Die Szenen werden von einer künstlichen Stimme gelesen, erzeugt mit ElevenLabs (Modell eleven_v4_turbo, Stimme „Alexander – Deep TV Narrator“). Kein Mensch hat diese Aufnahmen gesprochen. Dieselbe Stimme in beiden Sprachen, absichtlich.',
@@ -93,7 +94,7 @@ export const de = {
     'set.sfx.desc':              'Klicks, eingehende Mails, das Telefon und alles andere, was piept.',
     'set.sfx.level':             'Lautstärke der Effekte',
     'set.music.title':           'Musik',
-    'set.music.desc':            'Gedudel im Büroalltag, Boss-Beats, wenn es brennt.',
+    'set.music.desc':            'Die Hauskapelle spielt den Tag mit: ruhig am Morgen, dichter, wenn sich die Tickets stapeln, und eigene Stücke für Notfälle und die Gala.',
     'set.music.level':           'Lautstärke der Musik',
     'set.narration.title':       'Sprecher',
     'set.narration.desc':        'Liest Szenen und Ergebnisse vor.',
@@ -102,8 +103,9 @@ export const de = {
     // have a preview like the other two - see tools/voice-text.mjs, SPOKEN_KEYS.
     'set.narration.sample':      'Testdurchsage. So laut liest der Erzähler, wenn im Terminal etwas passiert.',
     'set.narration.rateSample':  'Testdurchsage. So schnell liest der Erzähler, wenn im Terminal etwas passiert.',
-    'set.musicStyle.title':      'Musik-Stil',
-    'set.musicStyle.desc':       'Das Radio wechselt zwischen allen Stücken, jede andere Wahl bleibt bei einem. Notfälle und die Gala haben ihre eigene Musik.',
+    'set.fm.title':              'GlobalCorp FM',
+    'set.fm.desc':               'Der Betriebsfunk meldet sich in ruhigen Momenten: Verkehr im Haus, Wetter im Serverraum, die Kantine. Er spricht so laut wie der Sprecher und schweigt, sobald das Spiel etwas zu sagen hat.',
+    'set.fm.silent':             'Der Sprecher steht auf null, und damit schweigt auch der Funk.',
     'set.textSize.title':        'Textgröße',
     'set.textSize.desc':         'Dieses Spiel ist zum Lesen da. Nimm die Größe, die dir liegt.',
     'set.compact.title':         'Kompaktmodus',
@@ -175,11 +177,6 @@ export const de = {
     'set.narration.kind.halgerd.desc': 'Die Einführung und die zwei ersten Hinweise.',
     'set.reset.title':           'Auf Standard zurücksetzen',
     'set.reset.desc':            'Setzt alle Optionen dieser Seite zurück. Spielstand, Archiv und Erfolge bleiben unangetastet.',
-    'set.music.radio':           'Radio (Abwechselnd)',
-    'set.music.elevator':        'Fahrstuhl (Klassisch)',
-    'set.music.lofi':            'Lofi (Entspannt)',
-    'set.music.detective':       'Detektiv (Noir)',
-    'set.music.bossa':           'Lounge (Bossa)',
     'set.textSize.normal':       'Normal',
     'set.textSize.large':        'Groß',
     'set.textSize.xlarge':       'Sehr groß',
@@ -451,6 +448,11 @@ export const de = {
     // the places are too far apart to hold side by side.
     'common.locked':               'Gesperrt',
     'ticker.broadcast':            '[GLOBAL CORP BROADCAST]',
+    // The header while a GlobalCorp FM spot is on air (7.2). The station's
+    // name and the studio sign read the same in both languages, on purpose.
+    'fm.station':                  'GlobalCorp FM',
+    'fm.onAir':                    'ON AIR',
+    'fm.stop':                     'Spot beenden',
 
     // The small read-aloud button beside the excuse. It carries an icon and
     // no text, so these two are its tooltip and its screen-reader name - what

@@ -1,4 +1,4 @@
-import { KEYS, PROGRESS_KEYS, LEGACY_PARTY_KEYS } from './keys.js';
+import { KEYS, PROGRESS_KEYS, LEGACY_PARTY_KEYS, RETIRED_KEYS } from './keys.js';
 import { SvelteSet } from 'svelte/reactivity';
 import { t, tf, tree } from '../i18n/i18n.svelte.js';
 
@@ -231,6 +231,9 @@ export const core = {
         // more than enough to warm the remaining pools before the first click.
         prefetchAll();
         this.warmImages();
+        // GlobalCorp FM's tick (7.2). It asks the state every two seconds and
+        // stays silent until a working day is on screen.
+        this.startRadio?.();
 
         this.renderHeader();
         this.updateUI();
@@ -525,6 +528,7 @@ export const core = {
 
     loadSystem: function() {
         this.migratePartyFlag();
+        this.dropRetiredKeys();
         const data = localStorage.getItem(this.KEYS.archive);
         
         DB.chars.forEach(char => {
@@ -717,6 +721,10 @@ export const core = {
         // checkRandomEmail asks isEmailOpen first, and no mail would come again.
         this.state.isEmailOpen = false;
         this.state.emailOutcome = null;
+        // GlobalCorp FM keeps nothing in the save, so a restored day is a new
+        // day for the station: its first spot at a moment nobody can count
+        // on, not eight seconds after the resume.
+        this.radioNewDay?.();
     },
 
     /**
@@ -1969,6 +1977,13 @@ export const core = {
         return { isParty: true, partyKey: this.KEYS.partyPlayed };
     },
 
+    /** Removes what an older version stored and nothing reads (RETIRED_KEYS). */
+    dropRetiredKeys: function() {
+        for (const key of RETIRED_KEYS) {
+            try { localStorage.removeItem(key); } catch { /* unreadable storage: nothing to drop */ }
+        }
+    },
+
     /**
      * Carries the three 6.1 gala flags onto the single one. Runs at boot after
      * the cloud has had its say - an old payload may have just written a
@@ -2135,6 +2150,8 @@ export const core = {
         // over the night screen: the end screens are overlays of their own and
         // none of them is on the over-terminal list.
         this.hushNarration();
+        // The radio as well - the end screen is no quiet moment.
+        this.cutRadio?.();
 
         if (this.state.pendingEnd) {
             const end = this.state.pendingEnd;
@@ -2227,8 +2244,10 @@ export const core = {
         const s = this.state;
         s.closingFigures = { time: s.time, tickets: s.tickets, fl: s.fl, al: s.al, cr: s.cr };
 
-        // Switch into party mode
+        // Switch into party mode. The radio is the office's, not the
+        // evening's (engine_radio.js): a spot still on air ends here.
         this.state.isPartyMode = true;
+        this.cutRadio?.();
         this.state.partyProgress = 0;
 
         // The evening starts at 17:00 and reaches 23:00 at the finale. The

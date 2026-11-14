@@ -43,8 +43,8 @@
  */
 export const POOL_NAMES = [
     'board', 'bossfights', 'calls', 'coffee', 'compendium', 'diary', 'emails',
-    'intranet', 'lore', 'lunch', 'meetings', 'party', 'reputation', 'server',
-    'sidequests', 'vending'
+    'intranet', 'lore', 'lunch', 'meetings', 'party', 'radio', 'reputation',
+    'server', 'sidequests', 'vending'
 ];
 
 /** Needed before the first click, so these come in one go at boot. */

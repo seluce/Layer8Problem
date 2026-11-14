@@ -122,6 +122,11 @@ export const voice = {
     _setSpeaking: function(on) {
         this.speaking = on;
         this.state.narrating = on;
+        // GlobalCorp FM gives way to the narrator, and starts counting its
+        // quiet again when he stops (engine_radio.js). Optional: the test
+        // benches compose the voice without the radio.
+        if (on) this.cutRadio?.();
+        else this.radioActivity?.();
     },
 
     _done: function() {
@@ -158,6 +163,8 @@ export const voice = {
         // deliberately does NOT land here: the button would otherwise offer to
         // repeat a tutorial bubble over a working day.
         this.state.narratable = text || null;
+        // The terminal changed: the radio waits for quiet again from here.
+        this.radioActivity?.();
 
         // A window the player opened: the scene is over for now, and a new
         // one arriving behind it is not read either.
@@ -628,8 +635,10 @@ export const voice = {
         // of quiet radio on a long scene - and the button that could have
         // stopped it had already disappeared, because zero is when it is not
         // offered. Found by the narration audit (01.11.2026).
-        if (this.state.narrationVolume <= 0) { this.hushNarration(); return; }
+        // The radio speaks at the narrator's level, so zero ends a spot too.
+        if (this.state.narrationVolume <= 0) { this.hushNarration(); this.cutRadio?.(); return; }
         if (this.speaking) this._setNarratorVolume(this.state.narrationVolume);
+        this.followRadioLevel?.();
     },
 
     /**

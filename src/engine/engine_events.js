@@ -1134,11 +1134,16 @@ export const events = {
 		// --- Record the event for the mail system ---
         this.state.currentEventId = ev.id;     // "did we already mail for this event?"
         this.state.currentEventType = type;    // "is this a boss fight?"
+        this.state.currentEventLoc = ev.loc ?? null;   // "where at the gala?" - the music asks
         this.updatePresence(type);
         // -----------------------------------------------------
 				
         this.state.activeEvent = true;
-        if(ev.id) this.state.usedIDs.add(ev.id); 
+        // A new scene is one of the two moments the music may decide at
+        // (the other is the end of a piece): lunch cuts in, a mood may
+        // take over. engine_audio.playMusic() reads the type set above.
+        this.playMusic();
+        if(ev.id) this.state.usedIDs.add(ev.id);
         this.disableButtons(true);
         this.recordSeen('event', ev.id);
         this.applyPassiveItems(ev.char);
@@ -1862,6 +1867,8 @@ export const events = {
         
         // --- Resume music after the boot sequence ---
         this.playMusic('office');
+        // GlobalCorp FM's day begins with the morning screen (7.2).
+        this.radioNewDay?.();
         
         // Release the buttons after the brief setup
         this.disableButtons(false);

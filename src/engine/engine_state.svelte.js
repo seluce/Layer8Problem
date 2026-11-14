@@ -153,6 +153,9 @@ export function freshDay(mult = 1.0) {
         // activeEvent back to true.
         currentEventId: null,
         currentEventType: null,
+        // The gala station of the event on screen (its `loc`), null anywhere
+        // else. The music reads it: the band sounds as it would from there.
+        currentEventLoc: null,
         currentPhoneEvent: null,
 
         // Phone view model. components/PhoneView.svelte renders from it:
@@ -632,7 +635,6 @@ export const state = $state({
     // voice - broadcast practice for a bed under narration. Reaches new
     // players only; a stored setting is the player's and is not rewritten.
     musicVolume: parseFloat(localStorage.getItem(KEYS.musicVolume) || String(DEFAULT_MUSIC_VOLUME)),
-    musicStyle: localStorage.getItem(KEYS.musicStyle) || 'radio',
     // The narrator. On by default - 15 hours of speech is not an easter egg -
     // and at the top of its range, because the recordings come in at -23.6
     // LUFS and the music is levelled 15 dB below that. See engine_audio.MUSIC_TRIM.
@@ -644,6 +646,11 @@ export const state = $state({
         catch { return mergeNarrationKinds(null); }
     })(),
     currentMusicTrack: null,
+    // GlobalCorp FM (7.2, engine_radio.js): the switch, and whether a spot is
+    // on air right now - the header's label reads it. Outside freshDay(): a
+    // spot belongs to the session, never to the save.
+    fmEnabled: localStorage.getItem(KEYS.fm) !== 'false',
+    fmOnAir: false,
     // The read-aloud button (components/ReadButton.svelte) reads these two,
     // which is why they are here and not on the voice object: the modules are spread
     // into `engine`, so a component watching a plain property there would never

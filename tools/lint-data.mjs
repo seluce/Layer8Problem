@@ -1582,6 +1582,113 @@ for (const ev of DB.emails) {
   }
 }
 
+/* ---------- 12d) GlobalCorp FM (7.2) ---------- */
+// The radio's spots are recordings, chosen by the engine on fields nothing
+// else reads - so every one of them fails in silence. An `if` with a typo
+// is a condition that never holds, a `when` the wrong way round is a spot
+// that never plays, a `day` written as the word is a spot for no day at all
+// (CLAUDE.md: nothing language-dependent as a comparison value). A spot
+// without `if.day` that names a weekday is wrong four days in five. A
+// colleague in `if.rep` who is not in DB.chars, or an emergency in `if.seen`
+// that is not in DB.bossfights, is a spot waiting for something that never
+// comes - and a greeting without its standing plays to every player alike.
+{
+  // One list for the engine and the linter (src/engine/radio_kinds.js).
+  const kinds = await import('../src/engine/radio_kinds.js');
+  const RADIO_KINDS = new Set(kinds.RADIO_KINDS);
+  const RADIO_LENGTHS = kinds.RADIO_LENGTHS;
+  const RADIO_KIND_NEEDS = kinds.RADIO_KIND_NEEDS;
+  const REP_NAMES = new Set(DB.chars.filter(c => !c.player).map(c => c.name));
+  const EMERGENCY_IDS = new Set((DB.bossfights ?? []).map(b => b.id));
+  const RADIO_FIELDS = new Set(['id', 'kind', 'when', 'if', 'text']);
+  const RADIO_IF = { tickets: [1, 10], l: [1, 100], a: [1, 100], b: [1, 100] };
+  const DAY_IDS = ['mon', 'tue', 'wed', 'thu', 'fri'];
+  const DAY_START = 8 * 60, DAY_END = 16 * 60 + 30;
+  // The words the check looks for, in the tree it is reading. German that is
+  // the SUBJECT of a check, like the phrase patterns of report-prose.
+  const WEEKDAY_WORDS = LANG === 'en'
+    ? /\b(Monday|Tuesday|Wednesday|Thursday|Friday)s?\b/
+    : /\b(Montag|Dienstag|Mittwoch|Donnerstag|Freitag)(s|morgen|abend|mittag|nachmittag)?\b/i;
+  const spots = DB.radio;
+  if (!Array.isArray(spots) || !spots.length) err('[radio] the pool is missing or empty');
+  const seenIds = new Set();
+  const seenTexts = new Map();
+  (spots ?? []).forEach((sp, i) => {
+    const ctx = `[radio/${sp?.id ?? i}]`;
+    if (!sp || typeof sp !== 'object') { err(`[radio] entry ${i} is not a spot`); return; }
+    for (const k of Object.keys(sp)) if (!RADIO_FIELDS.has(k)) err(`${ctx} unknown field "${k}" - allowed: ${[...RADIO_FIELDS].join(', ')}`);
+    if (typeof sp.id !== 'string' || !/^fm_[a-z0-9_]+$/.test(sp.id)) err(`${ctx} the id must be fm_ followed by lower case, digits and underscores`);
+    else if (seenIds.has(sp.id)) err(`${ctx} duplicate id`);
+    else seenIds.add(sp.id);
+    if (!RADIO_KINDS.has(sp.kind)) err(`${ctx} kind "${sp.kind}" - allowed: ${[...RADIO_KINDS].join(', ')}`);
+
+    if (sp.when !== undefined) {
+      const w = sp.when;
+      const ok = Array.isArray(w) && w.length === 2 && w.every(Number.isInteger)
+              && w[0] >= DAY_START && w[1] <= DAY_END && w[0] < w[1];
+      if (!ok) err(`${ctx} when must be [from, to] in minutes of the working day, ${DAY_START} <= from < to <= ${DAY_END} - got ${JSON.stringify(w)}`);
+    }
+
+    if (sp.if !== undefined) {
+      const c = sp.if;
+      if (!c || typeof c !== 'object' || Array.isArray(c) || !Object.keys(c).length) err(`${ctx} if must be an object with at least one condition`);
+      else for (const [k, v] of Object.entries(c)) {
+        if (k === 'day') {
+          if (!DAY_IDS.includes(v)) err(`${ctx} if.day "${v}" - a day id (${DAY_IDS.join(', ')}), never the word`);
+        } else if (RADIO_IF[k]) {
+          const [lo, hi] = RADIO_IF[k];
+          if (!Number.isInteger(v) || v < lo || v > hi) err(`${ctx} if.${k} must be a whole number from ${lo} to ${hi} - got ${JSON.stringify(v)}`);
+        } else if (k === 'rep') {
+          // By name, which is the same in both trees; the player is not a
+          // colleague. A positive threshold is "at least", a negative one
+          // "at most" - so zero would mean either, and means nothing.
+          if (!v || typeof v !== 'object' || Array.isArray(v) || !Object.keys(v).length) err(`${ctx} if.rep must name at least one colleague`);
+          else for (const [name, n] of Object.entries(v)) {
+            if (!REP_NAMES.has(name)) err(`${ctx} if.rep "${name}" is not a colleague in DB.chars - allowed: ${[...REP_NAMES].join(', ')}`);
+            if (!Number.isInteger(n) || n === 0 || n < -100 || n > 100) err(`${ctx} if.rep.${name} must be a whole number from -100 to 100 and not 0 - got ${JSON.stringify(n)}`);
+          }
+        } else if (k === 'seen') {
+          // An event the run can have had: an emergency, by id. A typo is a
+          // spot that waits for something that never happens.
+          if (!Array.isArray(v) || !v.length) err(`${ctx} if.seen must list at least one emergency`);
+          else for (const id of v) if (!EMERGENCY_IDS.has(id)) err(`${ctx} if.seen "${id}" is not an emergency in DB.bossfights`);
+        } else {
+          err(`${ctx} unknown condition if.${k} - allowed: ${[...Object.keys(RADIO_IF), 'day', 'rep', 'seen'].join(', ')}`);
+        }
+      }
+    }
+    // A greeting needs somebody's standing, the house news something that
+    // happened: without its condition the spot plays to every player alike.
+    const needs = RADIO_KIND_NEEDS[sp.kind];
+    if (needs && !sp.if?.[needs]) err(`${ctx} a ${sp.kind} answers if.${needs} and has none`);
+
+    const text = sp.text;
+    checkText(ctx, 'text', text);
+    if (typeof text !== 'string') return;
+    // Recorded months before it plays: a hole would be read out as braces,
+    // and a door command as letters.
+    if (text.includes('{')) err(`${ctx} text carries a placeholder - a spot is a recording`);
+    if (/^CMD:/.test(text.trim())) err(`${ctx} text is an engine command, not a sentence`);
+    // A recording is filed under its text, so two spots with the same words
+    // share one file - and two kinds may be read by two voices.
+    if (seenTexts.has(text.trim())) err(`${ctx} says word for word what ${seenTexts.get(text.trim())} says - one recording, one text`);
+    else seenTexts.set(text.trim(), sp.id);
+    const pic = text.match(/\p{Extended_Pictographic}/u);
+    if (pic) err(`${ctx} emoji ${pic[0]} in a spot - it is spoken; describe it instead`);
+    const named = text.match(WEEKDAY_WORDS);
+    if (named && !sp.if?.day) warn(`${ctx} names "${named[0]}" but plays on any day - give it if.day, or say it without the weekday`);
+    // Ten to twenty-five seconds is a spot. Under it the jingle is half the
+    // spot; over it the narrator's next scene cuts most of it off. An ident
+    // is a line, a story is half a minute and more - each kind its own range,
+    // fifteen characters a second.
+    const len = text.trim().length;
+    const [lo, hi] = RADIO_LENGTHS[sp.kind] ?? RADIO_LENGTHS.spot;
+    if (len < lo) warn(`${ctx} text is ${len} characters - a ${sp.kind} runs ${lo} at least`);
+    if (len > hi) warn(`${ctx} text is ${len} characters - a ${sp.kind} runs ${hi} at most`);
+  });
+  info(`radio: ${(spots ?? []).length} spots, ${(spots ?? []).filter(s => s?.if).length} with a condition, ${(spots ?? []).filter(s => s?.when).length} with a time window`);
+}
+
 /* ---------- 13) Years the calendar can overtake ---------- */
 // The game is played for years after a line is written. Three kinds of year
 // go wrong on their own, at 0 errors and 0 warnings:

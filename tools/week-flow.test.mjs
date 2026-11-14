@@ -3,6 +3,7 @@
 // Run: node --conditions browser --import ./test/register.mjs test/week-flow.test.mjs
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 
 // --- browser shims -----------------------------------------------------------
 const store = new Map();
@@ -1095,7 +1096,7 @@ console.log('Music:');
 {
     // Audio stub - the real element does not exist under node.
     class FakeAudio {
-        constructor(src) { this.src = src; this.volume = 1; this.paused = true; this.loop = false; this.preload = ''; this._h = {}; }
+        constructor(src) { this.src = src; this.volume = 1; this.paused = true; this.loop = false; this.preload = ''; this._h = {}; this.currentTime = 0; this.ended = false; }
         play() { this.paused = false; return Promise.resolve(); }
         pause() { this.paused = true; }
         addEventListener(e, f) { this._h[e] = f; }
@@ -1106,7 +1107,7 @@ console.log('Music:');
     const wait = (ms) => new Promise(r => setTimeout(r, ms));
 
     await ok('A track fades in rather than starting hard', async () => {
-        state.musicEnabled = true; state.musicVolume = 0.8; state.musicStyle = 'radio';
+        state.musicEnabled = true; state.musicVolume = 0.8;
         mus.initMusic();
         mus.playMusic('office');
         const key = state.currentMusicTrack;
@@ -1116,7 +1117,7 @@ console.log('Music:');
     });
 
     await ok('The replaced track is paused and reset to its volume', async () => {
-        state.musicEnabled = true; state.musicVolume = 0.8; state.musicStyle = 'radio';
+        state.musicEnabled = true; state.musicVolume = 0.8;
         mus.initMusic();
         mus.playMusic('office');
         const previousTrack = state.currentMusicTrack;
@@ -1129,24 +1130,28 @@ console.log('Music:');
     });
 
     await ok('The music follows the tab, but only what it paused itself', async () => {
-        state.musicEnabled = true; state.musicVolume = 0.8; state.musicStyle = 'lofi';
+        state.musicEnabled = true; state.musicVolume = 0.8;
         mus.initMusic();
         mus.playMusic('office');
-        // 750 for a 600 ms fade-in, like the test above it: while
-        // fadeTimers[key] is still set syncMusicToVisibility returns without
-        // pausing, so an overrun here would fail the tab assertion further
-        // down rather than a volume - and look like a broken feature.
-        await wait(750);
         const key = state.currentMusicTrack;
-        assert.equal(mus.bgmTracks[key].paused, false, 'nothing was playing to begin with');
-
+        const all = () => Object.values(mus.bgmTracks);
+        // Inside the fade-in (7.2): up to then a running fade kept the tab
+        // from pausing anything, and a tab left within 600 ms of a scene
+        // change played on in the background.
+        await wait(100);
+        assert.ok(mus.fadeTimers[key], 'the bench lost its fade-in');
+        mus.bgmTracks[key].currentTime = 30;      // the fake does not advance
         globalThis.document.hidden = true;
         mus.syncMusicToVisibility();
         assert.ok(mus.bgmTracks[key].paused, 'the music played on in a tab nobody was looking at');
+        assert.ok(Math.abs(mus.bgmTracks[key].volume - mus.musicTarget(key)) < 0.02,
+                  'the fade-in was left half-way, and the piece would come back at that');
 
         globalThis.document.hidden = false;
         mus.syncMusicToVisibility();
+        assert.equal(state.currentMusicTrack, key, 'coming back brought another piece');
         assert.equal(mus.bgmTracks[key].paused, false, 'the music never came back');
+        await wait(750);
 
         // A track the GAME stopped is none of its business - otherwise coming
         // back to the tab would resurrect music that was switched off.
@@ -1154,6 +1159,43 @@ console.log('Music:');
         globalThis.document.hidden = true;  mus.syncMusicToVisibility();
         globalThis.document.hidden = false; mus.syncMusicToVisibility();
         assert.ok(mus.bgmTracks[key].paused, 'a stopped track came back with the tab');
+
+        // A decision that falls into the hidden tab - the morning after a
+        // boot sequence the player walked away from - waits for the way back,
+        // and the way back makes it for the moment it finds: here the clock
+        // moved on to the afternoon meanwhile.
+        const { CUES } = await import('../src/engine/music_cues.js');
+        const kept = state.time;
+        state.al = 0; state.cr = 0; state.time = 15 * 60;
+        globalThis.document.hidden = true;
+        mus.playMusic('office');
+        assert.ok(all().every(t => t.paused), 'a piece started in a tab nobody was looking at');
+        globalThis.document.hidden = false;
+        mus.syncMusicToVisibility();
+        assert.ok(mus.isAudible(state.currentMusicTrack), 'the decision the tab held back was never made');
+        assert.equal(CUES[state.currentMusicTrack].pool, 'afternoon', 'the way back played the piece from before');
+        state.time = kept;
+        await wait(750);
+
+        // So does a piece that runs out there...
+        const now = state.currentMusicTrack;
+        globalThis.document.hidden = true;
+        mus.bgmTracks[now]._h.ended();
+        assert.ok(mus.musicPausedByTab, 'a piece ending in the hidden tab left nothing for the way back');
+        globalThis.document.hidden = false;
+        mus.syncMusicToVisibility();
+        assert.ok(mus.isAudible(state.currentMusicTrack), 'the piece that ran out was never followed');
+        await wait(750);
+
+        // ...and a stop meanwhile cancels the way back, or the end of a day
+        // reached in the background would get its music back.
+        mus.stopMusic(0);
+        globalThis.document.hidden = true;
+        mus.playMusic('office');
+        mus.stopMusic(0);
+        globalThis.document.hidden = false;
+        mus.syncMusicToVisibility();
+        assert.ok(all().every(t => t.paused), 'the music came back after a stop');
     });
 
     await ok('A platform that refuses track.volume is noticed', () => {
@@ -1179,18 +1221,36 @@ console.log('Music:');
         assert.deepEqual(fine.gainNodes, {}, 'a graph was built where none was needed');
     });
 
-    await ok('A fixed style loops seamlessly, the radio does not', () => {
-        state.musicEnabled = false; state.musicStyle = 'radio';
+    await ok('No piece loops: one that ends brings on the next of its pool', async () => {
+        // The house band (7.2) has an ending in every piece, and `ended` is
+        // the one moment the music moves on without a scene asking. A piece
+        // set to loop would never end, and the day would hear one piece.
+        resetState();
+        state.musicEnabled = true; state.musicVolume = 0.8;
+        state.isPartyMode = false; state.bossTimer = null; state.activeEvent = false;
+        state.time = 11 * 60;                                // the office proper
         mus.initMusic();
-        assert.equal(mus.bgmTracks.lofi.loop, false, 'the radio must not loop');
-        mus.changeMusicStyle('lofi');
-        assert.equal(mus.bgmTracks.lofi.loop, true, 'a fixed style does not loop');
-        mus.changeMusicStyle('radio');
-        assert.equal(mus.bgmTracks.lofi.loop, false, 'switching back does not take');
+        mus.musicRun = null;
+        const cues = await import('../src/engine/music_cues.js');
+        for (const id of Object.keys(cues.CUES)) {
+            const track = mus.trackFor(id);
+            assert.ok(track, `${id} has no file in music_files.js`);
+            assert.equal(track.loop, false, `${id} loops and would never end`);
+        }
+        mus.playMusic('office');
+        const first = state.currentMusicTrack;
+        assert.equal(cues.CUES[first].pool, 'day');
+        await wait(700);
+        mus.bgmTracks[first]._h.ended();                     // the piece runs out
+        const next = state.currentMusicTrack;
+        assert.notEqual(next, first, 'the piece followed itself');
+        assert.equal(cues.CUES[next].pool, 'day', 'the next piece came from another pool');
+        assert.equal(mus.bgmTracks[next].currentTime, 0, 'the next piece began in the middle');
+        mus.stopMusic(0);
     });
 
     await ok('The volume slider beats a running fade', async () => {
-        state.musicEnabled = true; state.musicVolume = 0.8; state.musicStyle = 'radio';
+        state.musicEnabled = true; state.musicVolume = 0.8;
         mus.initMusic();
         mus.playMusic('office');
         const key = state.currentMusicTrack;
@@ -1198,6 +1258,467 @@ console.log('Music:');
         await wait(750);
         assert.ok(Math.abs(mus.bgmTracks[key].volume - mus.musicTarget(key)) < 0.02,
                   `the fade overwrites the slider: ${mus.bgmTracks[key].volume}`);
+    });
+
+    await ok('A duck inside a stop does not undo the stop', async () => {
+        // stopMusic() fades out and pauses in the fade's callback. A duck
+        // fade replaced that fade and its pause with it: a line ending inside
+        // the 400 ms of a restart (the settings' sample, hushed as the menu
+        // closes) left the old piece playing under the new day's.
+        state.musicEnabled = true; state.musicVolume = 0.8;
+        mus.initMusic();
+        mus.duckReasons = null;
+        mus.playMusic('office');
+        await wait(750);
+        const key = state.currentMusicTrack;
+        mus.duckMusic(true, 'narration');
+        mus.stopMusic();
+        await wait(100);
+        mus.duckMusic(false, 'narration');
+        await wait(500);
+        assert.ok(mus.bgmTracks[key].paused, "the duck took the stop's pause away");
+        assert.equal(mus.musicRuntime().leaving.has(key), false, 'the piece stayed on its way out');
+        assert.ok(Math.abs(mus.bgmTracks[key].volume - mus.musicTarget(key)) < 0.02,
+                  'the stopped piece was not left at its level for the next play()');
+    });
+
+    await ok('A piece that ends inside a stop brings on no other', async () => {
+        state.musicEnabled = true; state.musicVolume = 0.8;
+        mus.initMusic();
+        mus.playMusic('office');
+        await wait(750);
+        const key = state.currentMusicTrack;
+        mus.stopMusic();
+        mus.bgmTracks[key]._h.ended();
+        assert.equal(state.currentMusicTrack, key, 'the stop was answered with the next piece');
+        await wait(500);
+        assert.ok(Object.values(mus.bgmTracks).every(t => t.paused), 'a piece plays on after the stop');
+    });
+
+    await ok('A piece built again leaves the gain node of its old element behind', () => {
+        // Where track.volume is refused (iOS) a plain element is heard through
+        // a gain node of its own. startCue() replaces a plain element with
+        // one in layers or in the room; if that graph then fails, the plain
+        // element built after it must not find the old node - it would set
+        // the volume on an element nobody hears and play at full blast.
+        const box = { ...audio, state: { ...state }, musicRun: null, fadeTimers: {},
+                      bgmTracks: { day_1: { paused: true } }, gainNodes: { day_1: 'old' },
+                      musicGraphs: {}, wantsGraph: () => true, trackFor: () => null };
+        box.startCue('day_1', 0);
+        assert.equal('day_1' in box.bgmTracks, false, 'the plain element was kept');
+        assert.equal('day_1' in box.gainNodes, false, "the old element's gain node was kept");
+    });
+
+    // ---------------------------------------- choosing the next piece (7.2)
+    // The rules live in music_cues.js as pure functions, so they are held
+    // here without any element at all; the engine half follows below.
+    const cues = await import('../src/engine/music_cues.js');
+
+    await ok('housePool() ranks the moment: gala, emergency, lunch, mood, clock', () => {
+        const hp = cues.housePool;
+        const at = (h, m = 0) => h * 60 + m;
+        assert.equal(hp({ minute: at(8) }), 'morning');
+        assert.equal(hp({ minute: at(9, 59) }), 'morning');
+        assert.equal(hp({ minute: at(10) }), 'day', 'the morning ran past ten');
+        assert.equal(hp({ minute: at(13, 59) }), 'day');
+        assert.equal(hp({ minute: at(14) }), 'afternoon', 'the midday ran past two');
+        // Each rank against the one below it.
+        assert.equal(hp({ tense: true, minute: at(8) }), 'tense', 'the clock beat the mood');
+        assert.equal(hp({ lunch: true, tense: true, minute: at(12) }), 'lunch', 'the mood beat lunch');
+        assert.equal(hp({ boss: true, lunch: true, tense: true }), 'emergency', 'lunch beat the emergency');
+        assert.equal(hp({ party: true, boss: true, lunch: true, tense: true }), 'gala', 'the emergency beat the gala');
+        assert.equal(hp({ party: true, loc: 'lounge' }), 'lounge', 'the lounge has no piece of its own');
+    });
+
+    await ok('The mood does not flutter at its threshold', () => {
+        const { nextMood, TENSE_ON, TENSE_OFF } = cues;
+        assert.ok(TENSE_OFF < TENSE_ON, 'no gap between the two thresholds, so no hysteresis');
+        assert.equal(nextMood('calm', TENSE_ON - 1, 0), 'calm');
+        assert.equal(nextMood('calm', 0, TENSE_ON), 'tense', 'the radar alone does not make it tense');
+        assert.equal(nextMood('calm', TENSE_ON, 0), 'tense', 'anger alone does not make it tense');
+        // Inside the gap it holds whatever it was.
+        assert.equal(nextMood('tense', TENSE_OFF, TENSE_OFF), 'tense', 'it let go inside the gap');
+        assert.equal(nextMood('calm', TENSE_ON - 1, TENSE_ON - 1), 'calm', 'it took hold inside the gap');
+        assert.equal(nextMood('tense', TENSE_OFF - 1, 0), 'calm', 'it never lets go');
+    });
+
+    await ok('A mood cuts into a running piece only by the rules', () => {
+        const { changeOver, SOFT_MIN_PLAYED: P, SOFT_GAP_MS: G } = cues;
+        for (const to of ['emergency', 'gala', 'lunch'])
+            assert.equal(changeOver('day', to, 0, 0), 'cut', `${to} waited for the piece to end`);
+        // Into the tense pool only after 45 s of the running piece, and once per 90 s.
+        assert.equal(changeOver('day', 'tense', P - 1, G), 'keep', 'the mood cut into a piece that had just begun');
+        assert.equal(changeOver('day', 'tense', P, G - 1), 'keep', 'two soft changes inside 90 seconds');
+        assert.equal(changeOver('day', 'tense', P, G), 'soft', 'the mood never takes over');
+        // Never back to calm in the middle of a piece, never for the clock.
+        assert.equal(changeOver('tense', 'day', 999, Infinity), 'keep', 'relief cut into a piece');
+        assert.equal(changeOver('morning', 'day', 999, Infinity), 'keep', 'the clock cut into a piece');
+        assert.equal(changeOver('day', 'day', 0, 0), 'keep');
+        // Out of the canteen after its 45 s; out of an emergency or the gala at once.
+        assert.equal(changeOver('lunch', 'afternoon', P, G), 'soft', 'the canteen plays on into the afternoon');
+        assert.equal(changeOver('lunch', 'afternoon', P - 1, G), 'keep');
+        assert.equal(changeOver('emergency', 'day', 0, 0), 'cut', 'the emergency music outlived its emergency');
+        assert.equal(changeOver('gala', 'day', 0, 0), 'cut');
+    });
+
+    await ok('The bag plays every piece before any twice, and never one twice in a row', () => {
+        const { drawCue } = cues;
+        const table = { a: { pool: 'tense' }, b: { pool: 'tense' }, c: { pool: 'tense' },
+                        solo: { pool: 'lunch' }, x: { pool: 'day' }, y: { pool: 'day' } };
+        // A fixed generator, so a failure here fails the same way every run.
+        let seed = 7;
+        const rng = () => ((seed = (seed * 16807) % 2147483647) / 2147483647);
+        const bags = {};
+        const seen = [];
+        let last = null;
+        for (let i = 0; i < 300; i++) {
+            const id = drawCue('tense', bags, last, rng, table);
+            assert.notEqual(id, last, `"${id}" twice in a row at draw ${i}`);
+            seen.push(id);
+            last = id;
+        }
+        for (let i = 0; i < 300; i += 3)
+            assert.equal(new Set(seen.slice(i, i + 3)).size, 3, `bag ${i / 3} repeats a piece before the others`);
+
+        // A pool with one piece borrows rather than play it twice running...
+        assert.ok(['x', 'y'].includes(drawCue('lunch', {}, 'solo', rng, table)), 'the canteen piece followed itself');
+        assert.equal(drawCue('lunch', {}, 'x', rng, table), 'solo');
+        // ...a pool with none borrows from its neighbour...
+        assert.ok(['x', 'y'].includes(drawCue('morning', {}, null, rng, table)), 'an empty pool stayed silent');
+        // ...and the one piece there is beats silence.
+        assert.equal(drawCue('gala', {}, 'only', rng, { only: { pool: 'gala' } }), 'only');
+        assert.equal(drawCue('emergency', {}, null, rng, {}), null);
+    });
+
+    await ok('After an emergency the interrupted piece carries on where it was', async () => {
+        resetState();
+        state.musicEnabled = true; state.musicVolume = 0.8;
+        state.isPartyMode = false; state.bossTimer = null; state.activeEvent = false;
+        mus.initMusic();
+        mus.musicRun = null;
+        mus.playMusic('office');
+        const piece = state.currentMusicTrack;
+        await wait(700);
+        mus.bgmTracks[piece].currentTime = 83.5;          // well into the piece
+        mus.playMusic('boss');
+        const fight = state.currentMusicTrack;
+        assert.equal(cues.CUES[fight]?.pool, 'emergency', 'the emergency did not interrupt');
+        await wait(300);
+        assert.ok(mus.bgmTracks[piece].paused, 'the office piece played on under the emergency');
+
+        mus.playMusic('office');                          // what reset() says after the fight
+        assert.equal(state.currentMusicTrack, piece, 'a new piece was drawn instead of the old one going on');
+        assert.equal(mus.bgmTracks[piece].currentTime, 83.5, 'the piece started over');
+        await wait(700);
+        assert.equal(mus.bgmTracks[piece].paused, false, 'the piece never came back');
+        assert.ok(mus.bgmTracks[fight].paused, 'the emergency music played on');
+
+        // The next emergency starts its music from the top, not from where
+        // the last one was left.
+        mus.bgmTracks[fight].currentTime = 40;
+        mus.playMusic('boss');
+        assert.equal(mus.bgmTracks[state.currentMusicTrack].currentTime, 0, 'an emergency began in the middle of its music');
+        mus.stopMusic(0);
+    });
+
+    // ------------------------------------------------- density (7.2, stage 2b)
+    await ok('The pressure is the largest of the three, and each alone can max it', () => {
+        const { pressure } = cues;
+        assert.equal(pressure({}), 0);
+        assert.equal(pressure({ tickets: 10 }), 1, 'a full ticket queue alone does not reach the top');
+        assert.equal(pressure({ al: 100 }), 1, 'anger alone does not reach the top');
+        assert.equal(pressure({ cr: 100 }), 1, 'the radar alone does not reach the top');
+        // The largest, not a weighted sum: a radar of 95 on a quiet day is a
+        // player one click from the sack.
+        assert.equal(pressure({ tickets: 1, al: 10, cr: 95 }), 0.95);
+        assert.ok(pressure({ cr: 60 }) > pressure({ cr: 40 }), 'the radar does not move it');
+        assert.ok(pressure({ al: 60 }) > pressure({ al: 40 }), 'anger does not move it');
+        assert.ok(pressure({ tickets: 6 }) > pressure({ tickets: 4 }), 'tickets do not move it');
+        assert.equal(pressure({ tickets: 30, al: 400 }), 1, 'it runs past 1');
+        assert.equal(pressure({ al: -20 }), 0, 'it runs below 0');
+    });
+
+    await ok('The rhythm never falls silent, and at full pressure it is all there', () => {
+        const { rhythmGain, RHYTHM_FLOOR_DB, PULL_FROM } = cues;
+        const floor = 10 ** (RHYTHM_FLOOR_DB / 20);
+        assert.ok(rhythmGain(0) > 0, 'the floor is silence: the bed lays the seams of the split bare');
+        assert.ok(Math.abs(rhythmGain(0) - floor) < 1e-9);
+        assert.equal(rhythmGain(PULL_FROM), rhythmGain(0), 'the band pulls in before the day presses');
+        assert.ok(rhythmGain(0.6) > rhythmGain(0.4), 'the rhythm does not follow the pressure');
+        assert.equal(rhythmGain(1), 1, 'the full band is not the full piece');
+        // A piece with a floor of its own keeps to it.
+        assert.ok(Math.abs(rhythmGain(0, -12) - 10 ** (-12 / 20)) < 1e-9, 'a piece lost its own floor');
+        assert.equal(rhythmGain(1, -12), 1);
+    });
+
+    // A Web Audio context for the bench: records what is built and what is
+    // asked of it. `tone(channel, buffer)` fills an analyser's buffer.
+    const fakeContext = (tone = () => {}) => {
+        const made = { sources: [], splitters: [], targets: [], analysers: 0, filters: 0 };
+        const node = (extra = {}) => ({ connect() {}, disconnect() {}, ...extra });
+        const param = (value, name = '') => ({ value, setTargetAtTime(t, at, tau) { made.targets.push({ t, tau, name }); } });
+        return {
+            made, state: 'running', sampleRate: 48000, currentTime: 0,
+            destination: node(), resume: () => Promise.resolve(),
+            createMediaElementSource(el) { made.sources.push(el); return node(); },
+            createChannelSplitter(n) { made.splitters.push(n); return node(); },
+            createChannelMerger() { return node(); },
+            createGain() { return node({ gain: param(1, 'gain') }); },
+            createBiquadFilter() { made.filters++; return node({ type: 'lowpass', frequency: param(350, 'hz'), Q: param(1) }); },
+            createAnalyser() {
+                const channel = made.analysers++;
+                return node({ fftSize: 2048, getFloatTimeDomainData: (buf) => tone(channel, buf) });
+            },
+        };
+    };
+    const { MUSIC_FILES, MUSIC_PROBE } = await import('../src/engine/music_files.js');
+
+    await ok('Only a layered piece goes through the splitter, and only once the probe said yes', () => {
+        const ctx = fakeContext();
+        const box = { ...audio, state, audioCtx: ctx, layersWork: true, musicGraphs: null,
+                      bgmTracks: null, gainNodes: {}, volumeWorks: null, musicPressure: null };
+        box.initMusic();
+        const fight = box.trackFor('emergency_2');
+        assert.ok(fight.src.endsWith(MUSIC_FILES.emergency_2.stereo), 'the emergency did not load its stereo file');
+        assert.equal(ctx.made.sources.length, 0, 'a stereo piece was routed through the graph');
+
+        const day = box.trackFor('day_1');
+        assert.ok(day.src.endsWith(MUSIC_FILES.day_1.quad), 'a layered piece did not load its four channels');
+        assert.deepEqual(ctx.made.sources, [day], 'the layered piece is not in the graph');
+        assert.deepEqual(ctx.made.splitters, [4], 'the four channels were not split');
+
+        // Its volume is the graph's: the element stays at 1, the level moves.
+        box.setTrackVolume('day_1', 0.3);
+        assert.equal(day.volume, 1, 'the element volume was turned as well');
+        assert.equal(box.trackVolume('day_1'), 0.3);
+        assert.equal(box.musicGraphs.day_1.level.gain.value, 0.3, 'the level did not move');
+
+        // Without the probe's yes the same piece plays its stereo file.
+        const ctx2 = fakeContext();
+        const shy = { ...audio, state, audioCtx: ctx2, layersWork: false, musicGraphs: null,
+                      bgmTracks: null, gainNodes: {}, volumeWorks: null, musicPressure: null };
+        shy.initMusic();
+        assert.ok(shy.trackFor('day_1').src.endsWith(MUSIC_FILES.day_1.stereo), 'the layers played without the probe');
+        assert.equal(ctx2.made.sources.length, 0, 'a graph was built without the probe');
+
+        // A graph that will not build after the yes: the piece plays its
+        // stereo file, and so does every layered piece after it.
+        const ctx3 = fakeContext();
+        ctx3.createMediaElementSource = () => { throw new Error('taken'); };
+        const odd = { ...audio, state, audioCtx: ctx3, layersWork: true, musicGraphs: null,
+                      bgmTracks: null, gainNodes: {}, volumeWorks: null, musicPressure: null };
+        odd.initMusic();
+        const warn = console.warn; console.warn = () => {};
+        try {
+            assert.ok(odd.trackFor('day_1').src.endsWith(MUSIC_FILES.day_1.stereo), 'a broken graph left the piece on four channels');
+        } finally { console.warn = warn; }
+        assert.equal(odd.layersWork, false, 'a broken graph is tried again for every piece');
+        assert.ok(odd.trackFor('day_2').src.endsWith(MUSIC_FILES.day_2.stereo), 'the next piece went back to four channels');
+    });
+
+    await ok('The band leans in as the day presses, through the stat bars', () => {
+        const ctx = fakeContext();
+        const box = { ...audio, state, audioCtx: ctx, musicPressure: null,
+                      musicGraphs: { day_1: { rhythm: ctx.createGain(), level: ctx.createGain(), levelValue: 0 },
+                                     morning_1: { rhythm: ctx.createGain(), level: ctx.createGain(), levelValue: 0 } } };
+        resetState();
+        state.al = 0; state.cr = 0; state.tickets = 0;
+        const last = (n) => ctx.made.targets.slice(-n).map(x => +x.t.toFixed(4));
+        const want = (p) => [+cues.rhythmGain(p).toFixed(4), +cues.rhythmGain(p, -12).toFixed(4)];
+        box.followPressure();
+        assert.deepEqual(last(2), want(0), 'a quiet desk does not sit at the floor, each piece at its own');
+        state.tickets = 7;
+        box.followPressure();
+        assert.deepEqual(last(2), want(0.7), 'the tickets piled up and the band did not move');
+        assert.ok(want(0.7)[0] > want(0)[0], 'the band did not lean in');
+        assert.ok(ctx.made.targets.every(x => x.tau === cues.RHYTHM_TAU), 'the band jumps instead of gliding');
+        const n = ctx.made.targets.length;
+        box.followPressure();
+        assert.equal(ctx.made.targets.length, n, 'nothing moved, and the band was told again');
+        resetState();
+
+        // And it is asked where the bars are drawn and at every scene. The
+        // real updateUI needs a DOM the bench does not have, so the hook is
+        // held at the source; the bench engine stubs both callers.
+        const body = (src, name) => {
+            const at = src.indexOf(`    ${name}: function(`);
+            return src.slice(at, src.indexOf('\n    },', at));
+        };
+        const uiSrc = readFileSync(new URL('../src/engine/engine_ui.js', import.meta.url), 'utf-8');
+        const audioSrc = readFileSync(new URL('../src/engine/engine_audio.js', import.meta.url), 'utf-8');
+        assert.match(body(uiSrc, 'updateUI'), /this\.followPressure\(\)/, 'the stat bars no longer move the band');
+        assert.match(body(audioSrc, 'playMusic'), /this\.followPressure\(\)/, 'a new scene no longer reads the pressure');
+    });
+
+    await ok('The runtime probe takes the layers only when every channel carries its own tone', async () => {
+        const { toneMatches, PROBE_TONES } = cues;
+        const sine = (hz, buf, sr = 48000) => { for (let i = 0; i < buf.length; i++) buf[i] = 0.25 * Math.sin(2 * Math.PI * hz * i / sr); };
+        const b = new Float32Array(2048);
+        sine(700, b);
+        assert.equal(toneMatches(b, 700, 48000), true, 'a clean tone was missed');
+        assert.equal(toneMatches(b, 300, 48000), false, 'a channel with the wrong tone passed');
+        assert.equal(toneMatches(new Float32Array(2048), 700, 48000), false, 'silence passed');
+
+        const RealAudio = globalThis.Audio;
+        class PlayingAudio extends RealAudio {
+            play() { this.paused = false; setTimeout(() => this._h.playing?.(), 0); return Promise.resolve(); }
+        }
+        globalThis.Audio = PlayingAudio;
+        const run = async (tone) => {
+            const box = { ...audio, state, audioCtx: fakeContext(tone), layersWork: null };
+            box.probeLayers();
+            assert.equal(box.layersWork, false, 'the layers were taken before the probe had answered');
+            await wait(320);
+            return box.layersWork;
+        };
+        try {
+            assert.equal(await run((c, buf) => sine(PROBE_TONES[c], buf)), true, 'four good channels were refused');
+            // A browser that mixes down first: channels 3 and 4 arrive empty.
+            assert.equal(await run((c, buf) => c < 2 && sine(PROBE_TONES[c], buf)), false, 'a mixed-down file was taken for four channels');
+            // Two channels swapped.
+            assert.equal(await run((c, buf) => sine(PROBE_TONES[[0, 1, 3, 2][c]], buf)), false, 'swapped channels passed');
+        } finally {
+            globalThis.Audio = RealAudio;
+        }
+        assert.ok(MUSIC_PROBE.startsWith('probe.quad.'), 'the probe file has no name in the table');
+
+        // Asked at the first input, so the answer is in before the first
+        // piece is drawn - and only by a gesture play() accepts: touchstart
+        // is none.
+        const shell = readFileSync(new URL('../src/engine.js', import.meta.url), 'utf-8');
+        const hook = shell.match(/for \(const ev of \[([^\]]*)\]\) \{\s*document\.addEventListener\(ev, \(\) => \{\s*if \(engine\.state\.musicEnabled\) engine\.probeLayers\(\);\s*\}, \{ once: true, capture: true \}\);/);
+        assert.ok(hook, 'the first input no longer asks the probe');
+        const events = hook[1].split(',').map(s => s.trim().replace(/'/g, ''));
+        assert.deepEqual(events.sort(), ['keydown', 'pointerdown', 'touchend'], 'the probe is asked by an event that is no gesture');
+    });
+
+    // --- the gala's rooms (Phase 3) ---------------------------------------------
+    await ok('Every gala station has a sound, and the far ones are muffled', async () => {
+        await ensure('party');
+        const stations = new Set(DB.party.map(ev => ev.loc).filter(Boolean));
+        assert.ok(stations.has('lounge') && stations.size === 6, `the gala has other stations now: ${[...stations].join(', ')}`);
+        for (const loc of stations) {
+            if (loc === 'lounge') continue;                  // a piece of its own instead
+            assert.ok(cues.PARTY_ROOMS[loc], `${loc} has no sound and is heard in the open`);
+        }
+        for (const loc of Object.keys(cues.PARTY_ROOMS)) {
+            assert.ok(stations.has(loc), `${loc} has a sound but is no station`);
+        }
+        const open = cues.roomSound(null);
+        assert.deepEqual(open, { hz: cues.OPEN_HZ, gain: 1 }, 'the foyer is not in the open');
+        assert.deepEqual(cues.roomSound('dance'), open, 'the dance floor is not in front of the band');
+        const [bar, toilet, outside] = ['bar', 'toilet', 'outside'].map(cues.roomSound);
+        assert.ok(bar.hz < open.hz && bar.gain < 1, 'the bar sounds like the dance floor');
+        assert.ok(toilet.hz < bar.hz && toilet.gain < bar.gain, 'the toilet is not behind a wall');
+        assert.ok(outside.hz < toilet.hz && outside.gain < toilet.gain, 'outside is not further away than the toilet');
+    });
+
+    await ok('The gala goes through one room, and the room follows the station', () => {
+        const ctx = fakeContext();
+        const box = { ...audio, state, audioCtx: ctx, layersWork: false, musicGraphs: null, roomBus: null,
+                      roomWorks: null, bgmTracks: null, gainNodes: {}, volumeWorks: null, musicPressure: null, musicRun: null };
+        resetState();
+        state.musicEnabled = true; state.musicVolume = 0.8;
+        state.isPartyMode = true; state.currentEventLoc = null;
+        box.initMusic();
+        const one = box.trackFor('gala_1');
+        const two = box.trackFor('gala_2');
+        assert.deepEqual(ctx.made.sources, [one, two], 'a gala piece is not in the room');
+        assert.equal(ctx.made.filters, 1, 'each piece has a room of its own, and they would drift apart');
+        box.trackFor('emergency_2');
+        assert.equal(ctx.made.sources.length, 2, 'a piece outside the gala went into the room');
+        box.setTrackVolume('gala_1', 0.4);
+        assert.equal(one.volume, 1, 'the element volume was turned as well');
+        assert.equal(box.musicGraphs.gala_1.level.gain.value, 0.4, 'the level did not move');
+        assert.doesNotThrow(() => box.followPressure(), 'the rhythm was asked of a gala piece, which has none');
+
+        // The scene decides: the station of the event on screen.
+        const last = () => ctx.made.targets.slice(-2).map(x => [x.name, +x.t.toFixed(4), x.tau]);
+        state.currentEventLoc = 'toilet';
+        box.playMusic();
+        const toilet = cues.roomSound('toilet');
+        assert.deepEqual(last(), [['hz', toilet.hz, cues.ROOM_TAU], ['gain', +toilet.gain.toFixed(4), cues.ROOM_TAU]],
+                         'the band does not sound as it would from the toilet');
+        state.currentEventLoc = null;                           // back in the foyer
+        box.playMusic();
+        assert.deepEqual(last(), [['hz', cues.OPEN_HZ, cues.ROOM_TAU], ['gain', 1, cues.ROOM_TAU]], 'the foyer kept the wall');
+
+        // A context that does not run: the gala plays plain, as before.
+        const sleepy = fakeContext();
+        sleepy.state = 'suspended';
+        const plain = { ...audio, state, audioCtx: sleepy, layersWork: false, musicGraphs: null, roomBus: null,
+                        roomWorks: null, bgmTracks: null, gainNodes: {}, volumeWorks: null, musicPressure: null, musicRun: null };
+        plain.initMusic();
+        plain.trackFor('gala_3');
+        assert.equal(sleepy.made.sources.length, 0, 'a gala piece went into a graph whose context sleeps');
+        resetState();
+
+        // The station is written where every scene begins.
+        const events = readFileSync(new URL('../src/engine/engine_events.js', import.meta.url), 'utf-8');
+        const at = events.indexOf('    renderTerminal: function(');
+        assert.match(events.slice(at, events.indexOf('\n    },', at)), /this\.state\.currentEventLoc = ev\.loc \?\? null/,
+                     'a scene no longer says where at the gala it is');
+    });
+
+    await ok('The lounge has its own piece, and both rooms carry on where they were', async () => {
+        resetState();
+        state.musicEnabled = true; state.musicVolume = 0.8;
+        state.isPartyMode = true; state.currentEventLoc = null; state.bossTimer = null;
+        mus.initMusic();
+        mus.musicRun = null;
+        mus.playMusic('gala');
+        const hall = state.currentMusicTrack;
+        assert.equal(cues.CUES[hall].pool, 'gala');
+        await wait(700);
+        mus.bgmTracks[hall].currentTime = 61;
+
+        state.currentEventLoc = 'lounge';
+        mus.playMusic();
+        assert.equal(state.currentMusicTrack, 'gala_lounge', 'the lounge plays the dance band');
+        await wait(500);
+        assert.ok(mus.bgmTracks[hall].paused, 'the hall played on in the lounge');
+        mus.bgmTracks.gala_lounge.currentTime = 42;
+
+        state.currentEventLoc = null;                       // back in the foyer
+        mus.playMusic();
+        assert.equal(state.currentMusicTrack, hall, 'the hall drew a new piece instead of carrying on');
+        assert.equal(mus.bgmTracks[hall].currentTime, 61, 'the hall started its piece over');
+        await wait(700);
+        assert.ok(mus.bgmTracks.gala_lounge.paused, 'the lounge played on in the foyer');
+
+        state.currentEventLoc = 'lounge';                   // the second visit
+        mus.playMusic();
+        assert.equal(mus.bgmTracks.gala_lounge.currentTime, 42, 'the lounge began its piece again on every visit');
+        await wait(700);
+
+        // Run out during a visit, it starts again - the next dance number
+        // would be the wrong room.
+        mus.onMusicEnded('gala_lounge');
+        assert.equal(state.currentMusicTrack, 'gala_lounge', 'the lounge ran out into the dance band');
+        assert.equal(mus.bgmTracks.gala_lounge.currentTime, 0);
+        await wait(700);
+        mus.stopMusic(0);
+        resetState();
+    });
+
+    await ok('A gala does not bring back the office piece an emergency paused', async () => {
+        resetState();
+        state.musicEnabled = true; state.musicVolume = 0.8;
+        state.isPartyMode = false; state.bossTimer = null; state.activeEvent = false; state.time = 11 * 60;
+        mus.initMusic();
+        mus.musicRun = null;
+        mus.playMusic('office');
+        const office = state.currentMusicTrack;
+        await wait(700);
+        mus.bgmTracks[office].currentTime = 30;
+        mus.playMusic('boss');
+        await wait(300);
+        state.isPartyMode = true; state.currentEventLoc = null;
+        mus.playMusic('gala');
+        assert.equal(cues.CUES[state.currentMusicTrack].pool, 'gala', `the gala opened with ${state.currentMusicTrack}`);
+        await wait(700);
+        mus.stopMusic(0);
+        resetState();
     });
 }
 
@@ -2929,18 +3450,29 @@ await ok('Switching the music on picks the track of the moment', async () => {
     const { audio } = await import('../src/engine/engine_audio.js');
     const box = { state, ...audio };
 
+    // Since the house band (7.2) it answers with a POOL, not a track.
+    const office = ['morning', 'day', 'afternoon'];
     resetState();
     state.isPartyMode = false; state.bossTimer = null; state.currentEventType = null;
-    assert.equal(box.situationTrack(), 'office', 'an ordinary day no longer asks for office music');
+    assert.ok(office.includes(box.situationTrack()), 'an ordinary day no longer asks for office music');
 
     // A boss fight, recognised the way the rest of the engine recognises one.
     state.bossTimer = 1;
-    assert.equal(box.situationTrack(), 'boss', 'the boss fight would get office music');
-    state.bossTimer = null; state.currentEventType = 'boss';
-    assert.equal(box.situationTrack(), 'boss', 'the boss event would get office music');
+    assert.equal(box.situationTrack(), 'emergency', 'the boss fight would get office music');
+    state.bossTimer = null; state.currentEventType = 'boss'; state.activeEvent = true;
+    assert.equal(box.situationTrack(), 'emergency', 'the boss event would get office music');
+    // ...but not once it is over: reset() says so with its hint, and at idle
+    // the event type still names the fight that has ended.
+    assert.ok(office.includes(box.situationTrack('office')), 'a fight that has just ended keeps its music');
+    state.activeEvent = false;
+    assert.ok(office.includes(box.situationTrack()), 'an idle desk after a fight still asks for its music');
+
+    // Lunch is its own moment while its scene is on.
+    state.currentEventType = 'lunch'; state.activeEvent = true;
+    assert.equal(box.situationTrack(), 'lunch', 'the canteen scene would get office music');
 
     // The gala outranks everything.
-    state.currentEventType = null; state.isPartyMode = true;
+    state.currentEventType = null; state.activeEvent = false; state.isPartyMode = true;
     assert.equal(box.situationTrack(), 'gala', 'the gala would get office music');
     state.bossTimer = 1;
     assert.equal(box.situationTrack(), 'gala', 'the gala lost to a leftover boss timer');
@@ -2948,8 +3480,8 @@ await ok('Switching the music on picks the track of the moment', async () => {
     // And the stale memory must not decide any more: a finished fight cannot
     // bring its own music back.
     resetState();
-    state.currentMusicTrack = 'boss';
-    assert.equal(box.situationTrack(), 'office', 'a finished fight still claims its music');
+    state.currentMusicTrack = 'emergency_2';
+    assert.ok(office.includes(box.situationTrack()), 'a finished fight still claims its music');
 });
 
 await ok('The weekly meeting has a status line of its own', async () => {
@@ -3130,6 +3662,75 @@ await ok('A heavy hit reports on every channel left switched on', () => {
 
     // Relief stays quiet, as it always has.
     assert.ok(/a < 30 && c < 30/.test(body), 'negative values could now fire the impact');
+});
+
+await ok('A heavy hit is a heartbeat a laptop can hear, under the narrator and never twice the same', async () => {
+    // Chosen by ear (13.11.2026) to replace a sawtooth drop. What it rests on
+    // is not taste: the beats sit under the voice, an overtone carries them
+    // on small speakers, and a drift keeps the fifth hit of a day from
+    // sounding like the first.
+    const { heartbeat } = await import('../src/engine/engine_audio.js');
+    const audioSrc = readFileSync(new URL('../src/engine/engine_audio.js', import.meta.url), 'utf-8');
+    assert.ok(/type === 'impact'\) \{ heartbeat\(/.test(audioSrc), 'playAudio no longer plays the heartbeat on a hit');
+
+    const record = (v, rnd) => {
+        const sources = [];
+        const param = () => {
+            const p = { events: [] };
+            for (const m of ['setValueAtTime', 'linearRampToValueAtTime', 'exponentialRampToValueAtTime'])
+                p[m] = (value, time) => { p.events.push([value, time]); return p; };
+            return p;
+        };
+        const node = (extra) => ({ connect(to) { this.to = to; return to; }, ...extra });
+        const source = (extra) => {
+            const n = node({ start(t) { this.at = t; }, stop(t) { this.end = t; }, ...extra });
+            sources.push(n);
+            return n;
+        };
+        const ctx = {
+            sampleRate: 48000, destination: {},
+            createOscillator: () => source({ type: 'sine', frequency: param() }),
+            createBufferSource: () => source({}),
+            createGain: () => node({ gain: param() }),
+            createBiquadFilter: () => node({ Q: param(), frequency: param() }),
+            createBuffer: (ch, len, sr) => ({ sampleRate: sr, getChannelData: () => new Float32Array(len) }),
+        };
+        heartbeat(ctx, 0, v, rnd);
+        const gainOf = (n) => (n.to.gain ? n.to : n.to.to);
+        return sources.map(n => ({
+            at: n.at, end: n.end,
+            hz: n.frequency ? n.frequency.events[0][0] : null,
+            peak: Math.max(...gainOf(n).gain.events.map(e => e[0])),
+        }));
+    };
+
+    // A beat is everything under the ringing; by pitch, not by time, or a
+    // beat that drifted too far would pass for the ears.
+    const isBeat = (p) => p.hz === null || p.hz < 2000;
+    const parts = record(1, () => 0.5);
+    const beats = [...new Set(parts.filter(isBeat).map(p => +p.at.toFixed(3)))].sort((a, b) => a - b);
+    assert.deepEqual(beats, [0, 0.2], `not two beats 0.2 s apart: ${beats}`);
+    for (const at of beats) {
+        const beat = parts.filter(p => +p.at.toFixed(3) === at);
+        const tones = beat.filter(p => p.hz !== null);
+        const loudest = tones.reduce((a, b) => (b.peak > a.peak ? b : a));
+        assert.ok(loudest.hz < 100, `the beat at ${at} s sits at ${loudest.hz} Hz - in the narrator's voice`);
+        assert.ok(tones.some(p => p.hz >= 120), `the beat at ${at} s has nothing a laptop speaker can play`);
+        const sum = beat.reduce((a, p) => a + p.peak, 0);
+        assert.ok(sum < 1, `the beat at ${at} s adds up to ${sum.toFixed(2)} at full volume and can clip`);
+    }
+    const first = Math.max(...parts.filter(p => p.at === 0).map(p => p.peak));
+    const ears = parts.filter(p => p.hz >= 2000);
+    assert.equal(ears.length, 1, 'the ears no longer ring after the beats');
+    assert.ok(ears[0].at > 0.2 && ears[0].peak < first / 10,
+              'the ringing starts with the beats or is no longer quiet beside them');
+    assert.ok(Math.max(...parts.map(p => p.end)) <= 1.4, 'the hit outlasts 1.4 s');
+
+    // The drift: at both ends of the dice the gap and the pitch move, by 4% at most.
+    const gapAt = (r) => Math.max(...record(1, () => r).filter(isBeat).map(p => p.at));
+    const low = gapAt(0), high = gapAt(0.999);
+    assert.ok(high - low > 0.01, `the heartbeat no longer drifts (${low} to ${high} s)`);
+    assert.ok(low >= 0.2 * 0.96 && high <= 0.2 * 1.04, `the drift left 4%: ${low} to ${high} s`);
 });
 
 await ok('The gala badge shows once, not a grade', async () => {
@@ -4762,18 +5363,18 @@ await ok('The music ducks once for the fall and comes back once', async () => {
     const track = { paused: false, volume: 0.2 };
     const box = {
         ...audio,
-        state: { musicEnabled: true, musicVolume: 0.2, currentMusicTrack: 'elevator' },
-        bgmTracks: { elevator: track },
+        state: { musicEnabled: true, musicVolume: 0.2, currentMusicTrack: 'day_1' },
+        bgmTracks: { day_1: track },
         fadeTrack(key, target) { fades.push([key, +target.toFixed(3)]); },
     };
-    const lvl = (f) => +(0.2 * audio.MUSIC_TRIM.elevator * f).toFixed(3);
+    const lvl = (f) => +(0.2 * audio.MUSIC_TRIM.day_1 * f).toFixed(3);
     box.duckMusic(false);
     assert.equal(fades.length, 0, 'un-ducking music that was never ducked started a fade');
     box.duckMusic(true); box.duckMusic(true);
-    assert.deepEqual(fades, [['elevator', lvl(audio.DUCK.vending)]],
+    assert.deepEqual(fades, [['day_1', lvl(audio.DUCK.vending)]],
         'the duck has to fade once, to a fraction of the levelled volume');
     box.duckMusic(false); box.duckMusic(false);
-    assert.deepEqual(fades[1], ['elevator', lvl(1)], 'the music has to come back to its own volume');
+    assert.deepEqual(fades[1], ['day_1', lvl(1)], 'the music has to come back to its own volume');
     assert.equal(fades.length, 2, 'the way back faded twice');
 
     // Two reasons at two depths (6.4). The narrator ducks the music while it
@@ -4783,13 +5384,13 @@ await ok('The music ducks once for the fall and comes back once', async () => {
     // boolean.
     fades.length = 0;
     box.duckMusic(true, 'narration');
-    assert.deepEqual(fades, [['elevator', lvl(audio.DUCK.narration)]], 'speech does not duck the music');
+    assert.deepEqual(fades, [['day_1', lvl(audio.DUCK.narration)]], 'speech does not duck the music');
     box.duckMusic(true, 'vending');
-    assert.deepEqual(fades[1], ['elevator', lvl(audio.DUCK.vending)], 'the deeper reason did not win');
+    assert.deepEqual(fades[1], ['day_1', lvl(audio.DUCK.vending)], 'the deeper reason did not win');
     box.duckMusic(false, 'narration');
     assert.equal(fades.length, 2, 'letting go of the shallower reason moved the volume');
     box.duckMusic(false, 'vending');
-    assert.deepEqual(fades[2], ['elevator', lvl(1)], 'the music never came back');
+    assert.deepEqual(fades[2], ['day_1', lvl(1)], 'the music never came back');
 
     fades.length = 0;
     box.state.musicEnabled = false;
@@ -5498,33 +6099,140 @@ await ok('A slot says what it can do in a frame the item ground does not swallow
     }
 });
 
-await ok('All six tracks are levelled to one loudness', async () => {
-    // Measured with ffmpeg's EBU R128 meter, per whole file, and written down
-    // in MUSIC_TRIM. The claim the trim makes is that one slider position is
-    // one loudness: hold each track's own level plus its trim against the
-    // reference and they have to agree within half a decibel. Without this the
-    // table is six numbers nobody can check, and the ten and a half decibels
-    // the music used to span would creep back in unnoticed the next time a
-    // track is added.
+await ok('Every piece is levelled to one loudness, and the table says so', async () => {
+    // tools/master-music.mjs measures each file as it ships and writes the
+    // number into music_files.js; MUSIC_TRIM levels whatever the mastering did
+    // not. The claim is that one slider position is one loudness: each
+    // piece's measurement plus its trim against the reference, within half a
+    // decibel. The reference is the old set's - bossaantiqua measured -21.9
+    // LUFS, the quietest of the six, and the narrator was balanced against it
+    // - so both sets, old and new, have ONE level.
     const { audio } = await import('../src/engine/engine_audio.js');
-    const MEASURED = {          // LUFS, ffmpeg -af ebur128, whole file
-        bossa: -21.9, detective: -21.1, elevator: -19.3,
-        gala: -12.4, boss: -11.3, lofi: -12.2
-    };
-    const INTENT = { boss: 3, gala: 3 };    // dB over the office tracks, on purpose
-    const ref = Math.min(...Object.values(MEASURED));
+    const { CUES, STINGS, TARGET_LUFS, INTENT_DB } = await import('../src/engine/music_cues.js');
+    const { MUSIC_FILES, MUSIC_STINGS } = await import('../src/engine/music_files.js');
+    assert.equal(TARGET_LUFS, -21.9, 'the reference moved away from the old set');
     const off = [];
-    for (const [key, lufs] of Object.entries(MEASURED)) {
-        const trim = audio.MUSIC_TRIM[key];
-        assert.ok(typeof trim === 'number', `${key} has no trim`);
-        assert.ok(trim > 0 && trim <= 1, `${key} would be amplified past the element's ceiling`);
+    for (const [id, cue] of Object.entries(CUES)) {
+        const lufs = MUSIC_FILES[id]?.lufs;
+        assert.ok(typeof lufs === 'number', `${id} has no measurement`);
+        const trim = audio.MUSIC_TRIM[id];
+        assert.ok(typeof trim === 'number', `${id} has no trim`);
+        assert.ok(trim > 0 && trim <= 1, `${id} would be amplified past the element's ceiling`);
         const played = lufs + 20 * Math.log10(trim);
-        const want = ref + (INTENT[key] ?? 0);
-        if (Math.abs(played - want) > 0.5) off.push(`${key}: plays at ${played.toFixed(1)}, wants ${want.toFixed(1)}`);
+        const want = TARGET_LUFS + (INTENT_DB[cue.pool] ?? 0);
+        if (Math.abs(played - want) > 0.5) off.push(`${id}: plays at ${played.toFixed(1)}, wants ${want.toFixed(1)}`);
     }
-    assert.deepEqual(off, [], 'a track is not levelled to the reference');
-    assert.deepEqual(Object.keys(audio.MUSIC_TRIM).sort(), Object.keys(MEASURED).sort(),
-        'a track has a trim without a measurement, or a measurement without a trim');
+    // A sting plays on another element at another knob, against its own
+    // target - the radio's jingle against the spots it opens.
+    for (const [id, sting] of Object.entries(STINGS)) {
+        const lufs = MUSIC_STINGS[id]?.lufs;
+        assert.ok(typeof lufs === 'number', `${id} has no measurement`);
+        if (Math.abs(lufs - sting.lufs) > 0.5) off.push(`${id}: plays at ${lufs.toFixed(1)}, wants ${sting.lufs.toFixed(1)}`);
+    }
+    assert.deepEqual(Object.keys(MUSIC_STINGS).sort(), Object.keys(STINGS).sort(),
+        'a sting has a measurement without a place, or a place without a measurement');
+    assert.deepEqual(off, [], 'a piece is not levelled to the reference');
+    assert.deepEqual(Object.keys(audio.MUSIC_TRIM).sort(), Object.keys(CUES).sort(),
+        'a piece has a trim without a place in the set, or a place without a trim');
+    assert.deepEqual(Object.keys(MUSIC_FILES).sort(), Object.keys(CUES).sort(),
+        'a piece has a measurement without a place in the set, or a place without a measurement');
+});
+
+await ok('Every piece is in docs/audio/music, layered ones twice, and nothing else is', async () => {
+    // The folder the site serves and the repository holds. A file missing
+    // here is a piece that never plays; a file without an entry is a
+    // re-mastered piece's old name that check-audio.mjs would copy back
+    // into public/ before every build.
+    const { CUES, MAX_FLOOR_LOSS } = await import('../src/engine/music_cues.js');
+    const { MUSIC_FILES, MUSIC_STINGS, MUSIC_PROBE, MUSIC_DIR } = await import('../src/engine/music_files.js');
+    const dir = new URL(`../docs/${MUSIC_DIR}`, import.meta.url);
+    const want = new Set([MUSIC_PROBE, ...Object.values(MUSIC_STINGS).map(f => f.stereo)]);
+    for (const [id, cue] of Object.entries(CUES)) {
+        const f = MUSIC_FILES[id];
+        want.add(f.stereo);
+        if (cue.layers) {
+            assert.ok(f.quad, `${id} is layered and has no four-channel file`);
+            assert.ok(typeof f.floor === 'number' && f.floor <= MAX_FLOOR_LOSS,
+                      `${id} loses ${f.floor} LU at the floor, more than ${MAX_FLOOR_LOSS}`);
+            want.add(f.quad);
+        } else {
+            assert.equal(f.quad, undefined, `${id} has layers on disk the set does not use`);
+        }
+    }
+    const have = new Set(readdirSync(dir));
+    assert.deepEqual([...want].filter(f => !have.has(f)), [], 'a piece is missing on disk');
+    assert.deepEqual([...have].filter(f => !want.has(f)), [], 'a file lies there without an entry');
+
+    // The channel count each file declares: byte 9 of its OpusHead.
+    const channels = (name) => {
+        const bytes = readFileSync(new URL(name, `${dir.href}/`));
+        const at = bytes.indexOf('OpusHead');
+        return at < 0 ? 0 : bytes[at + 9];
+    };
+    for (const [id, f] of Object.entries({ ...MUSIC_FILES, ...MUSIC_STINGS })) {
+        assert.equal(channels(f.stereo), 2, `${id}'s stereo file is not stereo`);
+        if (f.quad) assert.equal(channels(f.quad), 4, `${id}'s layered file does not carry four channels`);
+    }
+    assert.equal(channels(MUSIC_PROBE), 4, 'the probe does not carry four channels');
+
+    // And the repository takes them. A bare `music/` in .gitignore, meant
+    // for the workbench at the root, matched docs/audio/music as well: the
+    // build was complete, the commit held no music, and the site played
+    // none. Asked of git itself, by pattern (--no-index), so a file that is
+    // already committed is judged too. Without git - an unpacked archive -
+    // there is no repository to ask.
+    const voiced = (lang) => readdirSync(new URL(`../docs/audio/${lang}/`, import.meta.url)).find(f => f.endsWith('.opus'));
+    const shipped = [MUSIC_PROBE, MUSIC_FILES.day_1.stereo, MUSIC_FILES.day_1.quad].map(f => `docs/${MUSIC_DIR}${f}`)
+        .concat(['de', 'en'].map(lang => `docs/audio/${lang}/${voiced(lang)}`));
+    const root = new URL('..', import.meta.url);
+    for (const file of shipped) {
+        let ignored;
+        try {
+            execFileSync('git', ['check-ignore', '--no-index', '-q', file], { cwd: root, stdio: 'ignore' });
+            ignored = true;
+        } catch (err) {
+            ignored = err.status === 1 ? false : null;       // 1: not ignored; else no repository
+        }
+        assert.notEqual(ignored, true, `.gitignore keeps ${file} out of the repository`);
+    }
+});
+
+await ok('The stock music is gone, and nothing still points at it', () => {
+    // Up to 7.1.1 six licensed pieces lay in assets/music/, and the credits
+    // named their author because they were shipped. They went in one commit
+    // with the paragraph (7.2); a path left behind would be a 404 on every
+    // load of whatever asked for it, at 0 errors and 0 warnings - the image
+    // linter does not read audio.
+    const gone = [];
+    const walk = (url) => {
+        for (const entry of readdirSync(url, { withFileTypes: true })) {
+            const next = new URL(entry.name + (entry.isDirectory() ? '/' : ''), url);
+            if (entry.isDirectory()) walk(next);
+            else if (/\.(js|svelte|css)$/.test(entry.name) && readFileSync(next, 'utf-8').includes('assets/music/')) gone.push(next.pathname);
+        }
+    };
+    walk(new URL('../src/', import.meta.url));
+    const html = readFileSync(new URL('../index.html', import.meta.url), 'utf-8');
+    if (html.includes('assets/music/')) gone.push('index.html');
+    assert.deepEqual(gone, [], 'a path still points at the old music');
+    const folder = new URL('../public/assets/music/', import.meta.url);
+    let left = [];
+    try { left = readdirSync(folder); } catch { /* gone, as it should be */ }
+    assert.deepEqual(left, [], 'the old pieces are still shipped');
+});
+
+await ok('The music style of 7.1.1 is forgotten at boot, and its name is not reused', async () => {
+    // A later choice of music (GlobalCorp FM) that took the old key would
+    // inherit a 'lofi' it never wrote.
+    const { RETIRED_KEYS } = await import('../src/engine/keys.js');
+    assert.ok(RETIRED_KEYS.includes('layer8_music_style'), 'the old key is no longer retired');
+    const reused = Object.values(KEYS).filter(k => RETIRED_KEYS.includes(k));
+    assert.deepEqual(reused, [], 'a retired key is in use again');
+    resetState();
+    store.set('layer8_music_style', 'lofi');
+    engine.loadSystem();
+    assert.equal(store.get('layer8_music_style'), undefined, 'the old style is still stored');
+    assert.equal('musicStyle' in state, false, 'the state still carries a music style');
 });
 
 await ok("That evening the diary refuses to write about it", async () => {
@@ -6762,5 +7470,659 @@ await ok('The bug report goes to one form, written by the tool that reads it', a
     assert.ok(out.includes("debug: 'entry.3',"), 'a field was not rewritten');
     assert.equal(out.split('\n').length, src.split('\n').length, 'the rewrite added or lost lines');
 });
+
+// ------------------------------------------------------- GlobalCorp FM (7.2)
+console.log('GlobalCorp FM:');
+{
+    const { radio, spotFits, radioChoices, radioDayKey, radioContext,
+            RADIO_QUIET_MS, RADIO_GAP_MS, RADIO_GAP_SPREAD_MS, RADIO_FIRST_MS, RADIO_FIRST_SPREAD_MS,
+            RADIO_MODES, RADIO_JINGLE_CHANCE, RADIO_POINTED_CHANCE, RADIO_LONG_QUIET_MS,
+            RADIO_EARLY_MS, RADIO_EARLY_SHARE, RADIO_RETRY_MS } = await import('../src/engine/engine_radio.js');
+    const { RADIO_LONG_KINDS } = await import('../src/engine/radio_kinds.js');
+    const { MUSIC_DIR, MUSIC_STINGS } = await import('../src/engine/music_files.js');
+    const JINGLE = MUSIC_DIR + MUSIC_STINGS.fm_jingle.stereo;
+    const { drawAmong, returnToBag, stillInBag } = await import('../src/engine/draw_bag.js');
+    await ensure('radio');
+    const wait = (ms) => new Promise(r => setTimeout(r, ms));
+    const srcOf = (f) => readFileSync(new URL(`../src/${f}`, import.meta.url), 'utf-8');
+
+    // An element that remembers what it was told. `refuse` stands in for a
+    // file that is not there: play() rejects, as a 404 does.
+    class RadioAudio {
+        constructor() { this.src = ''; this.volume = 1; this.paused = true; this.currentTime = 0; this._h = {}; this.plays = 0; }
+        play() { this.plays++; if (RadioAudio.refuse) return Promise.reject(new Error('404')); this.paused = false; return Promise.resolve(); }
+        pause() { this.paused = true; }
+        addEventListener(e, f) { this._h[e] = f; }
+    }
+    const clock = { now: 10_000_000 };
+    const RealAudio = globalThis.Audio;
+
+    /** A working day at the idle terminal, quiet for a minute, the roll always won. */
+    const onAir = () => {
+        resetState();
+        Object.assign(state, { fmEnabled: true, fmOnAir: false, narrationVolume: 0.8, isPartyMode: false,
+                               isEmailOpen: false, intranetOpen: false, loreOpen: false, vendingOpen: false,
+                               narratable: null });
+        state.terminal = { mode: 'idle', variant: 'system', className: '' };
+        // A new player: nobody's standing moves a greeting ahead. The
+        // reputation is the career's, so resetState() leaves it alone.
+        state.reputation = Object.fromEntries(Object.keys(state.reputation).map(name => [name, 0]));
+        const fm = { ...engine, ...radio };
+        Object.assign(fm, { radioEl: null, radioNode: null, radioIndex: null, radioHeard: null, radioLastKind: null,
+                            radioPausedByTab: false, radioNextAt: 0, radioStillSince: clock.now - 60_000,
+                            radioFadeTimer: null, duckReasons: null, speaking: false, interrupted: false,
+                            heldLine: null, pausedByTab: false, _interruptions: null, lesson: undefined,
+                            volumeWorks: null, bgmTracks: {},
+                            // No station ID owed, ever, until a test starts a
+                            // day: the tests below hear the spot itself; the
+                            // jingle has tests of its own.
+                            radioJingle: false, radioSpotSrc: null, radioSinceJingle: -Infinity });
+        fm.radioClock = () => clock.now;
+        // Every roll won, and every spread at its least - unless a test says
+        // otherwise with rolls().
+        fm.radioRandom = () => 0;
+        RadioAudio.refuse = false;
+        globalThis.Audio = RadioAudio;
+        return fm;
+    };
+    const done = () => { globalThis.Audio = RealAudio; globalThis.document.hidden = false; };
+    // The station's dice, in the order it throws them: the tick's chance, the
+    // queue jump, the jingle (only when one may come), the gap after a spot.
+    // Past the list, every throw is 0.
+    const rolls = (fm, ...seq) => { fm.radioRandom = () => (seq.length ? seq.shift() : 0); };
+
+    await ok('A spot fits its window, its conditions and its day - by id', () => {
+        const ctx = { minute: 600, tickets: 7, l: 69, a: 70, b: 0, day: 'wed' };
+        assert.equal(spotFits({ when: [480, 600] }, ctx), false, 'the window\'s end is not exclusive');
+        assert.equal(spotFits({ when: [600, 690] }, ctx), true, 'the window\'s start is not inclusive');
+        assert.equal(spotFits({ if: { tickets: 7 } }, ctx), true, 'tickets is not "at least"');
+        assert.equal(spotFits({ if: { l: 70 } }, ctx), false, 'laziness below the threshold passed');
+        assert.equal(spotFits({ if: { a: 70, tickets: 7 } }, ctx), true, 'two conditions that hold failed');
+        assert.equal(spotFits({ if: { a: 70, b: 1 } }, ctx), false, 'one condition that fails passed');
+        assert.equal(spotFits({ if: { day: 'wed' } }, ctx), true);
+        assert.equal(spotFits({ if: { day: 'fri' } }, ctx), false, 'a spot for another day fits');
+        // The day the level stands for, and in a week the real one - as ids.
+        assert.equal(radioDayKey({ week: { active: false }, difficultyMult: 1.25 }), 'mon');
+        assert.equal(radioDayKey({ week: { active: false }, difficultyMult: 0.8 }), 'fri');
+        assert.equal(radioDayKey({ week: { active: false }, difficultyMult: 1.0 }), 'wed');
+        assert.equal(radioDayKey({ week: { active: true, dayIndex: 4 } }), 'thu');
+        resetState();
+        state.time = 700; state.tickets = 3; state.al = 12;
+        const read = radioContext(state);
+        assert.deepEqual({ ...read, rep: undefined, seen: undefined },
+                         { minute: 700, tickets: 3, l: 0, a: 12, b: 0, day: 'wed', rep: undefined, seen: undefined });
+        // The standing and the house's events are read live, never copied
+        // at the start of the day: a greeting follows the choice just made.
+        assert.equal(read.rep, state.reputation, 'the reputation is not the state\'s own');
+        assert.equal(read.seen, state.usedIDs, 'the events are not the state\'s own');
+    });
+
+    await ok('A greeting answers the standing - at least above zero, at most below - and the news an event', () => {
+        const ctx = (rep, seen = []) => ({ minute: 600, tickets: 0, l: 0, a: 0, b: 0, day: 'wed', rep, seen: new Set(seen) });
+        assert.equal(spotFits({ if: { rep: { Kevin: 40 } } }, ctx({ Kevin: 40 })), true, 'a positive threshold is not "at least"');
+        assert.equal(spotFits({ if: { rep: { Kevin: 40 } } }, ctx({ Kevin: 39 })), false, 'a standing below it passed');
+        assert.equal(spotFits({ if: { rep: { Egon: -40 } } }, ctx({ Egon: -40 })), true, 'a negative threshold is not "at most"');
+        assert.equal(spotFits({ if: { rep: { Egon: -40 } } }, ctx({ Egon: -39 })), false, 'a standing above it passed');
+        assert.equal(spotFits({ if: { rep: { Egon: -40 } } }, ctx({ Egon: 80 })), false, 'a good standing passed for a bad one');
+        // A colleague nobody has met yet stands at zero, and zero is neither.
+        assert.equal(spotFits({ if: { rep: { Gabi: 20 } } }, ctx({})), false, 'a missing standing counted as good');
+        assert.equal(spotFits({ if: { rep: { Gabi: -20 } } }, ctx({})), false, 'a missing standing counted as bad');
+        assert.equal(spotFits({ if: { seen: ['boss_fire', 'boss_heat'] } }, ctx({}, ['boss_heat'])), true, 'seen is not "any of"');
+        assert.equal(spotFits({ if: { seen: ['boss_fire'] } }, ctx({}, ['boss_heat'])), false, 'an event that did not happen passed');
+        assert.equal(spotFits({ if: { seen: ['boss_fire'] } }, { minute: 600, day: 'wed' }), false, 'no record of the run passed');
+        // Through the state as the game keeps it. The reputation is the
+        // career's and survives resetState(), so it is put back.
+        resetState();
+        const kept = { ...state.reputation };
+        try {
+            state.reputation = { ...state.reputation, Kevin: 55 };
+            state.usedIDs.add('boss_flood');
+            const live = radioContext(state);
+            assert.equal(spotFits({ if: { rep: { Kevin: 50 }, seen: ['boss_flood'] } }, live), true, 'the live state did not fit');
+            state.reputation.Kevin = 45;
+            assert.equal(spotFits({ if: { rep: { Kevin: 50 } } }, radioContext(state)), false, 'a standing that fell still fits');
+        } finally {
+            state.reputation = kept;
+        }
+    });
+
+    await ok('The station notices the day first, and never repeats a kind or a spot', () => {
+        const spots = [
+            { kind: 'weather' }, { kind: 'traffic' },
+            { kind: 'alert', if: { tickets: 7 } }, { kind: 'alert', if: { b: 70 } },
+        ];
+        const calm = { minute: 500, tickets: 0, l: 0, a: 0, b: 0, day: 'wed' };
+        assert.deepEqual(radioChoices(spots, calm, new Set(), null), [0, 1], 'an unmet condition was offered');
+        const queue = { ...calm, tickets: 8 };
+        assert.deepEqual(radioChoices(spots, queue, new Set(), null), [2], 'the queue lost to the weather');
+        assert.deepEqual(radioChoices(spots, queue, new Set([2]), null), [0, 1], 'a spot heard today came back');
+        assert.deepEqual(radioChoices(spots, calm, new Set(), 'weather'), [1], 'the kind just played came again');
+        // Every spot of the real pool fits SOME moment of a working day.
+        // A standing and an event are the spot's own (lint-data holds the
+        // names and the ids against the trees).
+        const never = DB.radio.filter(sp => ![480, 600, 700, 900, 960].some(m =>
+            ['mon', 'tue', 'wed', 'thu', 'fri'].some(day =>
+                spotFits(sp, { minute: m, tickets: 10, l: 100, a: 100, b: 100, day,
+                               rep: { ...sp.if?.rep }, seen: new Set(sp.if?.seen) }))));
+        assert.deepEqual(never.map(sp => sp.id), [], 'a spot no day can play');
+    });
+
+    await ok('The bag draws only what fits, and each of those once before any comes again', () => {
+        resetState();
+        assert.equal(drawAmong('fmtest', 10, [0]), 0, 'the bag drew a spot that does not fit');
+        const seen = [];
+        for (let i = 0; i < 3; i++) seen.push(drawAmong('fmtest', 10, [2, 5, 7]));
+        assert.deepEqual([...seen].sort(), [2, 5, 7], 'an eligible spot came twice in one cycle');
+        assert.ok([2, 5, 7].includes(drawAmong('fmtest', 10, [2, 5, 7])), 'the next cycle drew outside the eligible');
+        // The others were never touched: the six that never fitted are still
+        // in the bag, and the refill did not bring back the one heard before.
+        const bag = JSON.parse(store.get(KEYS.drawBags)).fmtest;
+        assert.deepEqual([1, 3, 4, 6, 8, 9].filter(i => !bag.includes(i)), [], 'a spot that never fitted was used up');
+        assert.ok(!bag.includes(0), 'the refill brought back a spot heard in this cycle');
+        assert.equal(drawAmong('fmtest', 10, []), null, 'nothing eligible drew something');
+        assert.equal(drawAmong('fmtest', 10, [12]), null, 'an index past the pool was drawn');
+        // A spot hardly heard goes back in at the far end, and only once.
+        const before = JSON.parse(store.get(KEYS.drawBags)).fmtest;
+        const out = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9].find(i => !before.includes(i));
+        returnToBag('fmtest', out);
+        returnToBag('fmtest', out);
+        const after = JSON.parse(store.get(KEYS.drawBags)).fmtest;
+        assert.deepEqual(after, [out, ...before], 'the returned spot is not back at the far end, once');
+    });
+
+    await ok('A spot waits for a quiet moment, and plays from its own folder', async () => {
+        const fm = onAir();
+        fm.radioStillSince = clock.now - (RADIO_QUIET_MS - 1);
+        fm.radioTick();
+        assert.equal(state.fmOnAir, false, 'it spoke before the quiet was long enough');
+        clock.now += 1;
+        fm.radioTick();
+        assert.equal(state.fmOnAir, true, 'it stayed silent in a quiet moment');
+        const spot = DB.radio[fm.radioIndex];
+        assert.equal(fm.radioEl.src, `audio/fm/${LANG}/${voiceHash(spot.text)}.opus`, 'not the spot\'s own file');
+        assert.ok(fm.duckReasons?.has('radio'), 'the music was not ducked under the spot');
+        assert.ok(fm.duckLevel() < 1, 'the radio\'s duck has no depth - DUCK.radio is missing');
+        assert.equal(state.narratable, null, 'the read-aloud button would offer to repeat a spot');
+        const first = fm.radioIndex;
+        assert.ok(fm.radioHeard.has(first), 'the spot on air does not count as heard today');
+        assert.equal(fm.radioLastKind, spot.kind, 'the kind on air is not remembered');
+        // The end of the spot: the gap starts, the duck lifts.
+        fm.radioEl._h.ended();
+        assert.equal(state.fmOnAir, false);
+        assert.equal(fm.radioNextAt, clock.now + RADIO_GAP_MS, 'no gap after the spot');
+        assert.ok(!fm.duckReasons.has('radio'), 'the music stayed ducked after the spot');
+        fm.radioStillSince = clock.now - 60_000;
+        fm.radioTick();
+        assert.equal(state.fmOnAir, false, 'a second spot inside the gap');
+        clock.now += RADIO_GAP_MS;
+        fm.radioTick();
+        assert.equal(state.fmOnAir, true, 'nothing after the gap');
+        assert.notEqual(fm.radioIndex, first, 'the same spot twice in one day');
+        assert.notEqual(DB.radio[fm.radioIndex].kind, spot.kind, 'the same kind twice in a row');
+        // A new day: what was heard may come again, and the first comes early.
+        fm.radioNewDay();
+        assert.equal(fm.radioHeard.size, 0);
+        assert.equal(fm.radioNextAt, clock.now + RADIO_FIRST_MS);
+        fm.cutRadio();
+        await wait(400);
+        done();
+    });
+
+    await ok('The station ID opens the day, then comes on a roll and never twice in a row', () => {
+        const fm = onAir();
+        fm.radioNewDay();
+        const opened = [];
+        // Thrown before each spot: the queue jump, then the jingle's own roll
+        // where one may come at all. 0 wins the jingle, 0.9 loses it.
+        for (const roll of [0.9, 0, 0, 0.9, 0.9, 0]) {
+            rolls(fm, roll, roll);
+            clock.now += RADIO_GAP_MS;
+            fm.radioStillSince = clock.now - 60_000;
+            assert.notEqual(fm.playSpot(), null, `spot ${opened.length + 1} did not start`);
+            const own = `audio/fm/${LANG}/${voiceHash(DB.radio[fm.radioIndex].text)}.opus`;
+            opened.push(fm.radioEl.src === JINGLE);
+            if (fm.radioEl.src === JINGLE) {
+                fm.radioEl.currentTime = MUSIC_STINGS.fm_jingle.seconds;
+                fm.radioEl._h.ended();
+                assert.equal(state.fmOnAir, true, 'the jingle ended the spot it opened');
+                assert.equal(fm.radioEl.src, own, 'the jingle did not hand over to its spot');
+                assert.equal(fm.radioEl.currentTime, 0, 'the spot starts where the jingle stopped');
+                assert.ok(fm.duckReasons.has('radio'), 'the music came back up between jingle and spot');
+            } else {
+                assert.equal(fm.radioEl.src, own, 'neither the jingle nor the spot');
+            }
+            fm.radioEl._h.ended();
+            assert.equal(state.fmOnAir, false, 'the spot did not end');
+        }
+        // The first of the day whatever the dice; right after one, never;
+        // after that, when the roll is won.
+        assert.deepEqual(opened, [true, false, true, false, false, true], 'the jingle does not follow its rules');
+        assert.ok(RADIO_JINGLE_CHANCE > 0 && RADIO_JINGLE_CHANCE < 1, 'the jingle is no longer a roll');
+        done();
+    });
+
+    await ok('The first spot of a day and every gap fall at a moment nobody can count on', async () => {
+        const fm = onAir();
+        rolls(fm, 0);
+        fm.radioNewDay();
+        assert.equal(fm.radioNextAt, clock.now + RADIO_FIRST_MS, 'the earliest first spot moved');
+        rolls(fm, 0.999);
+        fm.radioNewDay();
+        const late = fm.radioNextAt - clock.now;
+        assert.ok(late > RADIO_FIRST_MS + 4 * 60 * 1000, `the first spot always comes early (at most ${late} ms)`);
+        assert.ok(RADIO_FIRST_MS + RADIO_FIRST_SPREAD_MS <= 5 * 60 * 1000, 'a day can wait more than five minutes for its first spot');
+        // The gap: five minutes at least, nine at most, and it rolls.
+        fm.radioSinceJingle = -Infinity;
+        const gapAfter = (roll) => {
+            // The tick's chance won; the queue jump and the gap both get the
+            // roll, so the test does not hang on how many dice come between.
+            rolls(fm, 0, roll, roll);
+            fm.radioNextAt = 0;
+            fm.radioStillSince = clock.now - 60_000;
+            fm.radioTick();
+            assert.equal(state.fmOnAir, true, 'no spot to end');
+            fm.radioEl._h.ended();
+            return fm.radioNextAt - clock.now;
+        };
+        assert.equal(gapAfter(0), RADIO_GAP_MS, 'the least gap moved');
+        const wide = gapAfter(0.999);
+        assert.ok(wide > RADIO_GAP_MS + 3 * 60 * 1000, `the gap no longer rolls (${wide} ms)`);
+        assert.ok(RADIO_GAP_MS >= 5 * 60 * 1000, 'the station speaks more often than every five minutes');
+        assert.ok(RADIO_GAP_MS + RADIO_GAP_SPREAD_MS <= 10 * 60 * 1000, 'the station can fall silent for more than ten minutes');
+        done();
+    });
+
+    await ok('A restarted day does not open with the spot it opened with before', () => {
+        // Day mode on Normal stands for a Monday, and at 8:20 the Monday spot
+        // is the one whose condition holds. Up to 7.2 it was drawn first on
+        // every restart, because a restart forgets the day's heard spots.
+        const fm = onAir();
+        state.difficultyMult = 1.25;
+        state.time = 500;
+        const monday = DB.radio.findIndex(sp => sp.id === 'fm_monday_morning');
+        assert.ok(monday >= 0, 'fm_monday_morning is gone - pick another spot with if.day');
+        // The bag holds the Monday spot at the far end: drawn last, unless it
+        // goes ahead. So what the dice decide is the only thing that differs.
+        const rest = [...DB.radio.keys()].filter(i => i !== monday);
+        store.set(KEYS.drawBags, JSON.stringify({ radio: [monday, ...rest] }));
+        fm.radioNewDay();
+        rolls(fm, 0.9);
+        assert.notEqual(fm.playSpot(), monday, 'the Monday spot went ahead on a lost roll');
+        fm.cutRadio(true);
+        fm.radioNewDay();
+        rolls(fm, 0);
+        assert.equal(fm.playSpot(), monday, 'the Monday spot did not go ahead on a won roll');
+        fm.cutRadio(true);
+        for (let restart = 0; restart < 5; restart++) {
+            fm.radioNewDay();
+            rolls(fm, 0);
+            assert.notEqual(fm.playSpot(), monday, `restart ${restart + 1} opened with the Monday spot again`);
+            fm.cutRadio(true);
+        }
+        assert.ok(!stillInBag('radio', DB.radio.length).includes(monday), 'the Monday spot is back in this cycle');
+        // On a lost roll, nothing goes ahead at all.
+        const spots = [{ kind: 'weather' }, { kind: 'alert', if: { tickets: 7 } }];
+        const queue = { minute: 500, tickets: 8, l: 0, a: 0, b: 0, day: 'wed' };
+        assert.deepEqual(radioChoices(spots, queue, new Set(), null, { prefer: false }), [0, 1], 'a lost roll still let the queue jump');
+        assert.deepEqual(radioChoices(spots, queue, new Set(), null, { fresh: new Set([0]) }), [0, 1],
+                         'a spot heard in this cycle jumped the queue again');
+        assert.ok(RADIO_POINTED_CHANCE > 0 && RADIO_POINTED_CHANCE < 1, 'the queue jump is no longer a roll');
+        done();
+    });
+
+    await ok('A long story waits for a longer quiet, and counts as heard by its share', async () => {
+        const spots = [{ kind: 'talk' }, { kind: 'mandy' }, { kind: 'weather' }];
+        const calm = { minute: 500, tickets: 0, l: 0, a: 0, b: 0, day: 'wed' };
+        assert.deepEqual(radioChoices(spots, calm, new Set(), null, { long: false }), [2], 'a story started into a brisk game');
+        assert.deepEqual(radioChoices(spots, calm, new Set(), null, { long: true }), [0, 1, 2]);
+        assert.deepEqual([...RADIO_LONG_KINDS].sort(), ['mandy', 'talk'], 'the long kinds changed - check the quiet they wait for');
+
+        // The engine asks how still the player has been.
+        const fm = onAir();
+        const real = DB.radio;
+        DB.radio = [{ id: 'fm_t', kind: 'talk', text: 'a story' }, { id: 'fm_w', kind: 'weather', text: 'the weather' }];
+        // The story last in the bag, so it is the one drawn whenever it may be.
+        store.set(KEYS.drawBags, JSON.stringify({ radio: [1, 0] }));
+        try {
+            fm.radioStillSince = clock.now - (RADIO_LONG_QUIET_MS - 1);
+            assert.equal(fm.playSpot(), 1, 'a story was drawn while the player was busy');
+            fm.cutRadio(true);
+            await wait(400);
+            fm.radioHeard = new Set();
+            fm.radioLastKind = null;
+            fm.radioStillSince = clock.now - RADIO_LONG_QUIET_MS;
+            assert.equal(fm.playSpot(), 0, 'a story was not drawn in a long quiet');
+            // A minute-long story cut after ten seconds has lost its point.
+            fm.radioEl.duration = 60;
+            clock.now += 10_000;
+            fm.cutRadio();
+            assert.ok(!fm.radioHeard.has(0), 'a story cut a sixth of the way in counts as heard');
+            await wait(400);
+            fm.radioStillSince = clock.now - RADIO_LONG_QUIET_MS;
+            assert.equal(fm.playSpot(), 0);
+            fm.radioEl.duration = 60;
+            clock.now += 60_000 * RADIO_EARLY_SHARE;
+            fm.cutRadio();
+            assert.ok(fm.radioHeard.has(0), 'a story heard for its share went back');
+            await wait(400);
+        } finally {
+            DB.radio = real;
+            store.delete(KEYS.drawBags);
+        }
+        done();
+    });
+
+    await ok('A cut during the jingle takes its spot along; a jingle that fails does not', async () => {
+        const fm = onAir();
+        fm.radioNewDay();
+        clock.now += RADIO_FIRST_MS;
+        fm.radioTick();
+        assert.equal(fm.radioEl.src, JINGLE, 'the day did not open with the jingle');
+        fm.cutRadio();
+        assert.equal(state.fmOnAir, false, 'the cut left the station on air');
+        // The fade lets the jingle ring out, and its end may still arrive.
+        fm.radioEl._h.ended();
+        assert.equal(fm.radioEl.src, JINGLE, 'a cut jingle still handed over to its spot');
+        assert.equal(fm.radioIndex, null);
+        assert.ok(!fm.duckReasons.has('radio'), 'the music stayed ducked after the cut');
+        await wait(400);
+
+        fm.radioNewDay();
+        clock.now += RADIO_FIRST_MS;
+        fm.radioStillSince = clock.now - 60_000;
+        fm.radioTick();
+        assert.equal(fm.radioEl.src, JINGLE);
+        const own = `audio/fm/${LANG}/${voiceHash(DB.radio[fm.radioIndex].text)}.opus`;
+        fm.radioEl._h.error();
+        assert.equal(state.fmOnAir, true, 'a jingle that failed to load took the spot with it');
+        assert.equal(fm.radioEl.src, own, 'the spot did not follow a jingle that failed');
+        fm.radioEl._h.error();
+        assert.equal(state.fmOnAir, false, 'a spot that failed to load stayed on air');
+        done();
+    });
+
+    await ok('A spot the game cuts in its first seconds goes back to the day; the player\'s stop does not', async () => {
+        const fm = onAir();
+        fm.radioNewDay();
+        const bag = () => JSON.parse(store.get(KEYS.drawBags)).radio;
+        const again = () => { fm.radioStillSince = clock.now - 60_000; fm.radioTick(); };
+
+        // Cut during the day's first jingle: nothing of the spot was heard,
+        // however long the jingle took (a slow load, a paused tab).
+        clock.now += RADIO_FIRST_MS;
+        fm.radioTick();
+        assert.equal(fm.radioEl.src, JINGLE);
+        const first = fm.radioIndex;
+        clock.now += RADIO_EARLY_MS;
+        fm.cutRadio();
+        assert.ok(!fm.radioHeard.has(first), 'a spot cut during its jingle counts as heard');
+        assert.equal(bag()[0], first, 'a spot cut during its jingle did not go back into the bag');
+        assert.equal(fm.radioLastKind, null, 'the kind of a spot nobody heard blocks the next one');
+        assert.equal(fm.radioSinceJingle, Infinity, 'a jingle cut short is no longer owed');
+        assert.equal(fm.radioNextAt, clock.now + RADIO_RETRY_MS, 'an early cut cost the full gap');
+        await wait(400);
+
+        // The retry owes the jingle again; it rings out, the spot is cut
+        // just inside its first seconds: the spot goes back, the jingle stays heard.
+        clock.now += RADIO_RETRY_MS;
+        again();
+        assert.equal(fm.radioEl.src, JINGLE, 'the retry did not owe the jingle');
+        fm.radioEl._h.ended();
+        const second = fm.radioIndex;
+        clock.now += RADIO_EARLY_MS - 1;
+        fm.cutRadio();
+        assert.ok(!fm.radioHeard.has(second), 'a spot cut in its first seconds counts as heard');
+        assert.equal(fm.radioSinceJingle, 0, 'a jingle that rang out is owed again');
+        assert.equal(fm.radioNextAt, clock.now + RADIO_RETRY_MS);
+        await wait(400);
+
+        // Heard for RADIO_EARLY_MS: it counts, and the full gap follows.
+        clock.now += RADIO_RETRY_MS;
+        again();
+        assert.notEqual(fm.radioEl.src, JINGLE);
+        const third = fm.radioIndex;
+        clock.now += RADIO_EARLY_MS;
+        fm.cutRadio();
+        assert.ok(fm.radioHeard.has(third), 'a spot heard for its first seconds went back');
+        assert.equal(fm.radioNextAt, clock.now + RADIO_GAP_MS, 'a spot heard cost only the short gap');
+        await wait(400);
+
+        // The player's own stop, at once: an answer, not an interruption.
+        clock.now += RADIO_GAP_MS;
+        rolls(fm, 0, 0, 0.9);
+        again();
+        assert.notEqual(fm.radioEl.src, JINGLE, 'the jingle won a roll it lost');
+        const fourth = fm.radioIndex;
+        fm.endSpot();
+        assert.equal(state.fmOnAir, false, 'the stop button left the spot on air');
+        assert.ok(fm.radioHeard.has(fourth), 'the player\'s stop was taken for the game\'s');
+        assert.equal(fm.radioNextAt, clock.now + RADIO_GAP_MS);
+        assert.match(readFileSync(new URL('../src/components/TerminalHeader.svelte', import.meta.url), 'utf-8'),
+            /onclick=\{\(\) => engine\.endSpot\(\)\}/, 'the ON AIR button no longer ends the spot as the player\'s stop');
+        await wait(400);
+
+        // After a jingle, the seconds count from the spot's own start.
+        clock.now += RADIO_GAP_MS;
+        again();
+        assert.equal(fm.radioEl.src, JINGLE, 'a spot that won the jingle roll came without one');
+        clock.now += RADIO_EARLY_MS;
+        fm.radioEl._h.ended();
+        const fifth = fm.radioIndex;
+        clock.now += RADIO_EARLY_MS;
+        fm.cutRadio();
+        assert.ok(fm.radioHeard.has(fifth), 'a spot heard for its first seconds after a jingle went back');
+        assert.equal(fm.radioNextAt, clock.now + RADIO_GAP_MS);
+        await wait(400);
+        done();
+    });
+
+    await ok('The time a hidden tab held a spot does not count as heard', async () => {
+        // A mail runs out on its own timer in a tab nobody is looking at and
+        // cuts the spot from there. Up to the audit of 7.2 the minutes away
+        // counted, and a spot heard for two seconds was gone for the day.
+        let fm = onAir();
+        const first = fm.playSpot();
+        clock.now += 2000;
+        globalThis.document.hidden = true;
+        fm.syncRadioToVisibility();
+        clock.now += 10 * 60_000;
+        fm.cutRadio();
+        assert.ok(!fm.radioHeard.has(first), 'the time away counted as heard');
+        done();
+
+        // Back to a window that opened meanwhile: the same take-back.
+        fm = onAir();
+        const second = fm.playSpot();
+        clock.now += 2000;
+        globalThis.document.hidden = true;
+        fm.syncRadioToVisibility();
+        clock.now += 10 * 60_000;
+        state.isEmailOpen = true;
+        globalThis.document.hidden = false;
+        fm.syncRadioToVisibility();
+        state.isEmailOpen = false;
+        assert.equal(state.fmOnAir, false, 'the spot came back over a mail');
+        assert.ok(!fm.radioHeard.has(second), 'coming back to a window ended the spot as heard');
+
+        // And what was heard on both sides of the time away adds up.
+        fm = onAir();
+        const third = fm.playSpot();
+        clock.now += RADIO_EARLY_MS - 1000;
+        globalThis.document.hidden = true;
+        fm.syncRadioToVisibility();
+        clock.now += 10 * 60_000;
+        globalThis.document.hidden = false;
+        fm.syncRadioToVisibility();
+        assert.equal(state.fmOnAir, true, 'the spot did not come back with the tab');
+        clock.now += 1000;
+        fm.cutRadio();
+        assert.ok(fm.radioHeard.has(third), 'the seconds before and after the time away did not add up');
+        await wait(400);
+        done();
+    });
+
+    await ok('A restored day is a new day for the station', () => {
+        // Nothing of the radio is in the save, and the morning screen that
+        // starts the station's day is not shown on a resume: the first spot
+        // came eight seconds in.
+        const fm = onAir();
+        fm.applyRestoredDay({});
+        assert.ok(fm.radioNextAt >= clock.now + RADIO_FIRST_MS, 'the station spoke straight after the resume');
+        assert.equal(fm.radioMayStart(), false);
+        done();
+    });
+
+    await ok('Never over a decision, a window, a mail, an emergency, the gala or the lesson', () => {
+        const blockers = {
+            'a decision on screen':     () => { state.terminal = { mode: 'event' }; },
+            'the boot screen':          () => { state.terminal = { mode: 'boot' }; },
+            'a window over it':         () => { openOverlays.add('settings-modal'); },
+            'the intranet':             () => { state.intranetOpen = true; },
+            'the chronicle':            () => { state.loreOpen = true; },
+            'the vending machine':      () => { state.vendingOpen = true; },
+            'a mail':                   () => { state.isEmailOpen = true; },
+            'a notice':                 (fm) => { fm._interruptions = new Set(['modal-overlay']); },
+            'the end screen':           () => { state.modal = { open: true, isEnd: true }; },
+            'an emergency clock':       () => { state.bossTimer = 1; },
+            'an emergency on screen':   () => { state.activeEvent = true; state.currentEventType = 'boss'; },
+            'the gala':                 () => { state.isPartyMode = true; },
+            'the lesson':               (fm) => { fm.lesson = { isActive: true }; },
+            'the phone chat':           () => { state.phone = { ...state.phone, open: true }; },
+            'the narrator speaking':    (fm) => { fm.speaking = true; },
+            'a paused scene':           (fm) => { fm.interrupted = true; },
+            'a line held for later':    (fm) => { fm.heldLine = 'x'; },
+            'a hidden tab':             () => { globalThis.document.hidden = true; },
+            'the switch off':           () => { state.fmEnabled = false; },
+            'the narrator at zero':     () => { state.narrationVolume = 0; },
+        };
+        assert.ok(onAir().radioMayStart(), 'the quiet idle terminal itself is refused');
+        done();
+        for (const [what, set] of Object.entries(blockers)) {
+            const fm = onAir();
+            set(fm);
+            assert.equal(fm.radioMayStart(), false, `a spot would start over ${what}`);
+            done();
+        }
+        // An emergency that is OVER leaves its type behind until the next
+        // scene; the station must not stay silent for that.
+        const after = onAir();
+        Object.assign(state, { activeEvent: false, currentEventType: 'boss', bossTimer: null });
+        assert.ok(after.radioMayStart(), 'a finished emergency kept the station silent until the next scene');
+        done();
+        // And the modes it may start on are exactly the three without a question.
+        assert.deepEqual([...RADIO_MODES].sort(), ['idle', 'morning', 'result']);
+    });
+
+    await ok('The narrator, a window and the tick each take the room back', async () => {
+        let fm = onAir();
+        fm.playSpot();
+        assert.equal(state.fmOnAir, true);
+        const el = fm.radioEl;
+        fm._setSpeaking(true);
+        assert.equal(state.fmOnAir, false, 'the spot went on under the narrator');
+        assert.ok(!fm.duckReasons.has('radio'), 'the radio\'s duck outlived the spot');
+        await wait(400);
+        assert.ok(el.paused, 'the fade never ended in a pause');
+        // The cut stamped the quiet already; a later stop has to stamp it again.
+        clock.now += 5000;
+        fm._setSpeaking(false);
+        assert.equal(fm.radioStillSince, clock.now, 'the quiet did not start again when the narrator stopped');
+
+        // The net under the hooks: the tick ends a spot the moment a hard
+        // condition holds, a window here.
+        fm = onAir();
+        fm.playSpot();
+        openOverlays.add('inventory-modal');
+        fm.radioTick();
+        assert.equal(state.fmOnAir, false, 'the tick let a spot run under a window');
+        await wait(400);
+        done();
+
+        // The hooks themselves, where a window opens without the bench seeing it.
+        const ui = srcOf('engine/engine_ui.js');
+        assert.match(ui, /if \(lockScroll\) this\.lockScroll\(el\.id \|\| 'overlay'\);[\s\S]{0,200}if \(!wasOpen\) this\.cutRadio\?\.\(\);/,
+            'showOverlay no longer ends a spot under every window it opens');
+        const flags = ui.match(/if \(s\.(\w+) \|\| s\.(\w+) \|\| s\.(\w+)\) return true;/);
+        assert.ok(flags, 'windowOverTerminal() no longer reads three state flags - update this test');
+        const all = ui + srcOf('engine/engine_vending.js');
+        for (const f of flags.slice(1)) {
+            assert.match(all, new RegExp(`this\\.cutRadio\\?\\.\\(\\);\\s*\\n\\s*this\\.hushNarration\\(\\);\\s*\\n\\s*this\\.state\\.${f} = true;`),
+                `${f} opens a window without ending the spot`);
+        }
+        const core = srcOf('engine/engine_core.js');
+        const finish = core.slice(core.indexOf('finishGame: function'), core.indexOf('startParty: async function'));
+        assert.match(finish, /this\.cutRadio\?\.\(\);/, 'the end of the day leaves a spot on air');
+        const party = core.slice(core.indexOf('startParty: async function'));
+        assert.match(party.slice(0, 4000), /this\.state\.isPartyMode = true;\s*\n\s*this\.cutRadio\?\.\(\);/, 'the gala starts under a spot');
+        assert.match(srcOf('engine.js'), /onLanguageChange\(\(\) => \{[\s\S]{0,600}engine\.cutRadio\(\);/,
+            'a language switch leaves the old language\'s spot on air');
+        assert.match(srcOf('engine/engine_events.js'), /this\.radioNewDay\?\.\(\);/, 'the morning screen does not start the station\'s day');
+    });
+
+    await ok('The tab pauses a spot, zero ends it, the switch ends it, a missing file is over', async () => {
+        let fm = onAir();
+        fm.playSpot();
+        globalThis.document.hidden = true;
+        fm.syncRadioToVisibility();
+        assert.ok(fm.radioEl.paused && fm.radioPausedByTab, 'a hidden tab did not pause the spot');
+        assert.ok(!fm.duckReasons.has('radio'), 'the music stayed ducked under a paused spot');
+        globalThis.document.hidden = false;
+        fm.syncRadioToVisibility();
+        assert.ok(!fm.radioEl.paused && state.fmOnAir, 'the spot did not come back with the tab');
+        // Came back to a window: the spot is over instead.
+        globalThis.document.hidden = true;
+        fm.syncRadioToVisibility();
+        openOverlays.add('team-modal');
+        globalThis.document.hidden = false;
+        fm.syncRadioToVisibility();
+        assert.equal(state.fmOnAir, false, 'the spot came back over a window');
+        done();
+
+        fm = onAir();
+        fm.playSpot();
+        fm.setNarrationVolume(0);
+        assert.equal(state.fmOnAir, false, 'zero left the spot running');
+        await wait(400);
+        done();
+
+        fm = onAir();
+        fm.playSpot();
+        fm.toggleRadio(false);
+        assert.equal(state.fmOnAir, false, 'the switch left the spot running');
+        assert.equal(store.get(KEYS.fm), 'false', 'the switch was not stored');
+        assert.equal(fm.radioMayStart(), false);
+        await wait(400);
+        done();
+
+        fm = onAir();
+        RadioAudio.refuse = true;
+        fm.playSpot();
+        await wait(10);
+        assert.equal(state.fmOnAir, false, 'a spot without a file stayed on air');
+        assert.equal(fm.radioNextAt, clock.now + RADIO_GAP_MS, 'a missing file was asked for again at once');
+        done();
+    });
+
+    await ok('No two modules spread into the engine share a name', async () => {
+        // src/engine.js spreads every module into ONE object, and the later
+        // one wins without a word. The radio added two dozen names to it.
+        const shell = srcOf('engine.js');
+        const spread = [...shell.matchAll(/^\s*\.\.\.(\w+),$/gm)].map(m => m[1]);
+        const files = Object.fromEntries([...shell.matchAll(/^import \{ ([^}]+) \} from '\.\/engine\/(\w+)\.js';$/gm)]
+            .flatMap(m => m[1].split(',').map(n => [n.trim(), m[2]])));
+        assert.ok(spread.includes('radio'), 'the radio is not spread into the engine');
+        const owner = new Map();
+        const clash = [];
+        for (const name of spread) {
+            assert.ok(files[name], `no import for the spread module ${name}`);
+            const mod = (await import(`../src/engine/${files[name]}.js`))[name];
+            for (const key of Object.keys(mod)) {
+                if (owner.has(key)) clash.push(`${key} (${owner.get(key)} and ${name})`);
+                else owner.set(key, name);
+            }
+        }
+        assert.deepEqual(clash, [], 'two modules define the same name');
+    });
+}
 
 console.log(`\n${passed} checks passed.`);

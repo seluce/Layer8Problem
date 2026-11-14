@@ -8,7 +8,9 @@
  * one over the text as written and one over the text as it is sent to the
  * provider, and --check holds the manifest against the trees.
  *
- * Usage: node tools/make-voice.mjs [--lang=de|en] [--write] [--check]
+ * Usage: node tools/make-voice.mjs [--lang=de|en] [--set=fm] [--write] [--check]
+ *        --set=fm  GlobalCorp FM's spots (7.2) instead of the narrator's
+ *                  pieces: voice/manifest.fm.<lang>.json - see VOICE_SETS
  *        --write   create or update voice/manifest.<lang>.json
  *        --check   exit 1 if the manifest and the tree disagree (a gate)
  *        neither   report what would change, touch nothing
@@ -21,7 +23,7 @@
  */
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
-import { collectEntries, TERMINAL, MAIL_POOL } from './voice-text.mjs';
+import { TERMINAL, MAIL_POOL, voiceSet } from './voice-text.mjs';
 
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const args = process.argv.slice(2);
@@ -29,10 +31,12 @@ const flag = (n, d) => { const h = args.find(a => a.startsWith(`--${n}=`)); retu
 const LANG  = flag('lang', 'de');
 const WRITE = args.includes('--write');
 const CHECK = args.includes('--check');
+const SET_NAME = flag('set', 'narrator');
 
-let entries, unknownTags;
+let set, entries, unknownTags;
 try {
-    ({ entries, unknownTags } = await collectEntries(LANG));
+    set = voiceSet(SET_NAME);
+    ({ entries, unknownTags } = await set.collect(LANG));
 } catch (err) {
     console.error(err.message);
     process.exit(1);
@@ -41,7 +45,8 @@ try {
 // ---------------------------------------------------------------- the report
 
 const seen = new Map(entries.map(e => [e.key, e]));
-const MANIFEST = `${ROOT}voice/manifest.${LANG}.json`;
+const MANIFEST_PATH = set.manifest(LANG);
+const MANIFEST = `${ROOT}${MANIFEST_PATH}`;
 const old = existsSync(MANIFEST) ? JSON.parse(readFileSync(MANIFEST, 'utf8')) : null;
 const oldBy = new Map((old?.entries ?? []).map(e => [e.key, e]));
 
@@ -64,7 +69,9 @@ const gone = [...oldBy.keys()].filter(k => !seen.has(k));
 const chars = entries.reduce((n, e) => n + e.chars, 0);
 const todo = fresh.length + changed.length;
 
-console.log(`\nVoice manifest (${LANG}) - ${TERMINAL.length} terminal pools and the ${MAIL_POOL} outcomes`);
+console.log(SET_NAME === 'narrator'
+    ? `\n${set.label} (${LANG}) - ${TERMINAL.length} terminal pools and the ${MAIL_POOL} outcomes`
+    : `\n${set.label} (${LANG})`);
 console.log(`  ${entries.length} pieces, ${chars.toLocaleString('de-DE')} characters to speak`);
 console.log(`  ${(chars / 900 / 60).toFixed(1)} h at 900 characters a minute\n`);
 if (old) {
@@ -111,7 +118,7 @@ if (WRITE) {
         .map(e => `  {"key":${JSON.stringify(e.key)},"sha":"${e.sha}","spk":"${e.spk}","chars":${e.chars}}`)
         .join(',\n');
     writeFileSync(MANIFEST, head + body + '\n ]\n}\n');
-    console.log(`  written: voice/manifest.${LANG}.json`);
+    console.log(`  written: ${MANIFEST_PATH}`);
 } else {
     console.log('  (nothing written - pass --write)');
 }

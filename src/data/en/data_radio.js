@@ -1,0 +1,484 @@
+/**
+ * GlobalCorp FM - the company radio (7.2).
+ *
+ * Short spots in a voice of their own, played in the quiet moments of a
+ * working day: the narrator has been silent for a while, nothing covers the
+ * terminal, no mail, no emergency, not the gala, not the lesson. See
+ * src/engine/engine_radio.js for when, and EVENTS.md for the format.
+ *
+ * Every spot is ONE recording, filed under the checksum of its text in
+ * audio/fm/<lang>/ (tools/voice-text.mjs, collectRadio). Change a word and
+ * the spot goes silent until it is rendered again - the narrator's rule.
+ *
+ * Fields:
+ *   id    fm_ + motif, unique in this pool, the same in both trees
+ *   kind  what sort of spot (src/engine/radio_kinds.js, with the length
+ *         each kind runs to): two of one kind are never played back to
+ *         back. `talk` is Ralf, the host, telling a story; `mandy` is Mandy
+ *         from Marketing doing the same - read by the voice of the adverts;
+ *         `ident` is the station's name and a line. `shout` (Ralf) and
+ *         `gossip` (Mandy) answer the player's standing and must carry
+ *         if.rep; `news` (Ralf) answers an emergency and must carry if.seen.
+ *   when  [from, to] minutes of the day, from inclusive, to exclusive;
+ *         without it the spot fits any time of the working day
+ *   if    what has to hold on top: tickets (at least), l, a, b (at least,
+ *         the four letters of the effects), day (a WEEK_DAY_KEYS id - never
+ *         the word), rep ({ "<name in DB.chars>": n } - at least n when n
+ *         is positive, at most n when it is negative; the standing is the
+ *         career's), seen ([emergency ids] - any one of them used in this
+ *         run, today or, in a week, this week). A spot whose `if` holds may
+ *         go ahead of the rest, once a cycle (engine_radio.js, "NOT A
+ *         TIMETABLE").
+ *   text  what is said. No placeholder, no emoji, no markup - it is a
+ *         recording, made months before it is played.
+ *
+ * In this tree everyone speaks English, the presenter and the machines they
+ * quote alike; British spelling and the glossary's names (Ms Elster, Dr
+ * Wichtig, the kitchenette, 'Creative 2'). It is the company's own station,
+ * and it is cheerful the way a company is.
+ */
+export const radio = [
+
+    // --- The morning show, until 10:00 ---
+    { id: "fm_morning_coffee", kind: "morning", when: [480, 600],
+      text: "Good morning, GlobalCorp! You're listening to GlobalCorp FM, the in-house radio nobody ordered. The coffee machine in the kitchenette is already showing 'ERROR 418', and the queue in front of it is four people long all the same. We'll keep you posted." },
+    { id: "fm_morning_stretch", kind: "morning", when: [480, 600],
+      text: "GlobalCorp FM, the morning show. Before you sit down: shoulders up, shoulders down, one deep breath in. Not in the server room, please, the air is in short supply in there. HR recommends three minutes of exercise a day, ideally spread across the walk to the kitchenette." },
+    { id: "fm_morning_mail", kind: "morning", when: [480, 570],
+      text: "The morning briefing on GlobalCorp FM. Overnight, eleven hundred emails came into the building, nine hundred of them with 'Re:' in the subject line and two hundred with 'Re: Re:'. Exactly one had an attachment, and it was too big. Sales forwarded it to everyone anyway." },
+    { id: "fm_monday_morning", kind: "weekday", when: [480, 600], if: { day: "mon" },
+      text: "Monday morning on GlobalCorp FM. The weekend is behind you, the inbox ahead of you, and in between there is only the walk from the lift to your desk. Take your time over it." },
+    { id: "fm_morning_parking", kind: "morning", when: [480, 570],
+      text: "Good morning from GlobalCorp FM. The car park is full except for the space right by the entrance. That one belongs to Dr Wichtig, who is working from home today, so it stays free. Park there anyway and by midday you'll find a note from Egon under your windscreen wiper. Egon laminates his notes." },
+    { id: "fm_morning_turnstile", kind: "morning", when: [480, 600],
+      text: "The morning show on GlobalCorp FM. The turnstile at the main entrance is only reading every other pass today. If you belong to the other half, please see Gabi at reception. Gabi will let you through if you look friendly, and she'll remember who didn't." },
+    { id: "fm_morning_kevin", kind: "morning", when: [480, 600],
+      text: "Some good news to start the day: Kevin, our apprentice, was first in the building this morning, at half past six. He wanted to see what happens when you put the server's clock forward by an hour. What happened, you'll find out from the ticket system over the course of the morning." },
+    { id: "fm_morning_horoscope", kind: "morning", when: [480, 600],
+      text: "The office horoscope on GlobalCorp FM. Aries: a meeting is postponed, but not cancelled. Taurus: somebody eats your yoghurt. Gemini: you get copied in. All other signs: see Gemini." },
+    { id: "fm_morning_no_music", kind: "morning", when: [480, 600],
+      text: "You're listening to GlobalCorp FM, the station without music. The music licence has been with Purchasing for review for three years. Until it comes through, the air conditioning will sing to you, in the East Wing even in two-part harmony. Requests to facilities, please." },
+
+    // --- The other days of the week. Tuesday and Thursday exist only in a
+    //     week: day mode stands for a Monday, a Wednesday or a Friday
+    //     (radioDayKey). A spot whose `if` holds is drawn before the rest,
+    //     so a day spot without a `when` is that day's first spot. ---
+    { id: "fm_tuesday", kind: "weekday", if: { day: "tue" },
+      text: "Tuesday on GlobalCorp FM, the least remarkable day of the week. Monday has already had its crises, and Friday hasn't had them yet. So whatever goes wrong today is brand new and all yours." },
+    { id: "fm_wednesday", kind: "weekday", when: [600, 690], if: { day: "wed" },
+      text: "Hump day on GlobalCorp FM. Half the week is done, the other half is in the calendar. Accounts would like to point out that hump day is not a celebration, and that sparkling wine in the kitchenette cannot be claimed on expenses. We've seen some anyway." },
+    { id: "fm_thursday", kind: "weekday", if: { day: "thu" },
+      text: "Thursday on GlobalCorp FM, and we have a forecast: tomorrow is Friday. Whatever you don't get done today, you won't get done tomorrow either, but tomorrow nobody will mind. Plan accordingly." },
+
+    // --- Traffic: the building as a road network ---
+    { id: "fm_traffic_lift_b", kind: "traffic",
+      text: "GlobalCorp FM, traffic and travel. Lift B is stuck between the third and fourth floors. Egon has been informed and will take a look after his break. Please use the east stairwell instead. The east stairwell is closed today for a fire drill." },
+    { id: "fm_traffic_corridor", kind: "traffic",
+      text: "The travel news, with an obstruction outside Sales: a filing cabinet on wheels is standing crossways in the corridor, origin unknown. Egon has secured it with barrier tape, and the corridor along with it. Please give Sales a wide berth. Sales will come to you anyway." },
+    // fm_traffic_print_jam: the printer on the second floor is the device
+    // of the month (fm_staff_printer) - it has a reputation to keep.
+    { id: "fm_traffic_print_jam", kind: "traffic",
+      text: "Slow-moving traffic at the printer bank on the first floor. A three-hundred-page job is blocking both machines. It comes from Sales and consists mostly of slides with the word synergy on them. There is no diversion: the printer on the second floor does not take other people's jobs. It has a reputation to protect." },
+    { id: "fm_traffic_kitchen", kind: "traffic",
+      text: "Queuing traffic in the kitchenette. In front of the dishwasher, the crockery is backed up to the edge of the worktop. The dishwasher itself finished long ago; it just isn't being emptied. Please keep an emergency lane clear to the kettle." },
+    { id: "fm_traffic_wrong_way", kind: "traffic",
+      text: "Warning, wrong-way driver! In the west stairwell, a colleague from Sales is coming towards you on the wrong side with a stack of boxes. Please keep left, do not overtake and do not speak to him. He's on the phone." },
+    { id: "fm_traffic_kreativ", kind: "traffic",
+      text: "The travel news reports a full closure in meeting room 'Creative 2'. The room is triple-booked, and all three meetings started on time. The participants are now negotiating over who gets the projector. The projector has been showing 'No Signal' for ten minutes and is staying out of it." },
+    { id: "fm_traffic_barrier", kind: "traffic",
+      text: "The travel news from the car park. Since early this morning, the barrier at the exit will only take coins. Nobody in the building has had any coins since the canteen went card-only. Accounts is looking into a solution. Until then, you're parked nicely where you are." },
+    { id: "fm_traffic_lift_a", kind: "traffic",
+      text: "Good news from the travel desk: Lift A is running again, though only downwards. If you want to go up, you go down to the basement first and think it over there. Facilities is calling it a partial success and asks you not to jump in the lift." },
+
+    // --- Weather, indoors ---
+    // fm_weather_blue: the colour-blind electrician's note ('BLUE heats', see
+    // GLOSSAR 2). The mapping is never swapped - blue heats.
+    { id: "fm_weather_server", kind: "weather",
+      text: "The weather on GlobalCorp FM. Still tropical in the server room, with isolated fan failures this afternoon. Ground frost by the fridge in Accounts; Ms Elster asks you not to hold the door open any longer than necessary. In Sales, fair to cloudy, depending on the quarterly figures." },
+    { id: "fm_weather_blue", kind: "weather",
+      text: "The indoor climate, brought to you by facilities. It has been warm in the East Wing since early this morning, very warm, because somebody set the dial to blue. A reminder: blue heats. If you'd like it cooler, please open a window. The windows in the East Wing do not open." },
+    { id: "fm_weather_fog", kind: "weather",
+      text: "The weather on GlobalCorp FM. Dense fog over the smoking corner, visibility under one metre. Humid in the open-plan office, with isolated gusts of tuna, even though the microwave in the East Wing is out of use. Dry and quiet in the basement, as ever." },
+    { id: "fm_weather_draft", kind: "weather",
+      text: "A severe weather warning for the second floor: a window in the corridor is open on the tilt, and there's a draught, with gusts reaching the kitchenette. Please hold on to any loose sticky notes. Facilities would gladly close the window, but it belongs to Ms Elster, and Ms Elster tilted it on purpose." },
+    { id: "fm_weather_pollen", kind: "weather",
+      text: "The pollen count on GlobalCorp FM. High levels in Marketing from scented candles, cinnamon and apple. Moderate in Sales, mostly aftershave. Nothing at all in IT, where nobody ever opens a window. If you're sensitive, please avoid the lift after the lunch break." },
+    { id: "fm_weather_storm", kind: "weather", when: [480, 900],
+      text: "The outlook for the afternoon: a thunderstorm is building over the Sales team meeting, with the first lightning around three o'clock, aimed at the quarterly figures. Clearing afterwards. The mood stays fresh until clocking off, locally frosty in the office of the head of sales." },
+    { id: "fm_weather_sun", kind: "weather",
+      text: "The weather: the sun is shining outside, we're told. A colleague from Sales saw it in the smoking corner early this morning. For everyone with a window seat, the blinds stay down because of the screens. For everyone else, nothing changes." },
+
+    // --- The canteen, around midday. The dishes are the intranet's plan
+    //     (data_intranet.js, canteen.page.menu), keyed by the same day ids. ---
+    { id: "fm_canteen_queue", kind: "canteen", when: [690, 810],
+      text: "GlobalCorp FM, your lunch break. The canteen reports one hot dish of the day and a queue all the way to the glass door. The microwave in the East Wing stays out of use; Egon has seen what was in it last. Bring your own cutlery and you'll be served faster." },
+    { id: "fm_canteen_mon", kind: "canteen", when: [690, 810], if: { day: "mon" },
+      text: "Monday, and GlobalCorp FM is live at the serving counter: it's spaghetti bolognese. The pasta is soft, and there is plenty of sauce. Anyone wearing a white shirt today has made a brave decision." },
+    { id: "fm_canteen_wed", kind: "canteen", when: [690, 810], if: { day: "wed" },
+      text: "Wednesday is Hawaii day in the canteen: chicken breast with pineapple, baked under something the kitchen calls cheese. For everyone else there's the large salad bowl with three grains of sweetcorn. The dressing has sold out. GlobalCorp FM wishes you a pleasant lunch." },
+    { id: "fm_canteen_fri", kind: "canteen", when: [690, 810], if: { day: "fri" },
+      text: "The canteen news, heading into the weekend. Today it's fish fingers, four per person, counted out at the counter. The mash is from powder, the spinach from conviction. If you'd like a fifth fish finger, please fill in a request. The request forms are in Accounts." },
+    { id: "fm_canteen_tue", kind: "canteen", when: [690, 810], if: { day: "tue" },
+      text: "The canteen on a Tuesday: currywurst and chips, the classic. The chips were still crisp at half past eleven; by now that is a memory. The vegetarian option is steamed broccoli with rice, no sauce. The kitchen calls that healthy." },
+    { id: "fm_canteen_thu", kind: "canteen", when: [690, 810], if: { day: "thu" },
+      text: "Thursday in the canteen, and GlobalCorp FM is there. It's schnitzel, Viennese style. The breadcrumbs come away easily, so please eat briskly and without sudden movements. The potato salad comes out of a bucket; the potato soup is watery, but it warms you from the inside." },
+    { id: "fm_canteen_dessert", kind: "canteen", when: [690, 810],
+      text: "Dessert on GlobalCorp FM. Today it's pudding, flavour vanilla, colour beige. The skin on top is included in the price. If you don't want it, please take it off yourself; for reasons of hygiene, the kitchen no longer does that." },
+
+    // --- Announcements: HR, facilities, marketing ---
+    // fm_notice_basement: the basement code (0000, GLOSSAR 1) without saying it.
+    // fm_notice_password: Puschel123 (GLOSSAR 1) without saying it.
+    { id: "fm_notice_basement", kind: "notice",
+      text: "A message from facilities. Egon would like you to know that the basement is locked again as of now, and the code has not changed. Which code that is, he won't say. Egon does not speak into microphones, on principle." },
+    { id: "fm_notice_password", kind: "notice",
+      text: "A security notice on GlobalCorp FM. Please choose secure passwords. The name of your pet with one, two, three after it does not count as secure, even if the pet is very fluffy. By now, IT knows every pet in the building." },
+    { id: "fm_notice_feelgood", kind: "notice",
+      text: "An announcement from Marketing. Chantal invites you to the feel-good session in the large meeting room, topic: mindfulness in the mindset. There will be fruit. The fruit is an apple, and the apple is for Chantal." },
+    { id: "fm_notice_fridge", kind: "notice", when: [480, 840],
+      text: "An announcement from Accounts. The fridge in the kitchenette will be emptied today at two o'clock. Ms Elster asks you to label every container with your name. A container that only says 'Mine' counts as ownerless. The yoghurt labelled 'Hands off' is already empty." },
+    { id: "fm_notice_fire_drill", kind: "notice",
+      text: "A message from facilities: there will be a fire drill today, and the time is being kept secret. When the alarm sounds, please walk calmly to the assembly point in the car park, and do not take your coffee mugs with you. Eleven are still out there from the last drill." },
+    { id: "fm_notice_survey", kind: "notice",
+      text: "HR invites you to take part in the staff survey. The survey is anonymous. Please begin by giving your name, your department and your staff number, so that we can thank you personally for your honest opinion." },
+    { id: "fm_notice_mug", kind: "notice",
+      text: "A request from the kitchenette: the mug that says 'World's Best Boss' is not for everyone. It belongs to Dr Wichtig, who gave it to himself. Please put it back washed, with the handle to the right. He notices." },
+    { id: "fm_notice_reply_all", kind: "notice",
+      text: "A note on email traffic: please do not reply all to the email with the subject 'Please do not reply all'. If you already have, please don't apologise to everyone for it. The mail server thanks you and now needs a moment to itself." },
+    { id: "fm_notice_lost_found", kind: "notice",
+      text: "Lost property on GlobalCorp FM. Handed in so far: an umbrella, a bunch of forty keys and a USB stick labelled 'Salaries, do not open'. The umbrella is waiting for you with Gabi at reception. The keys are already back with Egon. The stick has been opened." },
+    { id: "fm_notice_colour", kind: "notice",
+      text: "A message from Marketing: the corporate colour is now holo pink. All presentations, letterheads and business cards will be switched over by the end of the month. Chantal asks for your understanding, and for a new tablet in a matching colour, because the old one no longer suits the company." },
+    // fm_notice_world: Kevin and his Minecraft (data_chars), not named.
+    { id: "fm_notice_world", kind: "notice",
+      text: "An appeal for information: overnight, a world appeared on the file server, with mountains, sheep and a house made of glass. Whoever it belongs to, please get in touch with IT. Kevin does not need to get in touch. IT already knows." },
+    { id: "fm_notice_meeting_free", kind: "notice",
+      text: "A message from Management: starting now, there will be one meeting-free afternoon every week. Which afternoon that will be, we shall discuss in a meeting with all heads of department. Two hours, open end, the invitation is on its way." },
+    { id: "fm_notice_plants", kind: "notice",
+      text: "A request from facilities: the plants in the corridors are plastic. Please stop watering them. The rubber plant outside Sales is now standing in a small lake, and down in the pot something is growing that is not plastic." },
+    { id: "fm_notice_cake", kind: "notice",
+      text: "An announcement for everyone with a sweet tooth: there is a cake in the kitchenette. Nobody knows what it's for, and nobody knows who brought it either. Accounts advises against cutting it until someone has owned up. Two slices are already missing." },
+    { id: "fm_notice_tailgate", kind: "notice",
+      text: "A security notice: please don't hold the server room door open for anyone, not even friendly people in hi-vis jackets carrying clipboards. They have passes of their own. Anyone without one is either from outside or from Sales, and neither belongs in the server room." },
+    // fm_notice_prince: the prince of the side quests and calls (Prinz
+    // Abubakar, prince_letter), not named.
+    { id: "fm_notice_prince", kind: "notice",
+      text: "A warning from IT: an email from a prince of a country that is on no map is going round the building. He would like to transfer a fortune to you and only needs your account number. Please do not reply. Ms Elster has already replied, with an invoice." },
+    { id: "fm_notice_shredder", kind: "notice",
+      text: "A message from Accounts: the ShredMaster 3000 is a shredder, not a waste-paper basket. Please do not put banana skins, coffee cups or ties in it. Last week's tie is beyond saving. Its owner has worn a bow tie ever since." },
+
+    // --- Advertising for the company's own services ---
+    { id: "fm_ad_tickets", kind: "ad",
+      text: "Have you met the GlobalCorp ticket system? One problem, one ticket, one number. And then patience. The ticket system remembers everything, so you don't have to. An advertisement from the IT department. The IT department knew nothing about it." },
+    { id: "fm_ad_printer", kind: "ad",
+      text: "Printing at GlobalCorp: the printer bank on the first floor prints in black and white, in colour, and now and then on request. Toner is available from Ms Elster against a receipt. The receipt is printed by the printer bank. GlobalCorp FM recommends the pencil." },
+    { id: "fm_ad_intranet", kind: "ad",
+      text: "The GlobalCorp intranet: the canteen menu, the organisation chart and the board's vision, all in one place. You'll find the password on the intranet too. GlobalCorp FM, bringing people together." },
+    // fm_ad_coolio: the fridge of the coffee pool, which reports itself on
+    // an extension.
+    { id: "fm_ad_coolio", kind: "ad",
+      text: "The Coolio 3000 in the kitchenette. It cools, it counts, it reports. Put the milk back in the door empty, and you'll get a call from its extension that very same day. The Coolio 3000, the fridge that knows you." },
+    { id: "fm_ad_kreativ", kind: "ad",
+      text: "Need room for big ideas? Book 'Creative 2': twelve chairs, one projector and a socket you can reach with a bit of luck. Bring your own coffee, and your own ideas too, please. 'Creative 2', bookable on the intranet, if it's free." },
+    { id: "fm_ad_restart", kind: "ad",
+      text: "Is your computer playing up? Have you tried turning it off and on again? Wonderful. Then you've already done everything IT would have done, and you didn't even have to wait. GlobalCorp IT. We believe in you." },
+    { id: "fm_ad_premium_coffee", kind: "ad",
+      text: "New in the kitchenette: Coffee Premium. The same coffee as always, but in the mug with the gold rim, for only fifty cents more. The tally sheet hangs right next to the machine. Coffee Premium. Tastes the same, costs more, feels better." },
+    // fm_ad_magazine: Dr Wichtig's ADDED VALUE, the magazine in the vending
+    // machine (data_vending), issue one, never sold out. Spelt as words:
+    // the spot is only heard, and capitals invite a voice to spell it.
+    { id: "fm_ad_magazine", kind: "ad",
+      text: "Read 'Added Value', the magazine from Dr Wichtig. Forty pages of vision, an interview with the publisher conducted by the publisher, and on the back cover the publisher playing golf. Issue one is still available. Issue two will appear as soon as issue one has sold out." },
+    { id: "fm_ad_chair", kind: "ad",
+      text: "GlobalCorp has exactly one Ergonomic 3000, and it is on the top floor. Fourteen settings, six levers and a manual of a hundred pages. For every other workstation, Purchasing recommends a cushion. The cushion has been requested." },
+    // fm_ad_carpool: the lift share on the noticeboard (data_board), whose
+    // one condition is no radio.
+    { id: "fm_ad_carpool", kind: "ad",
+      text: "The car share on the noticeboard brings together people who travel the same way. Right now someone there is looking for two passengers, departure ten past seven, condition: no radio. GlobalCorp FM doesn't take it personally and wishes you a pleasant journey." },
+    { id: "fm_ad_escape_room", kind: "ad",
+      text: "Team building with Marketing: in the escape room in the basement, you'll get to know your colleagues from a whole new side in sixty minutes. One door, one puzzle, no signal. Chantal will keep you company with a quote for every minute. Sign up on the intranet; the way out by arrangement." },
+    { id: "fm_ad_canteen_card", kind: "ad",
+      text: "The GlobalCorp canteen card. Simply top it up, simply pay, simply forget how much is left on it. You can top it up at the till in the canteen. The till only takes payment by canteen card." },
+    { id: "fm_ad_self_service", kind: "ad",
+      text: "Forgotten your password? No problem with the new GlobalCorp self-service. On the intranet, click the button for forgotten passwords, enter your old password, and everything is back the way it was. Self-service. Because even IT needs a break sometimes." },
+    // fm_ad_phoenix: Projekt Phoenix, the project nobody knows (intranet,
+    // side quests).
+    { id: "fm_ad_phoenix", kind: "ad",
+      text: "Project Phoenix. It's coming. When has not been decided yet, and neither has what. Who is leading it is being clarified as we speak, and as for who is paying for it, please don't ask Accounts. Project Phoenix. We can't wait to find out ourselves." },
+    { id: "fm_ad_stress_ball", kind: "ad",
+      text: "Trouble at your desk? The GlobalCorp anti-stress ball sits nicely in the hand, doesn't squeak and doesn't hold a grudge. In red, available now from reception. Gabi has only three left. She needed one herself today." },
+    // fm_ad_synerqon: the consultants of the meetings pool.
+    { id: "fm_ad_synerqon", kind: "ad",
+      text: "This programme is brought to you by Synerqon Consulting. Synerqon turns your processes into slides and your slides into processes. Don't know what your department does all day? Neither do we, but we write it down. Synerqon. Transformation you can bill for." },
+    { id: "fm_ad_station", kind: "ad",
+      text: "Ever fancied being on the radio? GlobalCorp FM is looking for voices from around the building. Send us your greetings, your requests and your complaints. We read out the greetings, we pass on the requests, and the complaints go to HR with your name on them." },
+
+    // --- From the top floor ---
+    { id: "fm_board_tunnel", kind: "board",
+      text: "And now a greeting from the top floor. Dr Wichtig is thinking of everyone listening right now, and especially of everyone who ought to be working while they listen. He wanted to say so in person, but the line dropped in a tunnel. He'll call straight back." },
+    { id: "fm_board_paperless", kind: "board",
+      text: "A word from the top floor: Dr Wichtig has a vision. By the end of the year, GlobalCorp is to go paperless. The vision reached every department early this morning, printed, in colour, double-sided, signed and with a cover sheet." },
+    { id: "fm_board_ai_coffee", kind: "board",
+      text: "Dr Wichtig announces from the top floor: from next quarter, an artificial intelligence will make the coffee. IT is to have it set up by then. IT replied with a question: with which hands? The question has been filed under resistance to change." },
+    { id: "fm_board_open_door", kind: "board",
+      text: "The door to the top floor is always open, Dr Wichtig would like you to know. He asks you not to walk through it all the same. For concerns there is the ticket system; for urgent concerns, the ticket system with an exclamation mark in the subject line. He reads the exclamation mark personally." },
+    { id: "fm_board_appreciation", kind: "board",
+      text: "Good news from the board: the quarter was excellent. As a thank-you to the staff there will be no pay rise this year, but something far more valuable: appreciation. The appreciation will arrive by email in the course of the day, to everyone, with no attachment." },
+    { id: "fm_board_live", kind: "board",
+      text: "We have Dr Wichtig live on the line, from the car. Dr Wichtig, what would you like to say to the staff? It's crackling. We hear a word that sounds like turnover and one that sounds like weekend, in the same sentence. We're sure it was meant as motivation." },
+    // Not 'employee of the month': the intranet dashboard names one of
+    // those, and the radio must not contradict it.
+    { id: "fm_staff_printer", kind: "staff",
+      text: "GlobalCorp FM congratulates the device of the month. This month it goes to the printer on the second floor: four weeks without a paper jam, without a complaint and without a single day of holiday. The certificate hangs right next to it. It printed it itself." },
+    { id: "fm_staff_egon", kind: "staff",
+      text: "GlobalCorp FM congratulates Egon on his work anniversary. Nobody knows exactly how long he has been here; his personnel file begins with the words 'see Egon'. His colleagues clubbed together and bought him a new key ring. Egon said thank you and asked where the keys for it were." },
+    { id: "fm_staff_new_colleague", kind: "staff",
+      text: "We welcome a new colleague to Sales. She has been given a computer without a password and a chair without castors. The password comes next week; the castors have been requested. Welcome to GlobalCorp, and here's to many tickets together." },
+    // fm_staff_ruediger: Frau Elster's cat (data_chars).
+    { id: "fm_staff_ruediger", kind: "staff",
+      text: "Greetings on GlobalCorp FM: Ms Elster from Accounts says hello to Rüdiger, who is at home and, she hopes, listening right now. She wants to tell him that the tin of salmon is for this evening and not for now. Rüdiger, if you've already found it: Ms Elster counts the tins." },
+    { id: "fm_staff_runners", kind: "staff",
+      text: "Congratulations to the running group: at the company run at the weekend, all seven of them crossed the finish line, six of them on foot. Markus reached the finish by phone and sold the run to a client along the way. The client is running with us next year." },
+    { id: "fm_staff_kevin_exam", kind: "staff",
+      text: "GlobalCorp FM congratulates Kevin, our apprentice, on passing his intermediate exam. He did it at the second attempt. At the first, he reinstalled the exam computer to make it run faster. The examiners counted that as initiative and gave him a new date." },
+    { id: "fm_staff_gabi", kind: "staff",
+      text: "A record from the switchboard: yesterday, Gabi at reception took more than two hundred calls and knew what each of them was about before the caller did. She forwarded three of them to IT, with the solution in the subject line." },
+
+    // --- The afternoon, towards clocking off ---
+    { id: "fm_countdown_screens", kind: "countdown", when: [900, 990],
+      text: "GlobalCorp FM in the afternoon. HR would like to remind you that clocking off is not a right but an opportunity. Please do not switch off your screen before the end of the working day. Not even a tiny bit dimmer." },
+    { id: "fm_countdown_coats", kind: "countdown", when: [930, 990],
+      text: "The last hour on GlobalCorp FM. In the corridors the first coats are going on, and in Sales the first 'See you tomorrow!' emails are being written in advance. Markus has already shut down his computer and is playing solitaire on his phone." },
+    { id: "fm_countdown_short_meeting", kind: "countdown", when: [900, 960],
+      text: "Afternoons on GlobalCorp FM: the hour of the short meetings begins now, the ones that start just before clocking off and are only supposed to take ten minutes. If an invitation arrives in a moment, you didn't see it. Your calendar is full, until the end of the day and beyond." },
+    { id: "fm_countdown_way_out", kind: "countdown", when: [930, 990],
+      text: "The travel news for clocking off. Delays are expected on the route from your desk to the exit: in the corridor outside Sales, caused by colleagues with one last question, and at reception, caused by Gabi with the news of the day. If you want to get out quickly, take the stairs and look at the floor." },
+    { id: "fm_countdown_overtime", kind: "countdown", when: [930, 990],
+      text: "For everyone staying late today: the heating switches off at half past four, the lights at five, and from then on the motion sensor in the corridor takes you for a burglar. Waving helps a little. Running helps more, but then security turns up." },
+    { id: "fm_countdown_status", kind: "countdown", when: [960, 990],
+      text: "The last half hour on GlobalCorp FM. HR recommends using it to tidy your desk, answer any open emails and set your chat status to busy. The order is up to you." },
+    { id: "fm_countdown_lights", kind: "countdown", when: [930, 990],
+      text: "Before you go: whoever leaves the office last, please turn off the lights. In Sales they have been on for three weeks without a break, because everyone thinks Markus is still there. Markus is the first to leave every day." },
+    { id: "fm_friday", kind: "weekday", if: { day: "fri" },
+      text: "It's Friday. GlobalCorp FM asks all departments not to start any new projects today, not to schedule any meetings after lunch, and to avoid the phrase 'just one quick thing'. Sales has scheduled two meetings for two o'clock." },
+
+    // --- When the day presses: the station notices what the player does.
+    //     Through the fiction, never the numbers (EVENT-DOKTRIN 9). ---
+    { id: "fm_alert_queue", kind: "alert", if: { tickets: 7 },
+      text: "A traffic report from the ticket system: congestion in the queue, getting worse. Please don't open your ticket a second time. Open it twice and you'll get two numbers, but not two technicians. There is only one." },
+    { id: "fm_alert_sighting", kind: "alert", if: { b: 70 },
+      text: "GlobalCorp FM with a sighting: Dr Wichtig is out and about in the corridors, last seen between Sales and the kitchenette, heading for IT. We recommend an upright posture and a spreadsheet on your screen. One with lots of numbers." },
+    { id: "fm_alert_breathe", kind: "alert", if: { a: 70 },
+      text: "Time for a relaxation exercise on GlobalCorp FM. Breathe in. Hold your breath for a moment. Breathe out. If you made a fist while doing so, please keep it under the desk. The desk belongs to the company." },
+    { id: "fm_alert_finish", kind: "alert", if: { l: 70 },
+      text: "The productivity tip on GlobalCorp FM: finish one single task completely today. Just one. Gabi at reception says nobody in the building has tried that since the spring, and Gabi knows these things." },
+    // Ten tickets end the day (checkEndConditions), so nine is the last
+    // number a spot can wait for.
+    { id: "fm_alert_queue_full", kind: "alert", if: { tickets: 9 },
+      text: "A newsflash from the travel desk: nothing is moving in the ticket system. The queue now stretches from IT to the canteen and back again. IT asks for your patience, your understanding and, if anyone happens to be in the kitchenette, a double espresso." },
+    { id: "fm_alert_printer_check", kind: "alert", if: { tickets: 5 },
+      text: "GlobalCorp FM, on behalf of IT: if your printer isn't printing, please check first whether there is paper in it. Then whether it's switched on. Then whether it's your printer. Only then write a ticket. The queue thanks you." },
+    { id: "fm_alert_boss_asks", kind: "alert", if: { b: 50 },
+      text: "From the top floor: Dr Wichtig has already asked twice today what IT actually does all day. The first time, it was a question. The second time, he wrote the answer down before anyone had said anything." },
+    { id: "fm_alert_boss_door", kind: "alert", if: { b: 90 },
+      text: "Breaking news: Dr Wichtig is standing outside the IT door. He has knocked, and he is waiting. GlobalCorp FM will now be quiet for a moment, so that it sounds like work at your end." },
+    { id: "fm_alert_doors", kind: "alert", if: { a: 50 },
+      text: "A request to all departments: please close office doors quietly. One door in the building has already slammed shut four times today, so hard that the cups rattled at reception. The cups are fine; the door frame is still being inspected." },
+    { id: "fm_alert_keyboard", kind: "alert", if: { a: 90 },
+      text: "A note from facilities: keyboards are not sports equipment. Anyone who has already hit their own twice today will get a replacement from stock the third time. One letter sticks on the replacement keyboard. Which one is a surprise." },
+    { id: "fm_alert_screensaver", kind: "alert", if: { l: 90 },
+      text: "GlobalCorp FM says hello to everyone who looks very busy right now. HR has a tip for you: a screensaver that looks like a spreadsheet is not a spreadsheet. HR tried it personally and speaks from experience." },
+
+    // --- Ralf, the host (7.2): a story that loses its thread on the way. He
+    //     once did a week of night shifts at a local station, broadcasts from
+    //     the basement next to the server room, keeps an allotment (plot
+    //     fourteen) and is at war with Egon over the studio radiator. The
+    //     basement is locked, with a code (fm_notice_basement). Long: they wait
+    //     for a longer quiet (radio_kinds.js). ---
+    { id: "fm_talk_radiator", kind: "talk",
+      text: "Ralf here, GlobalCorp FM, live from the studio in the basement. Live, in our case, means this: the radiator behind me knocks three times, then it goes quiet, then it knocks again. Egon says it's air in the system. I say it's Morse. I did a week of night shifts at the local station once, you know, and we had a radiator just like it there. The colleague before me claimed it once gave him the weather forecast at three in the morning. And it was right. Mind you, in summer the forecast is nearly always right, to be fair. It's different in the garden. Everyone says rain, and my kohlrabi stand in the dry all the same. Where was I? The heating. Egon is coming after his break, and until then, somebody down here is knocking along." },
+    { id: "fm_talk_first_words", kind: "talk",
+      text: "Quickly, the traffic, before I forget: Lift B is stopping at the third floor today, whether you want it to or not. It opens the doors, waits, closes them again and carries on. There's a certain dignity to it. My very first sentence on local radio was a traffic report too, as it happens. Queues on the bypass, I said, and in my excitement I named the wrong bypass, one the town didn't even have. Nobody rang in. That was the first thing I learned about radio. The second I learned at the allotment, on plot fourteen: you don't put a garden gnome on the boundary, not even if it's facing your way. My neighbour on fifteen has had a hedge ever since. What was I going to say? Lift B. If it stops at the third floor, just stay in. It'll carry on eventually." },
+
+    // --- Mandy from Marketing (7.2), who reads the adverts: up at half past
+    //     four, cold shower, a vision board, a coach. Not Chantal, who sits in
+    //     the same department and looks after the feelings - Mandy optimises.
+    //     She and Ralf fight a quiet war over the good studio chair. Read by
+    //     the voice of the adverts (byKind in voice/run.fm.<lang>.json). ---
+    { id: "fm_mandy_chair", kind: "mandy",
+      text: "Hi, it's Mandy from Marketing, I'm taking over for a moment, Ralf's getting coffee. He took the good chair with him. The one with the castors that don't squeak. I'm now sitting on the stool from the storeroom, and do you know what? That's fine. It's actually good. My coach says discomfort is just growth that hasn't got a name yet. I get up at half past four every morning, you see, cold shower, then twenty minutes in front of my vision board. For three weeks there's been a photo of this exact chair on it. Chantal says that's not a good sign for my energy, but then Chantal has a unicorn on her board. An actual unicorn, not a start-up. Anyway, the announcement. I had an announcement. It's written on a note, and the note is on the chair." },
+
+    // --- Idents (7.2): the station's name and a line, five to eight seconds.
+    //     What a station says between two things; Ralf's voice. ---
+    { id: "fm_ident_work", kind: "ident",
+      text: "GlobalCorp FM. We broadcast, you work. One of us has to." },
+    { id: "fm_ident_lunch", kind: "ident",
+      text: "You're listening to GlobalCorp FM, the station that takes just as long a lunch as you do." },
+    { id: "fm_ident_cellar", kind: "ident",
+      text: "GlobalCorp FM, from the basement to the whole building. Including the fourth floor, which doesn't want to hear us." },
+    { id: "fm_ident_accounts", kind: "ident",
+      text: "GlobalCorp FM. Certified, budgeted and not yet discovered by Accounts." },
+    { id: "fm_ident_corridor", kind: "ident",
+      text: "This is GlobalCorp FM, the in-house radio with the range of a corridor." },
+
+    // --- The house's standing with the player (7.2), by if.rep: from +40 a
+    //     colleague's greeting, from -40 one with an edge. Ralf reads the
+    //     greetings (shout), Mandy what the corridor says (gossip); each
+    //     colleague has one of each, never both from the same presenter.
+    //     The player is "die IT" - the department, never a name or a gender. ---
+    { id: "fm_shout_kevin", kind: "shout", if: { rep: { "Kevin": 40 } },
+      text: "There's a sticky note on the studio door, addressed to GlobalCorp FM. Kevin, our apprentice, says hello to IT, and I quote: 'Shoutout to IT, absolute legend, no joke.' I asked him whether he wanted to read it out himself. Live was too much for him, he said. He did wait outside the door, though, until I'd read it out." },
+    { id: "fm_gossip_kevin", kind: "gossip", if: { rep: { "Kevin": -40 } },
+      text: "Mandy from Marketing, the office grapevine, briefly. For days now Kevin has been sitting in the kitchenette with his headphones on, saying 'all good' to everyone who walks past. Nobody had asked. So I asked. IT totally dissed him, he says, and now he's working through it with lo-fi. My coach would say he's in his process. I'd say he's eating a lot of biscuits." },
+    { id: "fm_gossip_chantal", kind: "gossip", if: { rep: { "Chantal": 40 } },
+      text: "It's Mandy, with an observation from our department. Chantal has stuck IT on her vision board, between the unicorn and a spa week, with a heart next to it, in holo pink. I'm not on it, I checked. Which is completely fine. Good for IT. Being glad for others is an attitude; it's on page two of my journal." },
+    { id: "fm_shout_chantal", kind: "shout", if: { rep: { "Chantal": -40 } },
+      text: "Greetings on GlobalCorp FM, from Marketing this time. Chantal says hello to IT, and I'm reading it out, 'with loads of positive energy, in spite of everything'. In spite of everything is underlined. Twice. I've been in radio long enough to tell when a greeting is really an announcement. She's drawn a smiling face next to it. It isn't quite smiling." },
+    { id: "fm_shout_egon", kind: "shout", if: { rep: { "Egon": 40 } },
+      text: "I have something here that this station has never had before: a greeting from Egon. Egon doesn't speak into microphones, you know that. He pressed a note into my hand in the stairwell and walked on without turning round. The note says 'IT. Decent.' That's the whole greeting. From Egon, that's more or less a speech." },
+    { id: "fm_gossip_egon", kind: "gossip", if: { rep: { "Egon": -40 } },
+      text: "Mandy, quickly, from the corridor. Egon has fixed every wobbly chair on the second floor, really every one, with his little spanner. Except one. He looked at the chair in IT, gave it one shake and walked on. I asked him whether he'd forgotten it. He didn't answer. With Egon, that's a no." },
+    { id: "fm_shout_wichtig", kind: "shout", if: { rep: { "Dr. Wichtig": 40 } },
+      text: "A greeting from the top floor, put through by his office. Dr Wichtig praises IT. He doesn't know exactly what IT actually does, he'd like you to know, but for some time now he hasn't noticed any of it, and he has no higher compliment to give. IT gets an entry on the intranet for it, as team of the month. With a photo. No bonus is planned." },
+    { id: "fm_gossip_wichtig", kind: "gossip", if: { rep: { "Dr. Wichtig": -40 } },
+      text: "Mandy with the office grapevine, and today I'm whispering. In the management meeting, Dr Wichtig said the words cost centre and looked in the direction of IT as he said them. Through two walls. I was sitting right next to him, I saw it. My coach says if you're being watched, you should shine. So, dear IT: shine. Just not too brightly, electricity is a topic at the moment." },
+    { id: "fm_shout_gabi", kind: "shout", if: { rep: { "Gabi": 40 } },
+      text: "Greetings from the switchboard. Gabi would like you to know that she has already defended IT three times today, twice on the phone and once at the photocopier. What IT was accused of, she won't say. She has written it down, though, with the time, in case anyone ever needs to know. Who Gabi tells things to is a question of how much she likes them, and IT is at the top of the list." },
+    { id: "fm_gossip_gabi", kind: "gossip", if: { rep: { "Gabi": -40 } },
+      text: "A little tip from reception, it's Mandy. Gabi is putting calls through to IT very slowly at the moment. I was standing right there. She finished her own call, then watered her plant, and then said the line had been engaged, sadly. She smiled very sweetly as she said it. With Gabi, that is not a good sign, as everyone in the building knows." },
+    { id: "fm_shout_elster", kind: "shout", if: { rep: { "Frau Elster": 40 } },
+      text: "A greeting from Accounts, exactly as it's written here: 'Ms Elster sends her regards to IT. Receipt enclosed.' And there really is a receipt enclosed, for one greeting, to IT, signed and countersigned with a paw print. So Rüdiger says hello too. The last time I got anything like this was on local radio, for a traffic report that turned out to be right." },
+    { id: "fm_gossip_elster", kind: "gossip", if: { rep: { "Frau Elster": -40 } },
+      text: "The office grapevine with Mandy. There's a new list from Ms Elster up in the kitchenette. At the top it says 'Outstanding items', and underneath there's a single line, and that line says IT. What IT owes her isn't on it, just a date, underlined in red. There's a photo of Rüdiger stuck to her screen. I had a good look at it. He did not look reconciled." },
+    { id: "fm_gossip_markus", kind: "gossip", if: { rep: { "Markus": 40 } },
+      text: "Mandy with something from Sales. For days now Markus has been telling every client that GlobalCorp's IT is the best in the country. He hasn't cleared it with anyone, and by now it's in three quotes, as a service, with a price. Honestly, that's strong storytelling. IT might still want to look at those quotes before somebody signs." },
+    { id: "fm_shout_markus", kind: "shout", if: { rep: { "Markus": -40 } },
+      text: "Greetings on GlobalCorp FM from Sales, by phone, on the hands-free in his car. Markus says hello to IT and would like to remind you that time is money. After that he said something about his printer that I won't read out here, and hung up to call a client. I don't think that was a greeting. It's going in the log as a greeting all the same." },
+
+    // --- The house news (7.2), by if.seen: Ralf on an emergency the run
+    //     has had, any one of the ids listed. Said after the fact and
+    //     without a clock - in a week it may have been Monday - and true
+    //     whether the emergency was won or lost. Every emergency named was
+    //     read before its line was written. ---
+    { id: "fm_news_water", kind: "news", if: { seen: ["boss_water_leak", "boss_flood", "boss_water_leak_1"] },
+      text: "The house news on GlobalCorp FM. After the water damage, the situation is calm. Egon has looked at the spot, Ms Elster at the bill, and both of them pulled the same face. If you find a wet pair of socks in the corridor, you may keep them. And we down here in the basement can report: still dry. We check every hour." },
+    { id: "fm_news_heat", kind: "news", if: { seen: ["boss_heat", "boss_ac_failure_1"] },
+      text: "A late addition to the weather, from the server room. The great heat has moved off, leaving behind a smell of warm dust that is expected to linger into the evening. If you have business in there, please leave your chocolate at your desk. Changeable across the rest of the building. In Sales, as ever, hot air from the south." },
+    { id: "fm_news_fire", kind: "news", if: { seen: ["boss_fire"] },
+      text: "News from around the building. There was a fire in the server room; we're allowed to say so now. If you still notice a faint smell of melted plastic in the corridors, that's where it's coming from, and it's harmless. Egon is currently checking everything in the building that can put a fire out. There's a note on his door, and it says 'Do not burn'." },
+    { id: "fm_news_attack", kind: "news", if: { seen: ["boss_ransomware", "boss_ransomware_2", "boss_ddos", "boss_ddos_1", "boss_phishing_ceo_1"] },
+      text: "The house news. After the attack on our network, IT asks for your help: don't click on anything you didn't order yourself. No parcel, no prize, nothing forwarded from the top floor either. That least of all. Where the attack came from is still being investigated. The trail leads abroad, or into a fridge." },
+    { id: "fm_news_coffee", kind: "news", if: { seen: ["boss_coffee_crisis", "boss_coffee_shortage_1"] },
+      text: "GlobalCorp FM with a report from the kitchenette, and I must ask you to be brave now. Following the events surrounding the coffee, conversation in the corridors is only possible to a limited extent. If someone stares at you, they don't mean it personally. From now on we'll broadcast a little more quietly, for everyone who isn't quite back with us yet." },
+    { id: "fm_news_inspectors", kind: "news", if: { seen: ["boss_audit", "boss_audit_surprise_1", "boss_cable_mess", "boss_crypto_police_1"] },
+      text: "The house news. The gentlemen with the clipboards have left the building. Whether they were auditors, officers or the TÜV makes no difference to you, and a very big one to the top floor. All the same, please don't throw away anything that looks like a record. We don't have many of those in the building." },
+    { id: "fm_news_broadcast", kind: "news", if: { seen: ["boss_stream", "boss_ceo_stream_1", "boss_vga_fail", "boss_demo_fail"] },
+      text: "A word on our own behalf. GlobalCorp FM had nothing to do with Dr Wichtig's broadcast, the one the whole building is talking about. We only do sound. We have never broadcast a picture, and we don't intend to. Dr Wichtig asks that the subject not be pursued in the canteen. If you have a recording, please delete it twice." },
+    { id: "fm_news_machines", kind: "news", if: { seen: ["boss_skynet_lock", "boss_lockdown_1", "boss_rogue_ai_1", "boss_selbstlernend"] },
+      text: "The house news. After the incident with our software, which wanted to decide for itself for once, a reminder: the software in this building is there to help you. If it isn't helping, it's busy. If it's locking doors, writing letters of dismissal or reinstalling itself, it's very busy. Then please call IT. Their door still opens by hand." },
+    { id: "fm_news_power", kind: "news", if: { seen: ["boss_ups_battery", "boss_generator_test"] },
+      text: "News about the power. The emergency power has made itself felt in the building, in its own way. Egon has hung a note about it on the switch cabinet, two doors down from our studio. I've read it. It says: 'That is why you test it.' That's all it says. So if it suddenly goes quiet during the programme, it's not your set." },
+    { id: "fm_news_printer", kind: "news", if: { seen: ["boss_printer_rage"] },
+      text: "A report from the printer front. The office printer has calmed down. Most recently it put out several hundred black pages, and we would point out that those pages contain no message. Ms Elster would like you to know that Rüdiger is staying at home. And Markus asks you not to mention the printer to him. He isn't speaking to it himself any more." },
+    { id: "fm_news_excavator", kind: "news", if: { seen: ["boss_excavator_1"] },
+      text: "The house news. The main line in the yard is done for. That means the cable that connects us to the internet, not Egon, although he looked it. He has since returned the digger. It wasn't his fault, he says; the cable just happened to be lying there. Nothing changes for GlobalCorp FM. We broadcast down a wire, and Egon hasn't found that one." },
+
+    // --- Ralf's stories, the main batch (7.2). His week of night shifts at
+    //     the local station, plot fourteen and the neighbour at fifteen, the
+    //     chairwoman of the allotment society, his mother, Egon and the
+    //     radiator. A thread may come back, never two stories alike. ---
+    { id: "fm_talk_kombi", kind: "talk",
+      text: "A report from the car park: on level two there's an estate car with its windscreen wipers going, and it isn't raining. I mention it because I had an estate like that myself once, bought second-hand from the sports reporter at the local station. The car radio in it picked up a single station, namely ours. When I drove home after the night shift, it was playing the repeat of me. That's strange company on a country road. You disagree with yourself and there's nothing you can do about it. In the end I sold the car to my brother-in-law, and to this day he listens to nothing but static and claims it's jazz. So, the estate on level two. Egon has been informed and has written a note. It's now tucked under the wiper, waving." },
+    { id: "fm_talk_soup", kind: "talk", when: [690, 810],
+      text: "The canteen has announced that lentil stew will be back soon, and I'll say it openly: I'm pleased. My aunt made lentil stew every other Sunday, with an ingredient she never told anyone. We guessed for years. Vinegar, cinnamon, coffee. My cousin once suggested shoe polish and wasn't allowed to eat with us after that. Shortly before her ninetieth birthday she did finally tell someone, namely the postman. He never passed it on, not even to me, though I gave him kohlrabi from the garden for an entire summer. He still takes the kohlrabi. He thanks me very warmly every time, and then he smiles in that way. Right, the canteen. Whether the kitchen there has a secret ingredient, I don't know. I suspect it's more one they'd rather not name." },
+    { id: "fm_talk_hail", kind: "talk",
+      text: "The weather. Hail has been forecast, scattered, as they say, so if you've left your bike in the yard, please put it under the canopy by the delivery entrance. Hail always makes me think of the garden. Our society once voted on hail insurance, at the annual general meeting, for four hours. In the end the majority were in favour, but nobody wanted to sign, because the form was on paper and there was a thunderstorm outside. We agreed instead that everyone would put a bucket over their lettuces. I have three buckets. My neighbour on fifteen has one bucket and a hedge. Then no hail came at all, just a rainbow, right over number fifteen, and he photographed it and put it up in the society's display case as if it were his. So, hail has been forecast. Whether it comes, nobody knows. Bikes under the canopy anyway, please." },
+    { id: "fm_talk_gloves", kind: "talk",
+      text: "A single glove has been handed in at lost property with Gabi, black leather, right hand. If you have the left one, please come forward. I collect these, by the way, though not on purpose. At home I have a box full of single gloves, and not one of them matches another. I once presented my theory about this on the night shift at the local station: all the second gloves are in one place, somewhere, and they're waiting there. A man rang in that night and said he knew where the place was. Then the line went dead. I think about that call more often than I'd like to admit. Anyway, the right glove is on Gabi's counter, palm up. If you walk past, give it a high five." },
+    { id: "fm_talk_birthday", kind: "talk",
+      text: "There's going to be singing in the kitchenette in a moment; it's somebody's birthday. Whose, I don't know, but Gabi bought the candles, so she knows. I once had a birthday on the night shift myself, at the local station. It was only a week of night shifts, and of all weeks it fell in that one. I didn't tell anyone, you don't want to go begging. At half past three a listener rang in and wished me happy birthday, and I was touched, honestly. After three minutes it turned out he'd meant to ring his brother, who had his birthday on the same day and a similar number. We kept talking anyway, until the news came on. The brother never rang me, just so you know. So: there'll be singing in the kitchenette. Please join in when you go past. Just put the name in yourself." },
+    { id: "fm_talk_record", kind: "talk",
+      text: "In the drawer under the mixing desk there's a record, a single one. I'm not allowed to play it; the music licence is with Purchasing, as you know. I won't say which one it is either, or you'll hum it all day and it'll be my fault. I took it from the local station on my last evening there. The duty editor saw me slip it under my jacket and only said: take the sleeve as well. I forgot the sleeve. Since then the record has lived in an envelope on which Egon wrote 'Do not heat', because he thought I'd put it on the radiator. It's in the drawer, though. When the licence comes through one day, it'll be the first. Until then I sometimes rest my hand on the drawer while I talk. You can't hear that, but it helps me." },
+    { id: "fm_talk_thermos", kind: "talk",
+      text: "The coffee machine in the kitchenette is showing its error message again; I saw it on my way down. It doesn't affect me, I have my flask. It belonged to my father, and he won it in a prize draw. The first prize would actually have been a trip, but that fell on a weekend when the garden needed doing, so he took the flask. It's the most reliable device in this building, and I say that next to a server room. It has survived a fall off the loading bay, a night in the car at minus twelve and Kevin, who mistook it for a speaker. You have to unscrew the lid to the left, not to the right; only I know that. So if you're standing up in the kitchenette getting nothing, you're welcome to come down. I'll pour you a cup. I'll do the lid." },
+    { id: "fm_talk_letter", kind: "talk",
+      text: "I've had listener mail, through the internal post, addressed to 'the radio in the basement'. That's a first. At the local station, in my whole week of night shifts, exactly one letter arrived, from an elderly lady who wanted to know the name of the song I'd played at two in the morning. At two I hadn't played a song; I'd read the weather. I wrote back to her all the same and gave her a title, a lovely one, and she replied that yes, that was exactly the one. To this day I believe we were both right. So, now the letter from here in the building. It says, in capital letters: 'A bit quieter please, I'm trying to work.' It isn't signed. I'll speak a little more quietly now. For you." },
+    { id: "fm_talk_ficus", kind: "talk",
+      text: "There's a ficus in the studio. It was here before this room was a studio, back when it was still the store for the cable drums, and nobody knows who waters it. Not me, and Egon says not him either. Even so it's alive, it's even growing, towards the microphone. Once I turned it so it would face the window. We don't have a window, but the direction would have been right. After three weeks it had bent back towards the microphone. I've only seen anything like it once in the garden, with a sunflower that didn't turn to the sun but to the transistor radio on the shed. My mother says it was only pretending. Actually, I wanted to say something about the plants in the corridors. They're plastic, you know that, so please carry on not watering them. The ficus down here is real. It's listening right now." },
+    { id: "fm_talk_meeting", kind: "talk",
+      text: "The management meeting is today, and only heads of department are invited. I mention it because I was once invited by mistake. Someone had searched the directory for 'head' and found me, because mine says 'Head of Broadcasting'. I went, you shouldn't turn things down. For forty minutes I sat at the long table, between Sales and Accounts, and nobody asked what I was doing there. I nodded twice, said 'interesting' once and was given an egg sandwich. At the end Dr Wichtig shook my hand and said he was looking forward to my figures. I never sent any figures, and he never asked. The meetings of the allotment society go on longer, by the way, and there are no sandwiches, only plum cake, which the same woman always brings. The egg sandwich, for the record, was very good." },
+    { id: "fm_talk_moustache", kind: "talk",
+      text: "If the turnstile won't let you through today, you're in good company. It doesn't recognise me either. My pass photo is from my first day here, with a moustache I no longer have. I'd grown it for the local station, because I thought a voice sounds deeper with a moustache. Nobody there saw it, of course; it was radio, and it was night. My mother saw it and said I looked like my uncle, and he worked in customs. I kept it anyway, until my first day here, for the photo, and that evening I shaved it off. Ever since, Gabi has let me through every morning without looking at my pass. She says she knows me by my footsteps. I'm not sure that's a compliment. So, if you're stuck at the turnstile: go to Gabi, and walk distinctly." },
+    { id: "fm_talk_hum", kind: "talk",
+      text: "Next door to the studio is the server room, just one wall in between, and I hear the machines all day long. Over time you learn to tell them apart. One hums low and steady like an old fridge. One whistles very softly whenever somebody in the building prints. And one sounds exactly like our society chairwoman's lawnmower, Sundays at eight. I've given them names, which I won't say here, because IT is listening, and IT doesn't give devices names, it gives them numbers. The other day it went quiet next door, for perhaps four seconds. I stopped talking at once. The last time it was that quiet in the basement was the evening Egon bled the radiator, and that was a lovely evening. Then the humming started again, all three of them, and I carried on. So if I sometimes pause mid-sentence: I'm just listening next door for a moment." },
+    { id: "fm_talk_pumpkin", kind: "talk",
+      text: "Accounts asks that you stop weighing the fruit from the fruit bowl before you take it. It isn't charged by weight. I do understand the impulse, though. I once came second in the pumpkin weigh-in at our allotment society, with twenty-nine kilos, grown from a single seed and watered with stale coffee. That's my secret, and now you know it. The winner was the chairwoman. Nobody ever saw her pumpkin grow. One morning it was simply there, in the bed next to her compost heap, finished, with a ribbon on it. I'm not saying it was bought. I'm only saying it had a sticker on it, which she peeled off very quickly. So, please don't weigh the fruit. The scales in the kitchenette belong to Ms Elster, and she notes down what has been on them." },
+    { id: "fm_talk_fire_drill", kind: "talk",
+      text: "Facilities would like to remind you of the fire drill. The time is being kept secret, as always. When the alarm goes, I'm the last one out, by the way; that's only proper for a station, I still have to announce that everyone should leave. At our society's summer party we once had a real firefighter as a guest, from the volunteer brigade, so that somebody would keep an eye on the barbecue. He kept an eye on the barbecue until the last sausage, and then he noticed that a paper lantern was smoking on one of the sheds along the main path. He put it out with his beer. Everyone clapped, he took a bow, and the beer was gone too. He's been invited every year since. So, if the alarm goes off in a moment: walk calmly to the assembly point in the car park, and don't take your coffee mugs. And please don't bring any drinks for putting things out either; we have fire extinguishers." },
+    { id: "fm_talk_silence", kind: "talk",
+      text: "HR has declared a quiet hour, for focused work, and I got the email too. In radio, though, silence is the worst thing that can happen. It's called dead air. In my week at the local station I had some, eleven seconds of it, because I had to sneeze and pushed the fader down with my elbow. Eleven seconds on the radio is an eternity. You can hear your own blood. After the eighth second the phone rang; it was the station manager, from his bed, and I could tell from his voice that he was wearing striped pyjamas. He only said my name, twice, and hung up. Ever since, I've only sneezed with both hands on the desk. So I'm keeping to the quiet hour as best I can, and only talking very briefly. That's my way of being quiet." },
+    { id: "fm_talk_run", kind: "talk",
+      text: "The list for the next company run is up on the noticeboard. I'm on it, right at the bottom, in pencil, as every time, and as every time I won't be running. That's no secret. I put my name down because otherwise the list looks so short. The last time I ran was at the society's summer party, in the sack race, and I was disqualified because I walked in the sack instead of hopping. To this day I regard that as a matter of interpretation. The referee was my neighbour on fifteen, and that was two weeks after the business with the garden gnome. He read the rule out specially, from a slip of paper, at a volume I otherwise only know from the radio. So, the company run. If you'd like to take part, please put your name down below mine. Then I won't be right at the bottom any more." },
+
+    // --- Mandy, the main batch (7.2): the step count, the smoothie, the
+    //     podcast, the post, the week in the woods. ---
+    { id: "fm_mandy_steps", kind: "mandy",
+      text: "It's Mandy, I'll read the advert in a moment, I just need to get my steps in. I walk on the spot while I read, you see; perhaps you've already heard it, in my breathing. Ten thousand a day is the minimum. By lunchtime I've usually done four thousand, half of them on the way from the car park, because I park right at the top on purpose. In meetings, by the way, my watch thinks I'm asleep. It congratulates me on my deep sleep phase, right in the middle of the quarterly review. My coach says the body sometimes knows more than the calendar. Ralf says he gets his steps in at the allotment. Ralf doesn't have a watch, Ralf has a flask. Right, the advert. I'll read it on the move now, and if it wobbles, it's not your speaker." },
+    { id: "fm_mandy_smoothie", kind: "mandy",
+      text: "Mandy from Marketing, a quick personal announcement. A bottle has disappeared from the fridge in the kitchenette, green, with a label that says 'Mandy. Focus.' That's my morning smoothie. Spinach, ginger, linseed and a spoonful of a powder my coach recommends that smells of wet hay. Whoever drank it is probably noticing by now. I'm not angry, I'm concerned. Ms Elster says the bottle was correctly labelled under the fridge rules, so the culprit has no excuse. Chantal says maybe the universe needed the smoothie. My money is on Sales, because they've been on the phone remarkably energetically since this morning. So, Sales: drink plenty of water today. And bring the bottle back. It's glass, it was expensive." },
+    { id: "fm_mandy_podcast", kind: "mandy",
+      text: "Hi, it's Mandy. Ralf told me to keep it short, so I'll keep it short: I have a podcast. It's called 'Mindset in the Basement', because I record it down here, after hours, when Ralf has gone and the good chair is free. So far there are three episodes and three listeners: my mum, my coach and an account that only listens at night, for exactly twelve minutes, and then it drops out. I think it's a bot. My coach says every listener counts, even one that doesn't breathe. The next episode is about routines, and for that I wanted to interview Egon, because nobody in the building has a firmer routine. Egon looked at the microphone and left. I recorded it anyway, as episode four, seven minutes of silence and a door. I'll read the advert in a moment. And, Ralf: the chair was still warm when you came in. That was me." },
+    { id: "fm_mandy_post", kind: "mandy",
+      text: "Mandy here, with a quick update. This morning I posted on the business network about the paper jam at the printer bank. Well, not about the paper jam, but about what it taught me: that sometimes you get stuck so that you notice where you actually want to go. It has two hundred reactions by now, one of them from Dr Wichtig, who went for the clapping hands. Afterwards I printed the post out for my vision board, and the printer jammed again while I was doing it. Chantal says that's a sign. Ralf says that's the printer. I've now written a second post about it, and I think the printer has read it, it's been blinking differently ever since. So if you happen to be standing at the printer bank right now: we're all on a journey. The paper is in the cupboard underneath, by the way, top shelf." },
+    { id: "fm_mandy_workation", kind: "mandy",
+      text: "Hi, Mandy from Marketing, I'm back. I spent a week on a workation, in a cabin in the woods, with very bad signal, which was the plan. I wanted to unwind. On the first day I baked bread. On the second I optimised the bread, with a spreadsheet for proving time and temperature, and by the third I had a process. On the fourth day I talked to the forester about efficiency, and he said a tree takes eighty years and doesn't complain. That hit me quite hard, to be honest. On the fifth I climbed a hill, for the reception, and answered twelve emails from up there. My coach says it was still a rest, because I had the view. The announcement I'm meant to read now comes from HR, by the way, and it's about holidays. I'll read it with a great deal of feeling." },
+
+    // --- Idents, the main batch (7.2). ---
+    { id: "fm_ident_wifi", kind: "ident",
+      text: "You're listening to GlobalCorp FM. We're here for you, even when the Wi-Fi isn't." },
+    { id: "fm_ident_housenet", kind: "ident",
+      text: "GlobalCorp FM, broadcast over the building's network. If we cut out, now you know why." },
+    { id: "fm_ident_microphone", kind: "ident",
+      text: "GlobalCorp FM. In-house radio since someone found a microphone in the basement and didn't ask anyone." },
+    { id: "fm_ident_subscription", kind: "ident",
+      text: "This is GlobalCorp FM, the radio you won't find in any subscription and can't cancel anywhere." },
+    { id: "fm_ident_kitchen", kind: "ident",
+      text: "GlobalCorp FM, your station for the walk between your desk and the kitchenette." },
+    { id: "fm_ident_budget", kind: "ident",
+      text: "GlobalCorp FM. Made by people, heard by people, paid for out of a pot nobody misses." },
+    { id: "fm_ident_stay", kind: "ident",
+      text: "You're listening to GlobalCorp FM. Stay with us. Your emails certainly will." },
+    { id: "fm_ident_floors", kind: "ident",
+      text: "GlobalCorp FM, on air on every floor. In Lift B, only between floors." },
+    { id: "fm_ident_licence", kind: "ident",
+      text: "GlobalCorp FM. No music rights, but a great deal to talk about." },
+    { id: "fm_ident_quiet", kind: "ident",
+      text: "GlobalCorp FM. If the office suddenly goes quiet, it wasn't us." },
+    { id: "fm_ident_light", kind: "ident",
+      text: "This is GlobalCorp FM, live from the basement, where the reception is best and the light is worst." },
+    { id: "fm_ident_feedback", kind: "ident",
+      text: "GlobalCorp FM. We welcome your feedback, in the ticket system, category Other." },
+    { id: "fm_ident_truth", kind: "ident",
+      text: "GlobalCorp FM. The truth, the whole truth, and adverts in between." },
+    { id: "fm_ident_meeting", kind: "ident",
+      text: "GlobalCorp FM, for everyone who isn't in a meeting right now. And for everyone who is, and is listening on the quiet." },
+    { id: "fm_ident_coffee", kind: "ident",
+      text: "GlobalCorp FM. We're as awake as you are, so roughly on the second cup." },
+
+    // --- Spots, the main batch (7.2). ---
+    { id: "fm_traffic_parcels", kind: "traffic",
+      text: "The travel news, with a report from reception. Parcels are backing up there, by now as far as the turnstile. Gabi asks everyone who orders private deliveries to the company address to collect them. She knows which parcel belongs to whom. She knows what's inside too. She hasn't opened a single one; she has only shaken them." },
+    { id: "fm_weather_kettle", kind: "weather",
+      text: "The weather in the kitchenette: humidity at one hundred per cent, caused by a kettle that has been boiling non-stop since this morning because its switch is stuck. The windows are steamed up, and so are everyone's glasses. If you have to go in, feel your way along the wall. Facilities has been informed and is waiting for the fog to lift." },
+    { id: "fm_canteen_salad", kind: "canteen", when: [690, 810],
+      text: "New in the canteen: the build-your-own salad bar. There's iceberg lettuce, cucumber, sweetcorn and a bowl of something red that the kitchen calls beetroot and that tastes of strawberry. It's charged by weight. The bowl is weighed too, and the bowl is ceramic." },
+    { id: "fm_notice_desks", kind: "notice",
+      text: "A message from facilities: the desk-sharing pilot project is starting on the second floor. From now on, please book your desk on the intranet every morning, and in the evening take everything with you, including the plant and the photo of the dog. Twenty desks can be booked. Fifteen have been set up. First come, first seated." },
+    { id: "fm_ad_headset", kind: "ad",
+      text: "The new GlobalCorp headset, with active noise cancelling. It filters out keyboards, phone calls and the colleague who whistles while he thinks. Only your manager's voice gets through, loud and clear, even when they're not in the room. Available from reception while stocks last. Stocks consist of one." },
+    { id: "fm_board_offsite", kind: "board",
+      text: "A word from the top floor: Management is withdrawing for a strategy retreat, on a boat. There, the company's course is to be set anew. Dr Wichtig would like you to know that you may work on your own responsibility in the meantime. When the boat is back, there will be a review of what that responsibility has produced." },
+    { id: "fm_staff_chantal_title", kind: "staff",
+      text: "Congratulations to Chantal from Marketing on her new title: Chief Happiness and Synergy Experience Lead. The sign on her door has been extended, and the door next to it, the one to the copy room, now carries the rest. If you'd like to make copies, please knock at Chantal's." },
+    { id: "fm_countdown_send", kind: "countdown", when: [930, 990],
+      text: "Nearly clocking-off time on GlobalCorp FM. Now is the best moment for the email you've been putting off all day. Write it, and schedule it to send the next morning at seven. Then it looks as though you started early, and you're long since home." },
+];
