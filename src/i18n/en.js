@@ -443,6 +443,16 @@ export const en = {
     'fm.station':                  'GlobalCorp FM',
     'fm.onAir':                    'ON AIR',
     'fm.stop':                     'End the spot',
+    'fm.ready':                    'Spot ready',
+    'fm.asked':                    'after the narrator',
+    'fm.play':                     'Play the spot',
+    'fm.cancel':                   'Plays once the narrator has finished. Click to cancel.',
+    'fm.later':                    'The next spot comes later.',
+    // What a screen reader is told without asking: a spot is waiting, and
+    // a press was taken (7.2.1, TerminalHeader.svelte).
+    'fm.say.ready':                'GlobalCorp FM: spot ready.',
+    'fm.say.readyKey':             'GlobalCorp FM: spot ready. Press {key} to play it.',
+    'fm.say.asked':                'GlobalCorp FM: the spot plays once the narrator has finished.',
 
     // The small read-aloud button beside the excuse. It carries an icon and
     // no text, so these two are its tooltip and its screen-reader name - what
@@ -610,6 +620,7 @@ export const en = {
     'keybind.confirm':             'Continue / confirm',
     'keybind.confirm.hint':        'Also in notices and on the phone',
     'keybind.readAloud.hint':      'Reads the scene out, or stops it',
+    'keybind.radio.hint':          'Plays a waiting spot, or ends it',
     'keybind.fixed.title':         'Fixed keys',
     'keybind.fixed.esc':           'Open the menu, close a window',
     'keybind.fixed.more':          'Further answers, where there are more than three',

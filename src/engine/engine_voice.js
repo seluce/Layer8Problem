@@ -187,6 +187,10 @@ export const voice = {
         }
 
         this.hushNarration();      // also drops a line that was only paused
+        // The player asked for GlobalCorp FM (7.2.1, engine_radio.js): the
+        // spot is waiting for this voice or on air, and a new scene is not
+        // read over it. The button and V still read it, and cut the spot.
+        if (this.radioHoldsVoice?.()) return;
         this._speak(text, false, 'terminal', kind);
     },
 

@@ -13,7 +13,7 @@ import { scores } from './engine/engine_scores.js';
 import { switchLanguage, language, onLanguageChange, t } from './i18n/i18n.svelte.js';
 
 const engine = {
-    VERSION: "v7.2.0",
+    VERSION: "v7.2.1",
 
     // 1. Attach the mutable game state
     state: state,
@@ -186,6 +186,14 @@ document.addEventListener('keydown', (event) => {
     // Ignore keystrokes inside form fields
     if (event.target.tagName === 'INPUT' || event.target.tagName === 'TEXTAREA') return;
 
+    // A key held with Ctrl, Cmd or Alt is the browser's or the system's, never
+    // the game's. Up to 7.2.1 every shortcut below took it as well: Ctrl+R
+    // started a phone call instead of reloading the page, and Ctrl+F, once F
+    // was the station's key, would have played a spot instead of searching.
+    // AltGr is the exception - on a German keyboard it types @ and the
+    // brackets, and Windows reports it as Ctrl+Alt.
+    if ((event.ctrlKey || event.metaKey || event.altKey) && !event.getModifierState?.('AltGraph')) return;
+
     // A key the game acts on belongs to the game. Without preventDefault the
     // browser acts on it as well: Space scrolls the page wherever it can
     // scroll - below 1025 px, or in an embed smaller than the layout, such as
@@ -291,6 +299,16 @@ document.addEventListener('keydown', (event) => {
             if (key !== 'space' && key !== 'enter') press(here);
             return;
         }
+        // The station's button above the terminal answers for itself the
+        // same way once Tab has brought the ring to it (7.2.1): Space pressed
+        // the result's continue button past it. It stands in no window, so it
+        // needs its own line. The button lets go of the focus after a press
+        // (TerminalHeader.svelte), so the next Space is the terminal's again.
+        if (here?.closest?.('[data-fm-station]')
+            && !engine.topmostDialog() && !engine.windowOverTerminal()) {
+            if (key !== 'space' && key !== 'enter') press(here);
+            return;
+        }
 
         // A: Tutorial
         const tutPointer = document.getElementById('tut-pointer');
@@ -378,6 +396,20 @@ document.addEventListener('keydown', (event) => {
         if (!engine.canReplayNarration()) return;
         event.preventDefault();
         engine.replayNarration();
+        return;
+    }
+
+    // 3c. GLOBALCORP FM (F unless rebound)
+    // The keyboard twin of the station's button above the terminal (7.2.1).
+    // askRadio() decides what a press means, as it does for the button: play
+    // a waiting spot, wait for the narrator, cancel that wait, end the spot
+    // on air - and nothing while no spot is due. Not through a window or
+    // under a mail, where the button cannot be reached either.
+    if (key === engine.state.keyBinds.radio.toLowerCase()) {
+        if (engine.windowOverTerminal() || engine.state.isEmailOpen
+            || document.body.classList.contains('overflow-hidden')) return;
+        event.preventDefault();
+        engine.askRadio();
         return;
     }
 

@@ -53,7 +53,10 @@
         ] },
         { id: 'voice', title: 'set.section.narration', rows: [
             // i18n-uses: keybind.readAloud, keybind.readAloud.hint
-            { action: 'readAloud', label: 'keybind.readAloud', hint: 'keybind.readAloud.hint' }
+            { action: 'readAloud', label: 'keybind.readAloud', hint: 'keybind.readAloud.hint' },
+            // The station's name is its label, in both languages alike.
+            // i18n-uses: fm.station, keybind.radio.hint
+            { action: 'radio',     label: 'fm.station',        hint: 'keybind.radio.hint' }
         ] }
     ];
 

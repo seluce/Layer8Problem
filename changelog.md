@@ -1,3 +1,16 @@
+[7.2.1] - 2026-11-18
+
+GlobalCorp FM gets a button.
+
+GlobalCorp FM:
+* The station's name stands above the terminal now. It lights up when a spot is waiting, and a click plays it - at once, or as soon as the narrator has finished. A spot you started yourself plays to the end: the narrator does not read new scenes over it, and the read-aloud button still does.
+* A waiting spot now comes on a few seconds into a pause, not after up to half a minute.
+* F plays a waiting spot or ends the one on air. The key can be changed in the controls.
+* A screen reader announces when a spot is waiting.
+
+Bug fixes:
+* Keys held with Ctrl, Cmd or Alt are left to the browser. Ctrl+R started a phone call instead of reloading the page.
+
 [7.2.0] - 2026-11-14
 
 A house band that follows the day, and a company radio station for the quiet moments.

@@ -22,8 +22,8 @@
 
 
     <style>.platform-desktop{display:none!important}.lang-opt{color:#94a3b8}.lang-opt:hover{color:#e2e8f0}html[lang=de] .lang-opt[data-lang=de],html[lang=en] .lang-opt[data-lang=en]{color:#60a5fa;cursor:default}@keyframes newsScroll{0%{transform:translate(0)}to{transform:translate(-100%)}}</style>
-  <script type="module" crossorigin src="./build/index-BOH9JF12.js"></script>
-  <link rel="stylesheet" crossorigin href="./build/index-N8seeiG5.css">
+  <script type="module" crossorigin src="./build/index-CyOCwRfc.js"></script>
+  <link rel="stylesheet" crossorigin href="./build/index-BQev7XYZ.css">
 </head>
 <body class="text-xs md:text-sm">
     
@@ -209,7 +209,11 @@
     <div class="flex-1 flex flex-col lg:flex-row gap-4 min-h-0 mb-4 overflow-hidden">
 
         <div id="terminal" class="flex-2 neon-box panel-sunken terminal-screen p-4 md:p-6 overflow-y-auto flex flex-col relative min-h-[300px] shrink-0">
-            <div id="terminal-header-right" class="absolute top-2 left-4 right-4 text-right text-[0.625rem] text-slate-400 transition-all duration-500"><!-- Rendered by src/components/TerminalHeader.svelte --></div>
+            <!-- Above the terminal's content and see-through for the pointer: the
+                 content's opacity makes it a layer that painted over the
+                 station button's hit area, and the line itself must not
+                 swallow a click meant for what scrolls beneath it. -->
+            <div id="terminal-header-right" class="absolute top-2 left-4 right-4 z-10 pointer-events-none text-right text-[0.625rem] text-slate-400 transition-all duration-500"><!-- Rendered by src/components/TerminalHeader.svelte --></div>
             
             <!-- Rendered by src/components/Terminal.svelte -->
             <div id="terminal-content" class="flex-1 flex flex-col justify-center items-center text-center opacity-60"></div>
