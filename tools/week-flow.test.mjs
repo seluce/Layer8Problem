@@ -7477,7 +7477,7 @@ console.log('GlobalCorp FM:');
     const { radio, spotFits, radioChoices, radioDayKey, radioContext,
             RADIO_QUIET_MS, RADIO_GAP_MS, RADIO_GAP_SPREAD_MS, RADIO_FIRST_MS, RADIO_FIRST_SPREAD_MS,
             RADIO_MODES, RADIO_JINGLE_CHANCE, RADIO_POINTED_CHANCE, RADIO_LONG_QUIET_MS,
-            RADIO_EARLY_MS, RADIO_EARLY_SHARE, RADIO_RETRY_MS } = await import('../src/engine/engine_radio.js');
+            RADIO_EARLY_MS, RADIO_EARLY_SHARE, RADIO_RETRY_MS, RADIO_TICK_MS } = await import('../src/engine/engine_radio.js');
     const { RADIO_LONG_KINDS } = await import('../src/engine/radio_kinds.js');
     const { MUSIC_DIR, MUSIC_STINGS } = await import('../src/engine/music_files.js');
     const JINGLE = MUSIC_DIR + MUSIC_STINGS.fm_jingle.stereo;
@@ -7526,8 +7526,9 @@ console.log('GlobalCorp FM:');
         return fm;
     };
     const done = () => { globalThis.Audio = RealAudio; globalThis.document.hidden = false; };
-    // The station's dice, in the order it throws them: the tick's chance, the
-    // queue jump, the jingle (only when one may come), the gap after a spot.
+    // The station's dice, in the order it throws them: the queue jump, the
+    // jingle (only when one may come), the gap after a spot. The start itself
+    // throws none since 7.2.1.
     // Past the list, every throw is 0.
     const rolls = (fm, ...seq) => { fm.radioRandom = () => (seq.length ? seq.shift() : 0); };
 
@@ -7714,9 +7715,9 @@ console.log('GlobalCorp FM:');
         // The gap: five minutes at least, nine at most, and it rolls.
         fm.radioSinceJingle = -Infinity;
         const gapAfter = (roll) => {
-            // The tick's chance won; the queue jump and the gap both get the
-            // roll, so the test does not hang on how many dice come between.
-            rolls(fm, 0, roll, roll);
+            // The queue jump and the gap both get the roll, so the test does
+            // not hang on how many dice come between.
+            rolls(fm, roll, roll);
             fm.radioNextAt = 0;
             fm.radioStillSince = clock.now - 60_000;
             fm.radioTick();
@@ -7889,7 +7890,7 @@ console.log('GlobalCorp FM:');
 
         // The player's own stop, at once: an answer, not an interruption.
         clock.now += RADIO_GAP_MS;
-        rolls(fm, 0, 0, 0.9);
+        rolls(fm, 0, 0.9);
         again();
         assert.notEqual(fm.radioEl.src, JINGLE, 'the jingle won a roll it lost');
         const fourth = fm.radioIndex;
@@ -7897,8 +7898,10 @@ console.log('GlobalCorp FM:');
         assert.equal(state.fmOnAir, false, 'the stop button left the spot on air');
         assert.ok(fm.radioHeard.has(fourth), 'the player\'s stop was taken for the game\'s');
         assert.equal(fm.radioNextAt, clock.now + RADIO_GAP_MS);
+        // The sign's button goes through askRadio(), which on air is endSpot()
+        // - held below in 'Pressing on and off brings one spot a gap'.
         assert.match(readFileSync(new URL('../src/components/TerminalHeader.svelte', import.meta.url), 'utf-8'),
-            /onclick=\{\(\) => engine\.endSpot\(\)\}/, 'the ON AIR button no longer ends the spot as the player\'s stop');
+            /function press\(e\) \{\s*engine\.askRadio\(\);/, 'the sign\'s button no longer goes through askRadio()');
         await wait(400);
 
         // After a jingle, the seconds count from the spot's own start.
@@ -8100,6 +8103,303 @@ console.log('GlobalCorp FM:');
         await wait(10);
         assert.equal(state.fmOnAir, false, 'a spot without a file stayed on air');
         assert.equal(fm.radioNextAt, clock.now + RADIO_GAP_MS, 'a missing file was asked for again at once');
+        done();
+    });
+
+    // ---- The button (7.2.1) ----------------------------------------------
+
+    await ok('The sign shows the station: off, dimmed until a spot is due, lit once one is', async () => {
+        let fm = onAir();
+        fm.radioNextAt = clock.now + 60_000;
+        // A click just as the spot falls due: no quiet, no automatic start.
+        fm.radioStillSince = clock.now + 60_000;
+        fm.radioTick();
+        assert.equal(state.fmStation, 'idle', 'a station with nothing due is not dimmed');
+        clock.now += 60_000;
+        fm.radioTick();
+        assert.equal(state.fmStation, 'ready', 'a spot due did not light the button');
+        assert.equal(state.fmOnAir, false);
+        // Due, but a window stands over the terminal: not now.
+        openOverlays.add('inventory-modal');
+        fm.radioSync();
+        assert.equal(state.fmStation, 'idle', 'the button was lit under a window');
+        openOverlays.delete('inventory-modal');
+        fm.playSpot();
+        assert.equal(state.fmStation, 'onair');
+        fm.endSpot();
+        assert.equal(state.fmStation, 'idle', 'an ended spot left the button lit');
+        await wait(400);
+        done();
+        // Nothing to speak of: no sign at all.
+        for (const [key, value] of [['fmEnabled', false], ['narrationVolume', 0], ['isPartyMode', true]]) {
+            fm = onAir();
+            state[key] = value;
+            fm.radioSync();
+            assert.equal(state.fmStation, 'off', `${key} left the station on the sign`);
+            done();
+        }
+        fm = onAir();
+        state.terminal = { mode: 'boot', variant: 'system', className: '' };
+        fm.radioSync();
+        assert.equal(state.fmStation, 'off', 'the boot screen showed the station');
+        done();
+    });
+
+    await ok('A due spot comes four to six seconds into a pause, whatever the dice', async () => {
+        const fm = onAir();
+        fm.radioRandom = () => 0.999;     // every die lost
+        fm.radioStillSince = clock.now;
+        clock.now += RADIO_QUIET_MS - 1;
+        fm.radioTick();
+        assert.equal(state.fmOnAir, false, 'it spoke before the quiet was long enough');
+        clock.now += 1;
+        fm.radioTick();
+        assert.equal(state.fmOnAir, true, 'a due spot waited for a roll after the quiet');
+        assert.ok(RADIO_QUIET_MS + RADIO_TICK_MS <= 6000,
+            `a player who waits for a lit button can wait ${RADIO_QUIET_MS + RADIO_TICK_MS} ms`);
+        fm.cutRadio(true);
+        await wait(400);
+        done();
+    });
+
+    await ok('The button plays a waiting spot at once, on any screen, and nothing inside the gap', async () => {
+        let fm = onAir();
+        fm.radioNextAt = clock.now + 60_000;
+        fm.askRadio();
+        assert.equal(state.fmOnAir, false, 'the button played a spot inside the gap');
+        assert.equal(fm.radioAsked, false, 'a press with nothing due was kept for later');
+        clock.now += 60_000;
+        // An open question and a click a moment ago: the automatic start
+        // would wait, the player asked.
+        state.terminal = { mode: 'event', variant: 'system', className: '' };
+        fm.radioStillSince = clock.now;
+        fm.askRadio();
+        assert.equal(state.fmOnAir, true, 'the button waited for a quiet nobody asked for');
+        assert.equal(fm.radioOwned, true, 'the spot is not the player\'s');
+        fm.cutRadio(true);
+        await wait(400);
+        done();
+
+        // A long story needs no long quiet when it was asked for.
+        fm = onAir();
+        const spots = DB.radio;
+        fm.radioHeard = new Set(spots.map((s, i) => i).filter(i => !RADIO_LONG_KINDS.includes(spots[i].kind)));
+        fm.radioStillSince = clock.now;
+        assert.equal(fm.playSpot(), null, 'a long story began without the quiet it needs');
+        assert.ok(fm.radioDue(), 'a long story is not due');
+        fm.askRadio();
+        assert.ok(state.fmOnAir && RADIO_LONG_KINDS.includes(spots[fm.radioIndex].kind),
+            'the button could not play a long story');
+        fm.cutRadio(true);
+        await wait(400);
+        done();
+    });
+
+    await ok('Asked while the narrator speaks, the spot waits for him and goes on when he stops', async () => {
+        let fm = onAir();
+        fm.speaking = true;
+        fm.askRadio();
+        assert.equal(state.fmOnAir, false, 'the spot went on over the narrator');
+        assert.equal(state.fmStation, 'asked');
+        fm.radioTick();
+        assert.equal(state.fmOnAir, false, 'the tick started the spot under the narrator');
+        fm._setSpeaking(false);
+        assert.equal(state.fmOnAir, false, 'the spot began in the call that silenced the narrator');
+        fm.radioTick();
+        assert.equal(state.fmOnAir, true, 'the spot did not follow the narrator');
+        assert.equal(fm.radioOwned, true);
+        assert.equal(fm.radioAsked, false, 'the wait outlived the spot it waited for');
+        fm.cutRadio(true);
+        await wait(400);
+        done();
+
+        // A second press takes the wait back, and nothing comes of it.
+        fm = onAir();
+        fm.speaking = true;
+        fm.askRadio();
+        fm.askRadio();
+        assert.equal(fm.radioAsked, false, 'a second press did not take the wait back');
+        assert.equal(state.fmStation, 'ready');
+        fm.speaking = false;
+        fm.radioStillSince = clock.now;   // no quiet yet: only the wait could start it
+        fm.radioTick();
+        assert.equal(state.fmOnAir, false, 'a wait taken back still played');
+        done();
+    });
+
+    await ok('A scene is not read over the spot the player asked for - the button reads it, an emergency ends it', async () => {
+        state.narrationEnabled = true;
+        let fm = onAir();
+        state.narrationEnabled = true;
+        fm.askRadio();
+        assert.equal(fm.radioOwned, true);
+        fm.narrate('A new scene.');
+        assert.equal(state.fmOnAir, true, 'a new scene cut the spot the player started');
+        assert.equal(fm.speaking, false, 'the narrator read a scene over the player\'s spot');
+        assert.equal(state.narratable, 'A new scene.', 'the button lost the scene it may read');
+        fm.replayNarration();
+        assert.equal(fm.speaking, true, 'the read-aloud button refused the scene');
+        assert.equal(state.fmOnAir, false, 'the read-aloud button did not take the room');
+        await wait(400);
+        done();
+
+        // A spot the station started itself gives way to the scene, as before.
+        fm = onAir();
+        state.narrationEnabled = true;
+        fm.playSpot();
+        fm.narrate('Another scene.');
+        assert.equal(state.fmOnAir, false, 'an automatic spot held the narrator back');
+        await wait(400);
+        done();
+
+        // The wait holds the next scene back too: the narrator does not go on.
+        fm = onAir();
+        state.narrationEnabled = true;
+        fm.speaking = true;
+        fm.askRadio();
+        fm.narrate('A third scene.');
+        assert.equal(fm.speaking, false, 'the narrator went on to the next scene over the wait');
+        fm.radioTick();
+        assert.equal(state.fmOnAir, true, 'the spot did not come once the scene was left unread');
+        fm.cutRadio(true);
+        await wait(400);
+        done();
+
+        // An emergency is read, over the spot and over the wait.
+        for (const asked of [false, true]) {
+            fm = onAir();
+            state.narrationEnabled = true;
+            if (asked) fm.speaking = true;
+            fm.askRadio();
+            Object.assign(state, { activeEvent: true, currentEventType: 'boss' });
+            fm.narrate('An emergency.', 'emergencies');
+            assert.equal(state.fmOnAir, false, 'an emergency left the player\'s spot on air');
+            assert.equal(fm.radioAsked, false, 'an emergency left the wait standing');
+            assert.equal(fm.speaking, true, 'the emergency was not read');
+            await wait(400);
+            done();
+        }
+    });
+
+    await ok('Pressing on and off brings one spot a gap, however often', async () => {
+        const fm = onAir();
+        fm.askRadio();
+        const first = fm.radioIndex;
+        assert.equal(state.fmOnAir, true);
+        fm.askRadio();
+        assert.equal(state.fmOnAir, false, 'the button did not end the spot on air');
+        assert.ok(fm.radioHeard.has(first), 'the player\'s stop was taken for the game\'s');
+        assert.equal(fm.radioNextAt, clock.now + RADIO_GAP_MS, 'the stop did not start the gap');
+        const plays = fm.radioEl.plays;
+        for (let i = 0; i < 10; i++) fm.askRadio();
+        assert.equal(fm.radioEl.plays, plays, 'pressing inside the gap played something');
+        assert.equal(fm.radioAsked, false, 'pressing inside the gap left a wait');
+        assert.equal(state.fmStation, 'idle');
+        clock.now += RADIO_GAP_MS;
+        fm.askRadio();
+        assert.equal(state.fmOnAir, true, 'the next gap brought nothing');
+        fm.cutRadio(true);
+        await wait(400);
+        done();
+    });
+
+    await ok('On a narrow screen the station steps aside for a headline', () => {
+        const header = srcOf('components/TerminalHeader.svelte');
+        assert.match(header, /const show = \$derived\(news \? 'hidden sm:inline-flex' : 'inline-flex'\);/,
+            'the sign no longer gives a running headline the line on a phone');
+        assert.match(header, /class="news-fade pointer-events-auto shrink-0 \{show\} items-center/, 'the sign does not use the rule');
+    });
+
+    await ok('The station has a key of its own, and Space presses its button only while it holds the ring', async () => {
+        const { DEFAULT_KEYBINDS, mergeKeybinds } = await import('../src/engine/engine_state.svelte.js');
+        assert.equal(DEFAULT_KEYBINDS.radio, 'f');
+        // A player from before the key gets F - unless F is already theirs.
+        const before = { actCoffee: 'q', actQuest: 'w', actServer: 'e', actCall: 'r',
+                         opt1: '1', opt2: '2', opt3: '3', confirm: 'Space', readAloud: 'v' };
+        assert.equal(mergeKeybinds(before).radio, 'f');
+        assert.equal(mergeKeybinds({ ...before, actCall: 'F' }).radio, '', 'the station took a key the player already uses');
+
+        // The key goes through the button's door, with the button's refusals.
+        const keys = srcOf('engine.js');
+        const fm = keys.slice(keys.indexOf('// 3c. GLOBALCORP FM'), keys.indexOf('// 4. ACTION SHORTCUTS'));
+        assert.match(fm, /key === engine\.state\.keyBinds\.radio\.toLowerCase\(\)/, 'the station key is not handled');
+        assert.match(fm, /engine\.windowOverTerminal\(\) \|\| engine\.state\.isEmailOpen/,
+            'the station key reaches through a window or under a mail');
+        assert.match(fm, /event\.preventDefault\(\);\s*engine\.askRadio\(\);/, 'the station key does not use the button\'s door');
+
+        // Space pressed the result's continue button past a focused station
+        // button. It answers for itself now, ahead of every continue button...
+        const confirm = keys.slice(keys.indexOf('// 3. CONFIRM'), keys.indexOf('// A: Tutorial'));
+        assert.match(confirm, /if \(here\?\.closest\?\.\('\[data-fm-station\]'\)\s*&& !engine\.topmostDialog\(\) && !engine\.windowOverTerminal\(\)\) \{\s*if \(key !== 'space' && key !== 'enter'\) press\(here\);\s*return;/,
+            'Space presses the continue button past the focused station button');
+        const header = srcOf('components/TerminalHeader.svelte');
+        assert.match(header, /<button type="button" data-fm-station/, 'the station button lost its mark');
+        // ...and lets go of the ring after every press, or the next Space -
+        // meant for the result - would end the spot it had just started.
+        assert.match(header, /function press\(e\) \{\s*engine\.askRadio\(\);\s*e\.currentTarget\.blur\(\);\s*\}/,
+            'the station button keeps the focus after a press');
+        assert.match(header, /aria-keyshortcuts=\{key \|\| undefined\}/, 'the station button does not name its key');
+    });
+
+    await ok('A key held with Ctrl, Cmd or Alt is left to the browser', () => {
+        // Ctrl+R started a phone call instead of reloading, and Ctrl+F would
+        // have played a spot instead of searching. AltGr types characters.
+        const keys = srcOf('engine.js');
+        const guard = keys.search(/if \(\(event\.ctrlKey \|\| event\.metaKey \|\| event\.altKey\) && !event\.getModifierState\?\.\('AltGraph'\)\) return;/);
+        assert.ok(guard > 0, 'the game takes keys held with a modifier');
+        assert.ok(guard < keys.indexOf('// 3. CONFIRM'), 'the modifier guard comes after a shortcut');
+    });
+
+    await ok('A screen reader hears that a spot waits, and a thumb finds the button', () => {
+        const header = srcOf('components/TerminalHeader.svelte');
+        // A live region standing at all times: one that comes with its text
+        // is not reliably read. So outside the sign's own {#if}.
+        const region = header.indexOf('<span class="sr-only" role="status">{say}</span>');
+        assert.ok(region > 0, 'the station has no live region');
+        assert.ok(region < header.indexOf('{#if look}'), 'the live region comes and goes with the sign');
+        // It says ready and asked, never ON AIR, which the spot says itself.
+        const say = header.slice(header.indexOf('const say = $derived('), header.indexOf('function press'));
+        assert.match(say, /station === 'ready'/);
+        assert.match(say, /station === 'asked'/);
+        assert.ok(!/onair/.test(say), 'the live region talks over the spot');
+        // 30 px to tap instead of 14, and nothing paints over it.
+        assert.match(header, /<button type="button" data-fm-station\s+class="[^"]*\bpy-2 -my-2\b[^"]*"/, 'the station button is a thin strip again');
+        const html = readFileSync(new URL('../index.html', import.meta.url), 'utf-8');
+        assert.match(html, /id="terminal-header-right" class="[^"]*\bz-10 pointer-events-none\b/,
+            'the terminal\'s content paints over the button\'s hit area, or the line swallows clicks');
+        assert.match(header, /class="news-fade pointer-events-auto /, 'the button does not take the pointer back');
+    });
+
+    await ok('Whatever ends a spot on air ends the wait for one', () => {
+        let fm = onAir();
+        fm.speaking = true;
+        fm.askRadio();
+        openOverlays.add('team-modal');
+        fm.radioTick();
+        assert.equal(fm.radioAsked, false, 'a window left the wait standing');
+        done();
+
+        fm = onAir();
+        fm.speaking = true;
+        fm.askRadio();
+        fm.cutRadio();
+        assert.equal(fm.radioAsked, false, 'a cut left the wait standing');
+        done();
+
+        fm = onAir();
+        fm.speaking = true;
+        fm.askRadio();
+        fm.radioNewDay();
+        assert.equal(fm.radioAsked, false, 'a new day kept the last one\'s wait');
+        assert.equal(state.fmStation, 'idle');
+        done();
+
+        fm = onAir();
+        fm.speaking = true;
+        fm.askRadio();
+        fm.toggleRadio(false);
+        assert.equal(fm.radioAsked, false, 'the switch left the wait standing');
+        assert.equal(state.fmStation, 'off');
         done();
     });
 

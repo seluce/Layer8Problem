@@ -474,7 +474,7 @@ export function mergeNarrationKinds(saved) {
 export const DEFAULT_KEYBINDS = Object.freeze({
     actCoffee: 'q', actQuest: 'w', actServer: 'e', actCall: 'r',
     opt1: '1', opt2: '2', opt3: '3', confirm: 'Space',
-    readAloud: 'v'
+    readAloud: 'v', radio: 'f'
 });
 
 /**
@@ -651,6 +651,9 @@ export const state = $state({
     // spot belongs to the session, never to the save.
     fmEnabled: localStorage.getItem(KEYS.fm) !== 'false',
     fmOnAir: false,
+    // What the sign above the terminal shows (7.2.1): 'off', 'idle', 'ready',
+    // 'asked' or 'onair'. Written by radioSync() and nowhere else.
+    fmStation: 'off',
     // The read-aloud button (components/ReadButton.svelte) reads these two,
     // which is why they are here and not on the voice object: the modules are spread
     // into `engine`, so a component watching a plain property there would never

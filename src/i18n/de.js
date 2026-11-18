@@ -453,6 +453,18 @@ export const de = {
     'fm.station':                  'GlobalCorp FM',
     'fm.onAir':                    'ON AIR',
     'fm.stop':                     'Spot beenden',
+    // The sign's other states (7.2.1): a spot waiting to be played, one asked
+    // for and waiting for the narrator, and the tooltips of the button.
+    'fm.ready':                    'Spot bereit',
+    'fm.asked':                    'nach dem Sprecher',
+    'fm.play':                     'Spot abspielen',
+    'fm.cancel':                   'Läuft, sobald der Sprecher fertig ist. Klick bricht ab.',
+    'fm.later':                    'Der nächste Spot kommt später.',
+    // What a screen reader is told without asking: a spot is waiting, and
+    // a press was taken (7.2.1, TerminalHeader.svelte).
+    'fm.say.ready':                'GlobalCorp FM: Spot bereit.',
+    'fm.say.readyKey':             'GlobalCorp FM: Spot bereit. Taste {key} spielt ihn.',
+    'fm.say.asked':                'GlobalCorp FM: Der Spot läuft, sobald der Sprecher fertig ist.',
 
     // The small read-aloud button beside the excuse. It carries an icon and
     // no text, so these two are its tooltip and its screen-reader name - what
@@ -620,6 +632,7 @@ export const de = {
     'keybind.confirm':             'Weiter / Bestätigen',
     'keybind.confirm.hint':        'Auch in Hinweisfenstern und am Handy',
     'keybind.readAloud.hint':      'Liest die Szene vor oder stoppt sie',
+    'keybind.radio.hint':          'Spielt einen wartenden Spot oder beendet ihn',
     'keybind.fixed.title':         'Fest belegt',
     'keybind.fixed.esc':           'Menü öffnen, Fenster schließen',
     'keybind.fixed.more':          'Weitere Antworten, wo es mehr als drei gibt',

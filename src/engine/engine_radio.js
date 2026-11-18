@@ -25,8 +25,10 @@ import { MUSIC_DIR, MUSIC_STINGS } from './music_files.js';
  *   - nothing stands over the terminal, no mail and no notice, no emergency,
  *     not the gala, not the lesson, not a page nobody is looking at;
  *   - RADIO_GAP_MS since the last spot plus a roll of up to
- *     RADIO_GAP_SPREAD_MS, and a roll of RADIO_CHANCE on top, so the
- *     station is not a metronome.
+ *     RADIO_GAP_SPREAD_MS, so the station is not a metronome. Once that is
+ *     over the spot is due, the sign above the terminal says so, and the
+ *     first quiet moment has it - no roll on top (7.2.1): a player who sees
+ *     the button lit and waits must not wait for dice.
  *
  * It fades out in RADIO_FADE_MS when the narrator starts (engine_voice.
  * _setSpeaking), when any window opens (engine_ui.showOverlay and the three
@@ -60,9 +62,12 @@ import { MUSIC_DIR, MUSIC_STINGS } from './music_files.js';
  * once, it waits for the rest like any other.
  *
  * LONG SPOTS. Ralf's and Mandy's stories (RADIO_LONG_KINDS) run half a
- * minute and more, and the next click cuts them off. They are drawn only
- * when the player has been still for RADIO_LONG_QUIET_MS, and a cut counts
- * as hardly heard for RADIO_EARLY_SHARE of the recording, not five seconds.
+ * minute and more, and the next click cuts them off. The station draws one
+ * by itself only when the player has been still for RADIO_LONG_QUIET_MS,
+ * and a cut counts as hardly heard for RADIO_EARLY_SHARE of the recording,
+ * not five seconds. Since the quiet came down to seconds (7.2.1) the
+ * automatic start nearly always comes first, so the stories come through
+ * the button, where nothing cuts them.
  *
  * HARDLY HEARD IS NOT HEARD. A spot the game cuts during its jingle or in
  * its first RADIO_EARLY_MS (or RADIO_EARLY_SHARE of it, the longer of the
@@ -71,6 +76,20 @@ import { MUSIC_DIR, MUSIC_STINGS } from './music_files.js';
  * RADIO_RETRY_MS instead of the full gap. The player's own stop (endSpot)
  * is an answer, not an interruption - that spot counts, whenever it ended.
  *
+ * THE BUTTON (7.2.1). The sign above the terminal is always there while the
+ * station is (state.fmStation, written by radioSync() alone): dimmed while
+ * the next spot is not due, lit once it is - so a player who never stops
+ * clicking learns that something is waiting, and one who waits knows it is
+ * worth it. A press plays the waiting spot at once (askRadio); while the
+ * narrator is still speaking it waits for him (radioAsked) and goes on at the
+ * next tick after he stops. A spot the player started is theirs
+ * (radioOwned): the narrator does not read a new scene over it, or over the
+ * wait for it (radioHoldsVoice) - the button and V still do, and cut it. A
+ * press on air ends the spot as heard, a second press takes the wait back,
+ * and a press with nothing due does nothing: however often the button is
+ * pressed, a gap brings one spot. Whatever ends a spot on air ends the wait
+ * for one too (cutRadio).
+ *
  * NOTHING IN THE SAVE. Which spots a day has heard lives in memory and is
  * forgotten by a reload; the bag in draw_bag.js keeps the next one from being
  * one heard a minute ago.
@@ -78,8 +97,13 @@ import { MUSIC_DIR, MUSIC_STINGS } from './music_files.js';
 
 /** How often the station asks whether it may speak. */
 export const RADIO_TICK_MS = 2000;
-/** How long the narrator and the terminal must have been quiet. */
-export const RADIO_QUIET_MS = 8000;
+/**
+ * How long the narrator and the terminal must have been quiet. Four seconds,
+ * so a due spot comes four to six seconds into a pause (7.2.1, the operator:
+ * not twenty). It was eight plus a 15 % roll on every tick after: twenty
+ * seconds on average, and one wait in ten ran past thirty-five.
+ */
+export const RADIO_QUIET_MS = 4000;
 /**
  * The least time between the end of one spot and the start of the next, and
  * how much a roll adds on top. Five to nine minutes: a working day runs
@@ -95,8 +119,6 @@ export const RADIO_FIRST_SPREAD_MS = 4.5 * 60 * 1000;
 export const RADIO_LONG_QUIET_MS = 20 * 1000;
 /** The chance that a spot whose condition holds goes ahead of the rest. */
 export const RADIO_POINTED_CHANCE = 0.5;
-/** The chance per quiet tick, once everything else allows it. */
-export const RADIO_CHANCE = 0.15;
 /** Out, when the game wants the room back. */
 export const RADIO_FADE_MS = 300;
 /**
@@ -220,6 +242,10 @@ export const radio = {
     // not listened to: cutRadio() measures up to it, and the way back moves
     // radioSpotAt on by it.
     radioHiddenAt: null,
+    // The button (7.2.1): a spot asked for while the narrator spoke, and
+    // whether the spot on air is one the player started.
+    radioAsked: false,
+    radioOwned: false,
     // Overridden by the test bench, which cannot wait four minutes.
     radioClock: () => Date.now(),
     radioRandom: () => Math.random(),
@@ -227,7 +253,7 @@ export const radio = {
     /** Once, at boot. The pool is fetched on the way; the tick waits for it. */
     startRadio: function() {
         if (this.radioTimer) return;
-        ensure('radio').catch(() => { /* no spots, no station */ });
+        ensure('radio').then(() => this.radioSync(), () => { /* no spots, no station */ });
         this.radioTimer = setInterval(() => this.radioTick(), RADIO_TICK_MS);
     },
 
@@ -237,6 +263,8 @@ export const radio = {
         this.radioLastKind = null;
         this.radioSinceJingle = Infinity;
         this.radioNextAt = this.radioClock() + RADIO_FIRST_MS + this.radioRandom() * RADIO_FIRST_SPREAD_MS;
+        this.radioAsked = false;
+        this.radioSync();
     },
 
     /**
@@ -284,24 +312,103 @@ export const radio = {
     radioTick: function() {
         if (this.radioIndex !== null) {
             if (this.radioBlocked()) this.cutRadio();
-            return;
+        } else if (this.radioAsked) {
+            // Asked for while the narrator spoke: on as soon as he is done.
+            // Not in the same call that silences him - the read-aloud button
+            // stops one line and starts the next in one go - so on the tick.
+            if (!this.radioDue()) this.dropRadioAsk();
+            else if (!this.radioVoiceBusy() && !globalThis.document?.hidden) this.playSpot(true);
+        } else if (this.radioMayStart()) {
+            this.playSpot();
         }
-        if (!this.radioMayStart()) return;
-        if (this.radioRandom() >= RADIO_CHANCE) return;
-        this.playSpot();
+        this.radioSync();
     },
 
-    /** Draws a spot that fits and puts it on air. Returns its index, or null. */
-    playSpot: function() {
+    /** The narrator speaking, or owed a line he was made to pause. */
+    radioVoiceBusy: function() {
+        return !!(this.speaking || this.interrupted || this.heldLine || this.pausedByTab);
+    },
+
+    /**
+     * A spot is waiting: the gap is over, nothing stands in the way and one
+     * fits. What lights the button - the quiet and the roll are the automatic
+     * start's business, not the player's.
+     */
+    radioDue: function() {
+        if (this.radioIndex !== null || !Array.isArray(DB.radio) || !DB.radio.length) return false;
+        if (this.radioBlocked() || this.radioClock() < this.radioNextAt) return false;
+        const heard = this.radioHeard ?? new Set();
+        return radioChoices(DB.radio, radioContext(this.state), heard, this.radioLastKind, { prefer: false }).length > 0;
+    },
+
+    /** What the sign above the terminal shows. See THE BUTTON. */
+    radioStation: function() {
+        if (this.radioIndex !== null) return 'onair';
+        const s = this.state;
+        if (!s.fmEnabled || !(s.narrationVolume > 0) || s.isPartyMode || this.lesson?.isActive) return 'off';
+        if (s.terminal?.mode === 'boot' || this.isStartupOverlayOpen?.()) return 'off';
+        if (!Array.isArray(DB.radio) || !DB.radio.length) return 'off';
+        if (this.radioAsked) return 'asked';
+        return this.radioDue() ? 'ready' : 'idle';
+    },
+
+    radioSync: function() {
+        this.state.fmStation = this.radioStation();
+    },
+
+    /**
+     * The button. On air it ends the spot, as heard; waiting for the
+     * narrator it takes the wait back; with a spot due it plays it - now, or
+     * after the narrator's line. With nothing due it does nothing.
+     */
+    askRadio: function() {
+        if (this.radioIndex !== null) { this.endSpot(); return; }
+        if (this.radioAsked) { this.dropRadioAsk(); return; }
+        if (!this.radioDue()) return;
+        if (this.radioVoiceBusy() || globalThis.document?.hidden) {
+            this.radioAsked = true;
+            this.radioSync();
+            return;
+        }
+        this.playSpot(true);
+    },
+
+    dropRadioAsk: function() {
+        if (!this.radioAsked) return;
+        this.radioAsked = false;
+        this.radioSync();
+    },
+
+    /**
+     * Whether the narrator leaves a new terminal line unread: the player
+     * asked for the station, and it is waiting or on air. Not over anything
+     * that takes the room - an emergency, a window, a mail: that ends the
+     * spot and the wait instead, and the line is read.
+     */
+    radioHoldsVoice: function() {
+        if (!this.radioAsked && !(this.radioOwned && this.radioIndex !== null)) return false;
+        if (!this.radioBlocked()) return true;
+        this.cutRadio();
+        return false;
+    },
+
+    /**
+     * Draws a spot that fits and puts it on air. Returns its index, or null.
+     * `owned` is the button: a long story may come without the long quiet,
+     * since the narrator will not cut it.
+     */
+    playSpot: function(owned = false) {
         const spots = DB.radio;
         const heard = (this.radioHeard ??= new Set());
         const choices = radioChoices(spots, radioContext(this.state), heard, this.radioLastKind, {
             fresh: new Set(stillInBag('radio', spots.length)),
             prefer: this.radioRandom() < RADIO_POINTED_CHANCE,
-            long: this.radioClock() - this.radioStillSince >= RADIO_LONG_QUIET_MS,
+            long: owned || this.radioClock() - this.radioStillSince >= RADIO_LONG_QUIET_MS,
         });
         const index = drawAmong('radio', spots.length, choices);
         if (index === null) return null;
+        this.radioAsked = false;
+        this.radioOwned = owned;
         this.radioUndo = { lastKind: this.radioLastKind, sinceJingle: this.radioSinceJingle };
         heard.add(index);
         this.radioLastKind = spots[index].kind;
@@ -328,6 +435,7 @@ export const radio = {
         // No file - not rendered yet, or a language that has none - is the
         // same answer as the narrator's: the spot is over before it began.
         el.play().catch(() => { if (el.src === src) this.radioDone(); });
+        this.radioSync();
         return index;
     },
 
@@ -367,12 +475,14 @@ export const radio = {
     radioDone: function() {
         if (this.radioIndex === null) return;
         this.radioIndex = null;
+        this.radioOwned = false;
         this.radioPausedByTab = false;
         this.state.fmOnAir = false;
         const now = this.radioClock();
         this.radioNextAt = now + RADIO_GAP_MS + this.radioRandom() * RADIO_GAP_SPREAD_MS;
         this.radioStillSince = now;
         this.duckMusic(false, 'radio');
+        this.radioSync();
     },
 
     /**
@@ -383,6 +493,8 @@ export const radio = {
      * player ended it.
      */
     cutRadio: function(heard = false) {
+        // What takes the room from a spot on air takes it from one asked for.
+        this.dropRadioAsk();
         if (this.radioIndex === null) return;
         // In a hidden tab (a mail runs out there and cuts the spot) the spot
         // was heard up to the moment the tab went, not up to now.
@@ -499,5 +611,6 @@ export const radio = {
         this.state.fmEnabled = !!isOn;
         try { localStorage.setItem(KEYS.fm, String(!!isOn)); } catch { /* the session keeps it */ }
         if (!isOn) this.cutRadio();
+        this.radioSync();
     },
 };
