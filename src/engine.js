@@ -13,7 +13,7 @@ import { scores } from './engine/engine_scores.js';
 import { switchLanguage, language, onLanguageChange, t } from './i18n/i18n.svelte.js';
 
 const engine = {
-    VERSION: "v7.2.1",
+    VERSION: "v7.2.2",
 
     // 1. Attach the mutable game state
     state: state,

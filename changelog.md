@@ -1,4 +1,6 @@
-[Unreleased]
+[7.2.2] - 2026-11-25
+
+GlobalCorp FM keeps to the working day.
 
 GlobalCorp FM:
 * After a spot, the next one waits until you have done something in the day. Sitting at your desk no longer plays one spot after another while the clock stands still.
