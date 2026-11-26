@@ -29,6 +29,14 @@ import { MUSIC_DIR, MUSIC_STINGS } from './music_files.js';
  *     over the spot is due, the sign above the terminal says so, and the
  *     first quiet moment has it - no roll on top (7.2.1): a player who sees
  *     the button lit and waits must not wait for dice.
+ *   - the game's clock has moved since the last spot began: at least one
+ *     event between two. The gap alone is wall-clock time, and a player who
+ *     sat still at 8:00 heard one spot after another while the day stood -
+ *     159 of the 177 fit that minute (the operator: not several spots
+ *     without an event between). The first spot of a day is free of it,
+ *     the morning show; a spot taken back gives the mark back. Every answer
+ *     costs minutes but two mail replies and the gala's, where the station
+ *     is off anyway, so the clock is the event.
  *
  * It fades out in RADIO_FADE_MS when the narrator starts (engine_voice.
  * _setSpeaking), when any window opens (engine_ui.showOverlay and the three
@@ -238,6 +246,9 @@ export const radio = {
     // from before the draw.
     radioSpotAt: null,
     radioUndo: null,
+    // state.time when the last spot of the day began, or null before the
+    // first: the next one waits until the game's clock has moved.
+    radioMinute: null,
     // radioClock() when the tab paused the spot on air. The time away was
     // not listened to: cutRadio() measures up to it, and the way back moves
     // radioSpotAt on by it.
@@ -262,6 +273,7 @@ export const radio = {
         this.radioHeard = new Set();
         this.radioLastKind = null;
         this.radioSinceJingle = Infinity;
+        this.radioMinute = null;
         this.radioNextAt = this.radioClock() + RADIO_FIRST_MS + this.radioRandom() * RADIO_FIRST_SPREAD_MS;
         this.radioAsked = false;
         this.radioSync();
@@ -288,9 +300,18 @@ export const radio = {
         // musicSnapshot), so it counts only while the event is on screen.
         if (s.bossTimer || (s.activeEvent && s.currentEventType === 'boss')) return true;
         if (s.isEmailOpen || this._interruptions?.size || s.modal?.open) return true;
-        if (s.terminal?.mode === 'boot') return true;
-        if (this.isStartupOverlayOpen?.()) return true;
+        if (s.terminal?.mode === 'boot' || this.radioBeforeDay()) return true;
         return this.windowOverTerminal();
+    },
+
+    /**
+     * The day has not begun: the start screens, and after them the question
+     * whether to play the tutorial. That one is on no list the station read,
+     * and the gap had never been set - radioNewDay() comes with the morning -
+     * so 7.2.1 played a spot over it four seconds in.
+     */
+    radioBeforeDay: function() {
+        return !!(this.isStartupOverlayOpen?.() || this.isOverlayOpen?.('tut-ask-modal'));
     },
 
     /** Everything a spot needs before it may begin. */
@@ -305,8 +326,13 @@ export const radio = {
         // The narrator speaking, or owed a line it was made to pause.
         if (this.speaking || this.interrupted || this.heldLine || this.pausedByTab) return false;
         const now = this.radioClock();
-        if (now < this.radioNextAt) return false;
+        if (now < this.radioNextAt || !this.radioClockMoved()) return false;
         return now - this.radioStillSince >= RADIO_QUIET_MS;
+    },
+
+    /** An event since the last spot began - see the header, the clock. */
+    radioClockMoved: function() {
+        return this.radioMinute === null || (this.state.time ?? 0) !== this.radioMinute;
     },
 
     radioTick: function() {
@@ -336,7 +362,7 @@ export const radio = {
      */
     radioDue: function() {
         if (this.radioIndex !== null || !Array.isArray(DB.radio) || !DB.radio.length) return false;
-        if (this.radioBlocked() || this.radioClock() < this.radioNextAt) return false;
+        if (this.radioBlocked() || this.radioClock() < this.radioNextAt || !this.radioClockMoved()) return false;
         const heard = this.radioHeard ?? new Set();
         return radioChoices(DB.radio, radioContext(this.state), heard, this.radioLastKind, { prefer: false }).length > 0;
     },
@@ -346,7 +372,7 @@ export const radio = {
         if (this.radioIndex !== null) return 'onair';
         const s = this.state;
         if (!s.fmEnabled || !(s.narrationVolume > 0) || s.isPartyMode || this.lesson?.isActive) return 'off';
-        if (s.terminal?.mode === 'boot' || this.isStartupOverlayOpen?.()) return 'off';
+        if (s.terminal?.mode === 'boot' || this.radioBeforeDay()) return 'off';
         if (!Array.isArray(DB.radio) || !DB.radio.length) return 'off';
         if (this.radioAsked) return 'asked';
         return this.radioDue() ? 'ready' : 'idle';
@@ -409,7 +435,8 @@ export const radio = {
         if (index === null) return null;
         this.radioAsked = false;
         this.radioOwned = owned;
-        this.radioUndo = { lastKind: this.radioLastKind, sinceJingle: this.radioSinceJingle };
+        this.radioUndo = { lastKind: this.radioLastKind, sinceJingle: this.radioSinceJingle, minute: this.radioMinute };
+        this.radioMinute = this.state.time ?? 0;
         heard.add(index);
         this.radioLastKind = spots[index].kind;
 
@@ -547,6 +574,7 @@ export const radio = {
         if (this.radioUndo) {
             this.radioLastKind = this.radioUndo.lastKind;
             this.radioSinceJingle = this.radioUndo.sinceJingle;
+            this.radioMinute = this.radioUndo.minute;
         }
         this.radioNextAt = this.radioClock() + RADIO_RETRY_MS;
     },

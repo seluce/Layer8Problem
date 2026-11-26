@@ -1,3 +1,13 @@
+[7.2.2] - 2026-11-25
+
+GlobalCorp FM keeps to the working day.
+
+GlobalCorp FM:
+* After a spot, the next one waits until you have done something in the day. Sitting at your desk no longer plays one spot after another while the clock stands still.
+
+Bug fixes:
+* GlobalCorp FM no longer plays a spot over the question whether to start the tutorial, before the day has begun.
+
 [7.2.1] - 2026-11-18
 
 GlobalCorp FM gets a button.

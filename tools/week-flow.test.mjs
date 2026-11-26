@@ -108,6 +108,9 @@ const engine = {
     // guard: state.bossTimer could not tick down anywhere in this suite, and
     // the 6.4 pause had to be held by reading the source instead.
     isOverlayOpen: (t) => openOverlays.has(overlayId(t)),
+    // The real one, over the same set: the radio asks it whether the day has
+    // begun, and without it the start screens were never open here.
+    STARTUP_OVERLAYS: ui.STARTUP_OVERLAYS, isStartupOverlayOpen: ui.isStartupOverlayOpen,
     lockScroll() {}, releaseScroll() {},
     renderHeader() {}, updateUI() {}, disableButtons() {},
     setTerminalIdle() {}, setTerminalMorning() {},
@@ -7657,7 +7660,11 @@ console.log('GlobalCorp FM:');
         assert.equal(state.fmOnAir, false, 'a second spot inside the gap');
         clock.now += RADIO_GAP_MS;
         fm.radioTick();
-        assert.equal(state.fmOnAir, true, 'nothing after the gap');
+        assert.equal(state.fmOnAir, false, 'a second spot while the day stood still');
+        // An event: the clock moves, and the next spot may come.
+        state.time += 15;
+        fm.radioTick();
+        assert.equal(state.fmOnAir, true, 'nothing after the gap and an event');
         assert.notEqual(fm.radioIndex, first, 'the same spot twice in one day');
         assert.notEqual(DB.radio[fm.radioIndex].kind, spot.kind, 'the same kind twice in a row');
         // A new day: what was heard may come again, and the first comes early.
@@ -7720,6 +7727,7 @@ console.log('GlobalCorp FM:');
             rolls(fm, roll, roll);
             fm.radioNextAt = 0;
             fm.radioStillSince = clock.now - 60_000;
+            state.time += 15;       // an event between two spots
             fm.radioTick();
             assert.equal(state.fmOnAir, true, 'no spot to end');
             fm.radioEl._h.ended();
@@ -7889,7 +7897,10 @@ console.log('GlobalCorp FM:');
         await wait(400);
 
         // The player's own stop, at once: an answer, not an interruption.
+        // After a spot that was heard, an event first - the retries above
+        // needed none, since a spot taken back gives the clock's mark back.
         clock.now += RADIO_GAP_MS;
+        state.time += 15;
         rolls(fm, 0, 0.9);
         again();
         assert.notEqual(fm.radioEl.src, JINGLE, 'the jingle won a roll it lost');
@@ -7906,6 +7917,7 @@ console.log('GlobalCorp FM:');
 
         // After a jingle, the seconds count from the spot's own start.
         clock.now += RADIO_GAP_MS;
+        state.time += 15;
         again();
         assert.equal(fm.radioEl.src, JINGLE, 'a spot that won the jingle roll came without one');
         clock.now += RADIO_EARLY_MS;
@@ -8296,11 +8308,85 @@ console.log('GlobalCorp FM:');
         assert.equal(fm.radioAsked, false, 'pressing inside the gap left a wait');
         assert.equal(state.fmStation, 'idle');
         clock.now += RADIO_GAP_MS;
+        fm.radioSync();
+        assert.equal(state.fmStation, 'idle', 'the sign lit with no event since the last spot');
         fm.askRadio();
-        assert.equal(state.fmOnAir, true, 'the next gap brought nothing');
+        assert.equal(state.fmOnAir, false, 'the button played a second spot while the day stood still');
+        state.time += 15;
+        fm.radioSync();
+        assert.equal(state.fmStation, 'ready', 'an event and the gap did not light the sign');
+        fm.askRadio();
+        assert.equal(state.fmOnAir, true, 'the next gap and an event brought nothing');
         fm.cutRadio(true);
         await wait(400);
         done();
+    });
+
+    await ok('A second spot waits for an event; the morning show waits for none', async () => {
+        // Waited out at 8:00, the gap alone played one spot after another
+        // while the day stood still - 159 of the 177 fit that minute.
+        const fm = onAir();
+        fm.radioNewDay();
+        state.time = 480;
+        const tick = () => { fm.radioStillSince = clock.now - 60_000; fm.radioTick(); };
+        fm.radioNextAt = 0;
+        tick();
+        assert.equal(state.fmOnAir, true, 'the day\'s first spot waited for an event');
+        fm.radioEl._h.ended();      // the day's jingle hands over
+        fm.radioEl._h.ended();      // and the spot ends
+        assert.equal(state.fmOnAir, false);
+        const plays = fm.radioEl.plays;
+        for (let i = 0; i < 6; i++) { clock.now += RADIO_GAP_MS + RADIO_GAP_SPREAD_MS; tick(); }
+        assert.equal(fm.radioEl.plays, plays, 'the station played on while the clock stood at 8:00');
+        assert.equal(state.fmStation, 'idle', 'the sign lit with the day standing still');
+
+        // An event: the clock moves, and the next spot may come.
+        state.time += 10;
+        tick();
+        assert.equal(state.fmOnAir, true, 'an event did not open the way for the next spot');
+
+        // The game cuts that one in its first seconds: taken back, it gives
+        // the mark back, and its retry needs no second event.
+        clock.now += 1000;
+        fm.cutRadio();
+        assert.equal(state.fmOnAir, false);
+        assert.equal(fm.radioMinute, 480, 'a spot taken back kept the clock\'s mark');
+        clock.now += RADIO_RETRY_MS;
+        tick();
+        assert.equal(state.fmOnAir, true, 'the retry of a spot nobody heard waited for an event');
+        fm.cutRadio(true);
+
+        // A new day forgets the mark, though its clock starts where the
+        // last spot of a morning stood.
+        fm.radioNewDay();
+        assert.equal(fm.radioMinute, null, 'a new day kept the last day\'s mark');
+        state.time = 490;
+        fm.radioNextAt = 0;
+        tick();
+        assert.equal(state.fmOnAir, true, 'the next morning\'s first spot waited for an event');
+        fm.cutRadio(true);
+        await wait(400);
+        done();
+    });
+
+    await ok('Nothing plays before the day has begun - the tutorial\'s question included', async () => {
+        // 7.2.1 played a spot over the question four seconds in: it was on no
+        // list the station read, and the gap is only set with the morning.
+        for (const id of ['tut-ask-modal', 'intro-modal', 'difficulty-modal']) {
+            const fm = onAir();
+            openOverlays.add(id);
+            fm.radioTick();
+            assert.equal(state.fmOnAir, false, `a spot played over ${id}`);
+            assert.equal(state.fmStation, 'off', `the sign stands over ${id}`);
+            fm.askRadio();
+            assert.equal(state.fmOnAir, false, `the key played a spot over ${id}`);
+            openOverlays.delete(id);
+            fm.radioTick();
+            assert.equal(state.fmOnAir, true, `the station stayed off once ${id} was gone`);
+            fm.cutRadio(true);
+            await wait(400);
+            done();
+        }
     });
 
     await ok('On a narrow screen the station steps aside for a headline', () => {
