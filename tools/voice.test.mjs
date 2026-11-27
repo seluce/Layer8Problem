@@ -19,7 +19,7 @@ const flag = (n, d) => { const h = args.find(a => a.startsWith(`--${n}=`)); retu
 const LANG = flag('lang', 'de');
 
 const { sha1Hex, voiceHash } = await import('../src/engine/sha1.js');
-const { collectEntries, TERMINAL, MAIL_POOL, SPOKEN_KEYS, SPOKEN_LISTS, CHRONICLE, fileFor, spokenForm, oneCallPerText } = await import('./voice-text.mjs');
+const { collectEntries, collectRadio, TERMINAL, MAIL_POOL, SPOKEN_KEYS, SPOKEN_LISTS, CHRONICLE, fileFor, spokenForm, oneCallPerText } = await import('./voice-text.mjs');
 
 let passed = 0;
 const ok = async (name, fn) => {
@@ -273,8 +273,16 @@ await ok('a placeholder cannot be recorded', () => {
 // H.A.L.G.E.R.D. A provider reading those dots gets a hardware list, and the
 // mistake is only audible - the file is there, the hash matches, the checker is
 // green.
+//
+// The station's spots go through the same rules (collectRadio seals them like
+// the narrator's pieces), so the word surveys below read both. Up to 7.2.2
+// they read the narrator alone: a spot with a new boot form would have gone to
+// the provider undecided, and nothing would have said so.
+const { entries: radioSpots } = await collectRadio(LANG);
+const voiced = [...entries, ...radioSpots];
+
 await ok('the dotted name is sent as a word', () => {
-    const dotted = entries.filter(e => /H\.A\.L\.G\.E\.R\.D\./.test(e.src));
+    const dotted = voiced.filter(e => /H\.A\.L\.G\.E\.R\.D\./.test(e.src));
     assert.ok(dotted.length >= 3, `expected the three H.A.L.G.E.R.D. pieces, found ${dotted.length}`);
     for (const e of dotted) {
         assert.ok(!/H\.A\.L/.test(spokenForm(e.src, LANG)), `${e.key} would be spelled out`);
@@ -296,7 +304,7 @@ await ok(`a respelling reaches the ${LANG} tree and only where it belongs`, () =
     // would be the exception, and this is where it would turn up: in German
     // nothing may survive the rules in ANY spelling, so a lowercase arrival
     // fails here and names itself instead of going quietly to the provider.
-    const written = entries.filter(e => /\bracks?\b/i.test(e.src));
+    const written = voiced.filter(e => /\bracks?\b/i.test(e.src));
     // Over a hundred pieces in each tree carry it. The floor is low enough that
     // ordinary editing does not move it and high enough to catch a set that has
     // collapsed to nothing, which is what a broken rule looks like from here.
@@ -322,10 +330,12 @@ await ok(`a respelling reaches the ${LANG} tree and only where it belongs`, () =
 await ok(`"booten" is sent as the English verb in German and left alone elsewhere`, () => {
     // Every boot word the German rule leaves alone, by name. A new form - a
     // "gebootet", a "Reboot" in a scene - is not respelled by guesswork: it
-    // fails here and somebody decides which kind of word it is.
-    const GERMAN_BOOT = ['U-Boot'];
+    // fails here and somebody decides which kind of word it is. The bare
+    // "Boot" is the one the board takes for its strategy retreat
+    // (fm_board_offsite), a boat twice over.
+    const GERMAN_BOOT = ['U-Boot', 'Boot'];
     const words = (text) => text.match(/[\p{L}-]*boot[\p{L}-]*/giu) ?? [];
-    const written = entries.filter(e => /boot/i.test(e.src));
+    const written = voiced.filter(e => /boot/i.test(e.src));
     if (LANG === 'de') {
         assert.ok(written.length >= 8, `expected the boot pieces, found ${written.length}`);
         for (const e of written) {
@@ -344,7 +354,7 @@ await ok(`"booten" is sent as the English verb in German and left alone elsewher
 });
 
 await ok(`"IT" is sent as the English letters in German and left alone elsewhere`, () => {
-    const written = entries.filter(e => /\bIT/.test(e.src));
+    const written = voiced.filter(e => /\bIT/.test(e.src));
     if (LANG === 'de') {
         // Close to two hundred pieces: the floor catches a rule that has
         // collapsed, not ordinary editing.
